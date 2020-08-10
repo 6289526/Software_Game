@@ -41,10 +41,12 @@ namespace ServerSystems{
 
 /' 依存関係 '/
 ClientSystems <-- ClientNetworks
+ClientSystems --> ClientNetworks
 
 ClientNetworks.ClientReceavieModules <-- ServerNetworks.ServerSendModules 
-ClientNetworks.ClientSendModules <-- ServerNetworks.ServerReceavieModules
+ClientNetworks.ClientSendModules --> ServerNetworks.ServerReceavieModules
 
+ServerNetworks <-- ServerSystems
 ServerNetworks --> ServerSystems 
 
 @enduml
