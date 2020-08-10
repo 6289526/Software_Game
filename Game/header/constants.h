@@ -38,10 +38,6 @@ typedef struct {
     int cid;                  /*クライアントのID*/
     int connect;              /*サーバーに接続しているか*/
     int sock;                 /*使用するソケット*/
-    int group;                /*どの手を出したか*/
-    int wcount;               /*勝利した回数*/
-    int lcount;               /*負けた回数*/
-    int dcount;               /*引き分けた回数*/
     struct sockaddr_in addr;  /*ソケットの設定*/
     char name[MAX_LEN_NAME];  /*名前*/
 } CLIENT;
@@ -50,7 +46,7 @@ typedef struct {
 typedef struct {
     int cid;                      /*クライアントのID*/
     char command;                 /*入力されたコマンド*/
-    int result;                   /*勝敗*/
+    int result;                   /*順位*/
 } CONTAINER;
 
 /*----------構造体宣言 終了-----------*/
