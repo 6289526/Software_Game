@@ -1,0 +1,52 @@
+@startuml BS_ObjectModel
+!include IncludeFiles/Setting.pu
+!define _VERSION_ 0.1.0
+!define _FILE_CODE_ ObjectModel
+!define _LAST_MODIFIED_ 2020-08-10
+!include IncludeFiles/Layout.pu
+
+namespace ClientSystems{
+    
+}
+
+namespace ClientNetworks{
+    namespace ClientSendModules{
+        
+    }
+
+    namespace ClientReceavieModules{
+        
+    }
+}
+
+namespace ServerNetworks{
+    namespace ServerSendModules{
+        
+    }
+
+    namespace ServerReceavieModules{
+        
+    }
+}
+
+namespace ServerSystems{
+    
+}
+
+/' 継承関係 '/
+
+
+/' 集約関係 '/
+
+
+/' 依存関係 '/
+ClientSystems <-- ClientNetworks
+ClientSystems --> ClientNetworks
+
+ClientNetworks.ClientReceavieModules <-- ServerNetworks.ServerSendModules 
+ClientNetworks.ClientSendModules --> ServerNetworks.ServerReceavieModules
+
+ServerNetworks <-- ServerSystems
+ServerNetworks --> ServerSystems 
+
+@enduml

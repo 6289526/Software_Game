@@ -1,0 +1,11 @@
+/' 定数 '/
+!define _PROJECT_CODE_ SoftwareGame
+
+/' スキン設定 '/
+
+skinparam{
+    Shadowing false
+    sequenceArrowColor #666666
+}
+
+/' 共通設定 '/
