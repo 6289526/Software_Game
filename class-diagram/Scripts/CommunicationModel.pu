@@ -1,0 +1,56 @@
+@startuml SG_CommunicationModel
+!include IncludeFiles/Setting.pu
+!define _VERSION_ 0.1.0
+!define _FILE_CODE_ CommunicationModel client and server
+!define _LAST_MODIFIED_ 2020-08-11
+!include IncludeFiles/Layout.pu
+
+actor otherclients
+actor client
+database server
+participant serversystem
+
+== set up== 
+
+client --> server : try conect
+client -> server : send name
+... wait for other client ...
+client <- server : user count, id and all client datas
+
+== start main loop==
+
+loop move data
+
+client -> server : send move data
+server -> serversystem : movable?
+'server <- serversystem : return
+
+else place data 
+
+client -> server : send place data
+server -> serversystem : placable?
+    group place data
+    
+    server <- serversystem : yes
+    client <- server : place data
+    otherclients <- server
+    
+    else ! placable
+
+    server <- serversystem : no
+
+    client <- server : can't place
+
+    end
+
+else invalid data
+
+client -> server : send invalid data
+
+== update character positions==
+client <- server : chara positions data
+otherclients <- server
+
+end
+
+@enduml
