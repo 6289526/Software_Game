@@ -7,4 +7,7 @@
 - UTF-8
 
 ## オブジェクト図
-![object-image](class-diagram/Outputs/BS_ObjectModel.png)
+![object-image](class-diagram/Outputs/SG_ObjectModel.png)
+
+## ネットワークモジュールのシーケンス図
+![communication-model-image](class-diagram/Outputs/SG_CommunicationModel.png)

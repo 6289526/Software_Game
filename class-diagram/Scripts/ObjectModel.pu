@@ -1,4 +1,4 @@
-@startuml BS_ObjectModel
+@startuml SG_ObjectModel
 !include IncludeFiles/Setting.pu
 !define _VERSION_ 0.1.0
 !define _FILE_CODE_ ObjectModel
