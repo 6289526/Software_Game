@@ -46,11 +46,27 @@ server -> serversystem : placable?
 else invalid data
 
 client -> server : send invalid data
+client <- server : the data is invalid
 
+else character position update 
 == update character positions==
 client <- server : chara positions data
 otherclients <- server
+    group character clear
 
+        client <- server : you have a goal
+
+        else all clients have a goal
+
+        client <- server : all clients ranking
+        otherclients <- server
+
+== game clear==
+
+        client <- server : Exit the network.
+        otherclients <- server
+
+    end
 end
 
 @enduml
