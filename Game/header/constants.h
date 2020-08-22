@@ -32,12 +32,37 @@
 /*----------define 終了-----------*/
 
 /*----------構造体宣言 開始-----------*/
-/*クライアントの位置*/
+/*座標情報*/
 typedef struct{
     int x;       //x座標
     int y;       //y座標
     int z;       //z座標
-} Position;
+} IntPosition;
+
+typedef struct{
+    float x;       //x座標
+    float y;       //y座標
+    float z;       //z座標
+}FloatPosition;
+
+typedef struct{
+    int x;       //x座標
+    int y;       //y座標
+    int z;       //z座標
+    int w;       //x方向の長さ
+    int h;       //y方向の長さ
+    int d;       //z方向の長さ
+}IntCube;
+
+typedef struct{
+    float x;       //x座標
+    float y;       //y座標
+    float z;       //z座標
+    float w;       //x方向の長さ
+    float h;       //y方向の長さ
+    float d;       //z方向の長さ
+}FloatCube;
+
 
 /*クライアントの情報*/
 typedef struct {
@@ -48,40 +73,34 @@ typedef struct {
     char name[MAX_LEN_NAME];  /*名前*/
     int rank;                 /*順位*/
     int goal;                 /*ゴールしているか*/
-    Position pos;             /*場所*/
+    FloatCube pos;             /*場所*/
 } Client;
 
 
-
-/*サーバーとクライアント間で通信する情報*/
-typedef struct
-{
-    int count;      //クライアントの人数
-    int id;         //クライアントのID
-    Client client;  //クライアントの情報
-} Data;
+/**サーバーとクライアント間で通信する情報**/
 
 /*コマンド*/
-typedef struct 
-{
-    int cid;                      /*クライアントのID*/
-    char command;                 /*入力されたコマンド*/
-    int able;                     /*コマンドが実行可能か*/
-} Command;
+//
+// typedef struct
+// {
+// //    int cid;                      /*クライアントのID*/
+//     char command;                 /*入力されたコマンド*/
+//     int able;                     /*コマンドが実行可能か*/
+// } Command;
 
 
 /*MoveData*/
-typedef struct {
-    int cid;                      /*クライアントのID*/
-    Position pos;                 /*場所*/  
-    int goal;                     /*ゴールしたか*/
-} MoveData;
+// typedef struct {
+//     int cid;                      /*クライアントのID*/
+//     Position pos;                 /*場所*/
+//     int goal;                     /*ゴールしたか*/
+// } MoveData;
 
 /*PlaceData*/
 typedef struct {
-    int cid;                      /*クライアントのID*/
+//    int cid;                      /*クライアントのID*/
     int object;                   /*置く物のID*/
-    Position pos;                 /*場所*/ 
+    IntPosition pos;                 /*場所*/
 } PlaceData;
 
 
@@ -93,5 +112,3 @@ typedef struct {
 /*----------グローバル変数 開始-----------*/
 
 /*-----------グローバル変数 終了----------*/
-
-
