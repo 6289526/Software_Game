@@ -216,9 +216,9 @@ int ControlRequests() {
                 //移動後の場所を設定する
                 Clients[i].pos = data.pos;
                 //ゴールしたかを判定
-                int goal_flag = 0;
+                int goalFlag = 0;
                 /*もしゴールするなら*/
-                if(goal_flag){
+                if(goalFlag){
                     NumGoal++;
                     Clients[i].goal = 1;
                     //ランキング順位
