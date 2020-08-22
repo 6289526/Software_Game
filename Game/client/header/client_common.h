@@ -20,37 +20,44 @@
 
 /* ウインドウサイズ */
 enum {
-    WD_Width  = 640,
-    WD_Height = 480
+    Wd_Width  = 640,
+    Wd_Height = 480
 };
 
 /* ゲームの状態 */
 enum {
-    GS_SETTING = 0, //ゲームの設定段階
-    GS_RESULT  = 3
+    Gs_Setting = 0, //ゲームの設定段階
+    Gs_Result  = 3
 };
 
 
+/*変数*/
+// 接続してくるクライアントの数
+extern int NumClients;
+// 自身のID
+extern int MyId;
+// ソケット
+extern int Sock;
+// ソケットの数
+extern int NumSock;
+// ファイルディスクリプタ
+extern fd_set Mask;
+// クライアントの情報
+extern Client Clients[MAX_NUMCLIENTS];
 
+// ゲームの状態
+extern int GameStts;
 
 extern int PrintError(const char *str);
 
-/* sys.c */
-extern int push_button(int, int);
-
-
-/* win.c */
-extern int init_window(void);
-extern int draw_window(void);
 
 /* net.c */
-extern void setup_client(char *, u_short);
-extern int control_requests();
+extern void SetupClient(char *, u_short);
+extern int ControlRequests();
 extern void terminate_client();
 
-extern void send_data(void *, int);
-extern int receive_data(void *, int);
+extern int SendData(void *);
+extern int ReceiveData(void *);
 
-/* com.c */
-extern int in_command(char);
-extern int exe_command(void);
+extern int InCommand(char);
+extern int ExeCommand(void);
