@@ -1,8 +1,8 @@
 /*
- *  ファイル名  : client_common.h
- *  機能    : クライアント用のマクロ、構造体等の定義
+ *  ファイル名	：client.h
+ *  機能	： 変数、関数の宣言
+ *  
  */
-
 #pragma once    
 #include <stdio.h>
 #include <stdlib.h>
@@ -31,7 +31,22 @@ enum {
 };
 
 
+/*変数*/
+// 接続してくるクライアントの数
+extern int num_clients;
+// 自身のID
+extern int myid;
+// ソケット
+extern int sock;
+// ソケットの数
+extern int num_sock;
+// ファイルディスクリプタ
+extern fd_set mask;
+// クライアントの情報
+extern CLIENT clients[MAX_NUM_CLIENTS];
 
+// ゲームの状態
+extern int game_stts;
 
 extern int PrintError(const char *str);
 
@@ -48,9 +63,8 @@ extern void setup_client(char *, u_short);
 extern int control_requests();
 extern void terminate_client();
 
-extern void send_data(void *, int);
-extern int receive_data(void *, int);
+extern int send_data(void *);
+extern int receive_data(void *);
 
-/* com.c */
 extern int in_command(char);
 extern int exe_command(void);
