@@ -5,7 +5,6 @@
 #pragma once
 /*----------include 開始----------*/
 #include <netinet/in.h>
-
 #include<stdio.h>
 
 /*----------include 終了----------*/
@@ -16,7 +15,7 @@
 //名前の最大文字数
 #define MAX_LEN_NAME 10
 //最大参加人数
-#define MAX_NUM_CLIENTS 5
+#define MAX_NUMCLIENTS 5
 //メッセージの最大文字数
 #define MAX_LEN_BUFFER 256
 //ソケットの設定のサイズ
@@ -33,6 +32,13 @@
 /*----------define 終了-----------*/
 
 /*----------構造体宣言 開始-----------*/
+/*クライアントの位置*/
+typedef struct{
+    int x;       //x座標
+    int y;       //y座標
+    int z;       //z座標
+} Position;
+
 /*クライアントの情報*/
 typedef struct {
     int cid;                  /*クライアントのID*/
@@ -40,14 +46,47 @@ typedef struct {
     int sock;                 /*使用するソケット*/
     struct sockaddr_in addr;  /*ソケットの設定*/
     char name[MAX_LEN_NAME];  /*名前*/
-} CLIENT;
+    int rank;                 /*順位*/
+    int goal;                 /*ゴールしているか*/
+    Position pos;             /*場所*/
+} Client;
+
+
 
 /*サーバーとクライアント間で通信する情報*/
-typedef struct {
+typedef struct
+{
+    int count;      //クライアントの人数
+    int id;         //クライアントのID
+    Client client;  //クライアントの情報
+} Data;
+
+/*コマンド*/
+typedef struct 
+{
     int cid;                      /*クライアントのID*/
     char command;                 /*入力されたコマンド*/
-    int result;                   /*順位*/
-} CONTAINER;
+    int able;                     /*コマンドが実行可能か*/
+} Command;
+
+
+/*MoveData*/
+typedef struct {
+    int cid;                      /*クライアントのID*/
+    Position pos;                 /*場所*/  
+    int goal;                     /*ゴールしたか*/
+} MoveData;
+
+/*PlaceData*/
+typedef struct {
+    int cid;                      /*クライアントのID*/
+    int object;                   /*置く物のID*/
+    Position pos;                 /*場所*/ 
+} PlaceData;
+
+
+
+
 
 /*----------構造体宣言 終了-----------*/
 
