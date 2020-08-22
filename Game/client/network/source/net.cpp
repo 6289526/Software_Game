@@ -130,9 +130,7 @@ int ControlRequests () {
     // 通信を継続するかを判定する変数
     int result = 1;
     
-    if (FD_ISSET(0, &ReadFlag)) { //入力があった場合コマンドを受け付け、それに応じた処理を行う
-        result = InCommand();
-    } else if (FD_ISSET(Sock, &ReadFlag)) {  //サーバーからのメッセージを受け取った場合
+    if (FD_ISSET(Sock, &ReadFlag)) {  //サーバーからのメッセージを受け取った場合
         result = ExeCommand();
     }
     return result;
@@ -140,37 +138,27 @@ int ControlRequests () {
 
 /*
 * 入力があった場合コマンドを受け付けメッセージを送信する
+* 引数
+*    char com: コマンド
 * 返り値
 *    通信継続：result = 1
 */
-static int InCommand() {
+static int InCommand(char com) {
     /*変数*/
-    //コマンド
-    Command command;
-    // キーボードの入力を格納する変数
-    char com;
-    // commandの初期化
-    memset(&command, 0, sizeof(Command));
-    /** キーボードからの入力を受け付ける **/
-    com = getchar();
-    while(getchar()!='\n');
-
+    
     /** 入力されたコマンドに応じて分岐 **/
     switch (com) {
     case MOVE_COMMAND: //移動コマンド
         //送るデータ
-        MoveData data;
+        FloatPosition data;
         // dataの初期化
-        memset(&data, 0, sizeof(MoveData));
-        // コマンドを送信するデータの中に格納
-        command.command = MOVE_COMMAND;
-        // 自分のIDを送信するデータの中に格納
-        command.cid = MyId;
-        data.cid = MyId;
+        memset(&data, 0, sizeof(FloatPosition));
         //移動する場所を入力
-        data.pos = Clients[MyId].pos;
+        data.x = Clients[MyId].pos.x;
+        data.y = Clients[MyId].pos.y;
+        data.z = Clients[MyId].pos.z;
         // データを送信する
-        SendData(&command);
+        SendData(&com);
         SendData(&data);
         break;
     case PUT_COMMAND: //移動コマンド
@@ -178,15 +166,10 @@ static int InCommand() {
         PlaceData data;
         // dataの初期化
         memset(&data, 0, sizeof(PlaceData));
-        // コマンドを送信するデータの中に格納
-        command.command = PUT_COMMAND;
-        // 自分のIDを送信するデータの中に格納
-        command.id = MyId;
-        data.cid = MyId;
         //配置する場所を入力
         data.pos = {Clients[MyId].pos.x, Clients[MyId].pos.y, Clients[MyId].pos.z - 100};
         // データを送信する
-        SendData(&command);
+        SendData(&com);
         SendData(&data);
         break;
     default:
@@ -205,49 +188,37 @@ static int InCommand() {
 */
 static int ExeCommand() {
     /*変数*/
-    // ソケットから来るデータ
-    Command command;
+    // サーバーから来るコマンド
+    char command;
     // 通信を継続するかを判定する変数
     int result = 1;
-    // dataの初期化
-    memset(command, 0, sizeof(Command));
     // dataを受信する
     ReceiveData(&command);
 
     /** 受信したデータに含まれるコマンドに応じて分岐 **/
     switch (command.command) {
-    case MOVE_COMMAND: // メッセージ受信
-        MoveData data;
-        memset(data, 0, sizeof(MoveData));
-        ReceiveData(&data);
-        if(command.able){ //コマンドが実行可能なら
-            fprintf(stderr, "%d,%d,%dに移動しました\n", data.pos.x, data.pos.y, data.pos.z);
-        }else
-        {
-            Clients[data.id].pos = data.pos;
-            fprintf(stderr, "移動できませんでした。\n");
-        }
-        
-        // 通信継続
-        result = 1;
-        break;
-    case PUT_COMMAND: // 通信終了
+    case PUT_COMMAND: //配置完了
         PlaceData data;
         memset(data, 0, sizeof(PlaceData));
         ReceiveData(&data);
         if(command.able){ //コマンドが実行可能なら
             
             fprintf(stderr, "%d,%d,%dに%dを置きました\n", data.pos.x, data.pos.y, data.pos.z, data.object);
-        }else{
-            fprintf(stderr, "置けませんでした\n");
         }
-        // 通信終了
-        result = 0;
+        // 通信継続
+        result = 1;
+        break;
+    case DO_NOT_PUT_COMMAND:　//配置失敗
+        
+        fprintf(stderr, "置けませんでした\n");
+        // 通信継続
+        result = 1;
         break;
     default:
         // 上記以外のコマンドは存在しないので、エラーを表示して終了
         fprintf(stderr, "ExeCommand(): %c is not a valid command.\n", data.command);
-        exit(1);
+        result 1;
+        break;
     }
 
     // 値を返す
