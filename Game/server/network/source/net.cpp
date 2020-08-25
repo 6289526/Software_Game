@@ -176,11 +176,8 @@ int ControlRequests() {
     // ファイルディスクリプタ
     fd_set ReadFlag = Mask;
     //コマンド
-    Command command;
+    char command;
 
-    // dataの初期化
-    memset(&command, 0, sizeof(command));
-    
     /** ソケット通信の多重化 **/
     fprintf(stderr, "select() is started.\n");
     /* ファイルディスクリプタの集合から読み込み可能なファイルディスクリプタを見つける*/
@@ -200,40 +197,37 @@ int ControlRequests() {
         * メッセージ
         */
         ReceiveData(i, &command);
-        switch (command.command) {
+        switch (command) {
         case MOVE_COMMAND:  //移動
             //受け取るデータ
-            MoveData data;
+            FloatPosition data;
             // dataの初期化
-            memset(&data, 0, sizeof(MoveData));
+            memset(&data, 0, sizeof(FloatPosition));
             //受け取る
             ReceiveData(i, &data);
             /*移動できるかを尋ねる*/
+            
             /*移動できるかを訪ねた後*/
-            //移動可能
-            command.able = 1;
-            if(command.able){//移動可能なら
-                //移動後の場所を設定する
-                Clients[i].pos = data.pos;
-                //ゴールしたかを判定
-                int goalFlag = 0;
-                /*もしゴールするなら*/
-                if(goalFlag){
-                    NumGoal++;
-                    Clients[i].goal = 1;
-                    //ランキング順位
-                    Clients[i].rank = NumGoal;
-                    data.goal = 1;
-                }
-            }else{//移動不可なら
-                //移動する前の座標に戻す
-                data.pos = Clients[i].pos;
+            //移動可能なら
+            //移動後の場所を設定する
+            Clients[i].pos.x = data.x;
+            Clients[i].pos.y = data.y;
+            Clients[i].pos.z = data.z;
+            //ゴールしたかを判定
+            int goalFlag = 0;
+            /*もしゴールするなら*/
+            if(goalFlag){
+                NumGoal++;
+                Clients[i].goal = 1;
+                //ランキング順位
+                Clients[i].rank = NumGoal;
+                command = GOAL_COMMAND;
+                //ゴールしたことをを伝える
+                SendData(i, &command);
             }
             
-            //コマンドの実行可不可を伝える
-            SendData(i, &command);
-            // 全員に移動情報を送信する
-            SendData(BROADCAST, &data);
+            // // 全員に移動情報を送信する
+            // SendData(BROADCAST, &data);
 
             
             if(NumGoal == NumClients){ //全員ゴールした場合
@@ -252,19 +246,25 @@ int ControlRequests() {
             //受け取る
             ReceiveData(i, &data);
             /*配置できるかを尋ねる*/
+
             /*配置できるかを訪ねた後*/
             //配置可能
-            command.able = 1;
+
+            //配置不可
+            command = DO_NOT_PUT_COMMAND;
             //コマンドの実行可不可を伝える
             SendData(i, &command);
             // 全員に配置情報を送信する
             SendData(BROADCAST, &data);
-            // チャットの継続
+            // ゲーム継続
             result = 1;
             break;
         default:
             // コマンドは上記の2種類しか無いので、それ以外の場合はエラーが生じている　
-            fprintf(stderr, "ControlRequests(): %c is not a valid command.\n", command.command);
+            fprintf(stderr, "ControlRequests(): %c is not a valid command.\n", command);
+            command = ERROR_COMMAND;
+            //エラーコマンドを伝える
+            SendData(i, &command);
         }
         }
     }

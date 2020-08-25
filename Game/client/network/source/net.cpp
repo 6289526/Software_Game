@@ -155,18 +155,15 @@ static int InCommand(char com) {
     switch (com) {
     case MOVE_COMMAND: //移動コマンド
         //送るデータ
-        MoveData data;
+        FloatPosition data;
         // dataの初期化
-        memset(&data, 0, sizeof(MoveData));
-        // コマンドを送信するデータの中に格納
-        command.command = MOVE_COMMAND;
-        // 自分のIDを送信するデータの中に格納
-        command.cid = MyId;
-        data.cid = MyId;
+        memset(&data, 0, sizeof(FloatPosition));
         //移動する場所を入力
-        data.pos = Clients[MyId].pos;
+        data.x = Clients[MyId].pos.x;
+        data.y = Clients[MyId].pos.y;
+        data.z = Clients[MyId].pos.z;
         // データを送信する
-        SendData(&command);
+        SendData(&com);
         SendData(&data);
         break;
     case PUT_COMMAND: //移動コマンド
@@ -174,15 +171,10 @@ static int InCommand(char com) {
         PlaceData data;
         // dataの初期化
         memset(&data, 0, sizeof(PlaceData));
-        // コマンドを送信するデータの中に格納
-        command.command = PUT_COMMAND;
-        // 自分のIDを送信するデータの中に格納
-        command.id = MyId;
-        data.cid = MyId;
         //配置する場所を入力
         data.pos = {Clients[MyId].pos.x, Clients[MyId].pos.y, Clients[MyId].pos.z - 100};
         // データを送信する
-        SendData(&command);
+        SendData(&com);
         SendData(&data);
         break;
     default:
@@ -201,12 +193,10 @@ static int InCommand(char com) {
 */
 static int ExeCommand() {
     /*変数*/
-    // ソケットから来るデータ
-    Command command;
+    // サーバーから来るコマンド
+    char command;
     // 通信を継続するかを判定する変数
     int result = 1;
-    // dataの初期化
-    memset(command, 0, sizeof(Command));
     // dataを受信する
     ReceiveData(&command);
 
@@ -234,8 +224,6 @@ static int ExeCommand() {
         if(command.able){ //コマンドが実行可能なら
 
             fprintf(stderr, "%d,%d,%dに%dを置きました\n", data.pos.x, data.pos.y, data.pos.z, data.object);
-        }else{
-            fprintf(stderr, "置けませんでした\n");
         }
         // 通信継続
         result = 1;
