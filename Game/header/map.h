@@ -1,0 +1,48 @@
+/*
+ *  ファイル名	: map.h
+ *  機能	: マップのデータ構造の定義
+ */
+//#pragma once
+
+/*
+    横　　　: X軸 右+
+    進行方向: Z軸 奥+
+    高さ　　: Y軸 上+
+*/
+
+// int型 * 辺の大きさ で扱う
+
+// mapが扱うのはObjectのみ
+// どの位置にどのブロックがあるか
+
+// mapdataの保存はtxt方式
+
+/*
+    |-----------|
+    |           |
+Z   |           |
+A   |           |
+|   |-----------|
+ -|> x
+*/
+
+// mapdataのyサイズはソールコードで限定
+// xzはmapdataのtxt fileに記述
+
+/* MapData.txt
+    mapdata
+    Xsize Zsize MapName
+    1 1 1 1(\n)
+    1 0 0 1(\n)
+    1 0 0 1(\n)
+    1 1 1 1(\n)
+*/
+
+/* マップクラスに必要なもの
+    MapClass
+
+    client : グラフィックへの渡し口
+
+    server : clientへの渡し口
+             txtからのclass生成
+*/
