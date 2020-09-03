@@ -1,10 +1,4 @@
 /*
- *  ファイル名	: map.h
- *  機能	: マップのデータ構造の定義
- */
-//#pragma once
-
-/*
     横　　　: X軸 右+
     進行方向: Z軸 奥+
     高さ　　: Y軸 上+
@@ -30,8 +24,7 @@ A   |           |
 // xzはmapdataのtxt fileに記述
 
 /* MapData.txt
-    mapdata
-    Xsize Zsize MapName
+    Xsize Zsize
     1 1 1 1(\n)
     1 0 0 1(\n)
     1 0 0 1(\n)
