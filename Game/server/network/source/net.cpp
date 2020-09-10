@@ -6,14 +6,14 @@
 
 /*変数初期化*/
 // クライアントの情報
-Client Clients[MAX_NUMCLIENTS];
+ClientNet Clients[MAX_NUMCLIENTS];
 // 接続してくるクライアントの数
 int NumClients;
 // ソケットの数
 int NumSocks;
 // ファイルディスクリプタ
 fd_set Mask;
-
+int NumGoal = 0;
 /*関数*/
 static void HandleError(char *);
 
@@ -22,7 +22,7 @@ static void HandleError(char *);
  * 引数
  *   numCl: チャットに参加する人数
  *   port  : サーバーのポート番号
- * 
+ *
  */
 void SetupServer(int numCl, u_short port) {
     /*変数初期化*/
@@ -35,7 +35,7 @@ void SetupServer(int numCl, u_short port) {
     * svAddr: rsockの設定
     * clAddr: sockの設定
     */
-    struct sockaddr_in svAddr, clAddr; 
+    struct sockaddr_in svAddr, clAddr;
 
     /** 接続リクエストを受け取るためのソケットを作る **/
     //サーバーのセットアップが開始されたことを表示する
@@ -60,8 +60,8 @@ void SetupServer(int numCl, u_short port) {
     svAddr.sin_family = AF_INET;         //アドレスの種類：インターネット
     svAddr.sin_port = htons(port);       //ポート番号
     svAddr.sin_addr.s_addr = INADDR_ANY; //任意のアドレスから受付可能
-    
-    /*変数*/ 
+
+    /*変数*/
     // 要求されたオプションのための値が指定されるバッファ
     int opt = 1;
     // ソケットオプションをセット
@@ -80,14 +80,17 @@ void SetupServer(int numCl, u_short port) {
     fprintf(stderr, "listen() is started.\n");
 
     /** クライアントからの通信リクエストに対する処理 **/
-    /*変数*/ 
+    /*変数*/
     int i, maxSock = 0;
     // 接続先アドレス情報のサイズ
-    socklen_t len; 
+    socklen_t len;
 
     char src[MAX_LEN_ADDR];
-    
-    /* 
+    //クライアントの名前
+    char name[NumClients][MAX_LEN_NAME];
+    //クライアントのID
+    // int id[NumClients];
+    /*
     *  NumClientsの人数のクライアントが通信を要求してくるまで
     *  ここから先には進まない
     */
@@ -105,10 +108,11 @@ void SetupServer(int numCl, u_short port) {
         }
 
         /*クライアントからの名前を読み込む*/
-        if (read(sock, Clients[i].name, MAX_LEN_NAME) == -1) {
+        if (read(sock, name[i], MAX_LEN_NAME) == -1) {
         HandleError("read()");
         }
         // クライアントのID
+        // id[i] = i;
         Clients[i].cid = i;
         // 接続
         Clients[i].connect = 1;
@@ -117,19 +121,23 @@ void SetupServer(int numCl, u_short port) {
         // ソケットの設定
         Clients[i].addr = clAddr;
 
-        
+
 
         //srcの初期化
         memset(src, 0, sizeof(src));
         /*
         * ネットワークアドレス構造体を、そのアドレスを表す文字列に変換する
         * 構造体の内容を IPv4 ネットワークアドレスの ドット区切り 4 分割形式 "ddd.ddd.ddd.ddd" に変換
-        * 
+        *
         */
         inet_ntop(AF_INET, (struct sockaddr *)&clAddr.sin_addr, src, sizeof(src));
         //通信を受け入れたことを知らせる
         fprintf(stderr, "Client %d is accepted (address=%s, port=%d).\n", i, src, ntohs(clAddr.sin_port));
+
     }
+    /*システムモジュールにクライアントの情報を渡す*/
+    // ???(id, name);
+
     //接続リクエストを受け取るソケットを閉じる
     close(rsock);
 
@@ -165,6 +173,21 @@ void SetupServer(int numCl, u_short port) {
     // サーバーのセットアップが完了したことを知らせる
     fprintf(stderr, "Server setup is done.\n");
 }
+
+/* サーバーの終了 */
+void terminate_server(void) {
+    /*変数*/
+    int i;
+    /*すべてのソケットを閉じる*/
+    for (i = 0; i < NumClients; i++) {
+        close(Clients[i].sock);
+    }
+    // メッセージの表示
+    fprintf(stderr, "All connections are closed.\n");
+    // 正常終了
+    exit(0);
+}
+
 
 /* クライアントからのリクエストに対応する
  * 返値
@@ -206,37 +229,12 @@ int ControlRequests() {
             //受け取る
             ReceiveData(i, &data);
             /*移動できるかを尋ねる*/
-            
-            /*移動できるかを訪ねた後*/
-            //移動可能なら
-            //移動後の場所を設定する
-            Clients[i].pos.x = data.x;
-            Clients[i].pos.y = data.y;
-            Clients[i].pos.z = data.z;
-            //ゴールしたかを判定
-            int goalFlag = 0;
-            /*もしゴールするなら*/
-            if(goalFlag){
-                NumGoal++;
-                Clients[i].goal = 1;
-                //ランキング順位
-                Clients[i].rank = NumGoal;
-                command = GOAL_COMMAND;
-                //ゴールしたことをを伝える
-                SendData(i, &command);
+            if (Mobable(i)) {
+                // 移動できるなら移動
+                MovePosition(i, &data);
             }
-            
-            // // 全員に移動情報を送信する
-            // SendData(BROADCAST, &data);
-
-            
-            if(NumGoal == NumClients){ //全員ゴールした場合
-                //ゲームの終了
-                result = 0;
-            }else{ //まだ全員ゴールしていない場合 
-                // ゲームの継続
-                result = 1;
-            }
+            // ゲームの継続
+            result = 1;
             break;
         case PUT_COMMAND:  //配置
             //受け取るデータ
@@ -271,4 +269,92 @@ int ControlRequests() {
 
     // 値を返す
     return result;
+}
+
+
+/* データの受信
+ *
+ * 引数
+ *    cid:送り先
+ *    *data:送られるデータ
+ *    size:dataの型のサイズ
+ * 返り値
+ *
+ *    エラーの場合0,-1を返す
+ */
+ int ReceiveData(int cid, void *data) {
+     // データのサイズ
+    int size = 0;
+    // dataのサイズを取得
+    size = sizeof(data);
+    //全員に送らないかつ、cidが負もしくは最大人数の値を超えているとき
+    if ((cid != BROADCAST) && (0 > cid || cid >= NumClients)) {
+        fprintf(stderr, "ReceiveData(): client id is illeagal.\n");
+        return -1;
+    }
+    //データが無いもしくはサイズが負のとき
+    if ((data == NULL) || (size <= 0)) {
+        fprintf(stderr, "ReceiveData(): data is illeagal.\n");
+        return -1;
+    }
+    // ソケットに送られてきたデータをdataに読み込む
+    return read(Clients[cid].sock, data, size);
+}
+
+/* ソケットにデータを送信
+ *
+ * 引数
+ *    cid:送り先
+ *    *data:送られるデータ
+ */
+int SendData(int cid, void *data) {
+    // データのサイズ
+    int size = 0;
+    // dataのサイズを取得
+    size = sizeof(data);
+    //全員に送らないかつ、cidが負もしくは最大人数の値を超えているとき
+    if ((cid != BROADCAST) && (0 > cid || cid >= NumClients)) {
+        fprintf(stderr, "SendData(): client id is illeagal.\n");
+        return -1;
+    }
+    //データが無いもしくはサイズが負のとき
+    if ((data == NULL) || (size <= 0)) {
+        fprintf(stderr, "SendData(): data is illeagal.\n");
+        return -1;
+    }
+
+    if (cid == BROADCAST) { //全員に送るとき
+        int i;
+        /*クライアントのソケットに情報を送る*/
+        for (i = 0; i < NumClients; i++) {
+        // 接続されているクライアントのみに送る
+        if(Clients[i].connect == 1){
+            if (write(Clients[i].sock, data, size) < 0) {
+            HandleError("write()");
+            }
+        }
+        }
+    } else { //特定のクライアントに送るとき
+        // 接続されているクライアントであるか確認
+        if(Clients[cid].connect == 1){
+        //特定のソケットに情報を送る
+        if (write(Clients[cid].sock, data, size) < 0) {
+            HandleError("write()");
+        }
+        }
+    }
+    return 0;
+}
+
+/* エラーの表示
+ *
+ * 引数
+ *   *message: エラーの発生した段階
+ */
+static void HandleError(char *message) {
+    // エラーメッセージを表示
+    perror(message);
+    fprintf(stderr, "%d\n", errno);
+    // プログラム終了
+    exit(1);
 }

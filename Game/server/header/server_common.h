@@ -49,10 +49,10 @@ extern int ReceiveData(int, void *);
 extern int ControlRequests();
 
 /* sys.cpp */
-int Mobable(FloatPosition pos); // 移動できるかどうか　できれば１が返る
-void MovePosition(int chara_ID, FloatPosition pos); // キャラを移動させる
-void CheckGoal(int chara_num);    // ゴールしているか判定
+int Mobable(FloatPosition* pos); // 移動できるかどうか　できれば１が返る
+void CheckGoal(int chara_ID);    // ゴールしているか判定
+void MovePosition(int chara_ID, FloatPosition* pos); // キャラを移動させる
 int Goal(); // 全員ゴールしていれば１
-FloatPosition GetPosition(int chara_num); // キャラの座標を入手
+FloatPosition GetPosition(int chara_ID); // キャラの座標を入手
 
 /*-----------グローバル変数 終了----------*/
