@@ -23,21 +23,18 @@
 /*----------define 終了-----------*/
 
 /*----------構造体宣言 開始-----------*/
+/*ネットワークモジュール用のクライアントの情報*/
+typedef struct {
+    int cid;                  /*クライアントのID*/
+    int connect;              /*サーバーに接続しているか*/
+    int sock;                 /*使用するソケット*/
+    struct sockaddr_in addr;  /*ソケットの設定*/
+} ClientNet;
 
 /*----------構造体宣言 終了-----------*/
 
 /*----------グローバル変数 開始-----------*/
 /*変数*/
-// クライアントの情報
-extern Client Clients[MAX_NUMCLIENTS];
-// 接続してくるクライアントの数
-extern int NumClients;
-// ソケットの数
-extern int NumSocks;
-// ファイルディスクリプタ
-extern fd_set Mask;
-//ゴールした人数
-extern int NumGoal;
 
 
 /* net.c */

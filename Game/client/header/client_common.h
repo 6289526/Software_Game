@@ -30,23 +30,17 @@ enum {
     Gs_Result  = 3
 };
 
+/*ネットワークモジュール用のクライアントの情報*/
+typedef struct {
+    int cid;                  /*クライアントのID*/
+    int connect;              /*サーバーに接続しているか*/
+    int sock;                 /*使用するソケット*/
+    struct sockaddr_in addr;  /*ソケットの設定*/
+} ClientNet;
+
 
 /*変数*/
-// 接続してくるクライアントの数
-extern int NumClients;
-// 自身のID
-extern int MyId;
-// ソケット
-extern int Sock;
-// ソケットの数
-extern int NumSock;
-// ファイルディスクリプタ
-extern fd_set Mask;
-// クライアントの情報
-extern Client Clients[MAX_NUMCLIENTS];
 
-// ゲームの状態
-extern int GameStts;
 
 extern int PrintError(const char *str);
 
