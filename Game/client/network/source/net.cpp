@@ -44,12 +44,12 @@ void SetupClient(char *serverName, u_short port) {
     * ネットワークアドレスの種類：インタネット
     * ソケットの種類：TCP用ストリームソケット
     * プロトコル：自動選択でTCPが選ばれる
-    */ 
+    */
     Sock = socket(AF_INET, SOCK_STREAM, 0);
     if (Sock < 0) {
         HandleError("socket()");
     }
-    
+
     /*svAddrの設定*/
     svAddr.sin_family = AF_INET;                               //アドレスの種類：インターネット
     svAddr.sin_port = htons(port);                             //ポート番号
@@ -83,7 +83,7 @@ void SetupClient(char *serverName, u_short port) {
     // 受け取ったIDを表示
     fprintf(stderr, "Your ID = %d.\n", MyId);
 
-    
+
     /** 全クライアントの情報を受け取る **/
     int i;
     for (i = 0; i < NumClients; i++) {
@@ -100,10 +100,10 @@ void SetupClient(char *serverName, u_short port) {
     // 第一引数のファイルディスクリプタをセットに追加。
     FD_SET(Sock, &Mask);
 
-    
+
     /** 初期設定終了 **/
     fprintf(stderr, "Input command (R,P,S, Q=quit): \n");
-    
+
 }
 
 /* クライアントのリクエスト処理
@@ -129,7 +129,7 @@ int ControlRequests () {
     }
     // 通信を継続するかを判定する変数
     int result = 1;
-    
+
     if (FD_ISSET(Sock, &ReadFlag)) {  //サーバーからのメッセージを受け取った場合
         result = ExeCommand();
     }
@@ -139,13 +139,18 @@ int ControlRequests () {
 /*
 * 入力があった場合コマンドを受け付けメッセージを送信する
 * 引数
-*    char com: コマンド
+*    char com : コマンド
 * 返り値
 *    通信継続：result = 1
 */
 static int InCommand(char com) {
     /*変数*/
-    
+    //コマンド
+    Command command;
+
+    // commandの初期化
+    memset(&command, 0, sizeof(Command));
+
     /** 入力されたコマンドに応じて分岐 **/
     switch (com) {
     case MOVE_COMMAND: //移動コマンド
@@ -202,21 +207,23 @@ static int ExeCommand() {
         memset(data, 0, sizeof(PlaceData));
         ReceiveData(&data);
         fprintf(stderr, "%d,%d,%dに%dを置きました\n", data.pos.x, data.pos.y, data.pos.z, data.object);
-        
         // 通信継続
         result = 1;
         break;
-    case DO_NOT_PUT_COMMAND:　//配置失敗
-        
-        fprintf(stderr, "置けませんでした\n");
+    case PUT_COMMAND: // 通信終了
+        PlaceData data;
+        memset(data, 0, sizeof(PlaceData));
+        ReceiveData(&data);
+        if(command.able){ //コマンドが実行可能なら
+
+            fprintf(stderr, "%d,%d,%dに%dを置きました\n", data.pos.x, data.pos.y, data.pos.z, data.object);
+        }
         // 通信継続
         result = 1;
         break;
     default:
         // 上記以外のコマンドは存在しないので、エラーを表示して終了
         fprintf(stderr, "ExeCommand(): %c is not a valid command.\n", data.command);
-        result 1;
-        break;
     }
 
     // 値を返す
