@@ -201,19 +201,12 @@ static int ExeCommand() {
     ReceiveData(&command);
 
     /** 受信したデータに含まれるコマンドに応じて分岐 **/
-    switch (command.command) {
-    case MOVE_COMMAND: // メッセージ受信
-        MoveData data;
-        memset(data, 0, sizeof(MoveData));
+    switch (command) {
+    case PUT_COMMAND: //配置完了
+        PlaceData data;
+        memset(data, 0, sizeof(PlaceData));
         ReceiveData(&data);
-        if(command.able){ //コマンドが実行可能なら
-            fprintf(stderr, "%d,%d,%dに移動しました\n", data.pos.x, data.pos.y, data.pos.z);
-        }else
-        {
-            Clients[data.id].pos = data.pos;
-            fprintf(stderr, "移動できませんでした。\n");
-        }
-
+        fprintf(stderr, "%d,%d,%dに%dを置きました\n", data.pos.x, data.pos.y, data.pos.z, data.object);
         // 通信継続
         result = 1;
         break;
