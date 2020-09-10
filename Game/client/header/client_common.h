@@ -53,5 +53,5 @@ extern void terminate_client();
 extern int SendData(void *);
 extern int ReceiveData(void *);
 
-extern int InCommand(char);
+extern int InCommand(char, FloatPosition);
 extern int ExeCommand(void);
