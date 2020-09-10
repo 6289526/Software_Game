@@ -1,0 +1,91 @@
+@startuml SG_DataModule
+!include IncludeFiles/Setting.pu
+!define _VERSION_ 0.1.0
+!define _FILE_CODE_ DataModule
+!define _LAST_MODIFIED_ 2020-09-10
+!include IncludeFiles/Layout.pu
+
+object Server{
+
+}
+
+object OtherClient{
+    int myId
+    PlayerData[] PlayerDatas
+    NetworkData _NetworkData   
+}
+
+object NetworkData <<struct>>{
+    int connect
+    int sock
+    sockaddr_in addr
+}
+
+object PlayerData <<struct>>{
+    char[] name
+    FloatCube pos
+    int rank
+    int goal
+}
+
+package Client{
+    object Network{
+        NetworkData _NetworkData
+    }
+
+    object Map{
+        MapData MapData
+    }
+
+    object System{
+        int myId
+        PlayerData[] PlayerDatas
+    }
+
+    object Graphic{
+
+    }
+
+    object Input{
+
+    }
+
+    object InputData <<struct>>{
+        bool Forward
+        bool Right
+        bool Left
+        bool Jump
+    }
+
+    class MapData{
+        - int[][] TerrainData
+        - PlaceData[] ObjectDatas
+
+        + const int* GetTerrainData()
+        + const PlaceData* GetObjectData()
+    }
+
+    Network <--> System
+    System <- Graphic
+    Map <-- System 
+    Map <-- Graphic
+    Input -> System
+    InputData . (System, Input)
+    Map - MapData
+}
+
+'== ネットワーク間のデータのやり取り =='
+Server <--> Network
+Server <--> "n" OtherClient
+NetworkData . (Server, Network) : 使用
+'Network <.> "n" OtherClient : 相互参照
+'(Network, OtherClient) . PlayerData
+'== ネットワーク間のデータのやり取り =='
+
+note as NF
+マークなし : モジュール
+<<struct>> : 構造体
+C : クラス
+end note
+
+@enduml

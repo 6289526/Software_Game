@@ -16,7 +16,7 @@ int NumSock;
 // ファイルディスクリプタ
 fd_set Mask;
 // クライアントの情報
-Client Clients[MAX_NUMCLIENTS];
+ClientNet Clients[MAX_NUMCLIENTS];
 
 /*関数*/
 static void HandleError(char *);
@@ -106,6 +106,18 @@ void SetupClient(char *serverName, u_short port) {
 
 }
 
+/*
+* クライアントの削除
+*/
+void terminate_client() {
+    // メッセージを表示
+    fprintf(stderr, "Connection is closed.\n");
+    // ソケットを閉じる
+    close(sock);
+    // プログラムの終了
+    exit(0);
+}
+
 /* クライアントのリクエスト処理
 * 返値
 *   通信継続: result = 1
@@ -139,18 +151,14 @@ int ControlRequests () {
 /*
 * 入力があった場合コマンドを受け付けメッセージを送信する
 * 引数
-*    char com : コマンド
+
+*    char com: コマンド
 * 返り値
 *    通信継続：result = 1
 */
-static int InCommand(char com) {
+static int InCommand(char com, FloatPosition pos) {
     /*変数*/
-    //コマンド
-    Command command;
-
-    // commandの初期化
-    memset(&command, 0, sizeof(Command));
-
+    
     /** 入力されたコマンドに応じて分岐 **/
     switch (com) {
     case MOVE_COMMAND: //移動コマンド
@@ -159,9 +167,11 @@ static int InCommand(char com) {
         // dataの初期化
         memset(&data, 0, sizeof(FloatPosition));
         //移動する場所を入力
-        data.x = Clients[MyId].pos.x;
-        data.y = Clients[MyId].pos.y;
-        data.z = Clients[MyId].pos.z;
+        
+        data.x = pos.x;
+        data.y = pos.y;
+        data.z = pos.z;
+
         // データを送信する
         SendData(&com);
         SendData(&data);
@@ -172,7 +182,7 @@ static int InCommand(char com) {
         // dataの初期化
         memset(&data, 0, sizeof(PlaceData));
         //配置する場所を入力
-        data.pos = {Clients[MyId].pos.x, Clients[MyId].pos.y, Clients[MyId].pos.z - 100};
+        data.pos = {pos.x, pos.y, pos.z - 100};
         // データを送信する
         SendData(&com);
         SendData(&data);
@@ -207,25 +217,83 @@ static int ExeCommand() {
         memset(data, 0, sizeof(PlaceData));
         ReceiveData(&data);
         fprintf(stderr, "%d,%d,%dに%dを置きました\n", data.pos.x, data.pos.y, data.pos.z, data.object);
+        
         // 通信継続
         result = 1;
         break;
-    case PUT_COMMAND: // 通信終了
-        PlaceData data;
-        memset(data, 0, sizeof(PlaceData));
-        ReceiveData(&data);
-        if(command.able){ //コマンドが実行可能なら
+    case DO_NOT_PUT_COMMAND:　//配置失敗
+        
+        fprintf(stderr, "置けませんでした\n");
 
-            fprintf(stderr, "%d,%d,%dに%dを置きました\n", data.pos.x, data.pos.y, data.pos.z, data.object);
-        }
         // 通信継続
         result = 1;
         break;
     default:
         // 上記以外のコマンドは存在しないので、エラーを表示して終了
         fprintf(stderr, "ExeCommand(): %c is not a valid command.\n", data.command);
+
+        result 1;
+        break;
     }
 
     // 値を返す
     return result;
+}
+
+/* データの受信
+ *
+ * 引数
+ *    *data:送られるデータ
+ * 返り値
+ *     
+ *    エラーの場合0,-1を返す
+ */
+ int ReceiveData(void *data) {
+     // データのサイズ
+    int size = 0;
+    // dataのサイズを取得
+    size = sizeof(data);
+    //データが無いもしくはサイズが負のとき
+    if ((data == NULL) || (size <= 0)) {
+        fprintf(stderr, "ReceiveData(): data is illeagal.\n");
+        return -1;
+    }
+    // ソケットに送られてきたデータをdataに読み込む
+    return read(Sock, data, size);
+}
+
+
+/*データを送信する
+ * 引数
+ *    *data: 送信するデータ
+ *    size: データのサイズ
+ * 
+*/
+int SendData(void *data) {
+    // データのサイズ
+    int size = 0;
+    // dataのサイズを取得
+    size = sizeof(data);
+    //データが無いもしくはサイズが負のとき
+    if ((data == NULL) || (size <= 0)) {
+        fprintf(stderr, "SendData(): data is illeagal.\n");
+        return -1;
+    }
+
+    /*ソケットにデータを送る*/
+    if (write(Sock, data, size) == -1) {
+        HandleError("write()");
+    }
+}
+
+/* エラーの表示
+ *
+ * 引数
+ *   *message: エラーの発生した段階
+ */
+static void HandleError(char *message) {
+    // エラーメッセージを表示
+    perror(message);
+    fprintf(stderr, "%d\n", errno);
+    
 }

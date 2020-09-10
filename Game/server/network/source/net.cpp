@@ -90,7 +90,8 @@ void SetupServer(int numCl, u_short port) {
     char name[NumClients][MAX_LEN_NAME];
     //クライアントのID
     // int id[NumClients];
-    /*
+
+    /* 
     *  NumClientsの人数のクライアントが通信を要求してくるまで
     *  ここから先には進まない
     */
@@ -233,6 +234,7 @@ int ControlRequests() {
                 // 移動できるなら移動
                 MovePosition(i, &data);
             }
+
             // ゲームの継続
             result = 1;
             break;
