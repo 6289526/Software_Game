@@ -22,7 +22,7 @@ static void HandleError(char *);
  * 引数
  *   numCl: チャットに参加する人数
  *   port  : サーバーのポート番号
- * 
+ *
  */
 void SetupServer(int numCl, u_short port) {
     /*変数初期化*/
@@ -35,7 +35,7 @@ void SetupServer(int numCl, u_short port) {
     * svAddr: rsockの設定
     * clAddr: sockの設定
     */
-    struct sockaddr_in svAddr, clAddr; 
+    struct sockaddr_in svAddr, clAddr;
 
     /** 接続リクエストを受け取るためのソケットを作る **/
     //サーバーのセットアップが開始されたことを表示する
@@ -60,8 +60,8 @@ void SetupServer(int numCl, u_short port) {
     svAddr.sin_family = AF_INET;         //アドレスの種類：インターネット
     svAddr.sin_port = htons(port);       //ポート番号
     svAddr.sin_addr.s_addr = INADDR_ANY; //任意のアドレスから受付可能
-    
-    /*変数*/ 
+
+    /*変数*/
     // 要求されたオプションのための値が指定されるバッファ
     int opt = 1;
     // ソケットオプションをセット
@@ -80,16 +80,17 @@ void SetupServer(int numCl, u_short port) {
     fprintf(stderr, "listen() is started.\n");
 
     /** クライアントからの通信リクエストに対する処理 **/
-    /*変数*/ 
+    /*変数*/
     int i, maxSock = 0;
     // 接続先アドレス情報のサイズ
-    socklen_t len; 
+    socklen_t len;
 
     char src[MAX_LEN_ADDR];
     //クライアントの名前
     char name[NumClients][MAX_LEN_NAME];
     //クライアントのID
     // int id[NumClients];
+
     /* 
     *  NumClientsの人数のクライアントが通信を要求してくるまで
     *  ここから先には進まない
@@ -121,14 +122,14 @@ void SetupServer(int numCl, u_short port) {
         // ソケットの設定
         Clients[i].addr = clAddr;
 
-        
+
 
         //srcの初期化
         memset(src, 0, sizeof(src));
         /*
         * ネットワークアドレス構造体を、そのアドレスを表す文字列に変換する
         * 構造体の内容を IPv4 ネットワークアドレスの ドット区切り 4 分割形式 "ddd.ddd.ddd.ddd" に変換
-        * 
+        *
         */
         inet_ntop(AF_INET, (struct sockaddr *)&clAddr.sin_addr, src, sizeof(src));
         //通信を受け入れたことを知らせる
@@ -229,6 +230,11 @@ int ControlRequests() {
             //受け取る
             ReceiveData(i, &data);
             /*移動できるかを尋ねる*/
+            if (Mobable(i)) {
+                // 移動できるなら移動
+                MovePosition(i, &data);
+            }
+
             // ゲームの継続
             result = 1;
             break;
@@ -275,7 +281,7 @@ int ControlRequests() {
  *    *data:送られるデータ
  *    size:dataの型のサイズ
  * 返り値
- *     
+ *
  *    エラーの場合0,-1を返す
  */
  int ReceiveData(int cid, void *data) {
@@ -327,7 +333,7 @@ int SendData(int cid, void *data) {
         if(Clients[i].connect == 1){
             if (write(Clients[i].sock, data, size) < 0) {
             HandleError("write()");
-            }           
+            }
         }
         }
     } else { //特定のクライアントに送るとき
