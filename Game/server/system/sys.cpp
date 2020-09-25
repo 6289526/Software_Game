@@ -16,6 +16,8 @@ int Mobable(FloatPosition* pos) {
         return 0;
     }
     */
+
+    return 1;
 }
 
 void CheckGoal(int chara_ID) {
@@ -59,4 +61,10 @@ FloatPosition GetPosition(int chara_ID) {
     pos.y = Clients[chara_ID].pos.y;
     pos.z = Clients[chara_ID].pos.z;
     return pos;
+}
+
+void SendAllPos(int client_num) {
+    for (int i = 0; i < client_num; ++i) {
+        SendData(BROADCAST, &Clients[i].pos);
+    }
 }

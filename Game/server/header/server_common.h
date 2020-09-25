@@ -51,5 +51,6 @@ void CheckGoal(int chara_ID);    // ゴールしているか判定
 void MovePosition(int chara_ID, FloatPosition* pos); // キャラを移動させる
 int Goal(); // 全員ゴールしていれば１
 FloatPosition GetPosition(int chara_ID); // キャラの座標を入手
+void SendAllPos(int client_num); // クライアント全員に全員の座標を送る
 
 /*-----------グローバル変数 終了----------*/
