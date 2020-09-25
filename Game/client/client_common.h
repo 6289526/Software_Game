@@ -3,7 +3,7 @@
  *  機能    : クライアント用のマクロ、構造体等の定義
  */
 
-#pragma once    
+#pragma once
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -16,7 +16,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
-#include "../../header/constants.h"
+#include "../header/constants.h"
 
 /* ウインドウサイズ */
 enum {
