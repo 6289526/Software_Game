@@ -1,6 +1,6 @@
 
 /*----------include 開始----------*/
-#include "../header/server_common.h"
+#include "server_common.h"
 
 /*----------include 終了----------*/
 

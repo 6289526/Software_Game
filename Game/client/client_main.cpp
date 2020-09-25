@@ -4,7 +4,7 @@
  *  機能	: クライアント用のメイン関数を記述
  */
 
-#include "../../header/client_common.h"
+#include "client_common.h"
 
 // client用のmain関数
 int main(int argc, char *argv[]) {

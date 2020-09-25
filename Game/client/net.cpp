@@ -1,6 +1,6 @@
 //ポート番号をもう一つ作ってソケットを２つ作ればいい
 /*----------include 開始----------*/
-#include "../../header/client_common.h"
+#include "client_common.h"
 
 /*----------include 終了----------*/
 
@@ -56,7 +56,7 @@ void SetupClient(char *serverName, u_short port) {
     svAddr.sin_addr.s_addr = *(u_int *)server->h_addr_list[0]; //指定されたのアドレスから受付可能
 
     /*sv_adderの設定でソケットで接続を開く*/
-    if (connect(sock, (struct sockaddr *)&svAddr, sizeof(svAddr)) != 0) {
+    if (connect(Sock, (struct sockaddr *)&svAddr, sizeof(svAddr)) != 0) {
         HandleError("connect()");
     }
 
@@ -113,7 +113,7 @@ void terminate_client() {
     // メッセージを表示
     fprintf(stderr, "Connection is closed.\n");
     // ソケットを閉じる
-    close(sock);
+    close(Sock);
     // プログラムの終了
     exit(0);
 }
@@ -156,36 +156,38 @@ int ControlRequests () {
 * 返り値
 *    通信継続：result = 1
 */
-static int InCommand(char com, FloatPosition pos) {
+int InCommand(char com, FloatPosition pos) {
     /*変数*/
-    
+
     /** 入力されたコマンドに応じて分岐 **/
     switch (com) {
     case MOVE_COMMAND: //移動コマンド
         //送るデータ
-        FloatPosition data;
+        FloatPosition moveData;
         // dataの初期化
-        memset(&data, 0, sizeof(FloatPosition));
+        memset(&moveData, 0, sizeof(FloatPosition));
         //移動する場所を入力
-        
-        data.x = pos.x;
-        data.y = pos.y;
-        data.z = pos.z;
+
+        moveData.x = pos.x;
+        moveData.y = pos.y;
+        moveData.z = pos.z;
 
         // データを送信する
         SendData(&com);
-        SendData(&data);
+        SendData(&moveData);
         break;
     case PUT_COMMAND: //移動コマンド
         //送るデータ
-        PlaceData data;
+        PlaceData putData;
         // dataの初期化
-        memset(&data, 0, sizeof(PlaceData));
+        memset(&putData, 0, sizeof(PlaceData));
         //配置する場所を入力
-        data.pos = {pos.x, pos.y, pos.z - 100};
+        putData.pos.x = pos.x;
+        putData.pos.y = pos.y;
+        putData.pos.z = pos.z - 100;
         // データを送信する
         SendData(&com);
-        SendData(&data);
+        SendData(&putData);
         break;
     default:
         // 存在しないコマンドの場合はメッセージを表示して、再入力させる
@@ -201,7 +203,7 @@ static int InCommand(char com, FloatPosition pos) {
 *   通信継続: result = 1
 *   通信終了: result = 0
 */
-static int ExeCommand() {
+int ExeCommand() {
     /*変数*/
     // サーバーから来るコマンド
     char command;
@@ -214,15 +216,15 @@ static int ExeCommand() {
     switch (command) {
     case PUT_COMMAND: //配置完了
         PlaceData data;
-        memset(data, 0, sizeof(PlaceData));
+        memset(&data, 0, sizeof(PlaceData));
         ReceiveData(&data);
         fprintf(stderr, "%d,%d,%dに%dを置きました\n", data.pos.x, data.pos.y, data.pos.z, data.object);
-        
+
         // 通信継続
         result = 1;
         break;
-    case DO_NOT_PUT_COMMAND:　//配置失敗
-        
+    case DO_NOT_PUT_COMMAND: //配置失敗
+
         fprintf(stderr, "置けませんでした\n");
 
         // 通信継続
@@ -230,9 +232,9 @@ static int ExeCommand() {
         break;
     default:
         // 上記以外のコマンドは存在しないので、エラーを表示して終了
-        fprintf(stderr, "ExeCommand(): %c is not a valid command.\n", data.command);
+        fprintf(stderr, "ExeCommand(): %c is not a valid command.\n", command);
 
-        result 1;
+        result  = 1;
         break;
     }
 
@@ -245,7 +247,7 @@ static int ExeCommand() {
  * 引数
  *    *data:送られるデータ
  * 返り値
- *     
+ *
  *    エラーの場合0,-1を返す
  */
  int ReceiveData(void *data) {
@@ -267,7 +269,7 @@ static int ExeCommand() {
  * 引数
  *    *data: 送信するデータ
  *    size: データのサイズ
- * 
+ *
 */
 int SendData(void *data) {
     // データのサイズ
@@ -295,5 +297,5 @@ static void HandleError(char *message) {
     // エラーメッセージを表示
     perror(message);
     fprintf(stderr, "%d\n", errno);
-    
+
 }
