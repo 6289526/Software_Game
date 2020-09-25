@@ -91,7 +91,7 @@ void SetupServer(int numCl, u_short port) {
     //クライアントのID
     // int id[NumClients];
 
-    /* 
+    /*
     *  NumClientsの人数のクライアントが通信を要求してくるまで
     *  ここから先には進まない
     */
@@ -228,12 +228,11 @@ int ControlRequests() {
             // dataの初期化
             memset(&data, 0, sizeof(FloatPosition));
             //受け取る
+            printf("recieve MOVE_COMMAND  id:%d x:%d y:%d z:%d\n", i, data.x, data.y, data.z);
             ReceiveData(i, &data);
-            /*移動できるかを尋ねる*/
-            if (Mobable(i)) {
-                // 移動できるなら移動
-                MovePosition(i, &data);
-            }
+            
+            // 移動できるなら移動
+            MovePosition(i, &data);
 
             // ゲームの継続
             result = 1;
@@ -245,6 +244,7 @@ int ControlRequests() {
             memset(&data, 0, sizeof(PlaceData));
             //受け取る
             ReceiveData(i, &data);
+            printf("recieve PUT_COMMAND id:%d x:%d y:%d z:%d\n", i, data.x, data.y, data.z);
             /*配置できるかを尋ねる*/
 
             /*配置できるかを訪ねた後*/
