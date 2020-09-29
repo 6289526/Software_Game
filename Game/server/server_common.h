@@ -14,8 +14,8 @@
 #include <arpa/inet.h>
 #include <errno.h>
 #include "../header/constants.h"
-
-
+#include <SDL2/SDL.h>
+// 
 /*----------include 終了----------*/
 
 /*----------define 開始-----------*/
@@ -25,11 +25,17 @@
 /*----------構造体宣言 開始-----------*/
 /*ネットワークモジュール用のクライアントの情報*/
 typedef struct {
-    int cid;                  /*クライアントのID*/
     int connect;              /*サーバーに接続しているか*/
     int sock;                 /*使用するソケット*/
     struct sockaddr_in addr;  /*ソケットの設定*/
-} ClientNet;
+} NetworkData;
+/*システムモジュールが持ってるプレイヤーデータ*/ 
+typedef struct{
+    char name[MAX_LEN_NAME];    /*名前*/
+    FloatCube pos;              /*位置*/
+    int rank;                   /*順位*/
+    int goal;                   /*ゴールしたか*/
+} PlayerData;
 
 /*----------構造体宣言 終了-----------*/
 

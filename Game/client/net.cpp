@@ -16,7 +16,7 @@ int NumSock;
 // ファイルディスクリプタ
 fd_set Mask;
 // クライアントの情報
-ClientNet Clients[MAX_NUMCLIENTS];
+NetworkData ClientsNet[MAX_NUMCLIENTS];
 
 /*関数*/
 static void HandleError(char *);
@@ -78,18 +78,18 @@ void SetupClient(char *serverName, u_short port) {
     ReceiveData(&NumClients);
     // 受け取った人数を表示
     fprintf(stderr, "Number of clients = %d.\n", NumClients);
-    // 自身のIDを受け取る
-    ReceiveData(&MyId);
-    // 受け取ったIDを表示
-    fprintf(stderr, "Your ID = %d.\n", MyId);
+    // // 自身のIDを受け取る
+    // ReceiveData(&MyId);
+    // // 受け取ったIDを表示
+    // fprintf(stderr, "Your ID = %d.\n", MyId);
 
 
     /** 全クライアントの情報を受け取る **/
     int i;
     for (i = 0; i < NumClients; i++) {
-        ReceiveData(&Clients[i]);
+        ReceiveData(&ClientsNet[i]);
     }
-
+    
     /** ファイルディスクリプタの操作 **/
     // select関数の第一引数ので必要
     NumSock = Sock + 1;
@@ -109,7 +109,7 @@ void SetupClient(char *serverName, u_short port) {
 /*
 * クライアントの削除
 */
-void terminate_client() {
+void TerminateClient() {
     // メッセージを表示
     fprintf(stderr, "Connection is closed.\n");
     // ソケットを閉じる
@@ -214,11 +214,21 @@ int ExeCommand() {
 
     /** 受信したデータに含まれるコマンドに応じて分岐 **/
     switch (command) {
+    case MOVE_COMMAND://座標が来たよ
+        FloatCube moveData[MAX_NUMCLIENTS];
+        for(int i = 0; i < NumClients; i++){
+            memset(&moveData[i], 0, sizeof(FloatCube));
+            ReceiveData(&moveData[i]);
+            fprintf(stderr,"client%d　は %f %f %f にいます。\n", i, moveData[i].x, moveData[i].y, moveData[i].z);
+        }
+        // 通信継続
+        result = 1;
+        break;
     case PUT_COMMAND: //配置完了
-        PlaceData data;
-        memset(&data, 0, sizeof(PlaceData));
-        ReceiveData(&data);
-        fprintf(stderr, "%d,%d,%dに%dを置きました\n", data.pos.x, data.pos.y, data.pos.z, data.object);
+        PlaceData putData;
+        memset(&putData, 0, sizeof(PlaceData));
+        ReceiveData(&putData);
+        fprintf(stderr, "%d,%d,%dに%dを置きました\n", putData.pos.x, putData.pos.y, putData.pos.z, putData.object);
 
         // 通信継続
         result = 1;
@@ -233,7 +243,14 @@ int ExeCommand() {
     default:
         // 上記以外のコマンドは存在しないので、エラーを表示して終了
         fprintf(stderr, "ExeCommand(): %c is not a valid command.\n", command);
-
+        FloatCube mData[MAX_NUMCLIENTS];
+        for(int i = 0; i < NumClients; i++){
+            memset(&mData[i], 0, sizeof(FloatCube));
+            ReceiveData(&mData[i]);
+            fprintf(stderr,"client%d　は %f %f %f にいます。\n", i, mData[i].x, mData[i].y, mData[i].z);
+        }
+        // 通信継続
+        result = 1;
         result  = 1;
         break;
     }

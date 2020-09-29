@@ -32,12 +32,10 @@ enum {
 
 /*ネットワークモジュール用のクライアントの情報*/
 typedef struct {
-    int cid;                  /*クライアントのID*/
     int connect;              /*サーバーに接続しているか*/
     int sock;                 /*使用するソケット*/
     struct sockaddr_in addr;  /*ソケットの設定*/
-} ClientNet;
-
+} NetworkData;
 
 /*変数*/
 
@@ -48,7 +46,7 @@ extern int PrintError(const char *str);
 /* net.c */
 extern void SetupClient(char *, u_short);
 extern int ControlRequests();
-extern void terminate_client();
+extern void TerminateClient();
 
 extern int SendData(void *);
 extern int ReceiveData(void *);

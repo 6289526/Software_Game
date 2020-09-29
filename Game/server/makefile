@@ -1,22 +1,27 @@
-CC = gcc
+CXX := g++
+PROGNAME := execute
+OUTDIR := build
+SRCDIR := .
 # Update these paths as necessary to match your installation
-SDL_LIB = -L/usr/local/lib -I/usr/local/include/SDL2 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lSDL2_gfx
+# 
+SDL_LIB = `sdl2-config --cflags --libs` -lSDL2_ttf -lSDL2_image -lSDL2_mixer -lSDL2_gfx -L/usr/lib -L/usr/lib/x86_64-linux-gnu -lm
+SDL_INCLUDE = -Iusr/include
 # If your compiler is a bit older you may need to change -std=c++11 to -std=c++0x
-CXXFLAGS = -Wall
-LDFLAGS =  $(SDL_LIB)
-SRCS = $(wildcard ./*.cpp)
-OBJS = $(patsubst %.cpp,%.o,$(SRCS))
-TARGET = server
+CXXFLAGS = $(SDL_INCLUDE)
+LDFLAGS = $(SDL_LIB)
+SRCS := $(wildcard $(SRCDIR)/*.cpp)
+OBJS := $(addprefix $(OUTDIR),$(patsubst $(SRCDIR)%.cpp,%.o,$(SRCS)))
+EXE = $(OUTDIR)/$(PROGNAME)
 
 
+.PHONY: all
+
+all: $(EXE)
 
 
-$(TARGET): $(SRCS) $(OBJS)
+$(EXE): $(OBJS)
 
-	$(CC) $(OBJS) $(LDFLAGS) -o $@ 
+	$(CXX) $^ $(LDFLAGS) -o $@
 
-.cpp.o: 
-	$(CC) $(CXXFLAGS) -c $<
-
-clean:
-	rm -rf *~ *.o $(TARGET)
+$(OBJS):
+	$(CXX) $(CXXFLAGS) -c $(patsubst $(OUTDIR)%.o,$(SRCDIR)%.cpp,$@) -o $@

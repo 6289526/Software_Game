@@ -3,9 +3,9 @@
 #include "server_common.h"
 
 /*----------include 終了----------*/
-
+// 
 /*変数初期化*/
-Client Clients[MAX_NUMCLIENTS];
+PlayerData Clients[MAX_NUMCLIENTS];
 
 int Mobable(FloatPosition* pos) {
     /*
@@ -64,6 +64,9 @@ FloatPosition GetPosition(int chara_ID) {
 }
 
 void SendAllPos(int client_num) {
+    char com = MOVE_COMMAND;
+    SendData(BROADCAST, &com);
+    Clients[0].pos.x = 10;
     for (int i = 0; i < client_num; ++i) {
         SendData(BROADCAST, &Clients[i].pos);
     }

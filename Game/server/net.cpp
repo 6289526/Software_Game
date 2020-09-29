@@ -6,7 +6,7 @@
 
 /*変数初期化*/
 // クライアントの情報
-ClientNet Clients[MAX_NUMCLIENTS];
+NetworkData ClientsNet[MAX_NUMCLIENTS];
 // 接続してくるクライアントの数
 int NumClients;
 // ソケットの数
@@ -112,15 +112,12 @@ void SetupServer(int numCl, u_short port) {
         if (read(sock, name[i], MAX_LEN_NAME) == -1) {
         HandleError("read()");
         }
-        // クライアントのID
-        // id[i] = i;
-        Clients[i].cid = i;
         // 接続
-        Clients[i].connect = 1;
+        ClientsNet[i].connect = 1;
         // 使用するソケット
-        Clients[i].sock = sock;
+        ClientsNet[i].sock = sock;
         // ソケットの設定
-        Clients[i].addr = clAddr;
+        ClientsNet[i].addr = clAddr;
 
 
 
@@ -149,11 +146,10 @@ void SetupServer(int numCl, u_short port) {
     for (i = 0; i < NumClients; i++) {
         // 接続しているクライアントの人数を送る
         SendData(i, &NumClients);
-        // 自身のIDを送る
-        SendData(i, &i);
+        
         for (j = 0; j < NumClients; j++) {
         // 接続しているクライアントの情報を送る
-        SendData(i, &Clients[j]);
+        SendData(i, &ClientsNet[j]);
         }
     }
 
@@ -167,7 +163,7 @@ void SetupServer(int numCl, u_short port) {
 
     for (i = 0; i < NumClients; i++) {
         // 第一引数のファイルディスクリプタをセットに追加。
-        FD_SET(Clients[i].sock, &Mask);
+        FD_SET(ClientsNet[i].sock, &Mask);
     }
 
     /** セットアップ終了 **/
@@ -181,7 +177,7 @@ void TerminateServer(void) {
     int i;
     /*すべてのソケットを閉じる*/
     for (i = 0; i < NumClients; i++) {
-        close(Clients[i].sock);
+        close(ClientsNet[i].sock);
     }
     // メッセージの表示
     fprintf(stderr, "All connections are closed.\n");
@@ -214,7 +210,7 @@ int ControlRequests() {
     int i, result = 1;
     for (i = 0; i < NumClients; i++) {
         /* 第一引数のファイルディスクリプタがセット内にあるかを調べる。[2]*/
-        if (FD_ISSET(Clients[i].sock, &ReadFlag)) {
+        if (FD_ISSET(ClientsNet[i].sock, &ReadFlag)) {
         /*データを受け取る
         * クライアントのID
         * メッセージを送信するか、通信を終了するかのコマンド
@@ -224,27 +220,27 @@ int ControlRequests() {
         switch (command) {
         case MOVE_COMMAND:  //移動
             //受け取るデータ
-            FloatPosition data;
+            FloatPosition moveData;
             // dataの初期化
-            memset(&data, 0, sizeof(FloatPosition));
+            memset(&moveData, 0, sizeof(FloatPosition));
             //受け取る
-            printf("recieve MOVE_COMMAND  id:%d x:%d y:%d z:%d\n", i, data.x, data.y, data.z);
-            ReceiveData(i, &data);
+            printf("recieve MOVE_COMMAND  id:%d x:%f y:%f z:%f\n", i, moveData.x, moveData.y, moveData.z);
+            ReceiveData(i, &moveData);
 
             // 移動できるなら移動
-            MovePosition(i, &data);
+            MovePosition(i, &moveData);
 
             // ゲームの継続
             result = 1;
             break;
         case PUT_COMMAND:  //配置
             //受け取るデータ
-            PlaceData data;
+            PlaceData putData;
             // dataの初期化
-            memset(&data, 0, sizeof(PlaceData));
+            memset(&putData, 0, sizeof(PlaceData));
             //受け取る
-            ReceiveData(i, &data);
-            printf("recieve PUT_COMMAND id:%d x:%d y:%d z:%d\n", i, data.pos.x, data.pos.y, data.pos.z);
+            ReceiveData(i, &putData);
+            printf("recieve PUT_COMMAND id:%d x:%d y:%d z:%d\n", i, putData.pos.x, putData.pos.y, putData.pos.z);
             /*配置できるかを尋ねる*/
 
             /*配置できるかを訪ねた後*/
@@ -255,7 +251,7 @@ int ControlRequests() {
             //コマンドの実行可不可を伝える
             SendData(i, &command);
             // 全員に配置情報を送信する
-            SendData(BROADCAST, &data);
+            SendData(BROADCAST, &putData);
             // ゲーム継続
             result = 1;
             break;
@@ -300,7 +296,7 @@ int ControlRequests() {
         return -1;
     }
     // ソケットに送られてきたデータをdataに読み込む
-    return read(Clients[cid].sock, data, size);
+    return read(ClientsNet[cid].sock, data, size);
 }
 
 /* ソケットにデータを送信
@@ -330,17 +326,17 @@ int SendData(int cid, void *data) {
         /*クライアントのソケットに情報を送る*/
         for (i = 0; i < NumClients; i++) {
         // 接続されているクライアントのみに送る
-        if(Clients[i].connect == 1){
-            if (write(Clients[i].sock, data, size) < 0) {
+        if(ClientsNet[i].connect == 1){
+            if (write(ClientsNet[i].sock, data, size) < 0) {
             HandleError("write()");
             }
         }
         }
     } else { //特定のクライアントに送るとき
         // 接続されているクライアントであるか確認
-        if(Clients[cid].connect == 1){
+        if(ClientsNet[cid].connect == 1){
         //特定のソケットに情報を送る
-        if (write(Clients[cid].sock, data, size) < 0) {
+        if (write(ClientsNet[cid].sock, data, size) < 0) {
             HandleError("write()");
         }
         }
