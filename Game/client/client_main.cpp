@@ -4,6 +4,7 @@
  *  機能	: クライアント用のメイン関数を記述
  */
 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -49,5 +50,6 @@ int main(int argc, char *argv[]) {
     }
     
     terminate_client();
+  
     return 0;
 }

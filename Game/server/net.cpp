@@ -1,6 +1,6 @@
 
 /*----------include 開始----------*/
-#include "../../header/server_common.h"
+#include "server_common.h"
 
 /*----------include 終了----------*/
 
@@ -176,7 +176,7 @@ void SetupServer(int numCl, u_short port) {
 }
 
 /* サーバーの終了 */
-void terminate_server(void) {
+void TerminateServer(void) {
     /*変数*/
     int i;
     /*すべてのソケットを閉じる*/
@@ -230,7 +230,7 @@ int ControlRequests() {
             //受け取る
             printf("recieve MOVE_COMMAND  id:%d x:%d y:%d z:%d\n", i, data.x, data.y, data.z);
             ReceiveData(i, &data);
-            
+
             // 移動できるなら移動
             MovePosition(i, &data);
 
@@ -244,7 +244,7 @@ int ControlRequests() {
             memset(&data, 0, sizeof(PlaceData));
             //受け取る
             ReceiveData(i, &data);
-            printf("recieve PUT_COMMAND id:%d x:%d y:%d z:%d\n", i, data.x, data.y, data.z);
+            printf("recieve PUT_COMMAND id:%d x:%d y:%d z:%d\n", i, data.pos.x, data.pos.y, data.pos.z);
             /*配置できるかを尋ねる*/
 
             /*配置できるかを訪ねた後*/

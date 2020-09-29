@@ -13,7 +13,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <errno.h>
-#include "../../header/constants.h"
+#include "../header/constants.h"
 
 
 /*----------include 終了----------*/
