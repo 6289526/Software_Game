@@ -9,14 +9,14 @@
 #include <errno.h>
 #include "../../header/client_common.h"
 
-extern void setup_client(char *, u_short);
-extern int control_requests();
+extern void SetupClient(char *, u_short);
+extern int ControlRequests();
 extern void terminate_client();
 
 
 typedef struct UserData{
     u_short port;
-    char server_name[MAX_LEN_NAME];
+    char serverName[MAX_LEN_NAME];
 }
 
 // client用のmain関数
@@ -30,22 +30,22 @@ int main(int argc, char *argv[]) {
         case 1:
             break;
         case 2:
-            sprintf(userData.server_name, "%s", argv[1]);
+            sprintf(userData.serverName, "%s", argv[1]);
             break;
         case 3:
-            sprintf(userData.server_name, "%s", argv[1]);
+            sprintf(userData.serverName, "%s", argv[1]);
             userData.port = (u_short)atoi(argv[2]);
             break;
         default:
             break;
     }
 
-    setup_client(userData.server_name, userData.port)
+    SetupClient(userData.serverName, userData.port)
 
     int cond = true;
     while (cond)
     {
-        cond = control_requests();
+        cond = ControlRequests();
     }
     
     terminate_client();
