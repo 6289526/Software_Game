@@ -1,53 +1,50 @@
-
 /*
  *  ファイル名	: client_main.cpp
  *  機能	: クライアント用のメイン関数を記述
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <errno.h>
-#include "../../header/client_common.h"
-
-extern void SetupClient(char *, u_short);
-extern int ControlRequests();
-extern void terminate_client();
-
-
-typedef struct UserData{
-    u_short port;
-    char serverName[MAX_LEN_NAME];
-}
+#include "client_common.h"
 
 // client用のmain関数
 int main(int argc, char *argv[]) {
-    printf("execute client's main function.\n"); // main関数の実行宣言
+    // 参加したいサーバーのポート番号
+    u_short port = DEFAULT_PORT;
+    // 参加したいサーバーの名前
+    char server_name[MAX_LEN_NAME];
 
-    struct UserData userData={DEFAULT_PORT, ""};
+    // 初期設定
+    sprintf(server_name, "localhost");
 
-    switch (argc)
-    {
+    // 参加するサーバーの名前とポート番号の設定
+    switch (argc) {
         case 1:
             break;
         case 2:
-            sprintf(userData.serverName, "%s", argv[1]);
+            sprintf(server_name, "%s", argv[1]);
             break;
         case 3:
-            sprintf(userData.serverName, "%s", argv[1]);
-            userData.port = (u_short)atoi(argv[2]);
+            sprintf(server_name, "%s", argv[1]);
+            port = (u_short)atoi(argv[2]);
             break;
         default:
-            break;
+            // 引数の数が足りない、もしくは多すぎるときメッセージを表示して終了
+            fprintf(stderr, "Usage: %s [server name] [port number]\n", argv[0]);
+            return 1;
     }
-
-    SetupClient(userData.serverName, userData.port)
-
-    int cond = true;
-    while (cond)
-    {
-        cond = ControlRequests();
-    }
+    // クライアントの作成
+    // 指定されたサーバー名、ポート番号に参加するクライアントとして設定する。
+    SetupClient(server_name, port);
     
-    terminate_client();
+    // サーバーに接続
+    // ループするかを判定
+    int cond = 1;
+    while (cond) {
+        // サーバーにリクエストを送る
+        cond = ControlRequests();
+        SDL_Delay(1000);
+    }
+
+    // クライアントを終了する。
+    TerminateClient();
     return 0;
 }
