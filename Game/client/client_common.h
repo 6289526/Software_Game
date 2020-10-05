@@ -18,6 +18,7 @@
 #include <SDL2/SDL_ttf.h>
 #include "../header/constants.h"
 
+
 /* ウインドウサイズ */
 enum {
     Wd_Width  = 640,
@@ -37,6 +38,9 @@ typedef struct {
     struct sockaddr_in addr;  /*ソケットの設定*/
 } NetworkData;
 
+
+
+
 /*変数*/
 
 
@@ -47,9 +51,12 @@ extern int PrintError(const char *str);
 extern void SetupClient(char *, u_short);
 extern int ControlRequests();
 extern void TerminateClient();
-
 extern int SendData(void *);
 extern int ReceiveData(void *);
-
 extern int InCommand(char, FloatPosition);
 extern int ExeCommand(void);
+
+/*window.cpp */
+extern void InitWindowSys();
+extern void RendererWindow();
+extern void TerminateWindowSys();

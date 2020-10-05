@@ -303,6 +303,8 @@ int SendData(void *data) {
     if (write(Sock, data, size) == -1) {
         HandleError("write()");
     }
+
+    return 0;
 }
 
 /* エラーの表示
