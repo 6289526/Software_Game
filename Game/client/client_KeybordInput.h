@@ -9,23 +9,10 @@
 class KeybordInput : public InputModuleBase
 {
 private:
-    
+    //キーボードの入力を検出するための変数
+    const Uint8 *_key;
 public:
     KeybordInput();
     ~KeybordInput();
-
-    virtual void GetInput();
+    virtual void GetInput(SDL_Event);
 };
-
-KeybordInput::KeybordInput()
-{
-}
-
-KeybordInput::~KeybordInput()
-{
-}
-
-void KeybordInput::GetInput(){
-    //Ex) 前入力取得
-    //_Input.Forward = true; 
-}

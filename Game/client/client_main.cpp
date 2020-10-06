@@ -5,13 +5,33 @@
  */
 
 #include "client_common.h"
-
-
+#include "client_KeybordInput.h"
 
 
 
 // client用のmain関数
 int main(int argc, char *argv[]) {
+    /**********************/
+    /**SDL2関連 BEGIN******/
+    /**********************/
+    SDL_Init(SDL_INIT_EVERYTHING);
+    InitWindowSys();
+    /**********************/
+    /**SDL2関連 END********/
+    /**********************/
+
+    /**********************/
+    /**入力関連 BEGIN******/
+    /**********************/
+    KeybordInput input;
+    InputType data;
+    /**********************/
+    /**入力関連 END********/
+    /**********************/
+
+    /**********************/
+    /**サーバー関連 BEGIN**/
+    /**********************/
     //参加したいサーバーのポート番号
     u_short port = DEFAULT_PORT;
     //参加したいサーバーの名前
@@ -39,19 +59,25 @@ int main(int argc, char *argv[]) {
     /*クライアントの作成*/
     //指定されたサーバー名、ポート番号に参加するクライアントとして設定する。
     SetupClient(server_name, port);
-    
-    /*サーバーに接続*/
+    /********************/
+    /**サーバー関連 END**/
+    /********************/
+
+    SDL_Event event;
     //ループするかを判定
     int cond = 1;
-    while (cond) {
-        /*
-        サーバーにリクエストを送る
-        */
+    while (cond && data.Forward != 1) {
+        //入力受け付け
+        input.GetInput(event);
+        data = input.GetInputType();
+        /*サーバーにリクエストを送る*/
         cond = ControlRequests();
         
     }
-
+    // ウィンドウシステムの終了
+    TerminateWindowSys();
     //クライアントを終了する。
     TerminateClient();
+    SDL_Quit();
     return 0;
 }
