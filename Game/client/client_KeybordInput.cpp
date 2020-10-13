@@ -10,8 +10,11 @@ KeybordInput::~KeybordInput()
 void KeybordInput::GetInput(SDL_Event event){
     if(SDL_PollEvent(&event)){
         _Input = (InputType){false, false, false, false};
+        if(_key[SDL_SCANCODE_ESCAPE]){
+            _Input.end = true;
+        }
         /************/
-        /**移動関連**/
+        /**移動関連**/ 
         /************/
         if(_key[SDL_SCANCODE_W]){
             _Input.Forward = true;
@@ -32,7 +35,7 @@ void KeybordInput::GetInput(SDL_Event event){
         /**配置関連**/
         /************/
         if(_key[SDL_SCANCODE_P]){
-            _Input.Jump = true;
+            _Input.Put = true;
         }
         
         if(_key[SDL_SCANCODE_UP]){

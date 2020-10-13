@@ -1,11 +1,11 @@
 /*
  *  ファイル名	: constants.h
- *  機能	: マクロ、構造体の定義
+ *  機能	: マクロ、構造体の定義 
  */
 #pragma once
 /*----------include 開始----------*/
 #include <netinet/in.h>
-#include<stdio.h>
+#include <stdio.h>
 
 /*----------include 終了----------*/
 
@@ -24,59 +24,85 @@
 #define BROADCAST -1
 
 /*クライアントが使用するコマンド*/
+// #define MESSAGE_COMMAND 'M'
 #define MOVE_COMMAND 'M'
 #define PUT_COMMAND 'P'
 #define DO_NOT_PUT_COMMAND 'D'
 #define GOAL_COMMAND 'G'
 #define ERROR_COMMAND 'E'
 #define FINISH_COMMAND 'F'
+#define QUIT_COMMAND 'Q'
 /*----------define 終了-----------*/
 
 /*----------構造体宣言 開始-----------*/
 /*座標情報*/
-typedef struct{
-    int x;       //x座標
-    int y;       //y座標
-    int z;       //z座標
+typedef struct
+{
+    int x; //x座標
+    int y; //y座標
+    int z; //z座標
 } IntPosition;
 
-typedef struct{
-    float x;       //x座標
-    float y;       //y座標
-    float z;       //z座標
-}FloatPosition;
+typedef struct
+{
+    float x; //x座標
+    float y; //y座標
+    float z; //z座標
+} FloatPosition;
 
-typedef struct{
-    int x;       //x座標
-    int y;       //y座標
-    int z;       //z座標
-    int w;       //x方向の長さ
-    int h;       //y方向の長さ
-    int d;       //z方向の長さ
-}IntCube;
+typedef struct
+{
+    int x; //x座標
+    int y; //y座標
+    int z; //z座標
+    int w; //x方向の長さ
+    int h; //y方向の長さ
+    int d; //z方向の長さ
+} IntCube;
 
-typedef struct{
-    float x;       //x座標
-    float y;       //y座標
-    float z;       //z座標
-    float w;       //x方向の長さ
-    float h;       //y方向の長さ
-    float d;       //z方向の長さ
-}FloatCube;
+typedef struct
+{
+    float x; //x座標
+    float y; //y座標
+    float z; //z座標
+    float w; //x方向の長さ
+    float h; //y方向の長さ
+    float d; //z方向の長さ
+} FloatCube;
 
+/*ネットワークモジュール用のクライアントの情報*/
+typedef struct
+{
+    int connect;             /*サーバーに接続しているか*/
+    int sock;                /*使用するソケット*/
+    struct sockaddr_in addr; /*ソケットの設定*/
+} NetworkData;
 
 /*クライアントの情報*/
-typedef struct {
-    int cid;                  /*クライアントのID*/
-    int connect;              /*サーバーに接続しているか*/
-    int sock;                 /*使用するソケット*/
-    struct sockaddr_in addr;  /*ソケットの設定*/
-    char name[MAX_LEN_NAME];  /*名前*/
-    int rank;                 /*順位*/
-    int goal;                 /*ゴールしているか*/
-    FloatCube pos;             /*場所*/
-} Client;
+typedef struct
+{
+    char name[MAX_LEN_NAME]; /*名前*/
+    int rank;                /*順位*/
+    int goal;                /*ゴールしているか*/
+    FloatCube pos;           /*場所*/
+} PlayerDatas;
 
+/*クライアントの情報*/
+typedef struct
+{
+    int cid;                 /*クライアントのID*/
+    int sock;                /*使用するソケット*/
+    struct sockaddr_in addr; /*ソケットの設定*/
+    char name[MAX_LEN_NAME]; /*名前*/
+} CLIENT;
+
+/*サーバーが扱う情報*/
+typedef struct
+{
+    int cid;                      /*クライアントのID*/
+    char command;                 /*入力されたコマンド{M(messege) or Q(quit)}*/
+    char message[MAX_LEN_BUFFER]; /*送信されるメッセージ*/
+} CONTAINER;
 
 /**サーバーとクライアント間で通信する情報**/
 
@@ -89,7 +115,6 @@ typedef struct {
 //     int able;                     /*コマンドが実行可能か*/
 // } Command;
 
-
 /*MoveData*/
 // typedef struct {
 //     int cid;                      /*クライアントのID*/
@@ -98,15 +123,12 @@ typedef struct {
 // } MoveData;
 
 /*PlaceData*/
-typedef struct {
-//    int cid;                      /*クライアントのID*/
-    int object;                   /*置く物のID*/
-    IntPosition pos;                 /*場所*/
+typedef struct
+{
+    //    int cid;                      /*クライアントのID*/
+    int object;      /*置く物のID*/
+    IntPosition pos; /*場所*/
 } PlaceData;
-
-
-
-
 
 /*----------構造体宣言 終了-----------*/
 
