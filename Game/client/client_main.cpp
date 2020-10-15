@@ -6,7 +6,7 @@
 
 #include "client_common.h"
 
-
+static int PrintError(const char *str);
 
 // client用のmain関数
 int main(int argc, char *argv[]) {

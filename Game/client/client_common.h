@@ -39,23 +39,21 @@ enum {
 /*変数*/
 
 
-extern int PrintError(const char *str);
 
 
 /* net.c */
 extern void SetupClient(char *, u_short);
 extern void TerminateClient();
 extern int ControlRequests();
-extern void SendData(void *data, int size);
-extern int ReceiveData(void *data, int size);
-// extern int InCommand(char, FloatPosition);
-extern int InCommand(char com, FloatPosition data);
-extern int ExeCommand(void);
+extern int InCommand(char com);
+
 
 /* system.cpp */
+const PlayerData* GetPlayerData();
 extern void GetId(int);
 extern void GetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients);
 extern void SystemRun(InputType data);
+
 /*window.cpp */
 extern void InitWindowSys();
 // extern void RendererWindow();

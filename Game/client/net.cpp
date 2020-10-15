@@ -10,20 +10,24 @@
 
 /*変数初期化*/
 // 接続してくるクライアントの数
-static int num_clients;
+static int NumClients;
 // 自身のID
-static int myid;
+static int MyId;
 // ソケット
 static int sock;
 // ソケットの数
-static int num_sock;
+static int NumSock;
 // ファイルディスクリプタ
-static fd_set mask;
+static fd_set Mask;
 // クライアントの情報
-static NetworkData clients[MAX_NUMCLIENTS];
+static NetworkData Clients[MAX_NUMCLIENTS];
 
 /*関数*/
-static void HandleError(char *);
+static int HandleError(char *);
+static void SendData(void *data, int size);
+static int ReceiveData(void *data, int size);
+static int ExeCommand(void);
+
 
 /*クライアントの初期設定
 * 引数
@@ -83,35 +87,35 @@ void SetupClient(char *server_name, u_short port)
 
     /** サーバーとの接続後 **/
     // 他のクライアントの接続を待つ
-    fprintf(stderr, "Waiting for other clients...\n");
+    fprintf(stderr, "Waiting for other Clients...\n");
 
     /** 全員が揃ったら **/
-    // チャットに参加している人数を受け取る
-    ReceiveData(&num_clients, sizeof(int));
+    // ゲームに参加している人数を受け取る
+    ReceiveData(&NumClients, sizeof(int));
     // 受け取った人数を表示
-    fprintf(stderr, "Number of clients = %d.\n", num_clients);
+    fprintf(stderr, "Number of Clients = %d.\n", NumClients);
     // 自身のIDを受け取る
-    ReceiveData(&myid, sizeof(int));
+    ReceiveData(&MyId, sizeof(int));
     // 受け取ったIDをシステムモジュールに渡す
-    GetId(myid);
-    fprintf(stderr, "Your ID = %d.\n", myid);
+    GetId(MyId);
+    fprintf(stderr, "Your ID = %d.\n", MyId);
 
     /** 全クライアントの情報を受け取る **/
     int i;
-    for (i = 0; i < num_clients; i++)
+    for (i = 0; i < NumClients; i++)
     {
-        ReceiveData(&clients[i], sizeof(CLIENT));
+        ReceiveData(&Clients[i], sizeof(NetworkData));
     }
 
     /** ファイルディスクリプタの操作 **/
     // select関数の第一引数ので必要
-    num_sock = sock + 1;
+    NumSock = sock + 1;
     // ファイルディスクリプタセットからすべてのファイルディスクリプタを削除。[1]
-    FD_ZERO(&mask);
+    FD_ZERO(&Mask);
     // 第一引数のファイルディスクリプタをセットに追加。[1]
-    FD_SET(0, &mask);
+    FD_SET(0, &Mask);
     // 第一引数のファイルディスクリプタをセットに追加。[1]
-    FD_SET(sock, &mask);
+    FD_SET(sock, &Mask);
 
     /** 初期設定終了 **/
     fprintf(stderr, "Input command (M=message, Q=quit): \n");
@@ -126,7 +130,7 @@ int ControlRequests()
 {
     /*変数*/
     // ファイルディスクリプタ
-    fd_set read_flag = mask;
+    fd_set read_flag = Mask;
     // タイマー
     struct timeval timeout;
     timeout.tv_sec = 0;   //秒数
@@ -136,18 +140,14 @@ int ControlRequests()
    *ファイルディスクリプタの集合から読み込み可能なファイルディスクリプタを
    *探す。timeoutだけ待つ。
   */
-    if (select(num_sock, (fd_set *)&read_flag, NULL, NULL, &timeout) == -1)
+    if (select(NumSock, (fd_set *)&read_flag, NULL, NULL, &timeout) == -1)
     {
         HandleError("select()");
     }
     // 通信を継続するかを判定する変数
     int result = 1;
 
-    // if (FD_ISSET(0, &read_flag))
-    // { //入力があった場合コマンドを受け付け、それに応じた処理を行う
-    //     result = InCommand();
-    // }
-    // else 
+    
     if (FD_ISSET(sock, &read_flag))
     { //サーバーからのメッセージを受け取った場合
         result = ExeCommand();
@@ -158,60 +158,32 @@ int ControlRequests()
 
 /*
 * 入力があった場合コマンドを受け付けメッセージを送信する
+* 引数
+*    char com: コマンド
+*    FloatPosition data: 座標
 * 返り値
 *    通信継続：result = 1
 */
-int InCommand(char com, FloatPosition data)
+int InCommand(char com)
 {
     /*変数*/
-    // // ソケットに送るデータ
-    // FloatPosition data;
-    // // キーボードの入力を格納する変数
-    // char com;
-
-    // // dataの初期化
-    // memset(&data, 0, sizeof(FloatPosition));
-
-    /** キーボードからの入力を受け付ける **/
-    // com = getchar();
-    // while (getchar() != '\n')
-    //     ;
+    // システムモジュールからデータをもらう
+    const PlayerData* pData = GetPlayerData();
+    // ソケットに送るデータ達
+    FloatPosition posData = {pData[MyId].pos.x, pData[MyId].pos.y, pData[MyId].pos.z};
 
     /** 入力されたコマンドに応じて分岐 **/
     switch (com)
     {
     case MOVE_COMMAND: //Mが入力されたとき
-        // fprintf(stderr, "Input message: ");
-        // char c[MAX_LEN_BUFFER];
-        // /*送信したいメッセージを送信するデータの中に格納*/
-        // if (fgets(c, MAX_LEN_BUFFER, stdin) == NULL)
-        // {
-        //     HandleError("fgets()");
-        // }
-        // c[strlen(c) - 1] = '\0';
-        // int x, y, z;
-        // sscanf(c, "%f %f %f", &data.x, &data.y, &data.z);
-        // // コマンドを送信するデータの中に格納
-        // data.command = MESSAGE_COMMAND;
-        // // メッセージの後ろをナル文字列にする
-        // data.message[strlen(data.message) - 1] = '\0';
-        // // 自分のIDを送信するデータの中に格納
-        // data.cid = myid;
+        
+        
         // コマンド送信
         SendData(&com, sizeof(char));
         // データを送信する
-        SendData(&data, sizeof(FloatPosition));
+        SendData(&posData, sizeof(FloatPosition));
         break;
-    // case QUIT_COMMAND: //Qが入力されたとき
-    //     // // コマンドを送信するデータの中に格納
-    //     // data.command = QUIT_COMMAND;
-    //     // // 自分のIDを送信するデータの中に格納
-    //     // data.cid = myid;
-
-    //     SendData(&com, sizeof(char));
-    //     // データを送信する
-    //     // SendData(&data, sizeof(CONTAINER));
-    //     break;
+    
     default:
         // 存在しないコマンドの場合はメッセージを表示して、再入力させる
         fprintf(stderr, "%c is not a valid command.\n", com);
@@ -244,15 +216,14 @@ int ExeCommand()
     /** 受信したデータに含まれるコマンドに応じて分岐 **/
     switch (com)
     {
-    case MOVE_COMMAND: // メッセージ受信
-        for (int i = 0; i < num_clients; i++)
+    case MOVE_COMMAND: // 座標受信
+        for (int i = 0; i < NumClients; i++)
         {
             ReceiveData(&data[i], sizeof(FloatPosition));
         }
         // 受け取った座標をシステムモジュールにわたす
-        GetPlace(data, num_clients);
-        // 受け取ったメッセージを表示する
-        // fprintf(stderr, "client: message = %f %f %f\n", data.x, data.y, data.z);
+        GetPlace(data, NumClients);
+        
         // 通信継続
         result = 1;
         break;
@@ -274,8 +245,8 @@ int ExeCommand()
 
 /*データを送信する
  * 引数
- *    *data: 送信するデータ
- *    size: データのサイズ
+ *    void *data: 送信するデータ
+ *    int size: データのサイズ
  * 
 */
 void SendData(void *data, int size)
@@ -319,13 +290,13 @@ int ReceiveData(void *data, int size)
  * 引数
  *   *message: エラーの発生した段階
  */
-static void HandleError(char *message)
+static int HandleError(char *message)
 {
     // エラーメッセージを表示
     perror(message);
     fprintf(stderr, "%d\n", errno);
-    // プログラム終了
-    exit(1);
+    //
+    return -1;
 }
 
 /*
@@ -333,15 +304,6 @@ static void HandleError(char *message)
 */
 void TerminateClient()
 {
-
-    // // ソケットに送るデータ
-    // CONTAINER data;
-    // // dataの初期化
-    // memset(&data, 0, sizeof(CONTAINER));
-    // // コマンドを送信するデータの中に格納
-    // data.command = QUIT_COMMAND;
-    // // 自分のIDを送信するデータの中に格納
-    // data.cid = myid;
     char com = QUIT_COMMAND;
     // データを送信する
     SendData(&com, sizeof(char));

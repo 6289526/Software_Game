@@ -5,14 +5,22 @@
 /*----------include 終了----------*/
 //
 /*変数初期化*/
-PlayerDatas Clients[MAX_NUMCLIENTS];
+PlayerData PData[PLAYER_NUM] = {
+    {"a", {20, 20, 20, 7, 20, 7}, 1, 0},
+    {"a", {20, 20, 20, 10, 10, 10}, 1, 0}
+};
+
+// クライアント配列の先頭ポインタを返す
+const PlayerData* GetPlayerData(){
+    return PData;
+}
 
 // 名前の取得
 // id: クライアントのID
 // clientName:クライアントの名前
 void GetClientName(int id, char clientName[MAX_LEN_NAME])
 {
-    snprintf(Clients[id].name, MAX_LEN_NAME, "%s", clientName);
+    snprintf(PData[id].name, MAX_LEN_NAME, "%s", clientName);
 }
 int Mobable(FloatPosition *pos)
 {
@@ -59,7 +67,7 @@ int Goal()
     for (int i = 0; i < MAX_NUMCLIENTS; ++i)
     {
         // ゴールしていないクライアントがいれば
-        if (!Clients[i].goal)
+        if (!PData[i].goal)
         {
             return 0;
         }
@@ -73,21 +81,23 @@ int Goal()
 // pos:クライアントの座標
 void GetPosition(int chara_ID, FloatPosition pos)
 {
-    Clients[chara_ID].pos.x = pos.x;
-    Clients[chara_ID].pos.y = pos.y;
-    Clients[chara_ID].pos.z = pos.z;
+    PData[chara_ID].pos.x = pos.x;
+    PData[chara_ID].pos.y = pos.y;
+    PData[chara_ID].pos.z = pos.z;
 }
 
+/*全員に座標を送る
+*
+* 引数
+*     int client_num: クライアントの人数
+*/
 void SendAllPos(int client_num)
 {
     char com = MOVE_COMMAND;
-    SendData(BROADCAST, &com, sizeof(char));
-    FloatPosition pos;
+    // 全員に座標を送る
     for (int i = 0; i < client_num; ++i)
-    {
-        pos.x = Clients[i].pos.x;
-        pos.y = Clients[i].pos.y;
-        pos.z = Clients[i].pos.z;
-        SendData(BROADCAST, &pos, sizeof(FloatPosition));
+    {   
+        // 特定のIDにコマンドを送る
+        RunCommand(i, com);
     }
 }

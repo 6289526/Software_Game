@@ -46,11 +46,11 @@
 /* net.c */
 extern void SetupServer(int, u_short);
 extern void TerminateServer();
-extern void SendData(int cid, void *data, int size);
-extern int ReceiveData(int cid, void *data, int size);
 extern int ControlRequests();
+extern void RunCommand(int, char);
 
 /* sys.cpp */
+const PlayerData* GetPlayerData();
 extern void GetClientName(int id,char clientName[MAX_LEN_NAME]);
 extern int Mobable(FloatPosition* pos); // 移動できるかどうか　できれば１が返る
 extern void CheckGoal(int chara_ID);    // ゴールしているか判定

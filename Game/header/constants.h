@@ -22,7 +22,8 @@
 #define MAX_LEN_ADDR 32
 //全員に送るとき
 #define BROADCAST -1
-
+// クライアントの人数
+#define PLAYER_NUM 2
 /*クライアントが使用するコマンド*/
 // #define MESSAGE_COMMAND 'M'
 #define MOVE_COMMAND 'M'
@@ -82,27 +83,13 @@ typedef struct
 typedef struct
 {
     char name[MAX_LEN_NAME]; /*名前*/
-    int rank;                /*順位*/
-    int goal;                /*ゴールしているか*/
     FloatCube pos;           /*場所*/
-} PlayerDatas;
+    int rank;                /*順位*/
+    bool goal;                /*ゴールしているか*/
+    
+} PlayerData;
 
-/*クライアントの情報*/
-typedef struct
-{
-    int cid;                 /*クライアントのID*/
-    int sock;                /*使用するソケット*/
-    struct sockaddr_in addr; /*ソケットの設定*/
-    char name[MAX_LEN_NAME]; /*名前*/
-} CLIENT;
 
-/*サーバーが扱う情報*/
-typedef struct
-{
-    int cid;                      /*クライアントのID*/
-    char command;                 /*入力されたコマンド{M(messege) or Q(quit)}*/
-    char message[MAX_LEN_BUFFER]; /*送信されるメッセージ*/
-} CONTAINER;
 
 /**サーバーとクライアント間で通信する情報**/
 

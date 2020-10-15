@@ -10,23 +10,25 @@
 
 /*変数初期化*/
 // クライアントの情報
-static NetworkData clients[MAX_NUMCLIENTS];
+static NetworkData Clients[MAX_NUMCLIENTS];
 // 接続してくるクライアントの数
-static int num_clients;
+static int NumClient;
 // ソケットの数
-static int num_socks;
+static int NumSock;
 // ファイルディスクリプタ
-static fd_set mask;
-// // チャット用のソケット間で送信される情報
-// static CONTAINER data;
+static fd_set Mask;
+
 
 /*関数*/
-static void HandleError(char *);
+static int HandleError(char *);
+static void SendData(int cid, void *data, int size);
+static int ReceiveData(int cid, void *data, int size);
+
 
 /* サーバー初期化
  *
  * 引数
- *   num_cl: チャットに参加する人数
+ *   num_cl: ゲームに参加する人数
  *   port  : サーバーのポート番号
  * 
  */
@@ -35,7 +37,7 @@ void SetupServer(int num_cl, u_short port)
     /*変数初期化*/
     /*ソケット
   * rsock: 接続リクエストを受け取るソケット
-  * sock: チャットを行うためのソケット
+  * sock: 通信を行うためのソケット
   */
     int rsock, sock = 0;
     /*インタネットソケットの設定
@@ -48,8 +50,8 @@ void SetupServer(int num_cl, u_short port)
     //サーバーのセットアップが開始されたことを表示する
     fprintf(stderr, "Server setup is started.\n");
 
-    //チャットに参加する人数
-    num_clients = num_cl;
+    //ゲームに参加する人数
+    NumClient = num_cl;
 
     /*
   * ソケットの生成
@@ -83,7 +85,7 @@ void SetupServer(int num_cl, u_short port)
     fprintf(stderr, "bind() is done successfully.\n");
 
     /*接続準備*/
-    if (listen(rsock, num_clients) != 0)
+    if (listen(rsock, NumClient) != 0)
     {
         HandleError("listen()");
     }
@@ -98,10 +100,10 @@ void SetupServer(int num_cl, u_short port)
     char src[MAX_LEN_ADDR];
     char name[MAX_NUMCLIENTS][MAX_LEN_NAME];
     /* 
-  *  num_clientsの人数のクライアントが通信を要求してくるまで
+  *  NumClientの人数のクライアントが通信を要求してくるまで
   *  ここから先には進まない
   */
-    for (int i = 0; i < num_clients; i++)
+    for (int i = 0; i < NumClient; i++)
     {
         // 接続先アドレス情報のサイズ
         len = sizeof(cl_addr);
@@ -125,11 +127,11 @@ void SetupServer(int num_cl, u_short port)
         // 名前をシステムモジュールに渡す
         GetClientName(i, name[i]);
         // 接続していることを示す
-        clients[i].connect = 0;
+        Clients[i].connect = 0;
         // 使用するソケット
-        clients[i].sock = sock;
+        Clients[i].sock = sock;
         // ソケットの設定
-        clients[i].addr = cl_addr;
+        Clients[i].addr = cl_addr;
         //srcの初期化
         memset(src, 0, sizeof(src));
         /*
@@ -147,31 +149,31 @@ void SetupServer(int num_cl, u_short port)
     /** この段階で設定した人数分のクライアントが接続している **/
 
     /*接続したクライアントに情報を送る*/
-    for (int i = 0; i < num_clients; i++)
+    for (int i = 0; i < NumClient; i++)
     {
         // 接続しているクライアントの人数を送る
-        SendData(i, &num_clients, sizeof(int));
+        SendData(i, &NumClient, sizeof(int));
         // 自身のIDを送る
         SendData(i, &i, sizeof(int));
-        for (int j = 0; j < num_clients; j++)
+        for (int j = 0; j < NumClient; j++)
         {
             // 接続しているクライアントの情報を送る
-            SendData(i, &clients[j], sizeof(CLIENT));
+            SendData(i, &Clients[j], sizeof(NetworkData));
         }
     }
 
     /** ファイルディスクリプタの操作 **/
     // select関数の第一引数ので必要
-    num_socks = max_sock + 1;
+    NumSock = max_sock + 1;
     // ファイルディスクリプタセットからすべてのファイルディスクリプタを削除。[2]
-    FD_ZERO(&mask);
+    FD_ZERO(&Mask);
     // 第一引数のファイルディスクリプタをセットに追加。[2]
-    FD_SET(0, &mask);
+    FD_SET(0, &Mask);
 
-    for (int i = 0; i < num_clients; i++)
+    for (int i = 0; i < NumClient; i++)
     {
         // 第一引数のファイルディスクリプタをセットに追加。[2]
-        FD_SET(clients[i].sock, &mask);
+        FD_SET(Clients[i].sock, &Mask);
     }
 
     /** セットアップ終了 **/
@@ -189,7 +191,7 @@ int ControlRequests()
     /*変数*/
     char com;
     // ファイルディスクリプタ
-    fd_set read_flag = mask;
+    fd_set read_flag = Mask;
     // dataの初期化
     FloatPosition data;
     memset(&data, 0, sizeof(FloatPosition));
@@ -197,7 +199,7 @@ int ControlRequests()
     /** ソケット通信の多重化 **/
     fprintf(stderr, "select() is started.\n");
     /* ファイルディスクリプタの集合から読み込み可能なファイルディスクリプタを見つける*/
-    if (select(num_socks, (fd_set *)&read_flag, NULL, NULL, NULL) == -1)
+    if (select(NumSock, (fd_set *)&read_flag, NULL, NULL, NULL) == -1)
     {
         HandleError("select()");
     }
@@ -205,16 +207,16 @@ int ControlRequests()
     /** データの受信と送信 **/
     /*変数*/
     int i, result = 1;
-    for (i = 0; i < num_clients; i++)
+    for (i = 0; i < NumClient; i++)
     {
         /* 第一引数のファイルディスクリプタがセット内にあるかを調べる。[2]*/
-        if (FD_ISSET(clients[i].sock, &read_flag))
+        if (FD_ISSET(Clients[i].sock, &read_flag))
         {
             /*データを受け取る
-      * クライアントのID
-      * メッセージを送信するか、通信を終了するかのコマンド
-      * メッセージ
-       */
+            * クライアントのID
+            * メッセージを送信するか、通信を終了するかのコマンド
+            * メッセージ
+            */
             ReceiveData(i, &com, sizeof(char));
             switch (com)
             {
@@ -223,18 +225,14 @@ int ControlRequests()
                 fprintf(stderr, "client[%d]: message = %f %f %f\n", i, data.x, data.y, data.z);
                 // 受け取った座標をシステムモジュールに渡す
                 GetPosition(i, data);
-                // SendAllPos(num_clients);
-                // // 全員にメッセージを送信する
-                // SendData(BROADCAST, &com, sizeof(com));
-                // SendData(BROADCAST, &data, sizeof(data));
-                // チャットの継続
+                // ゲームの継続
                 result = 1;
                 break;
             case QUIT_COMMAND: //通信の終了を要求された場合
                 fprintf(stderr, "client[%d]: quit\n", i);
                 // 通信が終了したクライアントがあることを全員に知らせる
                 SendData(BROADCAST, &com, sizeof(com));
-                // チャットの終了
+                // ゲームの終了
                 result = 0;
                 break;
             default:
@@ -249,17 +247,52 @@ int ControlRequests()
     return result;
 }
 
+/*コマンドの実行
+*引数
+*   int id: 送り先のID
+*   char com: コマンド
+*/
+void RunCommand(int id, char com){
+    /* 変数 */
+    const PlayerData* pData = GetPlayerData();
+    // 送るデータ
+    FloatPosition posData;
+
+    //コマンド送信 
+    SendData(id, &com, sizeof(char));
+    // コマンドに応じた処理
+    switch (com)
+    {
+    case MOVE_COMMAND:
+        
+        for (int i = 0; i < NumClient; ++i)
+        {   
+            // 座標に変更
+            posData.x = pData[i].pos.x;
+            posData.y = pData[i].pos.y;
+            posData.z = pData[i].pos.z;
+            // 座標を送信
+            SendData(id, &posData, sizeof(FloatPosition));
+        }
+        break;
+    
+    default:
+        break;
+    }
+
+}
+
 /* ソケットにデータを送信
  *
  * 引数
- *    cid:送り先
- *    *data:送られるデータ
- *    size:dataの型のサイズ
+ *    int cid:送り先
+ *    void *data:送られるデータ
+ *    int size:dataの型のサイズ
  */
 void SendData(int cid, void *data, int size)
 {
     //全員に送らないかつ、cidが負もしくは最大人数の値を超えているとき
-    if ((cid != BROADCAST) && (0 > cid || cid >= num_clients))
+    if ((cid != BROADCAST) && (0 > cid || cid >= NumClient))
     {
         fprintf(stderr, "SendData(): client id is illegal.\n");
         // 終了
@@ -277,9 +310,9 @@ void SendData(int cid, void *data, int size)
     { //全員に送るとき
         int i;
         //すべてのクライアントのソケットに情報を送る
-        for (i = 0; i < num_clients; i++)
+        for (i = 0; i < NumClient; i++)
         {
-            if (write(clients[i].sock, data, size) < 0)
+            if (write(Clients[i].sock, data, size) < 0)
             {
                 HandleError("write()");
             }
@@ -288,7 +321,7 @@ void SendData(int cid, void *data, int size)
     else
     { //特定のクライアントに送るとき
         //特定のソケットに情報を送る
-        if (write(clients[cid].sock, data, size) < 0)
+        if (write(Clients[cid].sock, data, size) < 0)
         {
             HandleError("write()");
         }
@@ -298,9 +331,9 @@ void SendData(int cid, void *data, int size)
 /* データの受信
  *
  * 引数
- *    cid:送り先
- *    *data:送られるデータ
- *    size:dataの型のサイズ
+ *    int cid:送り先
+ *    void *data:送られるデータ
+ *    int size:dataの型のサイズ
  * 返り値
  *     
  *    エラーの場合0,-1を返す
@@ -308,7 +341,7 @@ void SendData(int cid, void *data, int size)
 int ReceiveData(int cid, void *data, int size)
 {
     //全員に送らないかつ、cidが負もしくは最大人数の値を超えているとき
-    if ((cid != BROADCAST) && (0 > cid || cid >= num_clients))
+    if ((cid != BROADCAST) && (0 > cid || cid >= NumClient))
     {
         fprintf(stderr, "ReceiveData(): client id is illegal.\n");
         // 終了
@@ -322,21 +355,21 @@ int ReceiveData(int cid, void *data, int size)
         exit(1);
     }
     // ソケットに送られてきたデータをdataに読み込む
-    return read(clients[cid].sock, data, size);
+    return read(Clients[cid].sock, data, size);
 }
 
 /* エラーの表示
  *
  * 引数
- *   *message: エラーの発生した段階
+ *   char *message: エラーの発生した段階
  */
-static void HandleError(char *message)
+static int HandleError(char *message)
 {
     // エラーメッセージを表示
     perror(message);
     fprintf(stderr, "%d\n", errno);
-    // プログラム終了
-    exit(1);
+    // 
+    return -1;
 }
 
 /* サーバーの終了 */
@@ -345,9 +378,9 @@ void TerminateServer(void)
     /*変数*/
     int i;
     /*すべてのソケットを閉じる*/
-    for (i = 0; i < num_clients; i++)
+    for (i = 0; i < NumClient; i++)
     {
-        close(clients[i].sock);
+        close(Clients[i].sock);
     }
     // メッセージの表示
     fprintf(stderr, "All connections are closed.\n");
