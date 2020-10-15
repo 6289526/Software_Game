@@ -5,10 +5,6 @@
 !define _LAST_MODIFIED_ 2020-09-10
 !include IncludeFiles/Layout.pu
 
-object Server{
-
-}
-
 object OtherClient{
     int myId
     PlayerData[] PlayerDatas
@@ -39,53 +35,88 @@ class BaseMapData{
     + void PushBackObject(PlaceData *objectData)
 }
 
-package Client{
-    object Network{
-        NetworkData _NetworkData
+package Server{
+    object ServerGameDatas <<struct>>{
+        + uint CurrentTime
     }
 
-    object Map{
+    object SMap{
         MapData MapData
     }
 
-    object System{
+    object SSystem{
+        - PlayerData[] PlayerDatas
+
+        + const PlayerData* GetPlayerData(int id)
+        + const PlayerData* GetAllPlayerDatas()
+    }
+
+    object SNetwork{
+        NetworkData _NetworkData
+
+        - SendData()
+        + void GetSendCommand(char command)
+        + void SetupServer()
+        + void TerminateServer()
+        + int ControlRequest()
+    }
+
+    class SMapData{
+
+    }
+
+    SMap <--> SSystem
+    SNetwork <--> SSystem
+    SMapData -- SMap
+    BaseMapData <|-- SMapData
+}
+
+package Client{
+    object CNetwork{
+        NetworkData _NetworkData
+    }
+
+    object CMap{
+        MapData MapData
+    }
+
+    object CSystem{
         int myId
         PlayerData[] PlayerDatas
     }
 
-    object Graphic{
+    object CGraphic{
 
     }
 
-    object Input{
+    object CInput{
 
     }
 
-    object InputData <<struct>>{
+    object CInputData <<struct>>{
         bool Forward
         bool Right
         bool Left
         bool Jump
     }
 
-    class MapData{
-
+    class CMapData{
+        + void SetMapData(int mapW atc...)
     }
 
-    Network <--> System
-    System <- Graphic
-    Map <-- System 
-    Map <-- Graphic
-    Input -> System
-    InputData . (System, Input)
-    Map - MapData
-    BaseMapData <|-- MapData
+    CNetwork <--> CSystem
+    CSystem <- CGraphic
+    CMap <-- CSystem 
+    CMap <-- CGraphic
+    CInput -> CSystem
+    CInputData . (CSystem, CInput)
+    CMapData -- CMap
+    BaseMapData <|-- CMapData
 }
 
 '== ネットワーク間のデータのやり取り =='
-Server <--> Network
-Server <--> "n" OtherClient
-NetworkData . (Server, Network) : 使用
+SNetwork <-> CNetwork
+SNetwork <---> "n" OtherClient
 'Network <.> "n" OtherClient : 相互参照
 '(Network, OtherClient) . PlayerData
 '== ネットワーク間のデータのやり取り =='
