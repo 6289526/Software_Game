@@ -4,7 +4,25 @@
  */
 
 #pragma once
-#include "client_common.h"
+/* error: expected class-name before ‘{’ token
+   10 | { 
+      | ^
+      って出るからclient_common.hはインクルードしない。
+*/
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <errno.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
+#include "../header/constants.h"
+
 typedef struct{
     bool Forward;   // 前進
     bool Right;     // 右
@@ -15,6 +33,7 @@ typedef struct{
     bool D;         //下
     bool R;         //右
     bool L;         //左
+    bool end;
 }InputType;
 
 class InputModuleBase
