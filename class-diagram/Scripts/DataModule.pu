@@ -23,9 +23,20 @@ object NetworkData <<struct>>{
 
 object PlayerData <<struct>>{
     char[] name
-    FloatCube pos
+    FloatCube cube
+    float dir
     int rank
-    int goal
+    bool goal
+}
+
+class BaseMapData{
+    # int[][][] _TerrainData
+    # vector<PlaceData> _ObjectDatas
+    # int _MapW, _MapH, _MapD
+
+    + const int(* GetTerrainData())
+    + const vector<PlaceData> GetObjectData()
+    + void PushBackObject(PlaceData *objectData)
 }
 
 package Client{
@@ -58,11 +69,7 @@ package Client{
     }
 
     class MapData{
-        - int[][] TerrainData
-        - PlaceData[] ObjectDatas
 
-        + const int* GetTerrainData()
-        + const PlaceData* GetObjectData()
     }
 
     Network <--> System
@@ -72,6 +79,7 @@ package Client{
     Input -> System
     InputData . (System, Input)
     Map - MapData
+    BaseMapData <|-- MapData
 }
 
 '== ネットワーク間のデータのやり取り =='
