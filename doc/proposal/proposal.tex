@@ -1,0 +1,226 @@
+\documentclass{jarticle}
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{here}
+
+\begin{document}
+
+
+
+\clearpage
+\subsection{操作方法}
+ゲームの操作は以下の入力機器のいずれかを用いる。
+\begin{itemize}
+    \item キーボード
+    \item wiiリモコン
+    \item バランスボード\&wiiリモコン
+\end{itemize}
+
+操作の種類は以下の通りである。
+\begin{table}[H]
+    \caption{操作方法1}
+    \label{table:control1}
+    \begin{center}
+    \begin{tabular}{|c|c|c|}\hline
+    操作 & キーボード & wiiリモコン\\ \hline
+    加速 & W & 2 \\ \hline
+    左右旋回 & AD & \verb+<->+ \\ \hline
+    ジャンプ & Space & 振る or 1 \\ \hline
+    ブロックの設置 & Enter & A \\ \hline
+    ゲーム終了 & Escape& + \\\hline
+    
+    \end{tabular}
+    \end{center}
+\end{table}
+
+\begin{table}[H]
+    \caption{操作方法2}
+    \label{table:control2}
+    \begin{center}
+    \begin{tabular}{|c|c|c|}\hline
+    操作 & バランスボード\&wiiリモコン\\ \hline
+    加速 & 2 \\ \hline
+    左右旋回 & 体重移動 \\ \hline
+    ジャンプ & 屈伸 or 振る or 1 \\ \hline
+    ブロックの設置 & A \\ \hline
+    ゲーム終了 & + \\\hline
+    \end{tabular}
+    \end{center}
+\end{table}
+
+
+
+\subsection{モジュール}
+\subsubsection{サーバー}
+
+以下に各モジュールの外部関数を説明する
+\begin{enumerate}
+    \item ネットワークモジュール
+    \begin{table}[H]
+        \label{table:fanc_s1-1}
+        \begin{center}
+            \begin{tabular}{|c||p{30em}|}\hline
+                関数名&void SetupServer(int numCl, u\_short port)\\\hline
+                機能&サーバーの初期設定を行う\\
+                引数&numCl ―― クライアント数\\
+                &port ―― ポート番号\\
+                返り値&無し\\\hline
+            \end{tabular}
+        \end{center}
+    \end{table}
+    \begin{table}[H]
+        \label{table:fanc_s1-2}
+        \begin{center}
+            \begin{tabular}{|c||p{30em}|}\hline
+                関数名&int ControlRequests(void) \\\hline
+                機能&クライアントからのリクエストに対応する\\
+                引数&無し\\
+                返り値&1:通信継続/0:通信終了\\\hline
+            \end{tabular}
+        \end{center}
+    \end{table}
+    \begin{table}[H]
+        \label{table:fanc_s1-3}
+        \begin{center}
+            \begin{tabular}{|c||p{30em}|}\hline
+                関数名&void RunCommand(int id, char com) \\\hline
+                機能&コマンドの実行\\
+                引数&id ―― 送信先のクライアントID\\
+                &com ―― 送信するコマンド\\
+                返り値&無し\\\hline
+            \end{tabular}
+        \end{center}
+    \end{table}
+    \begin{table}[H]
+        \label{table:fanc_s1-5}
+        \begin{center}
+            \begin{tabular}{|c||p{30em}|}\hline
+                関数名&void TerminateServer(void)  \\\hline
+                機能&サーバーの終了処理を行う\\
+                引数&無し\\
+                返り値&無し\\\hline
+            \end{tabular}
+        \end{center}
+    \end{table}
+    \item システムモジュール
+    \begin{table}[H]
+        \label{table:fanc_s2-1}
+        \begin{center}
+            \begin{tabular}{|c||p{30em}|}\hline
+                関数名&const PlayerData* GetPlayerData()\\\hline
+                機能&クライアントデータ配列の先頭ポインタを返す\\
+                引数&無し\\
+                返り値&無し\\\hline
+
+            \end{tabular}
+        \end{center}
+    \end{table}
+    \begin{table}[H]
+        \label{table:fanc_s2-2}
+        \begin{center}
+            \begin{tabular}{|c||p{30em}|}\hline
+                関数名&void GetClientName(int id, char clientName\verb+[MAX_LEN_NAME]+)\\\hline
+                機能&クライアントの名前の取得\\
+                引数&id ―― 送信先のクライアントID\\
+                &clientName\verb+[MAX_LEN_NAME]+ ―― クライアントの名前\\
+                返り値&無し\\\hline
+
+            \end{tabular}
+        \end{center}
+    \end{table}
+    \begin{table}[H]
+        \label{table:fanc_s2-3}
+        \begin{center}
+            \begin{tabular}{|c||p{30em}|}\hline
+                関数名&void GetPosition(int charaID, FloatPosition pos)\\\hline
+                機能&クライアントの座標の取得\\
+                引数&charaID ―― 受け取るクライアントのID\\
+                &pos ―― クライアントの座標\\
+                返り値&無し\\\hline
+            \end{tabular}
+        \end{center}
+    \end{table}
+\end{enumerate}
+
+\subsubsection{クライアント}
+
+
+
+以下に各モジュールの外部関数を説明する
+\begin{enumerate}
+    \item ネットワークモジュール
+    \begin{table}[H]
+        \label{table:fanc_c1-1}
+        \begin{center}
+            \begin{tabular}{|c||p{30em}|}\hline
+                関数名&void SetupClient(char *serverName, u\_short port) \\\hline
+                機能&クライアントの初期設定を行う\\
+                引数&serverName―― サーバー名\\
+                &u\_short port ―― ポート番号\\
+                返り値&無し\\\hline
+            \end{tabular}
+        \end{center}
+    \end{table}
+    \begin{table}[H]
+        \label{table:fanc_c1-2}
+        \begin{center}
+            \begin{tabular}{|c||p{30em}|}\hline
+                関数名&int ControlRequests(void) \\\hline
+                機能&クライアントの制御を行う\\
+                引数&無し\\
+                返り値&1:通信継続/0:通信終了\\\hline
+            \end{tabular}
+        \end{center}
+    \end{table}
+    \begin{table}[H]
+        \label{table:fanc_c1-3}
+        \begin{center}
+            \begin{tabular}{|c||p{30em}|}\hline
+                関数名&int InCommand(char com) \\\hline
+                機能&コマンドに対する処理を行う\\
+                引数&com ―― コマンド\\
+                返り値&1:通信継続/0:通信終了\\\hline
+            \end{tabular}
+        \end{center}
+    \end{table}
+    \begin{table}[H]
+        \label{table:fanc_c1-5}
+        \begin{center}
+            \begin{tabular}{|c||p{30em}|}\hline
+                関数名&void TerminateClient(void)  \\\hline
+                機能&クライアントの終了処理を行う\\
+                引数&無し\\
+                返り値&無し\\\hline
+            \end{tabular}
+        \end{center}
+    \end{table}
+    
+
+    \item 入力モジュール
+    \begin{table}[H]
+        \label{table:fanc_c2-1}
+        \begin{center}
+            \begin{tabular}{|c||p{30em}|}\hline
+                関数名&virtual void GetInput(SDL\_Event)\\\hline
+                機能&ユーザー入力を受け取る\\
+                引数&event ―― SDLのイベント\\
+                返り値&無し\\\hline
+            \end{tabular}
+        \end{center}
+    \end{table}
+    \begin{table}[H]
+        \label{table:fanc_c2-2}
+        \begin{center}
+            \begin{tabular}{|c||p{30em}|}\hline
+                関数名&InputType GetInputType()\\\hline
+                機能&現在の入力情報を返す\\
+                引数&無し\\
+                返り値&\_Input: 現在の入力情報\\\hline
+            \end{tabular}
+        \end{center}
+    \end{table}
+    
+\end{enumerate}
+
+
+
+\end{document}
