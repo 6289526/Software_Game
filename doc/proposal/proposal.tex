@@ -20,7 +20,7 @@
     \caption{操作方法1}
     \label{table:control1}
     \begin{center}
-    \begin{tabular}{|c|c|c|}\hline
+    \begin{tabular}{|l|l|l|}\hline
     操作 & キーボード & wiiリモコン\\ \hline
     加速 & W & 2 \\ \hline
     左右旋回 & AD & \verb+<->+ \\ \hline
@@ -36,7 +36,7 @@
     \caption{操作方法2}
     \label{table:control2}
     \begin{center}
-    \begin{tabular}{|c|c|c|}\hline
+    \begin{tabular}{|l|l|l|}\hline
     操作 & バランスボード\&wiiリモコン\\ \hline
     加速 & 2 \\ \hline
     左右旋回 & 体重移動 \\ \hline
@@ -47,7 +47,74 @@
     \end{center}
 \end{table}
 
-
+\subsection{ゲームデータの構造}
+以下にゲームデータの構造を示す
+\begin{table}[H]
+    \caption{クライアントのデータ構造}
+    \label{table:data1}
+    \begin{center}
+    \begin{tabular}{|l||l|l|}\hline
+    データ型 & 変数名 & 内容　\\ \hline
+    char & \verb+name[MAX_LEN_NAME]+ & クライアントの名前 \\ \hline
+    FloatCube & pos & マップ上の場所 \\ \hline
+    int & rank & 順位 \\ \hline
+    bool & goal & ゴールしているか \\ \hline
+    \end{tabular}
+    \end{center}
+\end{table}
+\begin{table}[H]
+    \caption{ネットワークモジュール用のクライアントの情報}
+    \label{table:data2}
+    \begin{center}
+    \begin{tabular}{|l||l|l|}\hline
+    データ型 & 変数名 & 内容　\\ \hline
+    int & connect & クライアントがサーバーに接続しているか \\ \hline
+    int & sock & 使用するソケット \\ \hline
+    struct sockaddr\_in & addr & ソケットの設定 \\ \hline
+    \end{tabular}
+    \end{center}
+\end{table}
+\begin{table}[H]
+    \caption{クライアントの座標}
+    \label{table:data3}
+    \begin{center}
+    \begin{tabular}{|l||l|l|}\hline
+    データ型 & 変数名 & 内容　\\ \hline
+    float & x & x座標 \\ \hline
+    float & y & y座標 \\ \hline
+    float & z & z座標 \\ \hline
+    \end{tabular}
+    \end{center}
+\end{table}
+\begin{table}[H]
+    \caption{直方体形を定義する構造体}
+    \label{table:data4}
+    \begin{center}
+    \begin{tabular}{|l||l|l|}\hline
+    データ型 & 変数名 & 内容　\\ \hline
+    float & x & x座標 \\ \hline
+    float & y & y座標 \\ \hline
+    float & z & z座標 \\ \hline
+    float & w & x方向の長さ \\ \hline
+    float & h & y方向の長さ \\ \hline
+    float & d & z方向の長さ \\ \hline
+    \end{tabular}
+    \end{center}
+\end{table}
+\begin{table}[H]
+    \caption{マップ用のデータ}
+    \label{table:data5}
+    \centering
+    \begin{tabular}{|l||l|l|}\hline
+    データ型 & 変数名 & 内容 \\ \hline
+    int & \verb+_TerrainData+  & マップデータ \\
+    & \verb+[MAP_SIZE_W][MAP_SIZE_H][MAP_SIZE_D]+ & \\ \hline
+    \verb+vector<PlaceData>+ & \_ObjectDatas & オブジェクトデータ \\ \hline
+    int & \_MapW & マップの横幅 \\ \hline
+    int & \_MapH & マップの横縦 \\ \hline
+    int & \_MapD & マップのサイズ \\ \hline
+    \end{tabular}
+\end{table}
 
 \subsection{モジュール}
 \subsubsection{サーバー}
