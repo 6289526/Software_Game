@@ -91,7 +91,7 @@
         \end{center}
     \end{table}
     \begin{table}[H]
-        \label{table:fanc_s1-5}
+        \label{table:fanc_s1-4}
         \begin{center}
             \begin{tabular}{|c||p{30em}|}\hline
                 関数名&void TerminateServer(void)  \\\hline
@@ -101,40 +101,14 @@
             \end{tabular}
         \end{center}
     \end{table}
-    \item システムモジュール
+    \item マップモジュール
     \begin{table}[H]
         \label{table:fanc_s2-1}
         \begin{center}
             \begin{tabular}{|c||p{30em}|}\hline
-                関数名&const PlayerData* GetPlayerData()\\\hline
-                機能&クライアントデータ配列の先頭ポインタを返す\\
-                引数&無し\\
-                返り値&無し\\\hline
-
-            \end{tabular}
-        \end{center}
-    \end{table}
-    \begin{table}[H]
-        \label{table:fanc_s2-2}
-        \begin{center}
-            \begin{tabular}{|c||p{30em}|}\hline
-                関数名&void GetClientName(int id, char clientName\verb+[MAX_LEN_NAME]+)\\\hline
-                機能&クライアントの名前の取得\\
-                引数&id ―― 送信先のクライアントID\\
-                &clientName\verb+[MAX_LEN_NAME]+ ―― クライアントの名前\\
-                返り値&無し\\\hline
-
-            \end{tabular}
-        \end{center}
-    \end{table}
-    \begin{table}[H]
-        \label{table:fanc_s2-3}
-        \begin{center}
-            \begin{tabular}{|c||p{30em}|}\hline
-                関数名&void GetPosition(int charaID, FloatPosition pos)\\\hline
-                機能&クライアントの座標の取得\\
-                引数&charaID ―― 受け取るクライアントのID\\
-                &pos ―― クライアントの座標\\
+                関数名&void LoadMapData(char* fileName)\\\hline
+                機能&マップデータの読み込みを行う\\
+                引数&fileName ―― マップデータファイル名\\
                 返り値&無し\\\hline
             \end{tabular}
         \end{center}
@@ -142,8 +116,6 @@
 \end{enumerate}
 
 \subsubsection{クライアント}
-
-
 
 以下に各モジュールの外部関数を説明する
 \begin{enumerate}
@@ -155,7 +127,7 @@
                 関数名&void SetupClient(char *serverName, u\_short port) \\\hline
                 機能&クライアントの初期設定を行う\\
                 引数&serverName―― サーバー名\\
-                &u\_short port ―― ポート番号\\
+                &port ―― ポート番号\\
                 返り値&無し\\\hline
             \end{tabular}
         \end{center}
@@ -183,7 +155,7 @@
         \end{center}
     \end{table}
     \begin{table}[H]
-        \label{table:fanc_c1-5}
+        \label{table:fanc_c1-4}
         \begin{center}
             \begin{tabular}{|c||p{30em}|}\hline
                 関数名&void TerminateClient(void)  \\\hline
@@ -194,13 +166,42 @@
         \end{center}
     \end{table}
     
+    \item システムモジュール
+    \begin{table}[H]
+        \label{table:fanc_s2-1}
+        \begin{center}
+            \begin{tabular}{|c||p{30em}|}\hline
+                関数名&const PlayerData* GetPlayerData()\\\hline
+                機能&プレイヤーデータ配列の先頭ポインタを返す\\
+                引数&無し\\
+                返り値&プレイヤーデータ配列の先頭ポインタ\\\hline
+            \end{tabular}
+        \end{center}
+    \end{table}
+
+    \item マップモジュール
+    \begin{table}[H]
+        \label{table:fanc_s3-1}
+        \begin{center}
+            \begin{tabular}{|c||p{30em}|}\hline
+                関数名&SetMapData(int mapW,int mapH, int mapD, \\
+                &int terrainData[MAP\_SIZE\_W][MAP\_SIZE\_H][MAP\_SIZE\_D])\\\hline
+                機能&マップデータの初期設定を行う\\
+                引数&mapW ―― マップの幅\\
+                &mapH ―― マップの高さ\\
+                &mapD ―― マップの奥行\\
+                &terrainData ―― マップの地形データ\\
+                返り値&無し\\\hline
+            \end{tabular}
+        \end{center}
+    \end{table}
 
     \item 入力モジュール
     \begin{table}[H]
-        \label{table:fanc_c2-1}
+        \label{table:fanc_c4-1}
         \begin{center}
             \begin{tabular}{|c||p{30em}|}\hline
-                関数名&virtual void GetInput(SDL\_Event)\\\hline
+                関数名&virtual void GetInput(SDL\_Event event)\\\hline
                 機能&ユーザー入力を受け取る\\
                 引数&event ―― SDLのイベント\\
                 返り値&無し\\\hline
@@ -208,7 +209,7 @@
         \end{center}
     \end{table}
     \begin{table}[H]
-        \label{table:fanc_c2-2}
+        \label{table:fanc_c4-2}
         \begin{center}
             \begin{tabular}{|c||p{30em}|}\hline
                 関数名&InputType GetInputType()\\\hline
@@ -218,9 +219,159 @@
             \end{tabular}
         \end{center}
     \end{table}
+    \item グラフィックモジュール
+    \begin{table}[H]
+        \label{table:fanc_c5-1}
+        \begin{center}
+            \begin{tabular}{|c||p{30em}|}\hline
+                関数名&void InitGraphic()\\\hline
+                機能&グラフィックモジュールの初期設定を行う\\
+                引数&無し\\
+                返り値&無し\\\hline
+            \end{tabular}
+        \end{center}
+    \end{table}
+    \begin{table}[H]
+        \label{table:fanc_c5-1}
+        \begin{center}
+            \begin{tabular}{|c||p{30em}|}\hline
+                関数名&void Disp()\\\hline
+                機能&グラフィックの表示を行う\\
+                引数&無し\\
+                返り値&無し\\\hline
+            \end{tabular}
+        \end{center}
+    \end{table}
     
 \end{enumerate}
 
+\subsection{コマンドプロトコル}
+
+\begin{enumerate}
+    \item サーバー→クライアントのプロトコル
+    \begin{table}[H]
+        \label{table:command1-1}
+        \begin{center}
+            \begin{tabular}{|c||p{30em}|}\hline
+                コマンド&M(PlayerData[])\\\hline
+                機能&移動処理\\
+                引数&全プレイヤーデータ\\
+                対象&全クライアント\\
+                タイミング&毎フレーム\\\hline
+            \end{tabular}
+        \end{center}
+    \end{table}
+    \begin{table}[H]
+        \label{table:command1-2}
+        \begin{center}
+            \begin{tabular}{|c||p{30em}|}\hline
+                コマンド&P(PlaceData)\\\hline
+                機能&ブロックの設置\\
+                引数&設置されたブロックのデータ\\
+                対象&全クライアント\\
+                タイミング&設置時\\\hline
+            \end{tabular}
+        \end{center}
+    \end{table}
+    \begin{table}[H]
+        \label{table:command1-3}
+        \begin{center}
+            \begin{tabular}{|c||p{30em}|}\hline
+                コマンド&D\\\hline
+                機能&設置不可能\\
+                引数&無し\\
+                対象&クライアント\\
+                タイミング&設置時\\\hline
+            \end{tabular}
+        \end{center}
+    \end{table}
+    \begin{table}[H]
+        \label{table:command1-2}
+        \begin{center}
+            \begin{tabular}{|c||p{30em}|}\hline
+                コマンド&G\\\hline
+                機能&ゴールしたことを通知\\
+                引数&なし\\
+                対象&クライアント\\
+                タイミング&ゴール時\\\hline
+            \end{tabular}
+        \end{center}
+    \end{table}
+    \begin{table}[H]
+        \label{table:command1-2}
+        \begin{center}
+            \begin{tabular}{|c||p{30em}|}\hline
+                コマンド&E(char[])\\\hline
+                機能&エラーを通知\\
+                引数&エラー内容\\
+                対象&クライアント\\
+                タイミング&エラー発生時\\\hline
+            \end{tabular}
+        \end{center}
+    \end{table}
+    \begin{table}[H]
+        \label{table:command1-2}
+        \begin{center}
+            \begin{tabular}{|c||p{30em}|}\hline
+                コマンド&F(PlayerData[])\\\hline
+                機能&ゲームの終了を通知\\
+                引数&全プレイヤーのデータ\\
+                対象&全クライアント\\
+                タイミング&全プレイヤーゴール時\\\hline
+            \end{tabular}
+        \end{center}
+    \end{table}
+    \begin{table}[H]
+        \label{table:command1-3}
+        \begin{center}
+            \begin{tabular}{|c||p{30em}|}\hline
+                コマンド&Q\\\hline
+                機能&プログラムの強制終了\\
+                引数&無し\\
+                対象&全クライアント\\
+                タイミング&任意\\\hline
+            \end{tabular}
+        \end{center}
+    \end{table}
+    
+    \item クライアント→サーバーのプロトコル
+    \begin{table}[H]
+        \label{table:command2-1}
+        \begin{center}
+            \begin{tabular}{|c||p{30em}|}\hline
+                コマンド&M(FloatPosition)\\\hline
+                機能&移動処理\\
+                引数&自身の移動後の座標\\
+                対象&サーバー\\
+                タイミング&毎フレーム\\\hline
+            \end{tabular}
+        \end{center}
+    \end{table}
+    \begin{table}[H]
+        \label{table:command2-2}
+        \begin{center}
+            \begin{tabular}{|c||p{30em}|}\hline
+                コマンド&P(PlaceData)\\\hline
+                機能&ブロックの設置\\
+                引数&設置するブロックのデータ\\
+                対象&サーバー\\
+                タイミング&設置時\\\hline
+            \end{tabular}
+        \end{center}
+    \end{table}
+    \begin{table}[H]
+        \label{table:command2-3}
+        \begin{center}
+            \begin{tabular}{|c||p{30em}|}\hline
+                コマンド&Q\\\hline
+                機能&プログラムの強制終了\\
+                引数&無し\\
+                対象&サーバー\\
+                タイミング&任意\\\hline
+            \end{tabular}
+        \end{center}
+    \end{table}
+\end{enumerate}
 
 
 \end{document}
