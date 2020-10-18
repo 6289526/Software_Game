@@ -1,75 +1,50 @@
 \documentclass{jarticle}
 \usepackage[dvipdfmx]{graphicx}
 \usepackage[top=30truemm,bottom=30truemm,left=25truemm,right=25truemm]{geometry}
-\usepackage{here}
+% \usepackage{here}
 \usepackage{ascmac}
 
 \title{14班企画書}
 \author{細野虎太郎　小嶋樹　早道広峻　谷口隼輔}
-\date{令和2年 10月18日 提出}
 
 \begin{document}
 
 \maketitle
 
 \section{概略}
-このゲームは最初,プレイヤーが同じ場所から同時に一斉にスタートし,同じゴールを目指す.
-ゴールまでの道のりは必ずしも平たんとは限らない.例えば谷が存在した場合には橋をかけたり,
-丘が存在した場合,プロックを使って乗り越えるか,迂回するかを自分で決め,プレイヤーはその道を進んでゴールを目指す.
-表~\ref{table:rule}にゲームの仕様とルールを示す．
-\begin{table}[H]
+このゲームは最初、プレイヤーが同じ場所から同時に一斉にスタートし、同じゴールを目指す。
+ゴールまでの道のりは必ずしも平たんとは限らない。例えば谷が存在した場合には橋をかけたり、
+丘が存在した場合、プロックを使って乗り越えるか、迂回するかを自分で決め、プレイヤーはその道を進んでゴールを目指す。
+表~\ref{table:rule}にゲームの仕様とルールを示しておく!
+\begin{table}[h]
     \caption{ゲームのおおまかな仕様とルール}
     \label{table:rule}
     \begin{center}
     \begin{tabular}{|l|l|}\hline
     ゲームジャンル & レースアクションゲーム\\
     プレイヤー人数 & 2 ～ 5 人              \\
-    ゲームに対するルール & プレイヤー全員がゴールした時点で終了する \\ \hline
+    ゲームに対するルール & 自分以外の全潜水艦が撃沈した時点で終了する \\ \hline
     \end{tabular}
     \end{center}
 \end{table}
-
 
 \section{コンセプト}
 \label{コンセプト}
 このゲームのコンセプトは『自分の道は自分で決めろ！』である．
 指先だけでなく体重移動まで使った特徴的な操作や，
-自由なブロックの設置を通じて，プレイヤーの数だけ正しいルートがある全く新しいレースゲームである．
+自由なブロックの設置を通じて，プレイヤーの数だけ正しいルートがある全く新しいレースゲーム．
 
-\section{ゲーム画面}
-\label{ゲーム画面}
-\begin{figure}[H]
-    \centering
-    \label{タイトル画面}
-    \includegraphics[scale=0.7]{title.png}
-    \caption{タイトル画面}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \label{ゲーム画面}
-    \includegraphics[scale=0.3]{game.png}
-    \caption{ゲーム画面}
-\end{figure}
-
-このイメージ画像はUnityを用いて作成したものである.  \\
-画面中央の白い直方体が自分の操作するキャラクターを示しており，緑色のブロックが初期からあるブロックである．\\
-また，赤色のブロックがプレイヤーが配置したブロックである．\\
-
-カメラは常に自身の操作するキャラクターの後方に位置しており,プレイヤーの回転に合わせてカメラ自身もキャラクターの進行方向を向く.
-
-このイメージ画像では画面奥にゴールがあるという想定であるため，自分以外のプレイヤもゴールに向かって進んでいる．
 
 \section{操作方法}
-ゲームの操作は以下の入力機器のいずれかを用いる.
+ゲームの操作は以下の入力機器のいずれかを用いる。
 \begin{itemize}
     \item キーボード
     \item wiiリモコン
-    \item バランスwiiボード\&wiiリモコン
+    \item バランスボード\&wiiリモコン
 \end{itemize}
 
-操作の種類は以下の通りである.
-\begin{table}[H]
+操作の種類は以下の通りである。
+\begin{table}[h]
     \caption{操作方法1}
     \label{table:control1}
     \begin{center}
@@ -85,12 +60,12 @@
     \end{center}
 \end{table}
 
-\begin{table}[H]
+\begin{table}[h]
     \caption{操作方法2}
     \label{table:control2}
     \begin{center}
     \begin{tabular}{|l|l|l|}\hline
-    操作 & バランスwiiボード\&wiiリモコン\\ \hline
+    操作 & バランスボード\&wiiリモコン\\ \hline
     加速 & 2 \\ \hline
     左右旋回 & 体重移動 \\ \hline
     ジャンプ & 屈伸 or 振る or 1 \\ \hline
@@ -103,7 +78,7 @@
 \section{世界観の設定}
 \begin{shadebox}
 \label{世界観の設定}
-西暦20xx年．Hayamich社\,とTaniguch社\,によって共同開発された
+西暦30xx年．Hayamich社\,とTaniguch社\,によって共同開発された
 「ホバリングボード(通称 セグウェイ)」と「ブロック生成デバイス」を用いた
 新たな娯楽がひそかに人気を集め始めていた．
 (背景：
@@ -116,7 +91,7 @@ Taniguch社\,はこの技術を一般市民でも購入できる安価な機器�
 
 \section{ゲームデータの構造}
 以下にゲームデータの構造を示す
-\begin{table}[H]
+\begin{table}[h]
     \caption{クライアントのデータ構造}
     \label{table:data1}
     \begin{center}
@@ -129,7 +104,7 @@ Taniguch社\,はこの技術を一般市民でも購入できる安価な機器�
     \end{tabular}
     \end{center}
 \end{table}
-\begin{table}[H]
+\begin{table}[h]
     \caption{ネットワークモジュール用のクライアントの情報}
     \label{table:data2}
     \begin{center}
@@ -141,7 +116,7 @@ Taniguch社\,はこの技術を一般市民でも購入できる安価な機器�
     \end{tabular}
     \end{center}
 \end{table}
-\begin{table}[H]
+\begin{table}[h]
     \caption{クライアントの座標}
     \label{table:data3}
     \begin{center}
@@ -153,7 +128,7 @@ Taniguch社\,はこの技術を一般市民でも購入できる安価な機器�
     \end{tabular}
     \end{center}
 \end{table}
-\begin{table}[H]
+\begin{table}[h]
     \caption{直方体形を定義する構造体}
     \label{table:data4}
     \begin{center}
@@ -168,7 +143,7 @@ Taniguch社\,はこの技術を一般市民でも購入できる安価な機器�
     \end{tabular}
     \end{center}
 \end{table}
-\begin{table}[H]
+\begin{table}[h]
     \caption{マップ用のデータ}
     \label{table:data5}
     \centering
@@ -189,7 +164,7 @@ Taniguch社\,はこの技術を一般市民でも購入できる安価な機器�
 以下に各モジュールの外部関数を説明する
 \begin{enumerate}
     \item ネットワークモジュール
-    \begin{table}[H]
+    \begin{table}[h]
         \label{table:fanc_s1-1}
         \begin{center}
             \begin{tabular}{|c||p{30em}|}\hline
@@ -201,18 +176,18 @@ Taniguch社\,はこの技術を一般市民でも購入できる安価な機器�
             \end{tabular}
         \end{center}
     \end{table}
-    \begin{table}[H]
+    \begin{table}[h]
         \label{table:fanc_s1-2}
         \begin{center}
             \begin{tabular}{|c||p{30em}|}\hline
-                関数名&int ControlRequests() \\\hline
+                関数名&int ControlRequests(void) \\\hline
                 機能&クライアントからのリクエストに対応する\\
                 引数&無し\\
                 返り値&1:通信継続/0:通信終了\\\hline
             \end{tabular}
         \end{center}
     \end{table}
-    \begin{table}[H]
+    \begin{table}[h]
         \label{table:fanc_s1-3}
         \begin{center}
             \begin{tabular}{|c||p{30em}|}\hline
@@ -224,11 +199,11 @@ Taniguch社\,はこの技術を一般市民でも購入できる安価な機器�
             \end{tabular}
         \end{center}
     \end{table}
-    \begin{table}[H]
+    \begin{table}[h]
         \label{table:fanc_s1-4}
         \begin{center}
             \begin{tabular}{|c||p{30em}|}\hline
-                関数名&void TerminateServer()  \\\hline
+                関数名&void TerminateServer(void)  \\\hline
                 機能&サーバーの終了処理を行う\\
                 引数&無し\\
                 返り値&無し\\\hline
@@ -236,7 +211,7 @@ Taniguch社\,はこの技術を一般市民でも購入できる安価な機器�
         \end{center}
     \end{table}
     \item マップモジュール
-    \begin{table}[H]
+    \begin{table}[h]
         \label{table:fanc_s2-1}
         \begin{center}
             \begin{tabular}{|c||p{30em}|}\hline
@@ -254,7 +229,7 @@ Taniguch社\,はこの技術を一般市民でも購入できる安価な機器�
 以下に各モジュールの外部関数を説明する
 \begin{enumerate}
     \item ネットワークモジュール
-    \begin{table}[H]
+    \begin{table}[h]
         \label{table:fanc_c1-1}
         \begin{center}
             \begin{tabular}{|c||p{30em}|}\hline
@@ -266,18 +241,18 @@ Taniguch社\,はこの技術を一般市民でも購入できる安価な機器�
             \end{tabular}
         \end{center}
     \end{table}
-    \begin{table}[H]
+    \begin{table}[h]
         \label{table:fanc_c1-2}
         \begin{center}
             \begin{tabular}{|c||p{30em}|}\hline
-                関数名&int ControlRequests() \\\hline
+                関数名&int ControlRequests(void) \\\hline
                 機能&クライアントの制御を行う\\
                 引数&無し\\
                 返り値&1:通信継続/0:通信終了\\\hline
             \end{tabular}
         \end{center}
     \end{table}
-    \begin{table}[H]
+    \begin{table}[h]
         \label{table:fanc_c1-3}
         \begin{center}
             \begin{tabular}{|c||p{30em}|}\hline
@@ -288,11 +263,11 @@ Taniguch社\,はこの技術を一般市民でも購入できる安価な機器�
             \end{tabular}
         \end{center}
     \end{table}
-    \begin{table}[H]
+    \begin{table}[h]
         \label{table:fanc_c1-4}
         \begin{center}
             \begin{tabular}{|c||p{30em}|}\hline
-                関数名&void TerminateClient()  \\\hline
+                関数名&void TerminateClient(void)  \\\hline
                 機能&クライアントの終了処理を行う\\
                 引数&無し\\
                 返り値&無し\\\hline
@@ -301,7 +276,7 @@ Taniguch社\,はこの技術を一般市民でも購入できる安価な機器�
     \end{table}
 
     \item システムモジュール
-    \begin{table}[H]
+    \begin{table}[h]
         \label{table:fanc_s2-1}
         \begin{center}
             \begin{tabular}{|c||p{30em}|}\hline
@@ -314,7 +289,7 @@ Taniguch社\,はこの技術を一般市民でも購入できる安価な機器�
     \end{table}
 
     \item マップモジュール
-    \begin{table}[H]
+    \begin{table}[h]
         \label{table:fanc_s3-1}
         \begin{center}
             \begin{tabular}{|c||p{30em}|}\hline
@@ -331,7 +306,7 @@ Taniguch社\,はこの技術を一般市民でも購入できる安価な機器�
     \end{table}
 
     \item 入力モジュール
-    \begin{table}[H]
+    \begin{table}[h]
         \label{table:fanc_c4-1}
         \begin{center}
             \begin{tabular}{|c||p{30em}|}\hline
@@ -342,19 +317,19 @@ Taniguch社\,はこの技術を一般市民でも購入できる安価な機器�
             \end{tabular}
         \end{center}
     \end{table}
-    \begin{table}[H]
+    \begin{table}[h]
         \label{table:fanc_c4-2}
         \begin{center}
             \begin{tabular}{|c||p{30em}|}\hline
                 関数名&InputType GetInputType()\\\hline
                 機能&現在の入力情報を返す\\
                 引数&無し\\
-                返り値&現在の入力情報\\\hline
+                返り値&\_Input: 現在の入力情報\\\hline
             \end{tabular}
         \end{center}
     \end{table}
     \item グラフィックモジュール
-    \begin{table}[H]
+    \begin{table}[h]
         \label{table:fanc_c5-1}
         \begin{center}
             \begin{tabular}{|c||p{30em}|}\hline
@@ -365,7 +340,7 @@ Taniguch社\,はこの技術を一般市民でも購入できる安価な機器�
             \end{tabular}
         \end{center}
     \end{table}
-    \begin{table}[H]
+    \begin{table}[h]
         \label{table:fanc_c5-1}
         \begin{center}
             \begin{tabular}{|c||p{30em}|}\hline
@@ -383,7 +358,7 @@ Taniguch社\,はこの技術を一般市民でも購入できる安価な機器�
 
 \begin{enumerate}
     \item サーバー→クライアントのプロトコル
-    \begin{table}[H]
+    \begin{table}[h]
         \label{table:command1-1}
         \begin{center}
             \begin{tabular}{|c||p{30em}|}\hline
@@ -395,7 +370,7 @@ Taniguch社\,はこの技術を一般市民でも購入できる安価な機器�
             \end{tabular}
         \end{center}
     \end{table}
-    \begin{table}[H]
+    \begin{table}[h]
         \label{table:command1-2}
         \begin{center}
             \begin{tabular}{|c||p{30em}|}\hline
@@ -407,7 +382,7 @@ Taniguch社\,はこの技術を一般市民でも購入できる安価な機器�
             \end{tabular}
         \end{center}
     \end{table}
-    \begin{table}[H]
+    \begin{table}[h]
         \label{table:command1-3}
         \begin{center}
             \begin{tabular}{|c||p{30em}|}\hline
@@ -419,7 +394,7 @@ Taniguch社\,はこの技術を一般市民でも購入できる安価な機器�
             \end{tabular}
         \end{center}
     \end{table}
-    \begin{table}[H]
+    \begin{table}[h]
         \label{table:command1-2}
         \begin{center}
             \begin{tabular}{|c||p{30em}|}\hline
@@ -431,7 +406,7 @@ Taniguch社\,はこの技術を一般市民でも購入できる安価な機器�
             \end{tabular}
         \end{center}
     \end{table}
-    \begin{table}[H]
+    \begin{table}[h]
         \label{table:command1-2}
         \begin{center}
             \begin{tabular}{|c||p{30em}|}\hline
@@ -443,7 +418,7 @@ Taniguch社\,はこの技術を一般市民でも購入できる安価な機器�
             \end{tabular}
         \end{center}
     \end{table}
-    \begin{table}[H]
+    \begin{table}[h]
         \label{table:command1-2}
         \begin{center}
             \begin{tabular}{|c||p{30em}|}\hline
@@ -455,7 +430,7 @@ Taniguch社\,はこの技術を一般市民でも購入できる安価な機器�
             \end{tabular}
         \end{center}
     \end{table}
-    \begin{table}[H]
+    \begin{table}[h]
         \label{table:command1-3}
         \begin{center}
             \begin{tabular}{|c||p{30em}|}\hline
@@ -469,7 +444,7 @@ Taniguch社\,はこの技術を一般市民でも購入できる安価な機器�
     \end{table}
 
     \item クライアント→サーバーのプロトコル
-    \begin{table}[H]
+    \begin{table}[h]
         \label{table:command2-1}
         \begin{center}
             \begin{tabular}{|c||p{30em}|}\hline
@@ -481,7 +456,7 @@ Taniguch社\,はこの技術を一般市民でも購入できる安価な機器�
             \end{tabular}
         \end{center}
     \end{table}
-    \begin{table}[H]
+    \begin{table}[h]
         \label{table:command2-2}
         \begin{center}
             \begin{tabular}{|c||p{30em}|}\hline
@@ -493,7 +468,7 @@ Taniguch社\,はこの技術を一般市民でも購入できる安価な機器�
             \end{tabular}
         \end{center}
     \end{table}
-    \begin{table}[H]
+    \begin{table}[h]
         \label{table:command2-3}
         \begin{center}
             \begin{tabular}{|c||p{30em}|}\hline
@@ -509,42 +484,43 @@ Taniguch社\,はこの技術を一般市民でも購入できる安価な機器�
 
 \section{スケジュール}
 
-\begin{figure}[H]
-    \centering
-    \label{table:gunt1}
-    \caption{スケジュール}
-    \includegraphics[scale=0.5]{guntdat.pdf}
-\end{figure}
-
-\begin{figure}[H]
+\section{ガントチャート}
+\begin{figure}[h]
     \centering
     \label{table:gunt1}
     \caption{ガントチャート1}
     \includegraphics[scale=0.5, page=1]{gunt.pdf}
 \end{figure}
-\begin{figure}[H]
+\begin{figure}[h]
     \centering
     \label{table:gunt1}
     \caption{ガントチャート2}
     \includegraphics[scale=0.5, page=2]{gunt.pdf}
 \end{figure}
-\begin{figure}[H]
+\begin{figure}[h]
     \centering
     \label{table:gunt1}
     \caption{ガントチャート3}
     \includegraphics[scale=0.5, page=3]{gunt.pdf}
 \end{figure}
-\begin{figure}[H]
+\begin{figure}[h]
     \centering
     \label{table:gunt1}
     \caption{ガントチャート4}
     \includegraphics[scale=0.5, page=4]{gunt.pdf}
 \end{figure}
-\begin{figure}[H]
+\begin{figure}[h]
     \centering
     \label{table:gunt1}
     \caption{ガントチャート5}
     \includegraphics[scale=0.5, page=5]{gunt.pdf}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \label{table:gunt1}
+    \caption{ガントチャートデータシート}
+    \includegraphics[scale=0.5]{guntdat.pdf}
 \end{figure}
 
 
