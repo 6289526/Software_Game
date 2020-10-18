@@ -1,13 +1,17 @@
 \documentclass{jarticle}
 \usepackage[dvipdfmx]{graphicx}
+\usepackage[top=30truemm,bottom=30truemm,left=25truemm,right=25truemm]{geometry}
 \usepackage{here}
+\usepackage{ascmac}
+
+\title{14班企画書}
+\author{細野虎太郎　小嶋樹　早道広峻　谷口隼輔}
 
 \begin{document}
 
+\maketitle
 
-
-\clearpage
-\subsection{概略}
+\section{概略}
 このゲームは最初、プレイヤーが同じ場所から同時に一斉にスタートし、同じゴールを目指す。
 ゴールまでの道のりは必ずしも平たんとは限らない。例えば谷が存在した場合には橋をかけたり、
 丘が存在した場合、プロックを使って乗り越えるか、迂回するかを自分で決め、プレイヤーはその道を進んでゴールを目指す。
@@ -24,7 +28,14 @@
     \end{center}
 \end{table}
 
-\subsection{操作方法}
+\section{コンセプト}
+\label{コンセプト}
+このゲームのコンセプトは『自分の道は自分で決めろ！』である．
+指先だけでなく体重移動まで使った特徴的な操作や，
+自由なブロックの設置を通じて，プレイヤーの数だけ正しいルートがある全く新しいレースゲーム．
+
+
+\section{操作方法}
 ゲームの操作は以下の入力機器のいずれかを用いる。
 \begin{itemize}
     \item キーボード
@@ -64,7 +75,21 @@
     \end{center}
 \end{table}
 
-\subsection{ゲームデータの構造}
+\section{世界観の設定}
+\begin{shadebox}
+\label{世界観の設定}
+西暦30xx年．Hayamich社\,とTaniguch社\,によって共同開発された
+「ホバリングボード(通称 セグウェイ)」と「ブロック生成デバイス」を用いた
+新たな娯楽がひそかに人気を集め始めていた．
+(背景：
+食料革命によって引き起こされた人口爆発は世界を手狭にさせた．
+住む場所が足りなくなった人類は空中に地面を生成することに成功し，無限ともいえる居住区を手に入れた．
+Taniguch社\,はこの技術を一般市民でも購入できる安価な機器として再開発した．さらに, Hayamich社\,はセグウェイを開発し空中の居住区間移動を従来からは考えられないほど劇的に容易なものとした．
+スポーツマンをはじめとした人々はこのボード(セグウェイ)とデバイスを用いて観客を楽しませている．)
+\end{shadebox}
+
+
+\section{ゲームデータの構造}
 以下にゲームデータの構造を示す
 \begin{table}[H]
     \caption{クライアントのデータ構造}
@@ -133,8 +158,8 @@
     \end{tabular}
 \end{table}
 
-\subsection{モジュール}
-\subsubsection{サーバー}
+\section{モジュール}
+\subsection{サーバー}
 
 以下に各モジュールの外部関数を説明する
 \begin{enumerate}
@@ -199,7 +224,7 @@
     \end{table}
 \end{enumerate}
 
-\subsubsection{クライアント}
+\subsection{クライアント}
 
 以下に各モジュールの外部関数を説明する
 \begin{enumerate}
@@ -329,7 +354,7 @@
     
 \end{enumerate}
 
-\subsection{コマンドプロトコル}
+\section{コマンドプロトコル}
 
 \begin{enumerate}
     \item サーバー→クライアントのプロトコル
@@ -456,6 +481,47 @@
         \end{center}
     \end{table}
 \end{enumerate}
+
+\section{スケジュール}
+
+\section{ガントチャート}
+\begin{figure}[H]
+    \centering
+    \label{table:gunt1}
+    \caption{ガントチャート1}
+    \includegraphics[scale=0.5, page=1]{gunt.pdf}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \label{table:gunt1}
+    \caption{ガントチャート2}
+    \includegraphics[scale=0.5, page=2]{gunt.pdf}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \label{table:gunt1}
+    \caption{ガントチャート3}
+    \includegraphics[scale=0.5, page=3]{gunt.pdf}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \label{table:gunt1}
+    \caption{ガントチャート4}
+    \includegraphics[scale=0.5, page=4]{gunt.pdf}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \label{table:gunt1}
+    \caption{ガントチャート5}
+    \includegraphics[scale=0.5, page=5]{gunt.pdf}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \label{table:gunt1}
+    \caption{ガントチャートデータシート}
+    \includegraphics[scale=0.5]{guntdat.pdf}
+\end{figure}
 
 
 \end{document}
