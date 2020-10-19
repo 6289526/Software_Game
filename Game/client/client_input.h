@@ -28,12 +28,12 @@ typedef struct{
     bool Right;     // 右
     bool Left;      // 左
     bool Jump;      // 跳
-    bool Put;       //置く
-    bool U;         //上
-    bool D;         //下
-    bool R;         //右
-    bool L;         //左
-    bool end;
+    bool Put;       // 置く
+    bool U;         // 上
+    bool D;         // 下
+    bool R;         // 右
+    bool L;         // 左
+    bool End;       // 終了
 }InputType;
 
 class InputModuleBase
