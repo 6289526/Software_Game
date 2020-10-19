@@ -43,6 +43,7 @@ typedef struct
     int y; //y座標
     int z; //z座標
 } IntPosition;
+typedef IntPosition Vector3Int;
 
 typedef struct
 {
@@ -50,6 +51,7 @@ typedef struct
     float y; //y座標
     float z; //z座標
 } FloatPosition;
+typedef FloatPosition Vector3;
 
 typedef struct
 {
@@ -82,10 +84,12 @@ typedef struct
 /*クライアントの情報*/
 typedef struct
 {
-    char name[MAX_LEN_NAME]; /*名前*/
-    FloatCube pos;           /*場所*/
-    int rank;                /*順位*/
-    bool goal;                /*ゴールしているか*/
+    char name[MAX_LEN_NAME]; // 名前
+    FloatCube pos;           // 場所
+    Vector3 velocity         // 速度ベクトル
+    float direction          // 向き
+    int rank;                // 順位
+    bool goal;               // ゴールしているか
     
 } PlayerData;
 
