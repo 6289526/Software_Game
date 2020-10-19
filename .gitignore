@@ -1,0 +1,5 @@
+
+*.vscode
+
+Game/client/build/*
+Game/server/build/*
