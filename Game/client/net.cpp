@@ -1,10 +1,7 @@
 /*
- *  ファイル名	：client.c
- *  機能	：変数と関数の定義、クライアントの処理
+ *  ファイル名	：net.cpp
+ *  機能	：ネットワークの処理
  * 
- * 参考文献
- *      [1] https://qiita.com/edo_m18/items/7414028fd91269e5427d
- *      [2] https://qiita.com/toshihirock/items/78286fccf07dbe6df38f#%E5%8F%82%E8%80%83
  */
 #include "client_common.h"
 
@@ -228,15 +225,22 @@ int ExeCommand()
         result = 1;
         break;
     case QUIT_COMMAND: // 通信終了
-        // 通信を終了したクライアントを表示
-        fprintf(stderr, "client sent quit command.\n");
+        // 通信を終了したことを表示
+        fprintf(stderr, "other client sent quit command.\n");
+        // 通信継続
+        result = 0;
+        break;
+    case TERMINATE_COMMAND:
+        // サーバーが通信を終了したことを表示
+        fprintf(stderr, "server sent terminate command.\n");
         // 通信終了
         result = 0;
         break;
     default:
         // 上記以外のコマンドは存在しないので、エラーを表示して終了
         fprintf(stderr, "ExeCommand(): %c is not a valid command.\n", com);
-        exit(1);
+        // 通信継続
+        result = 1;
     }
 
     // 値を返す
@@ -304,11 +308,11 @@ static int HandleError(char *message)
 */
 void TerminateClient()
 {
-    char com = QUIT_COMMAND;
-    // データを送信する
-    SendData(&com, sizeof(char));
+    // char com = QUIT_COMMAND;
+    // // データを送信する
+    // SendData(&com, sizeof(char));
 
-    SDL_Delay(1000);
+    // SDL_Delay(1000);
     // メッセージを表示
     fprintf(stderr, "Connection is closed.\n");
     // ソケットを閉じる

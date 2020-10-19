@@ -1,10 +1,8 @@
 /*
- *  ファイル名	：server.c
- *  機能	：変数と関数の定義、サーバーの処理
- *
- * 参考文献
- *     [1] https://kazmax.zpp.jp/cmd/i/inet_ntop.3.html
- *     [2] https://qiita.com/edo_m18/items/7414028fd91269e5427d
+
+ *  ファイル名	：net.cpp
+ *  機能	：ネットワーク処理
+ * 
  */
 #include "server_common.h"
 
@@ -17,7 +15,8 @@ static int NumClient;
 static int NumSock;
 // ファイルディスクリプタ
 static fd_set Mask;
-
+// サーバーが強制終了状態か
+static int TerminateFlag;
 
 /*関数*/
 static int HandleError(char *);
@@ -165,14 +164,14 @@ void SetupServer(int num_cl, u_short port)
     /** ファイルディスクリプタの操作 **/
     // select関数の第一引数ので必要
     NumSock = max_sock + 1;
-    // ファイルディスクリプタセットからすべてのファイルディスクリプタを削除。[2]
+    // ファイルディスクリプタセットからすべてのファイルディスクリプタを削除。
     FD_ZERO(&Mask);
-    // 第一引数のファイルディスクリプタをセットに追加。[2]
+    // 第一引数のファイルディスクリプタをセットに追加。
     FD_SET(0, &Mask);
 
     for (int i = 0; i < NumClient; i++)
     {
-        // 第一引数のファイルディスクリプタをセットに追加。[2]
+        // 第一引数のファイルディスクリプタをセットに追加。
         FD_SET(Clients[i].sock, &Mask);
     }
 
@@ -194,12 +193,17 @@ int ControlRequests()
     fd_set read_flag = Mask;
     // dataの初期化
     FloatPosition data;
-    memset(&data, 0, sizeof(FloatPosition));
+    // タイマー
+    struct timeval timeout;
+    timeout.tv_sec = 1;   //秒数
+    timeout.tv_usec = 0; //マイクロ秒
 
+    memset(&data, 0, sizeof(FloatPosition));
+    
     /** ソケット通信の多重化 **/
     fprintf(stderr, "select() is started.\n");
     /* ファイルディスクリプタの集合から読み込み可能なファイルディスクリプタを見つける*/
-    if (select(NumSock, (fd_set *)&read_flag, NULL, NULL, NULL) == -1)
+    if (select(NumSock, (fd_set *)&read_flag, NULL, NULL, &timeout) == -1)
     {
         HandleError("select()");
     }
@@ -207,9 +211,15 @@ int ControlRequests()
     /** データの受信と送信 **/
     /*変数*/
     int i, result = 1;
+
+    if(TerminateFlag){
+        // 通信終了
+        return result = 0;
+    }
+
     for (i = 0; i < NumClient; i++)
     {
-        /* 第一引数のファイルディスクリプタがセット内にあるかを調べる。[2]*/
+        /* 第一引数のファイルディスクリプタがセット内にあるかを調べ、接続しているかを確認する*/
         if (FD_ISSET(Clients[i].sock, &read_flag))
         {
             /*データを受け取る
@@ -230,9 +240,8 @@ int ControlRequests()
                 break;
             case QUIT_COMMAND: //通信の終了を要求された場合
                 fprintf(stderr, "client[%d]: quit\n", i);
-                // 通信が終了したクライアントがあることを全員に知らせる
-                SendData(BROADCAST, &com, sizeof(com));
-                // ゲームの終了
+               
+                // ゲームの継続
                 result = 0;
                 break;
             default:
@@ -242,9 +251,10 @@ int ControlRequests()
             }
         }
     }
-
-    // 値を返す
+    
+    // 
     return result;
+    
 }
 
 /*コマンドの実行
@@ -258,12 +268,13 @@ void RunCommand(int id, char com){
     // 送るデータ
     FloatPosition posData;
 
-    //コマンド送信
-    SendData(id, &com, sizeof(char));
     // コマンドに応じた処理
     switch (com)
     {
     case MOVE_COMMAND:
+
+        //コマンド送信 
+        SendData(id, &com, sizeof(char));        
 
         for (int i = 0; i < NumClient; ++i)
         {
@@ -274,6 +285,12 @@ void RunCommand(int id, char com){
             // 座標を送信
             SendData(id, &posData, sizeof(FloatPosition));
         }
+        break;
+    case TERMINATE_COMMAND:
+        fprintf(stderr, "Terminate!");
+        TerminateFlag = 1;
+        // コマンド送信 この時全員
+        SendData(id, &com, sizeof(com));
         break;
 
     default:
