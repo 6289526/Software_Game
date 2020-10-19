@@ -31,22 +31,11 @@ enum {
     Gs_Result  = 3
 };
 
-
-
-
-
-
-/*変数*/
-
-
-
-
 /* net.c */
 extern void SetupClient(char *, u_short);
 extern void TerminateClient();
 extern int ControlRequests();
 extern int InCommand(char com);
-
 
 /* system.cpp */
 const PlayerData* GetPlayerData();

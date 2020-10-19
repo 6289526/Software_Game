@@ -39,16 +39,16 @@ void KeybordInput::GetInput(SDL_Event event){
         }
         
         if(_key[SDL_SCANCODE_UP]){
-            _Input.Left = true;
+            _Input.U = true;
         }
         else if(_key[SDL_SCANCODE_DOWN]){
-            _Input.Right = true;
+            _Input.D = true;
         }
         else if(_key[SDL_SCANCODE_RIGHT]){
-            _Input.Left = true;
+            _Input.R = true;
         }
         else if(_key[SDL_SCANCODE_LEFT]){
-            _Input.Right = true;
+            _Input.L = true;
         }
     }    
 }
