@@ -10,6 +10,11 @@ using namespace std;
 #define MAP_SIZE_H 20
 #define MAP_SIZE_D 20
 
+//マップブロックのサイズ
+#define MAP_MAGNIFICATION 30.0f
+//設置オブジェクトのサイズ
+#define OBJECT_MAGNIFICATIO 15.0f
+
 class MapData{
     protected:
         int _TerrainData[MAP_SIZE_W][MAP_SIZE_H][MAP_SIZE_D] = {0};  //マップデータ
