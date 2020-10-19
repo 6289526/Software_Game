@@ -1,4 +1,5 @@
 /*
+
  *  ファイル名	：net.cpp
  *  機能	：ネットワーク処理
  * 
@@ -28,7 +29,7 @@ static int ReceiveData(int cid, void *data, int size);
  * 引数
  *   num_cl: ゲームに参加する人数
  *   port  : サーバーのポート番号
- * 
+ *
  */
 void SetupServer(int num_cl, u_short port)
 {
@@ -97,7 +98,7 @@ void SetupServer(int num_cl, u_short port)
 
     char src[MAX_LEN_ADDR];
     char name[MAX_NUMCLIENTS][MAX_LEN_NAME];
-    /* 
+    /*
   *  NumClientの人数のクライアントが通信を要求してくるまで
   *  ここから先には進まない
   */
@@ -135,7 +136,7 @@ void SetupServer(int num_cl, u_short port)
         /*
     * ネットワークアドレス構造体を、そのアドレスを表す文字列に変換する
     * 構造体の内容を IPv4 ネットワークアドレスの ドット区切り 4 分割形式 "ddd.ddd.ddd.ddd" に変換[1]
-    * 
+    *
     */
         inet_ntop(AF_INET, (struct sockaddr *)&cl_addr.sin_addr, src, sizeof(src));
         //通信を受け入れたことを知らせる
@@ -233,7 +234,7 @@ int ControlRequests()
                 ReceiveData(i, &data, sizeof(FloatPosition));
                 fprintf(stderr, "client[%d]: message = %f %f %f\n", i, data.x, data.y, data.z);
                 // 受け取った座標をシステムモジュールに渡す
-                GetPosition(i, data);
+                SetPosition(i, data);
                 // ゲームの継続
                 result = 1;
                 break;
@@ -271,10 +272,12 @@ void RunCommand(int id, char com){
     switch (com)
     {
     case MOVE_COMMAND:
+
         //コマンド送信 
         SendData(id, &com, sizeof(char));        
+
         for (int i = 0; i < NumClient; ++i)
-        {   
+        {
             // 座標に変更
             posData.x = pData[i].pos.x;
             posData.y = pData[i].pos.y;
@@ -289,6 +292,7 @@ void RunCommand(int id, char com){
         // コマンド送信 この時全員
         SendData(id, &com, sizeof(com));
         break;
+
     default:
         break;
     }
@@ -348,7 +352,7 @@ void SendData(int cid, void *data, int size)
  *    void *data:送られるデータ
  *    int size:dataの型のサイズ
  * 返り値
- *     
+ *
  *    エラーの場合0,-1を返す
  */
 int ReceiveData(int cid, void *data, int size)
@@ -381,7 +385,7 @@ static int HandleError(char *message)
     // エラーメッセージを表示
     perror(message);
     fprintf(stderr, "%d\n", errno);
-    // 
+    //
     return -1;
 }
 
