@@ -10,11 +10,35 @@
 
 int PlayerNum;
 int PortNum;
+int GetCommand(void *args){
+    SDL_mutex *mtx = (SDL_mutex *)args;
+     // コマンド入力処理
+    char str[25];
+    char com, buf[24];
+
+    while (1)
+    {
+        SDL_LockMutex(mtx);
+
+        /**コマンド入力**/
+        if(fgets(str, 25, stdin)){
+            sscanf(str, "%c %s", &com, buf);
+            fprintf(stderr, "%c\n", com);
+            if(com == TERMINATE_COMMAND){
+                RunCommand(BROADCAST, com);
+                break;
+            }
+        }
+        SDL_UnlockMutex(mtx);
+    }
+
+    return 0;
+}
 
 int SendPosFunc(void *args)
 {
     SDL_mutex *mtx = (SDL_mutex *)args;
-
+    
     while (1)
     {
         SDL_LockMutex(mtx);
@@ -51,16 +75,20 @@ int main(int argc, char *argv[])
     SDL_Init(SDL_INIT_EVERYTHING);
     // 座標を送るスレッド
     SDL_Thread *sendPosThread;
+    SDL_Thread *getCommand;
     // 相互排除
-    SDL_mutex *mtx = SDL_CreateMutex();
+    SDL_mutex *mtx1 = SDL_CreateMutex();
+    SDL_mutex *mtx2 = SDL_CreateMutex();
     // スレッド作成
-    sendPosThread = SDL_CreateThread(SendPosFunc, "sendPosThread", mtx);
+    sendPosThread = SDL_CreateThread(SendPosFunc, "sendPosThread", mtx1);
+    getCommand = SDL_CreateThread(GetCommand, "getCommand", mtx2);
     /**SDL END**/
 
     int end = 0;
     int result = 1;
+   
     while (!end && result)
-    {
+    {   
         result = ControlRequests(); // クライアントからのリクエストに対応
 
         // 全員ゴール
@@ -72,7 +100,8 @@ int main(int argc, char *argv[])
     }
 
     TerminateServer(); // サーバー終了処理
-    SDL_DestroyMutex(mtx);
+    SDL_DestroyMutex(mtx1);
+    SDL_DestroyMutex(mtx2);
     SDL_Quit();
     return 0;
 }

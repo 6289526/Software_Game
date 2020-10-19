@@ -1,7 +1,7 @@
 #include "client_common.h"
 
 SDL_Window* window;
-// SDL_Renderer* renderer;
+SDL_Renderer* renderer;
 
 /*ウィンドウ初期化*/
 void InitWindowSys(){
@@ -13,19 +13,19 @@ void InitWindowSys(){
         Wd_Height,
         SDL_WINDOW_OPENGL);
 
-    // renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
-    // SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 }
 
 /*描画*/
 void RendererWindow(){
-    // SDL_RenderClear(renderer);
-    // SDL_RenderPresent(renderer);
+     SDL_RenderClear(renderer);
+    SDL_RenderPresent(renderer);
 }
 
 /*ウィンドウシステムの終了*/
 void TerminateWindowSys(){
     SDL_DestroyWindow(window);
-    // SDL_DestroyRenderer(renderer);
+    SDL_DestroyRenderer(renderer);
 }

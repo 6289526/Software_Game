@@ -63,7 +63,6 @@ int main(int argc, char *argv[]) {
 		SDL_Delay(10);
 	}
 
-
 	// ウィンドウシステムの終了
 	TerminateWindowSys();
 	// クライアントを終了する。
