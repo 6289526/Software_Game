@@ -1,6 +1,6 @@
 /*
  *  ファイル名	: constants.h
- *  機能	: マクロ、構造体の定義 
+ *  機能	: マクロ、構造体の定義
  */
 #pragma once
 /*----------include 開始----------*/
@@ -86,7 +86,8 @@ typedef struct
     FloatCube pos;           /*場所*/
     int rank;                /*順位*/
     bool goal;                /*ゴールしているか*/
-    
+    float dir; // 進行方向 0 ~ 360
+
 } PlayerData;
 
 

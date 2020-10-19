@@ -15,7 +15,7 @@
 #include <errno.h>
 #include "../header/constants.h"
 #include <SDL2/SDL.h>
-// 
+//
 /*----------include 終了----------*/
 
 /*----------define 開始-----------*/
@@ -29,7 +29,7 @@
 //     int sock;                 /*使用するソケット*/
 //     struct sockaddr_in addr;  /*ソケットの設定*/
 // } NetworkData;
-// /*システムモジュールが持ってるプレイヤーデータ*/ 
+// /*システムモジュールが持ってるプレイヤーデータ*/
 // typedef struct{
 //     char name[MAX_LEN_NAME];    /*名前*/
 //     FloatCube pos;              /*位置*/
@@ -51,12 +51,15 @@ extern void RunCommand(int, char);
 
 /* sys.cpp */
 const PlayerData* GetPlayerData();
+       int CollisionUnder(int chara_ID); // 地面との当たり判定 ブロック有 0以外 無 0
+       int CollisionSide(int chara_ID); // 壁との当たり判定 ブロック有 0以外 無 0
 extern void GetClientName(int id,char clientName[MAX_LEN_NAME]);
-extern int Mobable(FloatPosition* pos); // 移動できるかどうか　できれば１が返る
-extern void CheckGoal(int chara_ID);    // ゴールしているか判定
+       int Mobable(FloatPosition* pos); // 移動できるかどうか　できれば１が返る
+       void CheckGoal(int chara_ID);    // ゴールしているか判定
 extern void MovePosition(int chara_ID, FloatPosition* pos); // キャラを移動させる
 extern int Goal(); // 全員ゴールしていれば１
-extern void GetPosition(int chara_ID, FloatPosition pos); // キャラの座標を入手
+extern void SetPosition(int chara_ID, FloatPosition pos); // キャラの移動先データをセット
 extern void SendAllPos(int client_num); // クライアント全員に全員の座標を送る
+
 
 /*-----------グローバル変数 終了----------*/
