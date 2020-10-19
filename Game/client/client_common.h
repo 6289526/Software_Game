@@ -3,7 +3,7 @@
  *  機能    : クライアント用のマクロ、構造体等の定義
  */
 
-#pragma once    
+#pragma once
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -16,7 +16,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
-#include "../../header/constants.h"
+#include "../header/constants.h"
+#include "client_KeybordInput.h"
 
 /* ウインドウサイズ */
 enum {
@@ -30,28 +31,30 @@ enum {
     Gs_Result  = 3
 };
 
-/*ネットワークモジュール用のクライアントの情報*/
-typedef struct {
-    int cid;                  /*クライアントのID*/
-    int connect;              /*サーバーに接続しているか*/
-    int sock;                 /*使用するソケット*/
-    struct sockaddr_in addr;  /*ソケットの設定*/
-} ClientNet;
+
+
+
 
 
 /*変数*/
 
 
-extern int PrintError(const char *str);
 
 
 /* net.c */
 extern void SetupClient(char *, u_short);
+extern void TerminateClient();
 extern int ControlRequests();
-extern void terminate_client();
+extern int InCommand(char com);
 
-extern int SendData(void *);
-extern int ReceiveData(void *);
 
-extern int InCommand(char, FloatPosition);
-extern int ExeCommand(void);
+/* system.cpp */
+const PlayerData* GetPlayerData();
+extern void GetId(int);
+extern void GetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients);
+extern void SystemRun(InputType data);
+
+/*window.cpp */
+extern void InitWindowSys();
+extern void RendererWindow();
+extern void TerminateWindowSys();

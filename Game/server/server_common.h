@@ -13,9 +13,9 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <errno.h>
-#include "../../header/constants.h"
-
-
+#include "../header/constants.h"
+#include <SDL2/SDL.h>
+//
 /*----------include 終了----------*/
 
 /*----------define 開始-----------*/
@@ -23,13 +23,19 @@
 /*----------define 終了-----------*/
 
 /*----------構造体宣言 開始-----------*/
-/*ネットワークモジュール用のクライアントの情報*/
-typedef struct {
-    int cid;                  /*クライアントのID*/
-    int connect;              /*サーバーに接続しているか*/
-    int sock;                 /*使用するソケット*/
-    struct sockaddr_in addr;  /*ソケットの設定*/
-} ClientNet;
+// /*ネットワークモジュール用のクライアントの情報*/
+// typedef struct {
+//     int connect;              /*サーバーに接続しているか*/
+//     int sock;                 /*使用するソケット*/
+//     struct sockaddr_in addr;  /*ソケットの設定*/
+// } NetworkData;
+// /*システムモジュールが持ってるプレイヤーデータ*/
+// typedef struct{
+//     char name[MAX_LEN_NAME];    /*名前*/
+//     FloatCube pos;              /*位置*/
+//     int rank;                   /*順位*/
+//     int goal;                   /*ゴールしたか*/
+// } PlayerData;
 
 /*----------構造体宣言 終了-----------*/
 
@@ -40,17 +46,20 @@ typedef struct {
 /* net.c */
 extern void SetupServer(int, u_short);
 extern void TerminateServer();
-extern int SendData(int, void *);
-extern int ReceiveData(int, void *);
-
 extern int ControlRequests();
+extern void RunCommand(int, char);
 
 /* sys.cpp */
-int Mobable(FloatPosition* pos); // 移動できるかどうか　できれば１が返る
-void CheckGoal(int chara_ID);    // ゴールしているか判定
-void MovePosition(int chara_ID, FloatPosition* pos); // キャラを移動させる
-int Goal(); // 全員ゴールしていれば１
-FloatPosition GetPosition(int chara_ID); // キャラの座標を入手
-void SendAllPos(int client_num); // クライアント全員に全員の座標を送る
+const PlayerData* GetPlayerData();
+       int CollisionUnder(int chara_ID); // 地面との当たり判定 ブロック有 0以外 無 0
+       int CollisionSide(int chara_ID); // 壁との当たり判定 ブロック有 0以外 無 0
+extern void GetClientName(int id,char clientName[MAX_LEN_NAME]);
+       int Mobable(FloatPosition* pos); // 移動できるかどうか　できれば１が返る
+       void CheckGoal(int chara_ID);    // ゴールしているか判定
+extern void MovePosition(int chara_ID, FloatPosition* pos); // キャラを移動させる
+extern int Goal(); // 全員ゴールしていれば１
+extern void SetPosition(int chara_ID, FloatPosition pos); // キャラの移動先データをセット
+extern void SendAllPos(int client_num); // クライアント全員に全員の座標を送る
+
 
 /*-----------グローバル変数 終了----------*/
