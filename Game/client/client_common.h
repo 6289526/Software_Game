@@ -56,5 +56,5 @@ extern void SystemRun(InputType data);
 
 /*window.cpp */
 extern void InitWindowSys();
-// extern void RendererWindow();
+extern void RendererWindow();
 extern void TerminateWindowSys();

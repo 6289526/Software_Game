@@ -66,6 +66,7 @@ int main(int argc, char *argv[]) {
     //ループするかを判定
     int cond = 1;
     while (cond && data.end != 1) {
+        RendererWindow();
         //入力受け付け
         input.GetInput(event);
         data = input.GetInputType();
@@ -78,8 +79,9 @@ int main(int argc, char *argv[]) {
     
     // ウィンドウシステムの終了
     TerminateWindowSys();
+    
+    SDL_Quit();
     //クライアントを終了する。
     TerminateClient();
-    SDL_Quit();
     return 0;
 }
