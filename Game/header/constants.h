@@ -33,6 +33,7 @@
 #define ERROR_COMMAND 'E'
 #define FINISH_COMMAND 'F'
 #define QUIT_COMMAND 'Q'
+#define TERMINATE_COMMAND 'T'
 /*----------define 終了-----------*/
 
 /*----------構造体宣言 開始-----------*/
