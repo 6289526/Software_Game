@@ -173,14 +173,20 @@ int InCommand(char com)
     /** 入力されたコマンドに応じて分岐 **/
     switch (com)
     {
-    case MOVE_COMMAND: //Mが入力されたとき
+    case MOVE_COMMAND:
         // コマンド送信
         SendData(&com, sizeof(char));
         // データを送信する
         SendData(&posData, sizeof(FloatPosition));
         SendData(&direction, sizeof(float));
         break;
-    
+    case PUT_COMMAND:
+        // コマンド送信
+        SendData(&com, sizeof(char));
+        // データを送信する
+        SendData(&posData, sizeof(FloatPosition));
+        
+        break;
     default:
         // 存在しないコマンドの場合はメッセージを表示して、再入力させる
         fprintf(stderr, "%c is not a valid command.\n", com);
@@ -227,6 +233,8 @@ int ExeCommand()
         // 通信継続
         result = 1;
         break;
+    case PUT_COMMAND:
+        
     case QUIT_COMMAND: // 通信終了
         // 通信を終了したことを表示
         fprintf(stderr, "other client sent quit command.\n");

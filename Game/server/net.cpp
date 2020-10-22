@@ -239,6 +239,10 @@ int ControlRequests()
                 // ゲームの継続
                 result = 1;
                 break;
+            case PUT_COMMAND:
+                ReceiveData(i, &data, sizeof(FloatPosition));
+                fprintf(stderr, "client[%d]: put = x:%f y:%f z:%f\n", i, data.x, data.y, data.z);
+
             case QUIT_COMMAND: //通信の終了を要求された場合
                 fprintf(stderr, "client[%d]: quit\n", i);
 
@@ -302,6 +306,10 @@ void RunCommand(int id, char com)
             SendData(id, &flag, sizeof(VelocityFlag));
         }
         break;
+    case PUT_COMMAND:
+        //コマンド送信
+        SendData(id, &com, sizeof(char));
+        
     case TERMINATE_COMMAND:
         fprintf(stderr, "Terminate!");
         TerminateFlag = 1;
