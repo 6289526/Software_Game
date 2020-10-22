@@ -13,7 +13,7 @@ PlayerData PData[PLAYER_NUM] = {
     {"a", {20, 20, 20, 10, 10, 10}, {0, 0, 0}, 1, 0, false}
 };
 
-Vector3 pVec = {0, 0, 0};
+Vector3 pVec[PLAYER_NUM] = {0};
 
 ServerMap Map;
 
@@ -29,9 +29,9 @@ int Collision(int chara_ID, int x, int y, int z) // 当たり判定 ブロック
 
 
     // 進行先のブロックを指定
-    int BlockX = PData[chara_ID].pos.x + pVec.x + x / MAP_MAGNIFICATION;
-    int BlockY = PData[chara_ID].pos.y + pVec.y + y / MAP_MAGNIFICATION;
-    int BlockZ = PData[chara_ID].pos.z + pVec.z + z / MAP_MAGNIFICATION;
+    int BlockX = PData[chara_ID].pos.x + pVec[chara_ID].x + x / MAP_MAGNIFICATION;
+    int BlockY = PData[chara_ID].pos.y + pVec[chara_ID].y + y / MAP_MAGNIFICATION;
+    int BlockZ = PData[chara_ID].pos.z + pVec[chara_ID].z + z / MAP_MAGNIFICATION;
 
     const int (*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
 
@@ -91,8 +91,8 @@ void MovePosition(int chara_ID, FloatPosition *pos)
             Goal(chara_ID);
         }
 
-        pVec.x = 0;
-        pVec.z = 0;
+        pVec[chara_ID].x = 0;
+        pVec[chara_ID].z = 0;
     }
 
     // 下の当たり判定
@@ -109,8 +109,8 @@ void MovePosition(int chara_ID, FloatPosition *pos)
         if (block == -1) {
             Goal(chara_ID);
         }
-        
-        pVec.y = 0;
+
+        pVec[chara_ID].y = 0;
     }
 }
 
@@ -133,15 +133,11 @@ int AllGoal()
 // pos:クライアントの座標
 void SetVec(int chara_ID, Vector3& vec)
 {
-    pVec.x += vec.x;
-    pVec.y += vec.y;
-    pVec.z += vec.z;
+    pVec[chara_ID].x += vec.x;
+    pVec[chara_ID].y += vec.y;
+    pVec[chara_ID].z += vec.z;
 }
 
-// システムにクライアントの角度を渡す
-void SetDirection(int i, float direction){
-
-}
 
 /*全員に座標を送る
 *
@@ -157,4 +153,9 @@ void SendAllPos(int client_num)
         // 特定のIDにコマンドを送る
         RunCommand(i, com);
     }
+}
+
+// システムにクライアントの角度を渡す
+void SetDirection(int chara_ID, float direction){
+    PData[chara_ID].direction = direction;
 }
