@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
 	SetupClient(server_name, port);
 	/**サーバー関連 END**/
 
-	SetUpSystem(input);
+	//SetUpSystem(input);
 
 	SDL_Event event;
 	// ループするかを判定

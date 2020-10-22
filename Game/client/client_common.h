@@ -39,7 +39,7 @@ extern int InCommand(char com);
 
 /* system.cpp */
 const PlayerData* GetPlayerData();
-ectern void SetUpSystem(InputModuleBase *input);
+extern void SetUpSystem(InputModuleBase *input);
 extern void GetId(int);
 extern void GetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients);
 extern void SystemRun(InputType data);

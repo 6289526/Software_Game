@@ -212,7 +212,8 @@ int ControlRequests()
     /** データの受信と送信 **/
     /*変数*/
     int i, result = 1;
-
+    // 残っているクライアントの数
+    int count = 0;
     if (TerminateFlag)
     {
         // 通信終了
@@ -221,47 +222,76 @@ int ControlRequests()
 
     for (i = 0; i < NumClient; i++)
     {
-        /* 第一引数のファイルディスクリプタがセット内にあるかを調べ、接続しているかを確認する*/
-        if (FD_ISSET(Clients[i].sock, &read_flag))
+        if (Clients[i].connect == 1)
         {
-            ReceiveData(i, &com, sizeof(char));
-            switch (com)
+            /* 第一引数のファイルディスクリプタがセット内にあるかを調べ、接続しているかを確認する*/
+            if (FD_ISSET(Clients[i].sock, &read_flag))
             {
-            case MOVE_COMMAND: 
-                ReceiveData(i, &data, sizeof(FloatPosition));
-                ReceiveData(i, &direction, sizeof(float));
+                ReceiveData(i, &com, sizeof(char));
+                switch (com)
+                {
+                case MOVE_COMMAND:
+                    ReceiveData(i, &data, sizeof(FloatPosition));
+                    ReceiveData(i, &direction, sizeof(float));
 
-                fprintf(stderr, "client[%d]: message = x:%f y:%f z:%f dir:%f\n", i, data.x, data.y, data.z, direction);
-                // 受け取った座標をシステムモジュールに渡す
-                SetVec(i, data);
-                SetDirection(i, direction);
+                    fprintf(stderr, "client[%d]: message = x:%f y:%f z:%f dir:%f\n", i, data.x, data.y, data.z, direction);
+                    // 受け取った座標をシステムモジュールに渡す
+                    SetVec(i, data);
+                    SetDirection(i, direction);
 
-                // ゲームの継続
-                result = 1;
-                break;
-            case PUT_COMMAND:
-                ReceiveData(i, &data, sizeof(FloatPosition));
-                fprintf(stderr, "client[%d]: put = x:%f y:%f z:%f\n", i, data.x, data.y, data.z);
+                    // ゲームの継続
+                    result = 1;
+                    break;
+                case PUT_COMMAND:
+                    ReceiveData(i, &data, sizeof(FloatPosition));
+                    fprintf(stderr, "client[%d]: put = x:%f y:%f z:%f\n", i, data.x, data.y, data.z);
 
-            case QUIT_COMMAND: //通信の終了を要求された場合
-                fprintf(stderr, "client[%d]: quit\n", i);
+                case QUIT_COMMAND: //通信の終了を要求された場合
+                    fprintf(stderr, "client[%d]: quit\n", i);
+                    // 接続を切る
+                    Clients[i].connect = 0;
+                    
+                    /** ファイルディスクリプタの操作 **/
+                    // ファイルディスクリプタセットからすべてのファイルディスクリプタを削除。
+                    FD_ZERO(&Mask);
+                    // 第一引数のファイルディスクリプタをセットに追加。
+                    FD_SET(0, &Mask);
 
-                // ゲームの継続
-                result = 0;
-                break;
-            default:
-                // コマンドは上記の2種類しか無いので、それ以外の場合はエラーが生じている　
-                fprintf(stderr, "ControlRequests(): %c is not a valid command.\n", com);
-                break;
+                    for (int j = 0; j < NumClient; j++)
+                    {
+                        // 接続されている場合
+                        if (Clients[j].connect == 1)
+                        {
+                            // 第一引数のファイルディスクリプタをセットに追加。
+                            FD_SET(Clients[j].sock, &Mask);
+                            // 数える
+                            count++;
+                        }
+                    }
+                    // 誰も接続していない場合
+                    if (count == 0)
+                    {
+                        // 終了
+                        result = 0;
+                    }
+                    else
+                    {
+
+                        // ゲームの継続
+                        result = 1;
+                    }
+                    break;
+                default:
+                    // コマンドは上記の2種類しか無いので、それ以外の場合はエラーが生じている　
+                    fprintf(stderr, "ControlRequests(): %c is not a valid command.\n", com);
+                    break;
+                }
             }
         }
     }
 
     //
     return result;
-
-
-
 }
 
 /*コマンドの実行
@@ -292,13 +322,16 @@ void RunCommand(int id, char com)
             posData.z = pData[i].pos.z;
 
             // フラッグ設定
-            if(pData->velocity.x != 0){
+            if (pData->velocity.x != 0)
+            {
                 flag.x;
             }
-            if(pData->velocity.y != 0){
+            if (pData->velocity.y != 0)
+            {
                 flag.y;
             }
-            if(pData->velocity.z != 0){
+            if (pData->velocity.z != 0)
+            {
                 flag.z;
             }
             // 座標とフラッグを送信
@@ -309,7 +342,7 @@ void RunCommand(int id, char com)
     case PUT_COMMAND:
         //コマンド送信
         SendData(id, &com, sizeof(char));
-        
+
     case TERMINATE_COMMAND:
         fprintf(stderr, "Terminate!");
         TerminateFlag = 1;
