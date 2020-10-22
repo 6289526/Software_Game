@@ -107,4 +107,12 @@ typedef struct
 	IntPosition pos; /*場所*/
 } PlaceData;
 
+typedef enum
+{
+	NonBlock = 0, // ブロックなし
+	Nomal_Block = 1, // ノーマルブロック
+	GoalBlock = -1, // ゴールブロック
+
+} BlockType;
+
 /*----------構造体宣言 終了-----------*/

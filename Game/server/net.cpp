@@ -2,7 +2,7 @@
 
  *  ファイル名	：net.cpp
  *  機能	：ネットワーク処理
- * 
+ *
  */
 #include "server_common.h"
 
@@ -233,8 +233,9 @@ int ControlRequests()
 
                 fprintf(stderr, "client[%d]: message = x:%f y:%f z:%f dir:%f\n", i, data.x, data.y, data.z, direction);
                 // 受け取った座標をシステムモジュールに渡す
-                SetPosition(i, data);
+                SetVec(i, data);
                 SetDirection(i, direction);
+
                 // ゲームの継続
                 result = 1;
                 break;
@@ -254,6 +255,9 @@ int ControlRequests()
 
     //
     return result;
+
+
+
 }
 
 /*コマンドの実行

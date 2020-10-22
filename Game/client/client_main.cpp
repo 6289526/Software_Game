@@ -1,4 +1,3 @@
-
 /*
  *  ファイル名	: client_main.cpp
  *  機能	: クライアント用のメイン関数を記述
@@ -16,7 +15,7 @@ int main(int argc, char *argv[]) {
 	/**SDL2関連 END********/
 
 	/**入力関連 BEGIN******/
-	KeybordInput input;
+	InputModuleBase *input;
 	InputType data;
 	/**入力関連 END********/
 
@@ -50,13 +49,15 @@ int main(int argc, char *argv[]) {
 	SetupClient(server_name, port);
 	/**サーバー関連 END**/
 
+	SetUpSystem(input);
+
 	SDL_Event event;
 	// ループするかを判定
 	int cond = 1;
 	while (cond && data.End != 1) {
 		// 入力受け付け
-		input.GetInput(event);
-		data = input.GetInputType();
+		input->GetInput(event);
+		data = input->GetInputType();
 		SystemRun(data);
 		/*サーバーにリクエストを送る*/
 		cond = ControlRequests();
