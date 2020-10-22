@@ -38,6 +38,14 @@ void GetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients)
         fprintf(stderr, "client%d　は %f %f %f にいます。\n", i, PData[i].pos.x, PData[i].pos.y, PData[i].pos.z);
     }
 }
+/*クライアントの速度フラグの取得
+* 引数
+*   
+*/
+void GetFlag(VelocityFlag* flag, int numClients){
+
+}
+
 
 /*移動処理とか設置処理
 * 引数

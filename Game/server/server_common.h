@@ -60,5 +60,5 @@ extern int AllGoal(); // 全員ゴールしていれば１
 extern void SetVec(int chara_ID, Vector3& vec); // キャラの速度ベクトルをセット
 extern void SendAllPos(int client_num); // クライアント全員に全員の座標を送る
 
-
+extern void SetDirection(int i, float direction); // システムにクライアントの角度を渡す
 /*-----------グローバル変数 終了----------*/

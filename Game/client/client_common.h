@@ -43,7 +43,7 @@ ectern void SetUpSystem(InputModuleBase *input);
 extern void GetId(int);
 extern void GetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients);
 extern void SystemRun(InputType data);
-
+extern void GetFlag(VelocityFlag* flag, int numClients);
 /*window.cpp */
 extern void InitWindowSys();
 extern void RendererWindow();

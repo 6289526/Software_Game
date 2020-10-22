@@ -138,6 +138,11 @@ void SetVec(int chara_ID, Vector3& vec)
     pVec.z += vec.z;
 }
 
+// システムにクライアントの角度を渡す
+void SetDirection(int i, float direction){
+
+}
+
 /*全員に座標を送る
 *
 * 引数

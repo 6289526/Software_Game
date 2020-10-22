@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
 	SDL_Event event;
 	// ループするかを判定
 	int cond = 1;
-	while (cond && data.end != 1) {
+	while (cond && data.End != 1) {
 		// 入力受け付け
 		input->GetInput(event);
 		data = input->GetInputType();
