@@ -11,7 +11,6 @@ static int PrintError(const char *str);
 int main(int argc, char *argv[]) {
 	/**SDL2関連 BEGIN******/
 	SDL_Init(SDL_INIT_EVERYTHING);
-	InitWindowSys();
 	/**SDL2関連 END********/
 
 	InputModuleBase *input;
@@ -62,8 +61,6 @@ int main(int argc, char *argv[]) {
 		SDL_Delay(10);
 	}
 
-	// ウィンドウシステムの終了
-	TerminateWindowSys();
 	// クライアントを終了する。
 	TerminateClient();
 	SDL_Quit();
