@@ -11,7 +11,7 @@ void KeybordInput::GetInput(SDL_Event event){
     if(SDL_PollEvent(&event)){
         _Input = (InputType){false, false, false, false};
         if(_key[SDL_SCANCODE_ESCAPE]){
-            _Input.end = true;
+            _Input.End = true;
         }
         /************/
         /**移動関連**/ 

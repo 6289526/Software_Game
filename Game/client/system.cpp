@@ -42,7 +42,7 @@ void GetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients)
 * 引数
 *   
 */
-void GetFlag(VelocityFlag flag, int numClients){
+void GetFlag(VelocityFlag* flag, int numClients){
 
 }
 
