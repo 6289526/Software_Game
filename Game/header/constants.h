@@ -46,6 +46,19 @@ typedef struct
 } FloatPosition;
 typedef FloatPosition Vector3;
 
+enum {
+	NO_ZERO = 1,
+	ZERO = 0
+};
+
+// 速度がゼロかを教えてくれる
+typedef struct 
+{
+	bool x;
+	bool y;
+	bool z;
+} VelocityFlag;
+
 typedef struct
 {
 	int x; //x座標
@@ -86,11 +99,20 @@ typedef struct
 	bool goal;               // ゴールしているか
 } PlayerData;
 
+
 // 設置するオブジェクトのデータ
 typedef struct
 {
 	int object;      /*置く物のID*/
 	IntPosition pos; /*場所*/
 } PlaceData;
+
+typedef enum
+{
+	NonBlock = 0, // ブロックなし
+	Nomal_Block = 1, // ノーマルブロック
+	GoalBlock = -1, // ゴールブロック
+
+} BlockType;
 
 /*----------構造体宣言 終了-----------*/

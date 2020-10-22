@@ -50,11 +50,11 @@ int main(int argc, char *argv[]) {
 
 	InitSystem(&initData);
 
-	SDL_Event event;
 	// ループするかを判定
 	int cond = 1;
 	while (cond && data.End != 1) {
-
+		// 入力受け付け
+		input->GetInput(NULL);
 		data = input->GetInputType();
 		SystemRun(data);
 		/*サーバーにリクエストを送る*/

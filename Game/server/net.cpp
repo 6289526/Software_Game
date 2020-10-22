@@ -2,7 +2,7 @@
 
  *  ファイル名	：net.cpp
  *  機能	：ネットワーク処理
- * 
+ *
  */
 #include "server_common.h"
 
@@ -22,7 +22,6 @@ static int TerminateFlag;
 static int HandleError(char *);
 static void SendData(int cid, void *data, int size);
 static int ReceiveData(int cid, void *data, int size);
-
 
 /* サーバー初期化
  *
@@ -191,15 +190,17 @@ int ControlRequests()
     char com;
     // ファイルディスクリプタ
     fd_set read_flag = Mask;
-    // dataの初期化
+    // 受け取るデータ
     FloatPosition data;
+    float direction;
+
     // タイマー
     struct timeval timeout;
-    timeout.tv_sec = 1;   //秒数
+    timeout.tv_sec = 1;  //秒数
     timeout.tv_usec = 0; //マイクロ秒
 
     memset(&data, 0, sizeof(FloatPosition));
-    
+
     /** ソケット通信の多重化 **/
     fprintf(stderr, "select() is started.\n");
     /* ファイルディスクリプタの集合から読み込み可能なファイルディスクリプタを見つける*/
@@ -212,7 +213,8 @@ int ControlRequests()
     /*変数*/
     int i, result = 1;
 
-    if(TerminateFlag){
+    if (TerminateFlag)
+    {
         // 通信終了
         return result = 0;
     }
@@ -222,25 +224,24 @@ int ControlRequests()
         /* 第一引数のファイルディスクリプタがセット内にあるかを調べ、接続しているかを確認する*/
         if (FD_ISSET(Clients[i].sock, &read_flag))
         {
-            /*データを受け取る
-            * クライアントのID
-            * メッセージを送信するか、通信を終了するかのコマンド
-            * メッセージ
-            */
             ReceiveData(i, &com, sizeof(char));
             switch (com)
             {
-            case MOVE_COMMAND: //メッセージ送信を要求された場合
+            case MOVE_COMMAND: 
                 ReceiveData(i, &data, sizeof(FloatPosition));
-                fprintf(stderr, "client[%d]: message = %f %f %f\n", i, data.x, data.y, data.z);
+                ReceiveData(i, &direction, sizeof(float));
+
+                fprintf(stderr, "client[%d]: message = x:%f y:%f z:%f dir:%f\n", i, data.x, data.y, data.z, direction);
                 // 受け取った座標をシステムモジュールに渡す
-                SetPosition(i, data);
+                SetVec(i, data);
+                SetDirection(i, direction);
+
                 // ゲームの継続
                 result = 1;
                 break;
             case QUIT_COMMAND: //通信の終了を要求された場合
                 fprintf(stderr, "client[%d]: quit\n", i);
-               
+
                 // ゲームの継続
                 result = 0;
                 break;
@@ -251,10 +252,12 @@ int ControlRequests()
             }
         }
     }
-    
-    // 
+
+    //
     return result;
-    
+
+
+
 }
 
 /*コマンドの実行
@@ -262,19 +265,20 @@ int ControlRequests()
 *   int id: 送り先のID
 *   char com: コマンド
 */
-void RunCommand(int id, char com){
+void RunCommand(int id, char com)
+{
     /* 変数 */
-    const PlayerData* pData = GetPlayerData();
+    const PlayerData *pData = GetPlayerData();
     // 送るデータ
     FloatPosition posData;
-
+    VelocityFlag flag;
     // コマンドに応じた処理
     switch (com)
     {
     case MOVE_COMMAND:
 
-        //コマンド送信 
-        SendData(id, &com, sizeof(char));        
+        //コマンド送信
+        SendData(id, &com, sizeof(char));
 
         for (int i = 0; i < NumClient; ++i)
         {
@@ -282,8 +286,20 @@ void RunCommand(int id, char com){
             posData.x = pData[i].pos.x;
             posData.y = pData[i].pos.y;
             posData.z = pData[i].pos.z;
-            // 座標を送信
+
+            // フラッグ設定
+            if(pData->velocity.x != 0){
+                flag.x;
+            }
+            if(pData->velocity.y != 0){
+                flag.y;
+            }
+            if(pData->velocity.z != 0){
+                flag.z;
+            }
+            // 座標とフラッグを送信
             SendData(id, &posData, sizeof(FloatPosition));
+            SendData(id, &flag, sizeof(VelocityFlag));
         }
         break;
     case TERMINATE_COMMAND:
@@ -296,7 +312,6 @@ void RunCommand(int id, char com){
     default:
         break;
     }
-
 }
 
 /* ソケットにデータを送信

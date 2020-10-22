@@ -51,6 +51,7 @@ extern void SystemRun(InputType data);
 int GetMyID();
 
 extern ClientMap Map;
+extern void GetFlag(VelocityFlag* flag, int numClients);
 
 /*window.cpp */
 extern void InitWindowSys();
