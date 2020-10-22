@@ -38,7 +38,7 @@ int GetCommand(void *args){
 int SendPosFunc(void *args)
 {
     SDL_mutex *mtx = (SDL_mutex *)args;
-    
+
     while (1)
     {
         SDL_LockMutex(mtx);
@@ -86,13 +86,13 @@ int main(int argc, char *argv[])
 
     int end = 0;
     int result = 1;
-   
+
     while (!end && result)
-    {   
+    {
         result = ControlRequests(); // クライアントからのリクエストに対応
 
         // 全員ゴール
-        if (Goal())
+        if (AllGoal())
         {
             printf("全員ゴール!!!!!!!!!!!!\n");
             end = 1;

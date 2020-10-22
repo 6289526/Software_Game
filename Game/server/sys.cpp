@@ -9,15 +9,11 @@
 /*変数初期化*/
 // プレイヤー情報
 PlayerData PData[PLAYER_NUM] = {
-    {"a", {20, 20, 20, 7, 20, 7}, 1, 0, 0.0},
-    {"a", {20, 20, 20, 10, 10, 10}, 1, 0, 0.0}
+    {"a", {20, 20, 20, 7, 20, 7}, {0, 0, 0}, 1, 0, false},
+    {"a", {20, 20, 20, 10, 10, 10}, {0, 0, 0}, 1, 0, false}
 };
 
-// プレイヤーの移動先座標
-FloatPosition AfterPlayerPos[PLAYER_NUM] = {
-    {PData[0].pos.x, PData[0].pos.y, PData[0].pos.z},
-    {PData[1].pos.x, PData[1].pos.y, PData[1].pos.z},
-};
+Vector3 pVec = {0, 0, 0};
 
 ServerMap Map;
 
@@ -26,31 +22,35 @@ const PlayerData* GetPlayerData(){
     return PData;
 }
 
-int CollisionUnder(int chara_ID) // 地面との当たり判定 ブロック無 0 有 0以外
+int Collision(int chara_ID, int x, int y, int z) // 当たり判定 ブロック無 0 有 0以外 ゴールブロック -1
 {
+    int FourBlock[4] = {0};
     int result = 0; // ブロック 無 0 有 0以外
 
 
     // 進行先のブロックを指定
-    int BlockX = AfterPlayerPos[chara_ID].x / MAP_MAGNIFICATION;
-    int BlockY = AfterPlayerPos[chara_ID].y / MAP_MAGNIFICATION;
-    int BlockZ = AfterPlayerPos[chara_ID].z / MAP_MAGNIFICATION;
+    int BlockX = PData[chara_ID].pos.x + pVec.x + x / MAP_MAGNIFICATION;
+    int BlockY = PData[chara_ID].pos.y + pVec.y + y / MAP_MAGNIFICATION;
+    int BlockZ = PData[chara_ID].pos.z + pVec.z + z / MAP_MAGNIFICATION;
 
-     const int (*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
-
+    const int (*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
 
      //　移動先の座標の地面４ブロックを調べる
-     result = terrainData[BlockX]    [BlockY][BlockZ]     |
-              terrainData[BlockX + 1][BlockY][BlockZ]     |
-              terrainData[BlockX]    [BlockY][BlockZ + 1] |
-              terrainData[BlockX + 1][BlockY][BlockZ + 1];
+    FourBlock[0] = terrainData[BlockX][BlockY][BlockZ];
+    FourBlock[1] = terrainData[BlockX + 1][BlockY][BlockZ];
+    FourBlock[2] = terrainData[BlockX][BlockY][BlockZ + 1];
+    FourBlock[3] = terrainData[BlockX + 1][BlockY][BlockZ + 1];
+
+    for (int i = 0; i < 4; ++i) {
+        if (FourBlock[i] == GoalBlock) {
+            return -1;
+        }
+        else {
+            result += FourBlock[i];
+        }
+    }
 
     return result;
-}
-
-int CollisionSide(int chara_ID) // 壁との当たり判定 ブロック有 1 無 0
-{
-
 }
 
 // 名前の取得
@@ -62,47 +62,59 @@ void GetClientName(int id, char clientName[MAX_LEN_NAME])
 }
 
 
-int Mobable(FloatPosition *pos)
-{
-    /*
-    if (移動できる) {
-        return 1;
-    }
-    else {
-        return 0;
-    }
-    */
-
-    return 1;
-}
-
-void CheckGoal(int chara_ID)
+void Goal(int chara_ID)
 {
     static int rank = 1;
-    /*
-    if (ゴールしているなら) {
-        Clients[chara_ID].goal = 1;
-        Clients[chara_ID].rank = rank++;
-        SendData(chara_ID, GOAL_COMMAND);
+
+    if (PData[chara_ID].goal == false) {
+        PData[chara_ID].goal = true;
+        PData[chara_ID].rank = rank++;
+        RunCommand(chara_ID, GOAL_COMMAND);
     }
-    */
 }
 
 void MovePosition(int chara_ID, FloatPosition *pos)
 {
-    /*移動できるなら*/
-    if (Mobable(pos))
+    // 横の当たり判定
+    int block = Collision(chara_ID, 0, 1, 0);
+    // ブロックがないなら移動
+    if (0 == block)
     {
         // 移動後の座標に書き換え
-        // Clients[chara_ID].pos.x = pos->x;
-        // Clients[chara_ID].pos.y = pos->y;
-        // Clients[chara_ID].pos.z = pos->z;
+        PData[chara_ID].pos.x = pos->x;
+        PData[chara_ID].pos.z = pos->z;
     }
-    printf("OK\n");
-    CheckGoal(chara_ID);
+    // ブロックがあるなら移動せず速度を0にする
+    else {
+        // ゴールブロックならゴール
+        if (block == -1) {
+            Goal(chara_ID);
+        }
+
+        pVec.x = 0;
+        pVec.z = 0;
+    }
+
+    // 下の当たり判定
+    block = Collision(chara_ID);
+    // ブロックがないなら移動
+    if (0 == block)
+    {
+        // 移動後の座標に書き換え
+        PData[chara_ID].pos.y = pos->y;
+    }
+    // ブロックがあるなら移動せず速度を0にする
+    else {
+        // ゴールブロックならゴール
+        if (block == -1) {
+            Goal(chara_ID);
+        }
+        
+        pVec.y = 0;
+    }
 }
 
-int Goal()
+int AllGoal()
 {
     for (int i = 0; i < MAX_NUMCLIENTS; ++i)
     {
@@ -116,14 +128,14 @@ int Goal()
     return 1;
 }
 
-// クライアントの座標を取得
+// クライアントの速度ベクトルをセット
 // chara_ID:クライアントのID
 // pos:クライアントの座標
-void SetPosition(int chara_ID, FloatPosition pos)
+void SetVec(int chara_ID, Vector3& vec)
 {
-    AfterPlayerPos[chara_ID].x = pos.x;
-    AfterPlayerPos[chara_ID].y = pos.y;
-    AfterPlayerPos[chara_ID].z = pos.z;
+    pVec.x += vec.x;
+    pVec.y += vec.y;
+    pVec.z += vec.z;
 }
 
 /*全員に座標を送る
