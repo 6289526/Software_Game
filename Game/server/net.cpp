@@ -2,7 +2,7 @@
 
  *  ファイル名	：net.cpp
  *  機能	：ネットワーク処理
- * 
+ *
  */
 #include "server_common.h"
 
@@ -199,7 +199,7 @@ int ControlRequests()
     timeout.tv_usec = 0; //マイクロ秒
 
     memset(&data, 0, sizeof(FloatPosition));
-    
+
     /** ソケット通信の多重化 **/
     fprintf(stderr, "select() is started.\n");
     /* ファイルディスクリプタの集合から読み込み可能なファイルディスクリプタを見つける*/
@@ -234,13 +234,13 @@ int ControlRequests()
                 ReceiveData(i, &data, sizeof(FloatPosition));
                 fprintf(stderr, "client[%d]: message = %f %f %f\n", i, data.x, data.y, data.z);
                 // 受け取った座標をシステムモジュールに渡す
-                SetPosition(i, data);
+                SetVec(i, data);
                 // ゲームの継続
                 result = 1;
                 break;
             case QUIT_COMMAND: //通信の終了を要求された場合
                 fprintf(stderr, "client[%d]: quit\n", i);
-               
+
                 // ゲームの継続
                 result = 0;
                 break;
@@ -251,10 +251,10 @@ int ControlRequests()
             }
         }
     }
-    
-    // 
+
+    //
     return result;
-    
+
 }
 
 /*コマンドの実行
@@ -273,8 +273,8 @@ void RunCommand(int id, char com){
     {
     case MOVE_COMMAND:
 
-        //コマンド送信 
-        SendData(id, &com, sizeof(char));        
+        //コマンド送信
+        SendData(id, &com, sizeof(char));
 
         for (int i = 0; i < NumClient; ++i)
         {
