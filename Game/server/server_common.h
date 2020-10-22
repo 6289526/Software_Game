@@ -61,5 +61,5 @@ extern int Goal(); // 全員ゴールしていれば１
 extern void SetPosition(int chara_ID, FloatPosition pos); // キャラの移動先データをセット
 extern void SendAllPos(int client_num); // クライアント全員に全員の座標を送る
 
-
+extern void SetDirection(int i, float direction); // システムにクライアントの角度を渡す
 /*-----------グローバル変数 終了----------*/

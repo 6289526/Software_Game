@@ -126,6 +126,11 @@ void SetPosition(int chara_ID, FloatPosition pos)
     AfterPlayerPos[chara_ID].z = pos.z;
 }
 
+// システムにクライアントの角度を渡す
+void SetDirection(int i, float direction){
+
+}
+
 /*全員に座標を送る
 *
 * 引数

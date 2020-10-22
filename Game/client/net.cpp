@@ -167,18 +167,18 @@ int InCommand(char com)
     // システムモジュールからデータをもらう
     const PlayerData* pData = GetPlayerData();
     // ソケットに送るデータ達
-    FloatPosition posData = {pData[MyId].pos.x, pData[MyId].pos.y, pData[MyId].pos.z};
+    FloatPosition posData = {pData[MyId].velocity.x, pData[MyId].velocity.y, pData[MyId].velocity.z};
+    float direction = pData[MyId].direction;
 
     /** 入力されたコマンドに応じて分岐 **/
     switch (com)
     {
     case MOVE_COMMAND: //Mが入力されたとき
-        
-        
         // コマンド送信
         SendData(&com, sizeof(char));
         // データを送信する
         SendData(&posData, sizeof(FloatPosition));
+        SendData(&direction, sizeof(float));
         break;
     
     default:
@@ -199,8 +199,9 @@ int ExeCommand()
 {
     /*変数*/
     char com;
-    // ソケットに送るデータ
+    // ソケットから来るデータ
     FloatPosition data[MAX_NUMCLIENTS];
+    VelocityFlag flag[MAX_NUMCLIENTS];
     // 通信を継続するかを判定する変数
     int result = 1;
     // dataの初期化
@@ -217,9 +218,11 @@ int ExeCommand()
         for (int i = 0; i < NumClients; i++)
         {
             ReceiveData(&data[i], sizeof(FloatPosition));
+            ReceiveData(&flag[i], sizeof(VelocityFlag));
         }
-        // 受け取った座標をシステムモジュールにわたす
+        // 受け取った座標とフラッグをシステムモジュールにわたす
         GetPlace(data, NumClients);
+        GetFlag(flag, NumClients);
         
         // 通信継続
         result = 1;
