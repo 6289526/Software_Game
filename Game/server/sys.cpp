@@ -13,8 +13,6 @@ PlayerData PData[PLAYER_NUM] = {
     {"a", {20, 20, 20, 10, 10, 10}, {0, 0, 0}, 1, 0, false}
 };
 
-Vector3 pVec[PLAYER_NUM] = {0};
-
 ServerMap Map;
 
 // クライアント配列の先頭ポインタを返す
@@ -29,9 +27,9 @@ int Collision(int chara_ID, int x, int y, int z) // 当たり判定 ブロック
 
 
     // 進行先のブロックを指定
-    int BlockX = PData[chara_ID].pos.x + pVec[chara_ID].x + x / MAP_MAGNIFICATION;
-    int BlockY = PData[chara_ID].pos.y + pVec[chara_ID].y + y / MAP_MAGNIFICATION;
-    int BlockZ = PData[chara_ID].pos.z + pVec[chara_ID].z + z / MAP_MAGNIFICATION;
+    int BlockX = PData[chara_ID].pos.x + PData[chara_ID].velocity.x + x / MAP_MAGNIFICATION;
+    int BlockY = PData[chara_ID].pos.y + PData[chara_ID].velocity.y + y / MAP_MAGNIFICATION;
+    int BlockZ = PData[chara_ID].pos.z + PData[chara_ID].velocity.z + z / MAP_MAGNIFICATION;
 
     const int (*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
 
@@ -73,7 +71,7 @@ void Goal(int chara_ID)
     }
 }
 
-void MovePosition(int chara_ID, FloatPosition *pos)
+void MovePosition(int chara_ID)
 {
     // 横の当たり判定
     int block = Collision(chara_ID, 0, 1, 0);
@@ -81,8 +79,8 @@ void MovePosition(int chara_ID, FloatPosition *pos)
     if (0 == block)
     {
         // 移動後の座標に書き換え
-        PData[chara_ID].pos.x = pos->x;
-        PData[chara_ID].pos.z = pos->z;
+        PData[chara_ID].pos.x += PData[chara_ID].velocity.x;
+        PData[chara_ID].pos.z += PData[chara_ID].velocity.z;
     }
     // ブロックがあるなら移動せず速度を0にする
     else {
@@ -91,8 +89,8 @@ void MovePosition(int chara_ID, FloatPosition *pos)
             Goal(chara_ID);
         }
 
-        pVec[chara_ID].x = 0;
-        pVec[chara_ID].z = 0;
+        PData[chara_ID].velocity.x = 0;
+        PData[chara_ID].velocity.z = 0;
     }
 
     // 下の当たり判定
@@ -101,7 +99,7 @@ void MovePosition(int chara_ID, FloatPosition *pos)
     if (0 == block)
     {
         // 移動後の座標に書き換え
-        PData[chara_ID].pos.y = pos->y;
+        PData[chara_ID].pos.y += PData[chara_ID].velocity.y;
     }
     // ブロックがあるなら移動せず速度を0にする
     else {
@@ -110,7 +108,7 @@ void MovePosition(int chara_ID, FloatPosition *pos)
             Goal(chara_ID);
         }
 
-        pVec[chara_ID].y = 0;
+        PData[chara_ID].velocity.y = 0;
     }
 }
 
@@ -133,9 +131,9 @@ int AllGoal()
 // pos:クライアントの座標
 void SetVec(int chara_ID, Vector3& vec)
 {
-    pVec[chara_ID].x += vec.x;
-    pVec[chara_ID].y += vec.y;
-    pVec[chara_ID].z += vec.z;
+    PData[chara_ID].velocity.x = vec.x;
+    PData[chara_ID].velocity.y = vec.y;
+    PData[chara_ID].velocity.z = vec.z;
 }
 
 

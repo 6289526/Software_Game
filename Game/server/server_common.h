@@ -55,7 +55,7 @@ const PlayerData* GetPlayerData();
        int Collision(int chara_ID, int x = 0, int y = 0, int z = 0); // 当たり判定 ブロック有 0以外 無 0 ゴールブロック -1
 extern void GetClientName(int id,char clientName[MAX_LEN_NAME]);
        void Goal(int chara_ID);    // ゴールの処理
-extern void MovePosition(int chara_ID, FloatPosition* pos); // キャラを移動させる
+extern void MovePosition(int chara_ID); // キャラを移動させる
 extern int AllGoal(); // 全員ゴールしていれば１
 extern void SetVec(int chara_ID, Vector3& vec); // キャラの速度ベクトルをセット
 extern void SendAllPos(int client_num); // クライアント全員に全員の座標を送る
