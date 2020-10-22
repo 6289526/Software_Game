@@ -90,6 +90,9 @@ int main(int argc, char *argv[])
     while (!end && result)
     {
         result = ControlRequests(); // クライアントからのリクエストに対応
+        for (int i = 0; i < PlayerNum; ++i) {
+            MovePosition(i);
+        }
 
         // 全員ゴール
         if (AllGoal())
