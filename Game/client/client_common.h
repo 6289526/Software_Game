@@ -18,6 +18,7 @@
 #include <SDL2/SDL_ttf.h>
 #include "../header/constants.h"
 #include "client_KeybordInput.h"
+#include "client_map.hpp"
 
 /* ウインドウサイズ */
 enum {
@@ -31,6 +32,10 @@ enum {
     Gs_Result  = 3
 };
 
+typedef struct{
+	InputModuleBase **input;
+} InitData;
+
 /* net.c */
 extern void SetupClient(char *, u_short);
 extern void TerminateClient();
@@ -39,10 +44,13 @@ extern int InCommand(char com);
 
 /* system.cpp */
 const PlayerData* GetPlayerData();
-ectern void SetUpSystem(InputModuleBase *input);
+extern bool InitSystem(InitData *data);
 extern void GetId(int);
 extern void GetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients);
 extern void SystemRun(InputType data);
+int GetMyID();
+
+extern ClientMap Map;
 
 /*window.cpp */
 extern void InitWindowSys();
