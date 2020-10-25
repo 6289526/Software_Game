@@ -252,6 +252,7 @@ int ControlRequests()
             default:
                 // コマンドは上記の2種類しか無いので、それ以外の場合はエラーが生じている　
                 fprintf(stderr, "ControlRequests(): %c is not a valid command.\n", com);
+                result = 0;
                 break;
             }
         }
