@@ -40,10 +40,11 @@ class InputModuleBase
 {
 protected:
     InputType _Input;
+    SDL_Event _Event;
 public:
     InputModuleBase();
     ~InputModuleBase();
-    virtual void GetInput(SDL_Event) = 0;
+    virtual int GetInput(void *data) = 0;
 
     InputType GetInputType();
 };

@@ -14,5 +14,5 @@ private:
 public:
     KeybordInput();
     ~KeybordInput();
-    virtual void GetInput(SDL_Event);
+    virtual int GetInput(void *data);
 };
