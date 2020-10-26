@@ -8,6 +8,8 @@ PlayerData PData[PLAYER_NUM] = {
     {"a", {20, 20, 20, 10, 10, 10}, 1, 0}
 };
 
+ClientMap Map;
+
 // クライアント配列の先頭ポインタを返す
 const PlayerData* GetPlayerData(){
     return PData;
@@ -17,7 +19,7 @@ const PlayerData* GetPlayerData(){
 * 引数
 *   id: クライアントのID
 */
-void SetMyID(int id)
+void GetId(int id)
 {
     MyId = id;
 }
@@ -27,7 +29,7 @@ void SetMyID(int id)
 *   moveData[MAX_NUMCLIENTS]: 移動位置
 *   numCLients : 接続しているクライアントの数
 */
-void SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients)
+void GetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients)
 {
     for (int i = 0; i < numClients; i++)
     {
@@ -38,13 +40,12 @@ void SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients)
         fprintf(stderr, "client%d　は %f %f %f にいます。\n", i, PData[i].pos.x, PData[i].pos.y, PData[i].pos.z);
     }
 }
-
 /*クライアントの速度フラグの取得
 * 引数
 *   
 */
-void SetFlag(VelocityFlag* flag, int numClients){
-    // Flagが立っていたらVelocityを0にする
+void GetFlag(VelocityFlag* flag, int numClients){
+
 }
 
 
@@ -90,4 +91,10 @@ void SystemRun(InputType data)
         // 移動コマンド実行
         InCommand(MOVE_COMMAND);
     }
+}
+
+
+
+int GetMyID(){
+    return MyId;
 }

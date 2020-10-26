@@ -1,3 +1,4 @@
+
 #include "client_map.hpp"
 
 void ClientMap::SetMapData(int mapW,int mapH, int mapD, int terrainData[MAP_SIZE_W][MAP_SIZE_H][MAP_SIZE_D]){

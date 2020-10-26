@@ -4,7 +4,8 @@ set(MAIN_CODE client_main)
 set(INPUT_CODE client_input)
 set(KEYBORD_CODE client_KeybordInput)
 set(NET_CODE net)
-set(WINDOW_CODE window)
+#set(WINDOW_CODE window)
+set(GRAPHIC_CODE graphic)
 set(SYSTEM_CODE system)
 
 set(SORYUTION_NAME client)
@@ -26,7 +27,7 @@ pkg_check_modules(SDL2image REQUIRED SDL2_image)
 include_directories(${SDL2_INCLUDE_DIRS} ${SDL2ttf_INCLUDE_DIRS} ${SDL2image_INCLUDE_DIRS})
 
 # 実行ファイル名とソース指定
-add_executable( ${SORYUTION_NAME} ${MAIN_CODE} ${INPUT_CODE} ${KEYBORD_CODE} ${NET_CODE} ${WINDOW_CODE} ${SYSTEM_CODE})
+add_executable( ${SORYUTION_NAME} ${MAIN_CODE} ${INPUT_CODE} ${KEYBORD_CODE} ${NET_CODE} ${GRAPHIC_CODE} ${SYSTEM_CODE})
 
 #リンク先のライブラリを指定
-target_link_libraries( ${SORYUTION_NAME} ${SDL2_LIBRARIES}  ${SDL2ttf_LIBRARIES} ${SDL2image_LIBRARIES})
+target_link_libraries( ${SORYUTION_NAME} ${SDL2_LIBRARIES}  ${SDL2ttf_LIBRARIES} ${SDL2image_LIBRARIES} -lGL -lGLU)

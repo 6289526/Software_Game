@@ -11,11 +11,12 @@ static int PrintError(const char *str);
 int main(int argc, char *argv[]) {
 	/**SDL2関連 BEGIN******/
 	SDL_Init(SDL_INIT_EVERYTHING);
-	InitWindowSys();
+	//InitWindowSys();
+	InitGraphic();
 	/**SDL2関連 END********/
 
 	/**入力関連 BEGIN******/
-	InputModuleBase *input;
+	KeybordInput input;
 	InputType data;
 	/**入力関連 END********/
 
@@ -49,15 +50,16 @@ int main(int argc, char *argv[]) {
 	SetupClient(server_name, port);
 	/**サーバー関連 END**/
 
-	SetUpSystem(input);
+	//SetUpSystem(input);
 
 	SDL_Event event;
 	// ループするかを判定
 	int cond = 1;
 	while (cond && data.End != 1) {
+		Disp();
 		// 入力受け付け
-		input->GetInput(event);
-		data = input->GetInputType();
+		input.GetInput(event);
+		data = input.GetInputType();
 		SystemRun(data);
 		/*サーバーにリクエストを送る*/
 		cond = ControlRequests();
@@ -65,7 +67,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	// ウィンドウシステムの終了
-	TerminateWindowSys();
+	//TerminateWindowSys();
 	// クライアントを終了する。
 	TerminateClient();
 	SDL_Quit();

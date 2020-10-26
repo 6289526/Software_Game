@@ -1,6 +1,6 @@
 #include "graphic.h"
 #include <math.h>
-#include "graphic_test.hpp"//テスト用
+// #include "graphic_test.hpp"//テスト用
 
 /*private*/
 FloatPosition lookatPlace = {0.0f, 100.0f, 0.0f};

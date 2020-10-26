@@ -94,7 +94,7 @@ void SetupClient(char *server_name, u_short port)
     // 自身のIDを受け取る
     ReceiveData(&MyId, sizeof(int));
     // 受け取ったIDをシステムモジュールに渡す
-    SetMyID(MyId);
+    GetId(MyId);
     fprintf(stderr, "Your ID = %d.\n", MyId);
 
     /** 全クライアントの情報を受け取る **/
@@ -221,8 +221,8 @@ int ExeCommand()
             ReceiveData(&flag[i], sizeof(VelocityFlag));
         }
         // 受け取った座標とフラッグをシステムモジュールにわたす
-        SetPlace(data, NumClients);
-        SetFlag(flag, NumClients);
+        GetPlace(data, NumClients);
+        GetFlag(flag, NumClients);
         
         // 通信継続
         result = 1;

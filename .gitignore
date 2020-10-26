@@ -1,7 +1,5 @@
 
 */.vscode/*
-!*/.vscode/**/launch.json
-!*/.vscode/**/tasks.json
 
 Game/client/build/*
 Game/server/build/*
