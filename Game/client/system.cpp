@@ -113,6 +113,8 @@ bool InitSystem(InitData *data){
 		return false;
 	}
 	SDL_DetachThread(thread);
+
+	*(data->input) = new KeybordInput();
 }
 
 // グラフィック用の
