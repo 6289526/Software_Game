@@ -30,7 +30,13 @@ int Collision(int chara_ID, int x, int y, int z) // 当たり判定 ブロック
     int BlockX = (PData[chara_ID].pos.x + PData[chara_ID].velocity.x + x) / MAP_MAGNIFICATION;
     int BlockY = (PData[chara_ID].pos.y + PData[chara_ID].velocity.y + y) / MAP_MAGNIFICATION;
     int BlockZ = (PData[chara_ID].pos.z + PData[chara_ID].velocity.z + z) / MAP_MAGNIFICATION;
-
+    if(BlockX < 0 || BlockY < 0 || BlockZ < 0 ){
+        fprintf(stderr, "マップの外〜〜〜〜負♪♪♪♪♪♪♪♪♪♪♪\n");
+        return 1;
+    }else if(BlockX > MAP_SIZE_W || BlockY > MAP_SIZE_H || BlockZ > MAP_SIZE_D ){
+        fprintf(stderr, "マップの外〜〜〜〜正♪♪♪♪♪♪♪♪♪♪♪\n");
+        return 1;
+    }
     const int (*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
 
      //　移動先の座標の地面４ブロックを調べる
