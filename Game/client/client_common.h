@@ -44,7 +44,7 @@ extern int InCommand(char com);
 
 /* system.cpp */
 const PlayerData* GetPlayerData();
-//extern void SetUpSystem(InputModuleBase *input);
+extern bool InitSystem(InitData *data);
 extern void SetMyID(int);
 extern void SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients);
 extern void SystemRun(InputType data);
