@@ -42,10 +42,10 @@ extern int InCommand(char com);
 /* system.cpp */
 const PlayerData* GetPlayerData();
 //extern void SetUpSystem(InputModuleBase *input);
-extern void GetId(int);
-extern void GetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients);
+extern void SetMyID(int);
+extern void SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients);
 extern void SystemRun(InputType data);
-extern void GetFlag(VelocityFlag* flag, int numClients);
+extern void SetFlag(VelocityFlag* flag, int numClients);
 extern int GetMyID();
 
 extern ClientMap Map;
