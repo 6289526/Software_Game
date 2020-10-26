@@ -8,6 +8,8 @@ PlayerData PData[PLAYER_NUM] = {
     {"a", {20, 20, 20, 10, 10, 10}, 1, 0}
 };
 
+ClientMap Map;
+
 // クライアント配列の先頭ポインタを返す
 const PlayerData* GetPlayerData(){
     return PData;
@@ -89,4 +91,10 @@ void SystemRun(InputType data)
         // 移動コマンド実行
         InCommand(MOVE_COMMAND);
     }
+}
+
+
+
+int GetMyID(){
+    return MyId;
 }
