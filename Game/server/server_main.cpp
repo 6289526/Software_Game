@@ -46,7 +46,7 @@ int SendPosFunc(void *args)
         SendAllPos(PlayerNum); // クライアントの座標を全員に送る(別スレッドにする予定)
 
         SDL_UnlockMutex(mtx);
-        SDL_Delay(1000);
+        SDL_Delay(10);
     }
 
     return 0;
