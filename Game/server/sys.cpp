@@ -27,9 +27,9 @@ int Collision(int chara_ID, int x, int y, int z) // 当たり判定 ブロック
 
 
     // 進行先のブロックを指定
-    int BlockX = PData[chara_ID].pos.x + PData[chara_ID].velocity.x + x / MAP_MAGNIFICATION;
-    int BlockY = PData[chara_ID].pos.y + PData[chara_ID].velocity.y + y / MAP_MAGNIFICATION;
-    int BlockZ = PData[chara_ID].pos.z + PData[chara_ID].velocity.z + z / MAP_MAGNIFICATION;
+    int BlockX = (PData[chara_ID].pos.x + PData[chara_ID].velocity.x + x) / MAP_MAGNIFICATION;
+    int BlockY = (PData[chara_ID].pos.y + PData[chara_ID].velocity.y + y) / MAP_MAGNIFICATION;
+    int BlockZ = (PData[chara_ID].pos.z + PData[chara_ID].velocity.z + z) / MAP_MAGNIFICATION;
 
     const int (*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
 
