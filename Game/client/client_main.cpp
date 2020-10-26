@@ -52,7 +52,6 @@ int main(int argc, char *argv[]) {
 	// ループするかを判定
 	int cond = 1;
 	while (cond && data.End != 1) {
-		Disp();
 		// 入力受け付け
 		input->GetInput(NULL);
 		data = input->GetInputType();
@@ -61,7 +60,7 @@ int main(int argc, char *argv[]) {
 		cond = ControlRequests();
 		SDL_Delay(10);
 	}
-	
+
 	// ウィンドウシステムの終了
 	//TerminateWindowSys();
 
