@@ -48,36 +48,30 @@ BlockType Collision(int chara_ID, int y, int accuracy) // 当たり判定 ブロ
     int Block_Z = 0;
 
     if (Block_Y < 0) {
-        fprintf(stderr, "マップ外 : y座標 : 負\n");
-        return NomalBlock;
+        throw "マップ外 : y座標 : 負\n";
     }
     else if (MAP_SIZE_H <= Block_Y) {
-        fprintf(stderr, "マップ外 : y座標 : 正\n");
-        return NomalBlock;
+        throw "マップ外 : y座標 : 正\n";
     }
 
     for (int i = 0; i <= accuracy; ++i) {
         Block_X = point_X[i] / MAP_MAGNIFICATION;
 
         if (Block_X < 0) {
-            fprintf(stderr, "マップ外 : x座標 :負\n");
-            return NomalBlock;
+            throw "マップ外 : x座標 :負\n";
         }
         else if (MAP_SIZE_W <= Block_X) {
-            fprintf(stderr, "マップ外 : x座標 : 正\n");
-            return NomalBlock;
+            throw "マップ外 : x座標 : 正\n";
         }
 
         for(int j = 0; j <= accuracy; ++j) {
             Block_Z = point_Z[j] / MAP_MAGNIFICATION;
 
             if (Block_Z < 0) {
-                fprintf(stderr, "マップ外 : z座標 : 負\n");
-                return NomalBlock;
+                throw "マップ外 : z座標 : 負\n";
             }
             else if (MAP_SIZE_D <= Block_Z) {
-                fprintf(stderr, "マップ外 : z座標 : 正\n");
-                return NomalBlock;
+                throw "マップ外 : z座標 : 正\n";
             }
 
             switch (terrainData[Block_X][Block_Y][Block_Z]) {
@@ -92,8 +86,7 @@ BlockType Collision(int chara_ID, int y, int accuracy) // 当たり判定 ブロ
                 case NonBlock :
                     break;
                 default :
-                    fprintf(stderr, "マップデータ : エラー\n");
-                    break;
+                    throw "マップデータ : エラー\n";
             }
         }
     }
@@ -167,7 +160,7 @@ void MovePosition(int chara_ID)
 
 int AllGoal()
 {
-    for (int i = 0; i < MAX_NUMCLIENTS; ++i)
+    for (int i = 0; i < PLAYER_NUM; ++i)
     {
         // ゴールしていないクライアントがいれば
         if (!PData[i].goal)

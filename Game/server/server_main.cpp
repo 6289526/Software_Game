@@ -5,6 +5,7 @@
  */
 
 #include "server_common.h"
+#include <iostream>
 //
 // ./server_main PlayerNum PortNum
 
@@ -91,13 +92,18 @@ int main(int argc, char *argv[])
     {
         result = ControlRequests(); // クライアントからのリクエストに対応
         for (int i = 0; i < PlayerNum; ++i) {
-            MovePosition(i);
+            try {
+                MovePosition(i);
+            }
+            catch (const char* const e) {
+                fprintf(stderr, e);
+            }
         }
 
         // 全員ゴール
         if (AllGoal())
         {
-            printf("全員ゴール!!!!!!!!!!!!\n");
+            fprintf(stderr, "全員ゴール\n");
             end = 1;
         }
     }
