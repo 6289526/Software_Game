@@ -52,7 +52,7 @@ enum {
 };
 
 // 速度がゼロかを教えてくれる
-typedef struct 
+typedef struct
 {
 	bool x;
 	bool y;
@@ -110,7 +110,7 @@ typedef struct
 typedef enum
 {
 	NonBlock = 0, // ブロックなし
-	Nomal_Block = 1, // ノーマルブロック
+	NomalBlock = 1, // ノーマルブロック
 	GoalBlock = -1, // ゴールブロック
 
 } BlockType;
