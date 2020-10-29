@@ -59,12 +59,18 @@ int main(int argc, char *argv[])
 
     if (3 < argc)
     {
-        printf("コマンドライン引数が多いんじゃああああ\n");
+        PlayerNum = 1;
+        PortNum = 51000;
+    }
+    else if (3 == argc) {
+        PlayerNum = atoi(argv[1]);
+        PortNum = atoi(argv[2]);
+    }
+    else {
+        fprintf(stderr, "引数が多いんじゃあああ\n");
         return 0;
     }
 
-    PlayerNum = atoi(argv[1]);
-    PortNum = atoi(argv[2]);
     //チャットの参加人数の表示
     fprintf(stderr, "Number of clients = %d\n", PlayerNum);
     //サーバーのポート番号を表示
