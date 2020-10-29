@@ -105,6 +105,7 @@ bool InitSystem(InitData *data){
 	SDL_Thread *thread;
 
 	InitGraphic(); // グラフィックの初期化
+	/*
 	// グラフィックのスレッド化
 	thread = SDL_CreateThread(GrapicThread, "GrapicThread", NULL);
 	if (thread == NULL)
@@ -113,6 +114,7 @@ bool InitSystem(InitData *data){
 		return false;
 	}
 	SDL_DetachThread(thread);
+	*/
 
 	*(data->input) = new KeybordInput();
 }

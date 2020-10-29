@@ -14,5 +14,5 @@ private:
 public:
     KeybordInput();
     ~KeybordInput();
-    virtual int GetInput(void *data);
+    virtual int UpdateInput(void *data);
 };

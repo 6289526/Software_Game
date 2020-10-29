@@ -6,8 +6,10 @@ KeybordInput::KeybordInput() : _key(SDL_GetKeyboardState(NULL))
 KeybordInput::~KeybordInput()
 {}
 
-int KeybordInput::GetInput(void *data){
+int KeybordInput::UpdateInput(void *data){
 	if(SDL_PollEvent(&_Event)){
+		InputType t;
+		_Input = t;
 		if(_key[SDL_SCANCODE_ESCAPE]){
 			_Input.End = true;
 		}
