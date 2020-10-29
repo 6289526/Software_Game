@@ -4,6 +4,7 @@
  */
 
 #include "client_common.h"
+#include "graphic.h"
 
 static int PrintError(const char *str);
 
@@ -17,7 +18,6 @@ int main(int argc, char *argv[]) {
 
 	InputModuleBase *input;
 	InitData initData = {&input};
-	InputType data;
 
 	/**サーバー関連 BEGIN**/
 	// 参加したいサーバーのポート番号
@@ -52,13 +52,13 @@ int main(int argc, char *argv[]) {
 	InitSystem(&initData);
 	// ループするかを判定
 	int cond = 1;
-	while (cond && !data.End) {
+	while (cond && !input->GetInputType().End) {
 		// 入力受け付け
-		input->GetInput(NULL);
-		data = input->GetInputType();
-		SystemRun(data);
+		input->UpdateInput(NULL);
+		SystemRun(input->GetInputType());
 		/*サーバーにリクエストを送る*/
 		cond = ControlRequests();
+		Disp();
 		SDL_Delay(10);
 		system("clear");
 	}
