@@ -8,7 +8,6 @@ KeybordInput::~KeybordInput()
 
 int KeybordInput::GetInput(void *data){
 	if(SDL_PollEvent(&_Event)){
-		_Input = (InputType){false, false, false, false};
 		if(_key[SDL_SCANCODE_ESCAPE]){
 			_Input.End = true;
 		}

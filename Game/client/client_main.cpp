@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
 
 	// ループするかを判定
 	int cond = 1;
-	while (cond && data.End != 1) {
+	while (cond && !data.End) {
 		// 入力受け付け
 		input->GetInput(NULL);
 		data = input->GetInputType();
@@ -67,5 +67,6 @@ int main(int argc, char *argv[]) {
 	// クライアントを終了する。
 	TerminateClient();
 	SDL_Quit();
+	delete input;
 	return 0;
 }
