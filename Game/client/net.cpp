@@ -148,6 +148,7 @@ int ControlRequests()
     if (FD_ISSET(sock, &read_flag))
     { //サーバーからのメッセージを受け取った場合
         result = ExeCommand();
+        
     }
 
     return result;
@@ -244,7 +245,7 @@ int ExeCommand()
         // 通信継続
         result = 1;
     }
-
+    
     // 値を返す
     return result;
 }
