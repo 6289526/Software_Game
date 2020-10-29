@@ -15,6 +15,7 @@
 #include <errno.h>
 #include "../header/constants.h"
 #include <SDL2/SDL.h>
+#include <iostream>
 //
 /*----------include 終了----------*/
 
@@ -49,7 +50,39 @@ extern void TerminateServer();
 extern int ControlRequests();
 extern void RunCommand(int, char);
 
+using namespace std;
+
 /* sys.cpp */
+template <typename T>
+class Pointer{
+public:
+    Pointer(int size) : m_point(new T[size]) { m_size = size; }
+    Pointer(const Pointer<T>& p) {
+        Copy(p);
+    }
+    ~Pointer() { delete[] m_point; }
+    const T operator[](int n) const { return m_point[n]; }
+    T& operator[](int n)      { return m_point[n]; }
+    Pointer& operator=(const Pointer& p) {
+        delete[] m_point;
+        Copy(p);
+    }
+private:
+    void Copy(const Pointer& p) {
+        m_size = p.m_size;
+        m_point = new T[m_size];
+        for (int i = 0; i < m_size; ++i) {
+            m_point[i] = p[i];
+        }
+    }
+
+
+public:
+    int m_size;
+private:
+    T* m_point;
+};
+
 const PlayerData* GetPlayerData();
        // 当たり判定
        // y : 当たり判定をとる座標ｙの補正(キャラの足元座標からの差)

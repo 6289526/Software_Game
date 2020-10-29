@@ -22,11 +22,12 @@ const PlayerData* GetPlayerData(){
 
 BlockType Collision(int chara_ID, int y, int accuracy) // 当たり判定 ブロック無 0 有 0以外 ゴールブロック -1
 {
-    int *point_X = new int[accuracy + 1]; // 動的に確保
-    int *point_Z = new int[accuracy + 1]; // 動的に確保
 
-    int wide = PData[chara_ID].pos.w / accuracy;  // 当たり判定を知らべる座標間距離 x座標
-    int depth = PData[chara_ID].pos.d / accuracy; // 当たり判定を知らべる座標間距離 z座標
+    Pointer<int> point_X(accuracy + 1);
+    Pointer<int> point_Z(accuracy + 1);
+
+    const int wide = PData[chara_ID].pos.w / accuracy;  // 当たり判定を知らべる座標間距離 x座標
+    const int depth = PData[chara_ID].pos.d / accuracy; // 当たり判定を知らべる座標間距離 z座標
 
     // 当たり判定を調べる座標をすべて格納
     for (int i = 0; i <= accuracy; ++i) {
@@ -90,9 +91,6 @@ BlockType Collision(int chara_ID, int y, int accuracy) // 当たり判定 ブロ
             }
         }
     }
-
-    delete[] point_X;
-    delete[] point_Z;
 
     return result;
 }
