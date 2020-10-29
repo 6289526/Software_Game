@@ -248,7 +248,7 @@ int ControlRequests()
                 Clients[i].connect = 0;
                 // 人数減らす
                 ClientCount--;
-                
+
                 // ファイルディスクリプタセットからすべてのファイルディスクリプタを削除。
                 FD_ZERO(&Mask);
                 // 第一引数のファイルディスクリプタをセットに追加。
@@ -258,7 +258,7 @@ int ControlRequests()
                     if (Clients[j].connect == 1)
                     {
                         // 第一引数のファイルディスクリプタをセットに追加。
-                        FD_SET(Clients[i].sock, &Mask);
+                        FD_SET(Clients[j].sock, &Mask);
                     }
                 }
 
@@ -365,25 +365,29 @@ void SendData(int cid, void *data, int size)
         // 終了
         exit(1);
     }
-
     if (cid == BROADCAST)
     { //全員に送るとき
         int i;
         //すべてのクライアントのソケットに情報を送る
         for (i = 0; i < NumClient; i++)
-        {
-            if (write(Clients[i].sock, data, size) < 0)
-            {
-                HandleError("write()");
+        {   
+            if(Clients[i].connect){
+                if (write(Clients[i].sock, data, size) < 0)
+                {
+                    HandleError("write()");
+                }
             }
         }
     }
     else
-    { //特定のクライアントに送るとき
-        //特定のソケットに情報を送る
-        if (write(Clients[cid].sock, data, size) < 0)
-        {
-            HandleError("write()");
+    { 
+        if(Clients[cid].connect){
+            //特定のクライアントに送るとき
+            //特定のソケットに情報を送る
+            if (write(Clients[cid].sock, data, size) < 0)
+            {
+                HandleError("write()");
+            }
         }
     }
 }
