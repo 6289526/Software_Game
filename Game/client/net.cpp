@@ -180,7 +180,6 @@ int InCommand(char com)
         SendData(&posData, sizeof(FloatPosition));
         SendData(&direction, sizeof(float));
         break;
-    
     default:
         // 存在しないコマンドの場合はメッセージを表示して、再入力させる
         fprintf(stderr, "%c is not a valid command.\n", com);
@@ -311,9 +310,9 @@ static int HandleError(char *message)
 */
 void TerminateClient()
 {
-    // char com = QUIT_COMMAND;
-    // // データを送信する
-    // SendData(&com, sizeof(char));
+    char com = QUIT_COMMAND;
+    // データを送信する
+    SendData(&com, sizeof(char));
 
     // SDL_Delay(1000);
     // メッセージを表示
