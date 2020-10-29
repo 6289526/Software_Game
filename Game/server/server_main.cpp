@@ -57,12 +57,12 @@ int SendPosFunc(void *args)
 int main(int argc, char *argv[])
 {
 
-    if (3 < argc)
+    if (argc < 3)
     {
         PlayerNum = 1;
         PortNum = 51000;
     }
-    else if (3 == argc) {
+    else if (argc == 3) {
         PlayerNum = atoi(argv[1]);
         PortNum = atoi(argv[2]);
     }
