@@ -4,6 +4,7 @@
  */
 
 #include "client_common.h"
+#include "graphic.h"
 
 static int PrintError(const char *str);
 
@@ -58,6 +59,7 @@ int main(int argc, char *argv[]) {
 		SystemRun(data);
 		/*サーバーにリクエストを送る*/
 		cond = ControlRequests();
+		Disp();
 		SDL_Delay(10);
 	}
 
