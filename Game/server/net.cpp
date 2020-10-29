@@ -125,7 +125,7 @@ void SetupServer(int num_cl, u_short port)
         // 名前をシステムモジュールに渡す
         GetClientName(i, name[i]);
         // 接続していることを示す
-        Clients[i].connect = 0;
+        Clients[i].connect = 1;
         // 使用するソケット
         Clients[i].sock = sock;
         // ソケットの設定
@@ -271,7 +271,7 @@ void RunCommand(int id, char com)
     const PlayerData *pData = GetPlayerData();
     // 送るデータ
     FloatPosition posData;
-    VelocityFlag flag;
+    VelocityFlag flag = {false, false, false};
     // コマンドに応じた処理
     switch (com)
     {
@@ -289,13 +289,13 @@ void RunCommand(int id, char com)
 
             // フラッグ設定
             if(pData->velocity.x != 0){
-                flag.x;
+                flag.x = true;
             }
             if(pData->velocity.y != 0){
-                flag.y;
+                flag.y = true;
             }
             if(pData->velocity.z != 0){
-                flag.z;
+                flag.z = true;
             }
             // 座標とフラッグを送信
             SendData(id, &posData, sizeof(FloatPosition));
