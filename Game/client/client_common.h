@@ -48,7 +48,5 @@ extern int InCommand(char com);
 extern ClientMap Map;
 extern void GetFlag(VelocityFlag* flag, int numClients);
 
-/*window.cpp */
-extern void InitWindowSys();
-extern void RendererWindow();
-extern void TerminateWindowSys();
+/* move */
+extern void UpdateFlag(VelocityFlag* flags, int numClients);
