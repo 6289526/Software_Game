@@ -102,7 +102,7 @@ typedef struct
 // 設置するオブジェクトのデータ
 typedef struct
 {
-	int object;      /*置く物のID*/
+	BlockType object; // 置く物のID
 	IntPosition pos; /*場所*/
 } PlaceData;
 
