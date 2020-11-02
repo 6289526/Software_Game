@@ -6,9 +6,30 @@
 #include "client_common.h"
 #include "graphic.h"
 
+
+// ループするかを判定
+int cond = 1;
+
 static int PrintError(const char *str);
 
 
+int Select(void *args){
+    SDL_mutex *mtx = (SDL_mutex *)args;
+
+    while (1)
+    {
+        SDL_LockMutex(mtx);
+        
+        
+		cond = ControlRequests();
+
+        SDL_UnlockMutex(mtx);
+        SDL_Delay(10);
+    }
+
+    return 0;
+
+}
 
 // client用のmain関数
 int main(int argc, char *argv[]) {
@@ -24,6 +45,11 @@ int main(int argc, char *argv[]) {
 	u_short port = DEFAULT_PORT;
 	// 参加したいサーバーの名前
 	char server_name[MAX_LEN_NAME];
+
+	//multithread
+    SDL_Thread *SelectThread;
+    SDL_mutex *mtx1 = SDL_CreateMutex();
+    SelectThread = SDL_CreateThread(Select, "getCommand", mtx1);
 
 	/*初期設定*/
 	sprintf(server_name, "localhost");
@@ -50,14 +76,12 @@ int main(int argc, char *argv[]) {
 	/**サーバー関連 END**/
 
 	InitSystem(&initData);
-	// ループするかを判定
-	int cond = 1;
+
 	while (cond && !input->GetInputType().End) {
 		// 入力受け付け
 		input->UpdateInput(NULL);
 		SystemRun(input->GetInputType());
 		/*サーバーにリクエストを送る*/
-		cond = ControlRequests();
 		Disp();
 		SDL_Delay(10);
 	}
