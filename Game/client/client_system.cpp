@@ -1,45 +1,38 @@
 #include "client_common.h"
 #include "graphic.h"
 
-// クライアントのID
-static int MyId;
+static int MyId; // クライアントのID
 // プレイヤーのデータ
 PlayerData PData[PLAYER_NUM] = {
 	{"a", {20, 20, 20, 7, 20, 7}, {0, 0, 0},0, 1, 0},
 	{"a", {20, 20, 20, 10, 10, 10}, 1, 0}
 };
+ClientMap Map; //マップ
 
-//マップ
-ClientMap Map;
+// int GrapicThread(void *data); // This Function isn't used now.
 
+// ===== * ===== プロパティ ===== * ===== //
 // クライアント配列の先頭ポインタを返す
-const PlayerData* GetPlayerData(){
-	return PData;
-}
+const PlayerData* GetPlayerData(){ return PData; }
 
-int GetMyID(){
-	return MyId;
-}
-
-int GrapicThread(void *data);
+// このクライアントのIDを返す
+int GetMyID(){ return MyId; }
 
 /*クライアントのID取得
 * 引数
 *   id: クライアントのID
 */
-void SetMyID(int id)
-{
-	MyId = id;
-}
+void SetMyID(int id){ MyId = id; }
+// ===== * ===== プロパティ ===== * ===== //
 
 /*クライアントの位置の取得
 * 引数
 *   moveData[MAX_NUMCLIENTS]: 移動位置
 *   numCLients : 接続しているクライアントの数
 */
-int count = 0;
 void SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients)
 {
+	int count = 0;
 	for (int i = 0; i < numClients; i++)
 	{
 		// 座標の代入
@@ -122,7 +115,7 @@ void SystemRun(InputType data)
 }
 
 bool InitSystem(InitData *data){
-	SDL_Thread *thread;
+	// SDL_Thread *thread;
 
 	InitGraphic(); // グラフィックの初期化
 	/*
@@ -140,7 +133,7 @@ bool InitSystem(InitData *data){
 }
 
 // グラフィック用の
-int GrapicThread(void *data){
+/*int GrapicThread(void *data){
 	Disp();
 	return 0;
-}
+}*/
