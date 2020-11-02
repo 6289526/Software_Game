@@ -201,7 +201,7 @@ int ExeCommand()
     char com;
     // ソケットから来るデータ
     FloatPosition data[MAX_NUMCLIENTS];
-    VelocityFlag flag[MAX_NUMCLIENTS];
+    VelocityFlag flags[MAX_NUMCLIENTS];
     // 通信を継続するかを判定する変数
     int result = 1;
     // dataの初期化
@@ -218,11 +218,11 @@ int ExeCommand()
         for (int i = 0; i < NumClients; i++)
         {
             ReceiveData(&data[i], sizeof(FloatPosition));
-            ReceiveData(&flag[i], sizeof(VelocityFlag));
+            ReceiveData(&flags[i], sizeof(VelocityFlag));
         }
         // 受け取った座標とフラッグをシステムモジュールにわたす
         SetPlace(data, NumClients);
-        SetFlag(flag, NumClients);
+        UpdateFlag(flags, NumClients);
         
         // 通信継続
         result = 1;

@@ -48,14 +48,25 @@ void SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients)
 		fprintf(stderr, "client%d　は %f %f %f にいます。\n", i, PData[i].pos.x, PData[i].pos.y, PData[i].pos.z);
 	}
 }
-/*クライアントの速度フラグの取得
+
+/*各プレイヤーのvelocityを変更する
 * 引数
-*   
+*   flags: 動いているかどうかのフラグ
+*	numClients: クライアントの数
 */
-void SetFlag(VelocityFlag* flag, int numClients){
+void UpdateFlag(VelocityFlag* flags, int numClients){
+	for (int i = 0; i < numClients; i++)
+	{
+		if (flags[i].x == false)
+			PData[i].velocity.x = 0;
 
+		if (flags[i].y == false)
+			PData[i].velocity.y = 0;
+
+		if (flags[i].z == false)
+			PData[i].velocity.z = 0;
+	}
 }
-
 
 /*移動処理とか設置処理
 * 引数
