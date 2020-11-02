@@ -98,14 +98,6 @@ typedef struct
 	bool goal;               // ゴールしているか
 } PlayerData;
 
-
-// 設置するオブジェクトのデータ
-typedef struct
-{
-	BlockType object; // 置く物のID
-	IntPosition pos; /*場所*/
-} PlaceData;
-
 typedef enum
 {
 	NonBlock = 0, // ブロックなし
@@ -113,5 +105,12 @@ typedef enum
 	GoalBlock = -1, // ゴールブロック
 
 } BlockType;
+
+// 設置するオブジェクトのデータ
+typedef struct
+{
+	BlockType object; // 置く物のID
+	IntPosition pos; /*場所*/
+} PlaceData;
 
 /*----------構造体宣言 終了-----------*/
