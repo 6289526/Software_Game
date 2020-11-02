@@ -25,6 +25,24 @@ int GetMyID(){ return MyId; }
 void SetMyID(int id){ MyId = id; }
 // ===== * ===== プロパティ ===== * ===== //
 
+bool InitSystem(InitData *data){
+	// SDL_Thread *thread;
+
+	InitGraphic(); // グラフィックの初期化
+	/*
+	// グラフィックのスレッド化
+	thread = SDL_CreateThread(GrapicThread, "GrapicThread", NULL);
+	if (thread == NULL)
+	{
+		fprintf(stderr, "Failed to create a graphics red.\n");
+		return false;
+	}
+	SDL_DetachThread(thread);
+	*/
+
+	*(data->input) = new KeybordInput();
+}
+
 /*クライアントの位置の取得
 * 引数
 *   moveData[MAX_NUMCLIENTS]: 移動位置
@@ -52,23 +70,6 @@ PlaceData GetPlaceData(){
 	data.object = NomalBlock;
 	data.pos = { PData[GetMyID()].pos.x, PData[GetMyID()].pos.y, PData[GetMyID()].pos.z };
 	return data;
-}
-
-/*各プレイヤーのvelocityを変更する
-* 引数
-*/
-void UpdateFlag(VelocityFlag* flags, int numClients){
-	for (int i = 0; i < numClients; i++)
-	{
-		if (flags[i].x == false)
-			PData[i].velocity.x = 0;
-
-		if (flags[i].y == false)
-			PData[i].velocity.y = 0;
-
-		if (flags[i].z == false)
-			PData[i].velocity.z = 0;
-	}
 }
 
 /*移動処理とか設置処理
@@ -122,22 +123,26 @@ void SystemRun(InputType data)
 	}
 }
 
-bool InitSystem(InitData *data){
-	// SDL_Thread *thread;
-
-	InitGraphic(); // グラフィックの初期化
-	/*
-	// グラフィックのスレッド化
-	thread = SDL_CreateThread(GrapicThread, "GrapicThread", NULL);
-	if (thread == NULL)
+/*各プレイヤーのvelocityを変更する
+* 引数
+*/
+void UpdateFlag(VelocityFlag* flags, int numClients){
+	for (int i = 0; i < numClients; i++)
 	{
-		fprintf(stderr, "Failed to create a graphics red.\n");
-		return false;
-	}
-	SDL_DetachThread(thread);
-	*/
+		if (flags[i].x == false)
+			PData[i].velocity.x = 0;
 
-	*(data->input) = new KeybordInput();
+		if (flags[i].y == false)
+			PData[i].velocity.y = 0;
+
+		if (flags[i].z == false)
+			PData[i].velocity.z = 0;
+	}
+}
+
+// Updated place data from server
+void UpdatePlaceData(PlaceData data){
+
 }
 
 // グラフィック用の

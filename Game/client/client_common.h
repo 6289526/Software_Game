@@ -51,9 +51,10 @@ extern int GetMyID();
 extern void SetMyID(int);
 extern void SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients);
 extern void GetFlag(VelocityFlag* flag, int numClients);
-
+extern PlaceData GetPlaceData();
 extern void SystemRun(InputType data);
 extern void UpdateFlag(VelocityFlag* flags, int numClients);
+extern void UpdatePlaceData(PlaceData data);
 
 /* move */
 
