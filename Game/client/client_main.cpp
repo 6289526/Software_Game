@@ -58,9 +58,8 @@ int main(int argc, char *argv[]) {
 		SystemRun(input->GetInputType());
 		/*サーバーにリクエストを送る*/
 		cond = ControlRequests();
-		//Disp();
+		Disp();
 		SDL_Delay(10);
-		system("clear");
 	}
 
 	// ウィンドウシステムの終了
