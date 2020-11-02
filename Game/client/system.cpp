@@ -71,33 +71,35 @@ void SystemRun(InputType data)
 		if (data.Forward)
 		{
 			data.Forward = false;
-			PData[MyId].pos.z += 10;
+			PData[MyId].velocity.z += 1;
 		}
 		// 左右
 		if (data.Left)
 		{
 			data.Left = false;
-			PData[MyId].pos.x -= 10;
+			PData[MyId].velocity.x -= 1;
 		}
 		else if (data.Right)
 		{
 			data.Right = false;
-			PData[MyId].pos.x += 10;
+			PData[MyId].velocity.x += 1;
 		}
 		// ジャンプ
 		if (data.Jump)
 		{
 			data.Jump = false;
-			PData[MyId].pos.y += 10;
+			PData[MyId].velocity.y += 5;
 		}
 
-		// PData[MyId].posはFloatCubeなのでFloatPositionにする
-		FloatPosition pos;
-		pos.x = PData[MyId].pos.x;
-		pos.y = PData[MyId].pos.y;
-		pos.z = PData[MyId].pos.z;
 		// 移動コマンド実行
 		InCommand(MOVE_COMMAND);
+	}
+
+	// 設置処理
+	if (data.Put)
+	{
+		data.Put = false;
+		InCommand(PUT_COMMAND);
 	}
 }
 
