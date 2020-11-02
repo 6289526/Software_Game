@@ -44,9 +44,16 @@ extern int ControlRequests();
 extern int InCommand(char com);
 
 /* system.cpp */
-
+const PlayerData* GetPlayerData();
+extern bool InitSystem(InitData *data);
 extern ClientMap Map;
+extern int GetMyID();
+extern void SetMyID(int);
+extern void SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients);
 extern void GetFlag(VelocityFlag* flag, int numClients);
 
-/* move */
+extern void SystemRun(InputType data);
 extern void UpdateFlag(VelocityFlag* flags, int numClients);
+
+/* move */
+
