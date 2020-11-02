@@ -8,6 +8,8 @@
 
 static int PrintError(const char *str);
 
+
+
 // client用のmain関数
 int main(int argc, char *argv[]) {
 	/**SDL2関連 BEGIN******/
@@ -48,7 +50,6 @@ int main(int argc, char *argv[]) {
 	/**サーバー関連 END**/
 
 	InitSystem(&initData);
-
 	// ループするかを判定
 	int cond = 1;
 	while (cond && !input->GetInputType().End) {
@@ -57,8 +58,9 @@ int main(int argc, char *argv[]) {
 		SystemRun(input->GetInputType());
 		/*サーバーにリクエストを送る*/
 		cond = ControlRequests();
-		Disp();
+		//Disp();
 		SDL_Delay(10);
+		system("clear");
 	}
 
 	// ウィンドウシステムの終了
