@@ -51,6 +51,16 @@ void SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients)
 	}
 }
 
+/*現在の設置データを返す
+*	返り値: MyIDのキャラの設置データ
+*/
+PlaceData GetPlaceData(){
+	PlaceData data;
+	data.object = NomalBlock;
+	data.pos = { PData[GetMyID()].pos.x, PData[GetMyID()].pos.y, PData[GetMyID()].pos.z };
+	return data;
+}
+
 /*各プレイヤーのvelocityを変更する
 * 引数
 */
