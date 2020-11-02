@@ -5,7 +5,7 @@
 static int MyId;
 // プレイヤーのデータ
 PlayerData PData[PLAYER_NUM] = {
-	{"a", {20, 20, 20, 7, 20, 7}, 1, 0},
+	{"a", {20, 20, 20, 7, 20, 7}, {0, 0, 0},0, 1, 0},
 	{"a", {20, 20, 20, 10, 10, 10}, 1, 0}
 };
 
@@ -37,6 +37,7 @@ void SetMyID(int id)
 *   moveData[MAX_NUMCLIENTS]: 移動位置
 *   numCLients : 接続しているクライアントの数
 */
+int count = 0;
 void SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients)
 {
 	for (int i = 0; i < numClients; i++)
@@ -45,17 +46,27 @@ void SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients)
 		PData[i].pos.x = moveData[i].x;
 		PData[i].pos.y = moveData[i].y;
 		PData[i].pos.z = moveData[i].z;
-		fprintf(stderr, "client%d　は %f %f %f にいます。\n", i, PData[i].pos.x, PData[i].pos.y, PData[i].pos.z);
+		if(count % 10 == 0) fprintf(stderr, "%d client%d　は %f %f %f にいます。\n",count, i, PData[i].pos.x, PData[i].pos.y, PData[i].pos.z);
+		count++;
 	}
 }
-/*クライアントの速度フラグの取得
+
+/*各プレイヤーのvelocityを変更する
 * 引数
-*   
 */
-void SetFlag(VelocityFlag* flag, int numClients){
+void UpdateFlag(VelocityFlag* flags, int numClients){
+	for (int i = 0; i < numClients; i++)
+	{
+		if (flags[i].x == false)
+			PData[i].velocity.x = 0;
 
+		if (flags[i].y == false)
+			PData[i].velocity.y = 0;
+
+		if (flags[i].z == false)
+			PData[i].velocity.z = 0;
+	}
 }
-
 
 /*移動処理とか設置処理
 * 引数
@@ -64,6 +75,11 @@ void SetFlag(VelocityFlag* flag, int numClients){
 */
 void SystemRun(InputType data)
 {
+	PData[MyId].velocity.x = 0;
+
+	PData[MyId].velocity.y = 0;
+
+	PData[MyId].velocity.z = 0;
 	// 移動処理
 	if (data.Forward || data.Left || data.Right || data.Left || data.Jump)
 	{
@@ -71,24 +87,28 @@ void SystemRun(InputType data)
 		if (data.Forward)
 		{
 			data.Forward = false;
-			PData[MyId].pos.z += 10;
+			//PData[MyId].pos.z += 10;
+			PData[MyId].velocity.z = 1;
 		}
 		// 左右
 		if (data.Left)
 		{
 			data.Left = false;
-			PData[MyId].pos.x -= 10;
+			//PData[MyId].pos.x -= 10;
+			PData[MyId].velocity.x = -1;
 		}
 		else if (data.Right)
 		{
 			data.Right = false;
-			PData[MyId].pos.x += 10;
+			//PData[MyId].pos.x += 10;
+			PData[MyId].velocity.x = 1;
 		}
 		// ジャンプ
 		if (data.Jump)
 		{
 			data.Jump = false;
-			PData[MyId].pos.y += 10;
+			//PData[MyId].pos.y += 10;
+			PData[MyId].velocity.y = 1;
 		}
 
 		// PData[MyId].posはFloatCubeなのでFloatPositionにする

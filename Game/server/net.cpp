@@ -18,6 +18,8 @@ static fd_set Mask;
 // サーバーが強制終了状態か
 static int TerminateFlag;
 
+static int ClientCount;
+
 /*関数*/
 static int HandleError(char *);
 static void SendData(int cid, void *data, int size);
@@ -145,7 +147,7 @@ void SetupServer(int num_cl, u_short port)
     close(rsock);
 
     /** この段階で設定した人数分のクライアントが接続している **/
-
+    ClientCount = NumClient;
     /*接続したクライアントに情報を送る*/
     for (int i = 0; i < NumClient; i++)
     {
@@ -227,7 +229,7 @@ int ControlRequests()
             ReceiveData(i, &com, sizeof(char));
             switch (com)
             {
-            case MOVE_COMMAND: 
+            case MOVE_COMMAND:
                 ReceiveData(i, &data, sizeof(FloatPosition));
                 ReceiveData(i, &direction, sizeof(float));
 
@@ -242,8 +244,34 @@ int ControlRequests()
             case QUIT_COMMAND: //通信の終了を要求された場合
                 fprintf(stderr, "client[%d]: quit\n", i);
 
-                // ゲームの継続
-                result = 0;
+                // コネクションを解除
+                Clients[i].connect = 0;
+                // 人数減らす
+                ClientCount--;
+
+                // ファイルディスクリプタセットからすべてのファイルディスクリプタを削除。
+                FD_ZERO(&Mask);
+                // 第一引数のファイルディスクリプタをセットに追加。
+                FD_SET(0, &Mask);
+                for (int j = 0; j < NumClient; j++)
+                {
+                    if (Clients[j].connect == 1)
+                    {
+                        // 第一引数のファイルディスクリプタをセットに追加。
+                        FD_SET(Clients[j].sock, &Mask);
+                    }
+                }
+
+                if (ClientCount == 0)
+                {
+                    // ゲームの終了
+                    result = 0;
+                }
+                else
+                {
+                    // ゲームの継続
+                    result = 1;
+                }
                 break;
             default:
                 // コマンドは上記の2種類しか無いので、それ以外の場合はエラーが生じている　
@@ -255,9 +283,6 @@ int ControlRequests()
 
     //
     return result;
-
-
-
 }
 
 /*コマンドの実行
@@ -288,13 +313,16 @@ void RunCommand(int id, char com)
             posData.z = pData[i].pos.z;
 
             // フラッグ設定
-            if(pData->velocity.x != 0){
+            if (pData->velocity.x != 0)
+            {
                 flag.x = true;
             }
-            if(pData->velocity.y != 0){
+            if (pData->velocity.y != 0)
+            {
                 flag.y = true;
             }
-            if(pData->velocity.z != 0){
+            if (pData->velocity.z != 0)
+            {
                 flag.z = true;
             }
             // 座標とフラッグを送信
@@ -337,25 +365,29 @@ void SendData(int cid, void *data, int size)
         // 終了
         exit(1);
     }
-
     if (cid == BROADCAST)
     { //全員に送るとき
         int i;
         //すべてのクライアントのソケットに情報を送る
         for (i = 0; i < NumClient; i++)
-        {
-            if (write(Clients[i].sock, data, size) < 0)
-            {
-                HandleError("write()");
+        {   
+            if(Clients[i].connect){
+                if (write(Clients[i].sock, data, size) < 0)
+                {
+                    HandleError("write()");
+                }
             }
         }
     }
     else
-    { //特定のクライアントに送るとき
-        //特定のソケットに情報を送る
-        if (write(Clients[cid].sock, data, size) < 0)
-        {
-            HandleError("write()");
+    { 
+        if(Clients[cid].connect){
+            //特定のクライアントに送るとき
+            //特定のソケットに情報を送る
+            if (write(Clients[cid].sock, data, size) < 0)
+            {
+                HandleError("write()");
+            }
         }
     }
 }

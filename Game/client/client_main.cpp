@@ -12,6 +12,7 @@ int cond = 1;
 
 static int PrintError(const char *str);
 
+
 int Select(void *args){
     SDL_mutex *mtx = (SDL_mutex *)args;
 

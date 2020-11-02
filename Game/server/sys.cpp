@@ -10,13 +10,13 @@
 // プレイヤー情報
 PlayerData PData[PLAYER_NUM] = {
     {"a", {20, 20, 20, 7, 20, 7}, {0, 0, 0}, 1, 0, false},
-    {"a", {20, 20, 20, 10, 10, 10}, {0, 0, 0}, 1, 0, false}
-};
+    {"a", {20, 20, 20, 10, 10, 10}, {0, 0, 0}, 1, 0, false}};
 
 ServerMap Map;
 
 // クライアント配列の先頭ポインタを返す
-const PlayerData* GetPlayerData(){
+const PlayerData *GetPlayerData()
+{
     return PData;
 }
 
@@ -30,13 +30,14 @@ BlockType Collision(int chara_ID, int y, int accuracy) // 当たり判定 ブロ
     const int depth = PData[chara_ID].pos.d / accuracy; // 当たり判定を知らべる座標間距離 z座標
 
     // 当たり判定を調べる座標をすべて格納
-    for (int i = 0; i <= accuracy; ++i) {
+    for (int i = 0; i <= accuracy; ++i)
+    {
         point_X[i] = PData[chara_ID].pos.x + PData[chara_ID].velocity.x + wide * i;
         point_Z[i] = PData[chara_ID].pos.z + PData[chara_ID].velocity.z + depth * i;
     }
 
     // マップデータ入手
-    const int (*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
+    const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
 
     // 返り値用変数を宣言，初期化
     // ゴールブロックが１個でも接触すればゴールブロックが返る
@@ -48,46 +49,56 @@ BlockType Collision(int chara_ID, int y, int accuracy) // 当たり判定 ブロ
     int Block_Y = (PData[chara_ID].pos.y + PData[chara_ID].velocity.y + y) / MAP_MAGNIFICATION;
     int Block_Z = 0;
 
-    if (Block_Y < 0) {
+    if (Block_Y < 0)
+    {
         throw "マップ外 : y座標 : 負\n";
     }
-    else if (MAP_SIZE_H <= Block_Y) {
+    else if (MAP_SIZE_H <= Block_Y)
+    {
         throw "マップ外 : y座標 : 正\n";
     }
 
-    for (int i = 0; i <= accuracy; ++i) {
+    for (int i = 0; i <= accuracy; ++i)
+    {
         Block_X = point_X[i] / MAP_MAGNIFICATION;
 
-        if (Block_X < 0) {
+        if (Block_X < 0)
+        {
             throw "マップ外 : x座標 :負\n";
         }
-        else if (MAP_SIZE_W <= Block_X) {
+        else if (MAP_SIZE_W <= Block_X)
+        {
             throw "マップ外 : x座標 : 正\n";
         }
 
-        for(int j = 0; j <= accuracy; ++j) {
+        for (int j = 0; j <= accuracy; ++j)
+        {
             Block_Z = point_Z[j] / MAP_MAGNIFICATION;
 
-            if (Block_Z < 0) {
+            if (Block_Z < 0)
+            {
                 throw "マップ外 : z座標 : 負\n";
             }
-            else if (MAP_SIZE_D <= Block_Z) {
+            else if (MAP_SIZE_D <= Block_Z)
+            {
                 throw "マップ外 : z座標 : 正\n";
             }
 
-            switch (terrainData[Block_X][Block_Y][Block_Z]) {
-                case GoalBlock :
-                    result = GoalBlock;
-                    break;
-                case NomalBlock :
-                    if (result == NonBlock) {
-                        result = NomalBlock;
-                    }
-                    break;
-                case NonBlock :
-                    break;
-                default :
-                    throw "マップデータ : エラー\n";
+            switch (terrainData[Block_X][Block_Y][Block_Z])
+            {
+            case GoalBlock:
+                result = GoalBlock;
+                break;
+            case NomalBlock:
+                if (result == NonBlock)
+                {
+                    result = NomalBlock;
+                }
+                break;
+            case NonBlock:
+                break;
+            default:
+                throw "マップデータ : エラー\n";
             }
         }
     }
@@ -103,12 +114,12 @@ void GetClientName(int id, char clientName[MAX_LEN_NAME])
     snprintf(PData[id].name, MAX_LEN_NAME, "%s", clientName);
 }
 
-
 void Goal(int chara_ID)
 {
     static int rank = 1;
 
-    if (PData[chara_ID].goal == false) {
+    if (PData[chara_ID].goal == false)
+    {
         PData[chara_ID].goal = true;
         PData[chara_ID].rank = rank++;
         RunCommand(chara_ID, GOAL_COMMAND);
@@ -117,8 +128,10 @@ void Goal(int chara_ID)
 
 void MovePosition(int chara_ID)
 {
+    
     // 横の当たり判定
     BlockType block = Collision(chara_ID, 1);
+    
     // ブロックがないなら移動
     if (block == NonBlock)
     {
@@ -126,34 +139,31 @@ void MovePosition(int chara_ID)
         PData[chara_ID].pos.x += PData[chara_ID].velocity.x;
         PData[chara_ID].pos.z += PData[chara_ID].velocity.z;
     }
-    // ブロックがあるなら移動せず速度を0にする
-    else {
-        // ゴールブロックならゴール
-        if (block == GoalBlock) {
-            Goal(chara_ID);
-        }
-
-        PData[chara_ID].velocity.x = 0;
-        PData[chara_ID].velocity.z = 0;
+    // ゴールブロックならゴール
+    if (block == GoalBlock)
+    {
+        Goal(chara_ID);
     }
 
     // 下の当たり判定
-    block = Collision(chara_ID, 0, 2);
+    block = Collision(chara_ID, 0, 1);
+
     // ブロックがないなら移動
     if (block == NonBlock)
     {
         // 移動後の座標に書き換え
         PData[chara_ID].pos.y += PData[chara_ID].velocity.y;
     }
-    // ブロックがあるなら移動せず速度を0にする
-    else {
-        // ゴールブロックならゴール
-        if (block == GoalBlock) {
-            Goal(chara_ID);
-        }
-
-        PData[chara_ID].velocity.y = 0;
+    // ゴールブロックならゴール
+    if (block == GoalBlock)
+    {
+        Goal(chara_ID);
     }
+
+    // 速度を０に戻す
+    PData[chara_ID].velocity.x = 0;
+    PData[chara_ID].velocity.y = 0;
+    PData[chara_ID].velocity.z = 0;
 }
 
 int AllGoal()
@@ -173,13 +183,12 @@ int AllGoal()
 // クライアントの速度ベクトルをセット
 // chara_ID:クライアントのID
 // pos:クライアントの座標
-void SetVec(int chara_ID, Vector3& vec)
+void SetVec(int chara_ID, Vector3 &vec)
 {
     PData[chara_ID].velocity.x = vec.x;
     PData[chara_ID].velocity.y = vec.y;
     PData[chara_ID].velocity.z = vec.z;
 }
-
 
 /*全員に座標を送る
 *
@@ -198,6 +207,7 @@ void SendAllPos(int client_num)
 }
 
 // システムにクライアントの角度を渡す
-void SetDirection(int chara_ID, float direction){
+void SetDirection(int chara_ID, float direction)
+{
     PData[chara_ID].direction = direction;
 }
