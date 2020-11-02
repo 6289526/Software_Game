@@ -131,7 +131,7 @@ int ControlRequests()
     // タイマー
     struct timeval timeout;
     timeout.tv_sec = 0;   //秒数
-    timeout.tv_usec = 30; //マイクロ秒
+    timeout.tv_usec = 10; //マイクロ秒
 
     /*
    *ファイルディスクリプタの集合から読み込み可能なファイルディスクリプタを
@@ -218,11 +218,14 @@ int ExeCommand()
         for (int i = 0; i < NumClients; i++)
         {
             ReceiveData(&data[i], sizeof(FloatPosition));
+            fprintf(stderr,"get %f %f %f\n", data[i].x, data[i].y, data[i].z);
             ReceiveData(&flag[i], sizeof(VelocityFlag));
         }
         // 受け取った座標とフラッグをシステムモジュールにわたす
         SetPlace(data, NumClients);
         SetFlag(flag, NumClients);
+
+        
         
         // 通信継続
         result = 1;

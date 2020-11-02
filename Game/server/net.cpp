@@ -198,8 +198,8 @@ int ControlRequests()
 
     // タイマー
     struct timeval timeout;
-    timeout.tv_sec = 1;  //秒数
-    timeout.tv_usec = 0; //マイクロ秒
+    timeout.tv_sec = 0;  //秒数
+    timeout.tv_usec = 100; //マイクロ秒
 
     memset(&data, 0, sizeof(FloatPosition));
 

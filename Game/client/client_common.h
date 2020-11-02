@@ -20,6 +20,12 @@
 #include "client_KeybordInput.h"
 #include "client_map.hpp"
 
+#include <SDL2/SDL2_gfxPrimitives.h>
+#include <SDL2/SDL_opengl.h>
+#include <GL/gl.h>
+#include <GL/glut.h>
+#include <assert.h>
+#include <math.h>
 /* ウインドウサイズ */
 enum {
     Wd_Width  = 640,
@@ -55,6 +61,6 @@ extern ClientMap Map;
 extern void GetFlag(VelocityFlag* flag, int numClients);
 
 /*window.cpp */
-extern void InitWindowSys();
+extern void InitWindowSys(int *argc, char* argsv[]);
 extern void RendererWindow();
 extern void TerminateWindowSys();

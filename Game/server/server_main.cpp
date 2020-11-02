@@ -53,6 +53,22 @@ int SendPosFunc(void *args)
     return 0;
 }
 
+
+int result = 1;
+int select(void *args){
+    SDL_mutex *mtx = (SDL_mutex *)args;
+    while (result)
+    {
+        SDL_LockMutex(mtx);
+
+        result = ControlRequests(); // クライアントからのリクエストに対応
+        SDL_Delay(10);
+        SDL_UnlockMutex(mtx);
+    }
+
+    return 0;
+}
+
 // server用のmain関数
 int main(int argc, char *argv[])
 {
@@ -77,20 +93,25 @@ int main(int argc, char *argv[])
     // 座標を送るスレッド
     SDL_Thread *sendPosThread;
     SDL_Thread *getCommand;
+    SDL_Thread *selectThread;
     // 相互排除
     SDL_mutex *mtx1 = SDL_CreateMutex();
     SDL_mutex *mtx2 = SDL_CreateMutex();
     // スレッド作成
     sendPosThread = SDL_CreateThread(SendPosFunc, "sendPosThread", mtx1);
     getCommand = SDL_CreateThread(GetCommand, "getCommand", mtx2);
+
+    // 相互排除
+    SDL_mutex *mtx3 = SDL_CreateMutex();
+    // スレッド作成
+    selectThread = SDL_CreateThread(select, "sendPosThread", mtx3);
     /**SDL END**/
 
     int end = 0;
-    int result = 1;
 
     while (!end && result)
     {
-        result = ControlRequests(); // クライアントからのリクエストに対応
+        
         for (int i = 0; i < PlayerNum; ++i) {
             try {
                 MovePosition(i);

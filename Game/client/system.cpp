@@ -115,7 +115,7 @@ void SystemRun(InputType data)
 bool InitSystem(InitData *data){
 	SDL_Thread *thread;
 
-	InitGraphic(); // グラフィックの初期化
+	//InitGraphic(); // グラフィックの初期化
 	/*
 	// グラフィックのスレッド化
 	thread = SDL_CreateThread(GrapicThread, "GrapicThread", NULL);

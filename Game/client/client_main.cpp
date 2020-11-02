@@ -5,8 +5,24 @@
 
 #include "client_common.h"
 #include "graphic.h"
-
+#include <time.h>
 static int PrintError(const char *str);
+
+
+int result = 1;
+int select(void *args){
+    SDL_mutex *mtx = (SDL_mutex *)args;
+    while (result)
+    {
+        SDL_LockMutex(mtx);
+
+        result = ControlRequests(); // クライアントからのリクエストに対応
+        SDL_Delay(10);
+        SDL_UnlockMutex(mtx);
+    }
+
+    return 0;
+}
 
 
 
@@ -14,6 +30,8 @@ static int PrintError(const char *str);
 int main(int argc, char *argv[]) {
 	/**SDL2関連 BEGIN******/
 	SDL_Init(SDL_INIT_EVERYTHING);
+
+	
 	/**SDL2関連 END********/
 
 	InputModuleBase *input;
@@ -48,23 +66,27 @@ int main(int argc, char *argv[]) {
 	// 指定されたサーバー名、ポート番号に参加するクライアントとして設定する。
 	SetupClient(server_name, port);
 	/**サーバー関連 END**/
-
+	SDL_Thread *selectThread;
+    // 相互排除
+    SDL_mutex *mtx1 = SDL_CreateMutex();
+    // スレッド作成
+    selectThread = SDL_CreateThread(select, "sendPosThread", mtx1);
+	InitWindowSys(&argc, argv);
 	InitSystem(&initData);
-	// ループするかを判定
-	int cond = 1;
-	while (cond && !input->GetInputType().End) {
+	
+	while (result && !input->GetInputType().End) {
+		RendererWindow();
 		// 入力受け付け
 		input->UpdateInput(NULL);
 		SystemRun(input->GetInputType());
-		/*サーバーにリクエストを送る*/
-		cond = ControlRequests();
+		
 		//Disp();
 		SDL_Delay(10);
-		system("clear");
+		// system("clear");
 	}
 
 	// ウィンドウシステムの終了
-	//TerminateWindowSys();
+	TerminateWindowSys();
 
 	// クライアントを終了する。
 	TerminateClient();
