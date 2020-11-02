@@ -167,7 +167,7 @@ int InCommand(char com)
     /*変数*/
     // システムモジュールからデータをもらう
     const PlayerData* pData = GetPlayerData();
-    const PlaceData* placeData;
+    PlaceData placeData;
     // ソケットに送るデータ達
     FloatPosition posData = {pData[MyId].velocity.x, pData[MyId].velocity.y, pData[MyId].velocity.z};
     float direction = pData[MyId].direction;
@@ -184,7 +184,7 @@ int InCommand(char com)
         break;
     case PUT_COMMAND:
         SendData(&com, sizeof(char));
-        SendData(placeData, sizeof(PlaceData));
+        SendData(&placeData, sizeof(PlaceData));
     default:
         // 存在しないコマンドの場合はメッセージを表示して、再入力させる
         fprintf(stderr, "%c is not a valid command.\n", com);
@@ -235,7 +235,7 @@ int ExeCommand()
         break;
     case PUT_COMMAND:
         ReceiveData(&placeData, sizeof(PlaceData));
-        fprintf(stderr, "x:%f y:%f z:%f　に　ブロックが現れた！\n", placeData.x, placeData.y, placeData.z);
+        fprintf(stderr, "x:%d y:%d z:%d にブロックが現れた！\n", placeData.pos.x, placeData.pos.y, placeData.pos.z);
     case QUIT_COMMAND: // 通信終了
         // 通信を終了したことを表示
         fprintf(stderr, "other client sent quit command.\n");

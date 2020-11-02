@@ -247,7 +247,7 @@ int ControlRequests()
                     break;
                 case PUT_COMMAND:
                     ReceiveData(i, &placeData, sizeof(PlaceData));
-                    fprintf(stderr, "client[%d]: put = x:%f y:%f z:%f\n", i, placeData.x, placeData.y, placeData.z);
+                    fprintf(stderr, "client[%d]: put = x:%d y:%d z:%d\n", i, placeData.pos.x, placeData.pos.y, placeData.pos.z);
 
                 case QUIT_COMMAND: //通信の終了を要求された場合
                     fprintf(stderr, "client[%d]: quit\n", i);
@@ -307,7 +307,7 @@ void RunCommand(int id, char com)
 {
     /* 変数 */
     const PlayerData *pData = GetPlayerData();
-    const PlaceData* placeData;
+    PlaceData placeData;
     // 送るデータ
     FloatPosition posData;
     VelocityFlag flag = {false, false, false};
@@ -347,7 +347,7 @@ void RunCommand(int id, char com)
     case PUT_COMMAND:
         //コマンド送信
         SendData(id, &com, sizeof(char));
-        SendData(id, placeData, sizeof(PlaceData));
+        SendData(id, &placeData, sizeof(PlaceData));
     case TERMINATE_COMMAND:
         fprintf(stderr, "Terminate!");
         TerminateFlag = 1;
