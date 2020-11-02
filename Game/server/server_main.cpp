@@ -57,14 +57,20 @@ int SendPosFunc(void *args)
 int main(int argc, char *argv[])
 {
 
-    if (3 < argc)
+    if (argc < 3)
     {
-        printf("コマンドライン引数が多いんじゃああああ\n");
+        PlayerNum = 1;
+        PortNum = 51000;
+    }
+    else if (argc == 3) {
+        PlayerNum = atoi(argv[1]);
+        PortNum = atoi(argv[2]);
+    }
+    else {
+        fprintf(stderr, "引数が多いんじゃあああ\n");
         return 0;
     }
 
-    PlayerNum = atoi(argv[1]);
-    PortNum = atoi(argv[2]);
     //チャットの参加人数の表示
     fprintf(stderr, "Number of clients = %d\n", PlayerNum);
     //サーバーのポート番号を表示

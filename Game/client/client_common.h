@@ -48,7 +48,7 @@ extern bool InitSystem(InitData *data);
 extern void SetMyID(int);
 extern void SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients);
 extern void SystemRun(InputType data);
-extern void SetFlag(VelocityFlag* flag, int numClients);
+extern void UpdateFlag(VelocityFlag* flags, int numClients);
 extern int GetMyID();
 
 extern ClientMap Map;
