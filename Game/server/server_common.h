@@ -24,19 +24,7 @@
 /*----------define 終了-----------*/
 
 /*----------構造体宣言 開始-----------*/
-// /*ネットワークモジュール用のクライアントの情報*/
-// typedef struct {
-//     int connect;              /*サーバーに接続しているか*/
-//     int sock;                 /*使用するソケット*/
-//     struct sockaddr_in addr;  /*ソケットの設定*/
-// } NetworkData;
-// /*システムモジュールが持ってるプレイヤーデータ*/
-// typedef struct{
-//     char name[MAX_LEN_NAME];    /*名前*/
-//     FloatCube pos;              /*位置*/
-//     int rank;                   /*順位*/
-//     int goal;                   /*ゴールしたか*/
-// } PlayerData;
+
 
 /*----------構造体宣言 終了-----------*/
 
