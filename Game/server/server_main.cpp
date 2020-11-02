@@ -62,7 +62,7 @@ int Select(void *args){
     while (1)
     {
         SDL_LockMutex(mtx);
-        
+
         result = ControlRequests(); // クライアントからのリクエストに対応
 
         SDL_UnlockMutex(mtx);
@@ -133,6 +133,8 @@ int main(int argc, char *argv[])
             fprintf(stderr, "全員ゴール\n");
             end = 1;
         }
+
+        SDL_Delay(10);
     }
 
     TerminateServer(); // サーバー終了処理
