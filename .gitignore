@@ -1,5 +1,8 @@
 
-*/.vscode/*
+/**/.vscode/
 
 Game/client/build/*
 Game/server/build/*
+
+# 細野用
+compile_commands.json

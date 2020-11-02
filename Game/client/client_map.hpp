@@ -1,3 +1,4 @@
+#pragma once
 #include "../header/map.hpp"
 
 class ClientMap : public MapData{

@@ -94,7 +94,7 @@ void SetupClient(char *server_name, u_short port)
     // 自身のIDを受け取る
     ReceiveData(&MyId, sizeof(int));
     // 受け取ったIDをシステムモジュールに渡す
-    GetId(MyId);
+    SetMyID(MyId);
     fprintf(stderr, "Your ID = %d.\n", MyId);
 
     /** 全クライアントの情報を受け取る **/
@@ -148,6 +148,7 @@ int ControlRequests()
     if (FD_ISSET(sock, &read_flag))
     { //サーバーからのメッセージを受け取った場合
         result = ExeCommand();
+        
     }
 
     return result;
@@ -166,6 +167,7 @@ int InCommand(char com)
     /*変数*/
     // システムモジュールからデータをもらう
     const PlayerData* pData = GetPlayerData();
+    const PlaceData* placeData;
     // ソケットに送るデータ達
     FloatPosition posData = {pData[MyId].velocity.x, pData[MyId].velocity.y, pData[MyId].velocity.z};
     float direction = pData[MyId].direction;
@@ -181,12 +183,8 @@ int InCommand(char com)
         SendData(&direction, sizeof(float));
         break;
     case PUT_COMMAND:
-        // コマンド送信
         SendData(&com, sizeof(char));
-        // データを送信する
-        SendData(&posData, sizeof(FloatPosition));
-        
-        break;
+        SendData(placeData, sizeof(PlaceData));
     default:
         // 存在しないコマンドの場合はメッセージを表示して、再入力させる
         fprintf(stderr, "%c is not a valid command.\n", com);
@@ -207,7 +205,8 @@ int ExeCommand()
     char com;
     // ソケットから来るデータ
     FloatPosition data[MAX_NUMCLIENTS];
-    VelocityFlag flag[MAX_NUMCLIENTS];
+    PlaceData placeData;
+    VelocityFlag flags[MAX_NUMCLIENTS];
     // 通信を継続するかを判定する変数
     int result = 1;
     // dataの初期化
@@ -215,6 +214,7 @@ int ExeCommand()
     {
         memset(&data[i], 0, sizeof(FloatPosition));
     }
+    memset(&placeData, 0, sizeof(PlaceData));
     // dataを受信する
     ReceiveData(&com, sizeof(com));
     /** 受信したデータに含まれるコマンドに応じて分岐 **/
@@ -224,17 +224,18 @@ int ExeCommand()
         for (int i = 0; i < NumClients; i++)
         {
             ReceiveData(&data[i], sizeof(FloatPosition));
-            ReceiveData(&flag[i], sizeof(VelocityFlag));
+            ReceiveData(&flags[i], sizeof(VelocityFlag));
         }
         // 受け取った座標とフラッグをシステムモジュールにわたす
-        GetPlace(data, NumClients);
-        GetFlag(flag, NumClients);
+        SetPlace(data, NumClients);
+        UpdateFlag(flags, NumClients);
         
         // 通信継続
         result = 1;
         break;
     case PUT_COMMAND:
-        
+        ReceiveData(&placeData, sizeof(PlaceData));
+        fprintf(stderr, "x:%f y:%f z:%f　に　ブロックが現れた！\n", placeData.x, placeData.y, placeData.z);
     case QUIT_COMMAND: // 通信終了
         // 通信を終了したことを表示
         fprintf(stderr, "other client sent quit command.\n");
@@ -253,7 +254,7 @@ int ExeCommand()
         // 通信継続
         result = 1;
     }
-
+    
     // 値を返す
     return result;
 }
@@ -319,9 +320,9 @@ static int HandleError(char *message)
 */
 void TerminateClient()
 {
-    // char com = QUIT_COMMAND;
-    // // データを送信する
-    // SendData(&com, sizeof(char));
+    char com = QUIT_COMMAND;
+    // データを送信する
+    SendData(&com, sizeof(char));
 
     // SDL_Delay(1000);
     // メッセージを表示

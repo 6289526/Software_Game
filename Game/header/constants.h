@@ -52,7 +52,7 @@ enum {
 };
 
 // 速度がゼロかを教えてくれる
-typedef struct 
+typedef struct
 {
 	bool x;
 	bool y;
@@ -90,7 +90,6 @@ typedef struct
 /*クライアントの情報*/
 typedef struct
 {
-
 	char name[MAX_LEN_NAME]; // 名前
 	FloatCube pos;           // 場所
 	Vector3 velocity;        // 速度ベクトル
@@ -110,7 +109,7 @@ typedef struct
 typedef enum
 {
 	NonBlock = 0, // ブロックなし
-	Nomal_Block = 1, // ノーマルブロック
+	NomalBlock = 1, // ノーマルブロック
 	GoalBlock = -1, // ゴールブロック
 
 } BlockType;

@@ -11,7 +11,6 @@
 #include <GL/glu.h>
 
 #include "client_common.h"
-#include"client_map.hpp"
 
 using namespace std;
 

@@ -23,7 +23,7 @@
 #include <SDL2/SDL_ttf.h>
 #include "../header/constants.h"
 
-typedef struct{
+typedef struct InputType{
     bool Forward;   // 前進
     bool Right;     // 右
     bool Left;      // 左
@@ -34,16 +34,30 @@ typedef struct{
     bool R;         // 右
     bool L;         // 左
     bool End;       // 終了
+
+    InputType() : 
+        Forward(false),
+        Right(false),
+        Left(false),
+        Jump(false),
+        Put(false),
+        U(false),
+        D(false),
+        R(false),
+        L(false),
+        End(false)
+        { };
 }InputType;
 
 class InputModuleBase
 {
 protected:
     InputType _Input;
+    SDL_Event _Event;
 public:
     InputModuleBase();
-    ~InputModuleBase();
-    virtual void GetInput(SDL_Event) = 0;
+    virtual ~InputModuleBase();
+    virtual int UpdateInput(void *data) = 0;
 
     InputType GetInputType();
 };

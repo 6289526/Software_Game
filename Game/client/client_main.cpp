@@ -4,26 +4,52 @@
  */
 
 #include "client_common.h"
+#include "graphic.h"
+
+
+// ループするかを判定
+int cond = 1;
 
 static int PrintError(const char *str);
+
+
+int Select(void *args){
+    SDL_mutex *mtx = (SDL_mutex *)args;
+
+    while (1)
+    {
+        SDL_LockMutex(mtx);
+        
+        
+		cond = ControlRequests();
+
+        SDL_UnlockMutex(mtx);
+        SDL_Delay(10);
+    }
+
+    return 0;
+
+}
 
 // client用のmain関数
 int main(int argc, char *argv[]) {
 	/**SDL2関連 BEGIN******/
 	SDL_Init(SDL_INIT_EVERYTHING);
-	InitWindowSys();
 	/**SDL2関連 END********/
 
-	/**入力関連 BEGIN******/
 	InputModuleBase *input;
-	InputType data;
-	/**入力関連 END********/
+	InitData initData = {&input};
 
 	/**サーバー関連 BEGIN**/
 	// 参加したいサーバーのポート番号
 	u_short port = DEFAULT_PORT;
 	// 参加したいサーバーの名前
 	char server_name[MAX_LEN_NAME];
+
+	//multithread
+    SDL_Thread *SelectThread;
+    SDL_mutex *mtx1 = SDL_CreateMutex();
+    SelectThread = SDL_CreateThread(Select, "getCommand", mtx1);
 
 	/*初期設定*/
 	sprintf(server_name, "localhost");
@@ -48,26 +74,23 @@ int main(int argc, char *argv[]) {
 	// 指定されたサーバー名、ポート番号に参加するクライアントとして設定する。
 	SetupClient(server_name, port);
 	/**サーバー関連 END**/
+	InitSystem(&initData);
 
-	//SetUpSystem(input);
-
-	SDL_Event event;
-	// ループするかを判定
-	int cond = 1;
-	while (cond && data.End != 1) {
+	while (cond && !input->GetInputType().End) {
 		// 入力受け付け
-		input->GetInput(event);
-		data = input->GetInputType();
-		SystemRun(data);
+		input->UpdateInput(NULL);
+		SystemRun(input->GetInputType());
 		/*サーバーにリクエストを送る*/
-		cond = ControlRequests();
+		Disp();
 		SDL_Delay(10);
 	}
 
 	// ウィンドウシステムの終了
-	TerminateWindowSys();
+	//TerminateWindowSys();
+
 	// クライアントを終了する。
 	TerminateClient();
 	SDL_Quit();
+	delete input;
 	return 0;
 }
