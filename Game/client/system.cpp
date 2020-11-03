@@ -46,7 +46,7 @@ void SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients)
 		PData[i].pos.x = moveData[i].x;
 		PData[i].pos.y = moveData[i].y;
 		PData[i].pos.z = moveData[i].z;
-		if(count % 10 == 0) fprintf(stderr, "%d client%d　は %f %f %f にいます。\n",count, i, PData[i].pos.x, PData[i].pos.y, PData[i].pos.z);
+		if(count % 10 == 0) //fprintf(stderr, "%d client%d　は %f %f %f にいます。\n",count, i, PData[i].pos.x, PData[i].pos.y, PData[i].pos.z);
 		count++;
 	}
 }

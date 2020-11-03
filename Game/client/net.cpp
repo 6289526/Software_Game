@@ -218,7 +218,7 @@ int ExeCommand()
         for (int i = 0; i < NumClients; i++)
         {
             ReceiveData(&data[i], sizeof(FloatPosition));
-            fprintf(stderr,"get %f %f %f\n", data[i].x, data[i].y, data[i].z);
+            //fprintf(stderr,"get %f %f %f\n", data[i].x, data[i].y, data[i].z);
             ReceiveData(&flag[i], sizeof(VelocityFlag));
         }
         // 受け取った座標とフラッグをシステムモジュールにわたす

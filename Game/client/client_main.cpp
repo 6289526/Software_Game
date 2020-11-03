@@ -24,7 +24,21 @@ int select(void *args){
     return 0;
 }
 
+int win(void *args){
+    SDL_mutex *mtx = (SDL_mutex *)args;
+	
+    while (result)
+    {
+        SDL_LockMutex(mtx);
 
+        RendererWindow();
+        SDL_Delay(10);
+        SDL_UnlockMutex(mtx);
+    }
+	// ウィンドウシステムの終了
+	TerminateWindowSys();
+    return 0;
+}
 
 // client用のmain関数
 int main(int argc, char *argv[]) {
@@ -67,15 +81,19 @@ int main(int argc, char *argv[]) {
 	SetupClient(server_name, port);
 	/**サーバー関連 END**/
 	SDL_Thread *selectThread;
+	SDL_Thread *windowThread;
     // 相互排除
     SDL_mutex *mtx1 = SDL_CreateMutex();
+	SDL_mutex *mtx2 = SDL_CreateMutex();
     // スレッド作成
     selectThread = SDL_CreateThread(select, "sendPosThread", mtx1);
 	InitWindowSys(&argc, argv);
-	InitSystem(&initData);
+	windowThread = SDL_CreateThread(win, "sendPosThread", mtx2);
 	
+	InitSystem(&initData);
+
 	while (result && !input->GetInputType().End) {
-		RendererWindow();
+		
 		// 入力受け付け
 		input->UpdateInput(NULL);
 		SystemRun(input->GetInputType());
@@ -84,9 +102,6 @@ int main(int argc, char *argv[]) {
 		SDL_Delay(10);
 		// system("clear");
 	}
-
-	// ウィンドウシステムの終了
-	TerminateWindowSys();
 
 	// クライアントを終了する。
 	TerminateClient();
