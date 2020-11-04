@@ -307,10 +307,10 @@ void RunCommand(int id, char com)
 {
     /* 変数 */
     const PlayerData *pData = GetPlayerData();
-    PlaceData placeData;
     // 送るデータ
-    FloatPosition posData;
     VelocityFlag flag = {false, false, false};
+    bool putflag; 
+    bool goal = pData[id].goal;
     // コマンドに応じた処理
     switch (com)
     {
@@ -345,9 +345,15 @@ void RunCommand(int id, char com)
         }
         break;
     case PUT_COMMAND:
-        //コマンド送信
-        SendData(id, &com, sizeof(char));
-        SendData(id, &placeData, sizeof(PlaceData));
+        fprintf(stderr,"%d put.");
+        SendData(id, &putflag, sizeof(bool));
+        break;
+    case FINISH_COMMAND:
+        fprintf(stderr, "All clients goaled.\n");
+        SendData(BROADCAST, &com, sizeof(com));
+    case GOAL_COMMAND:
+        fprintf(stderr, "clinet%d goaled!");
+        SendData(id, &bool, sizeof(bool));
         break;
     case TERMINATE_COMMAND:
         fprintf(stderr, "Terminate!");

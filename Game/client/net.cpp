@@ -185,9 +185,11 @@ int InCommand(char com)
     case PUT_COMMAND:
         SendData(&com, sizeof(char));
         SendData(&placeData, sizeof(PlaceData));
+        break;
     default:
         // 存在しないコマンドの場合はメッセージを表示して、再入力させる
         fprintf(stderr, "%c is not a valid command.\n", com);
+        break;
     }
 
     return 1;
@@ -243,6 +245,14 @@ int ExeCommand()
         fprintf(stderr, "other client sent quit command.\n");
         // 通信継続
         result = 0;
+        break;
+    case FINISH_COMMAND:
+        fprintf(stderr, "All clients goaled.\n");
+        result = 0;
+    case GOAL_COMMAND:
+        fprintf(stderr, "GOALLLL!!!");
+        // 通信継続
+        result = 1;
         break;
     case TERMINATE_COMMAND:
         // サーバーが通信を終了したことを表示
