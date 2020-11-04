@@ -113,6 +113,10 @@ int main(int argc, char *argv[])
     SelectThread = SDL_CreateThread(Select, "getCommand", mtx3);
     /**SDL END**/
 
+    char file[] = "../../data/mapdata.csv";
+
+    InitSys(file);
+
     int end = 0;
 
     while (!end && result)

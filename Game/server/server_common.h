@@ -72,6 +72,7 @@ private:
 };
 
 const PlayerData* GetPlayerData();
+extern void InitSys(char* file); // システム初期化
        // キャラとマップの当たり判定
        // y : 当たり判定をとる座標ｙの補正(キャラの足元座標からの差)
        // accuracy : 当たり判定の精度(座標軸ごとの判定する座標数)
@@ -81,7 +82,7 @@ const PlayerData* GetPlayerData();
 extern void GetClientName(int id,char clientName[MAX_LEN_NAME]);
        void Goal(int chara_ID);    // ゴールの処理
 extern void MovePosition(int chara_ID); // キャラを移動させる
-extern void PutBlock(); // ブロックを置けるなら置く
+extern void PutBlock(int chara_ID); // ブロックを置けるなら置く
 extern int AllGoal(); // 全員ゴールしていれば１
 extern void SetVec(int chara_ID, Vector3& vec); // キャラの速度ベクトルをセット
 extern void SetPlaceData(PlaceData& data); // 配置したいブロックの場所をセット
