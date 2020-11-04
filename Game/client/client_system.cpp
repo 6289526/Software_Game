@@ -8,6 +8,7 @@ PlayerData PData[PLAYER_NUM] = {
 	{"a", {20, 20, 20, 10, 10, 10}, 1, 0}
 };
 ClientMap Map; //マップ
+InputModuleBase *Input; // Input Module
 
 // int GrapicThread(void *data); // This Function isn't used now.
 
@@ -25,6 +26,9 @@ int GetMyID(){ return MyId; }
 void SetMyID(int id){ MyId = id; }
 // ===== * ===== プロパティ ===== * ===== //
 
+int InputThread(void *data);
+
+
 bool InitSystem(InitData *data){
 	// SDL_Thread *thread;
 
@@ -40,7 +44,17 @@ bool InitSystem(InitData *data){
 	SDL_DetachThread(thread);
 	*/
 
-	*(data->input) = new KeybordInput();
+	Input = new KeybordInput();
+	data->input = Input;
+	
+	SDL_Thread *inputThread;
+    SDL_mutex *input_mtx = SDL_CreateMutex(); // 相互排除
+	inputThread = SDL_CreateThread(InputThread, "inputThread", input_mtx);
+	if (inputThread == NULL)
+	{
+		fprintf(stderr, "Failed to create a input thread.\n");
+		return false;
+	}
 }
 
 /*クライアントの位置の取得
@@ -77,8 +91,10 @@ PlaceData GetPlaceData(){
 *   data: 入力データ
 *
 */
-void SystemRun(InputType data)
+void SystemRun()
 {
+	InputType data = Input->GetInputType();
+
 	PData[MyId].velocity.x = 0;
 
 	PData[MyId].velocity.y = 0;
@@ -145,8 +161,24 @@ void UpdatePlaceData(PlaceData data){
 
 }
 
+// ===== * ===== マルチスレッド ===== * ===== //
+
 // グラフィック用の
 /*int GrapicThread(void *data){
 	Disp();
 	return 0;
 }*/
+
+int InputThread(void *data){
+    SDL_mutex *mtx = (SDL_mutex *)data;
+
+    while (1)
+    {
+        SDL_LockMutex(mtx);
+		// 入力受け付け
+		Input->UpdateInput();
+		SDL_UnlockMutex(mtx);
+	}
+	
+	return 0;
+}
