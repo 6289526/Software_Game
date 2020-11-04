@@ -84,7 +84,7 @@ extern void MovePosition(int chara_ID); // キャラを移動させる
 extern void PutBlock(); // ブロックを置けるなら置く
 extern int AllGoal(); // 全員ゴールしていれば１
 extern void SetVec(int chara_ID, Vector3& vec); // キャラの速度ベクトルをセット
-extern void SetPlaceData(int chara_ID, PlaceData& data); //
+extern void SetPlaceData(PlaceData& data); // 配置したいブロックの場所をセット
 extern void SendAllPos(int client_num); // クライアント全員に全員の座標を送る
 
 extern void SetDirection(int chara_ID, float direction); // システムにクライアントの角度を渡す

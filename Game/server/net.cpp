@@ -1,6 +1,6 @@
 /*
 
- *  ファイル名	：net.cpp 
+ *  ファイル名	：net.cpp
  *  機能	：ネットワーク処理
  *
  */
@@ -247,13 +247,14 @@ int ControlRequests()
                     break;
                 case PUT_COMMAND:
                     ReceiveData(i, &placeData, sizeof(PlaceData));
+                    SetPlaceData(placeData);
                     fprintf(stderr, "client[%d]: put = x:%d y:%d z:%d\n", i, placeData.pos.x, placeData.pos.y, placeData.pos.z);
 
                 case QUIT_COMMAND: //通信の終了を要求された場合
                     fprintf(stderr, "client[%d]: quit\n", i);
                     // 接続を切る
                     Clients[i].connect = 0;
-                    
+
                     /** ファイルディスクリプタの操作 **/
                     // ファイルディスクリプタセットからすべてのファイルディスクリプタを削除。
                     FD_ZERO(&Mask);
@@ -395,7 +396,7 @@ void SendData(int cid, void *data, int size)
         int i;
         //すべてのクライアントのソケットに情報を送る
         for (i = 0; i < NumClient; i++)
-        {   
+        {
             if(Clients[i].connect){
                 if (write(Clients[i].sock, data, size) < 0)
                 {
@@ -405,7 +406,7 @@ void SendData(int cid, void *data, int size)
         }
     }
     else
-    { 
+    {
         if(Clients[cid].connect){
             //特定のクライアントに送るとき
             //特定のソケットに情報を送る

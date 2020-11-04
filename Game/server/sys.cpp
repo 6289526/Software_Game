@@ -231,14 +231,22 @@ void MovePosition(int chara_ID)
 
 void PutBlock(int chara_ID) // ブロックを置けるなら置く
 {
+    // ブロックを置けるなら
     if (Collision_BB()) {
+        // マップに追加
         Map.PushBackObject(&PlData);
+        // クライアント全員に送信
         RunCommand(BROADCAST, PUT_COMMAND);
-    }else{
+    }
+    // ブロックを置けないなら
+    else{
+        // データ書き換え
         PlData.object = NonBlock;
+        // ブロックを置くクライアントのみに送信
         RunCommand(chara_ID, DO_NOT_PUT_COMMAND);
     }
 
+    // PlaceData を初期化
     PlData.object = NonBlock;
     PlData.pos.x = 0;
     PlData.pos.y = 0;
@@ -271,7 +279,7 @@ void SetVec(int chara_ID, Vector3 &vec)
 }
 
 
-void SetPlaceData(int chara_ID, PlaceData& data)
+void SetPlaceData(PlaceData& data)
 {
     PlData = data;
 }
