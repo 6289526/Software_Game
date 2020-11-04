@@ -330,6 +330,10 @@ void RunCommand(int id, char com)
             SendData(id, &flag, sizeof(VelocityFlag));
         }
         break;
+    case FINISH_COMMAND:
+        fprintf(stderr, "All clients goaled.\n");
+        SendData(BROADCAST, &com, sizeof(com));
+        break;
     case TERMINATE_COMMAND:
         fprintf(stderr, "Terminate!");
         TerminateFlag = 1;
