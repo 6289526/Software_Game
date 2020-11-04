@@ -25,7 +25,7 @@ const PlayerData *GetPlayerData()
     return PData;
 }
 
-BlockType Collision_CM(int chara_ID, int y, int accuracy)
+BlockType Collision_CB(int chara_ID, int y, int accuracy)
 {
 
     if (accuracy <= 1) {
@@ -121,8 +121,51 @@ bool Collision_BB() // ブロックを置けるかどうかの判定
     if (PlData.object == NonBlock) {
         return false;
     }
-    // ブロックの当たり判定をかきなさい。
-    return true;
+
+    // マップデータ入手
+    const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
+
+    int Block_X = PlData.pos.x / MAP_MAGNIFICATION;
+    int Block_Y = PlData.pos.y / MAP_MAGNIFICATION;
+    int Block_Z = PlData.pos.z / MAP_MAGNIFICATION;
+
+    if (Block_X < 0)
+    {
+        throw "マップ外 : x座標 : 負\n";
+    }
+    else if (MAP_SIZE_H <= Block_X)
+    {
+        throw "マップ外 : x座標 : 正\n";
+    }
+
+    if (Block_Y < 0)
+    {
+        throw "マップ外 : y座標 : 負\n";
+    }
+    else if (MAP_SIZE_H <= Block_Y)
+    {
+        throw "マップ外 : y座標 : 正\n";
+    }
+
+    if (Block_Z < 0)
+    {
+        throw "マップ外 : z座標 : 負\n";
+    }
+    else if (MAP_SIZE_H <= Block_Z)
+    {
+        throw "マップ外 : z座標 : 正\n";
+    }
+
+    if (terrainData[Block_X][Block_Y][Block_Z] != NonBlock) {
+        // 置けます
+        return true;
+    }
+    else {
+        // 置けません
+        return false;
+    }
+
+
 }
 
 
@@ -150,7 +193,7 @@ void MovePosition(int chara_ID)
 {
 
     // 横の当たり判定
-    BlockType block = Collision_CM(chara_ID, 1);
+    BlockType block = Collision_CB(chara_ID, 1);
 
     // ブロックがないなら移動
     if (block == NonBlock)
@@ -166,7 +209,7 @@ void MovePosition(int chara_ID)
     }
 
     // 下の当たり判定
-    block = Collision_CM(chara_ID, 0, 3);
+    block = Collision_CB(chara_ID, 0, 3);
 
     // ブロックがないなら移動
     if (block == NonBlock)
@@ -189,7 +232,7 @@ void MovePosition(int chara_ID)
 void PutBlock() // ブロックを置けるなら置く
 {
     if (Collision_BB()) {
-        // ブロック置く
+        Map.PushBackObject(&PlData);
     }
 
     PlData.object = NonBlock;
