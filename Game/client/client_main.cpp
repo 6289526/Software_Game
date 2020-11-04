@@ -37,8 +37,7 @@ int main(int argc, char *argv[]) {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	/**SDL2関連 END********/
 
-	InputModuleBase *input;
-	InitData initData = {&input};
+	InitData initData = {NULL};
 
 	/**サーバー関連 BEGIN**/
 	// 参加したいサーバーのポート番号
@@ -76,10 +75,8 @@ int main(int argc, char *argv[]) {
 	/**サーバー関連 END**/
 	InitSystem(&initData);
 
-	while (cond && !input->GetInputType().End) {
-		// 入力受け付け
-		input->UpdateInput(NULL);
-		SystemRun(input->GetInputType());
+	while (cond && !initData.input->GetInputType().End) {
+		SystemRun();
 		/*サーバーにリクエストを送る*/
 		Disp();
 		SDL_Delay(10);
@@ -91,6 +88,6 @@ int main(int argc, char *argv[]) {
 	// クライアントを終了する。
 	TerminateClient();
 	SDL_Quit();
-	delete input;
+	delete initData.input;
 	return 0;
 }

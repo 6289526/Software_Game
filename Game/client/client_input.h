@@ -57,7 +57,7 @@ protected:
 public:
     InputModuleBase();
     virtual ~InputModuleBase();
-    virtual int UpdateInput(void *data) = 0;
+    virtual void UpdateInput() = 0;
 
     InputType GetInputType();
 };
