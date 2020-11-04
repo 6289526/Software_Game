@@ -233,6 +233,9 @@ int ExeCommand()
         // 通信継続
         result = 0;
         break;
+    case FINISH_COMMAND:
+        fprintf(stderr, "All clients goaled.\n");
+        result = 0;
     case GOAL_COMMAND:
         fprintf(stderr, "GOALLLL!!!");
         // 通信継続
