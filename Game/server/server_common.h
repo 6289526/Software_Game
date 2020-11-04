@@ -76,12 +76,15 @@ const PlayerData* GetPlayerData();
        // y : 当たり判定をとる座標ｙの補正(キャラの足元座標からの差)
        // accuracy : 当たり判定の精度(座標軸ごとの判定する座標数)
        //            例：２で２・２の４点　３で３・３の９点を判定する
-       BlockType Collision_CM(int chara_ID, int y = 0, int accuracy = 2);
+       BlockType Collision_CB(int chara_ID, int y = 0, int accuracy = 2);
+       bool Collision_BB(); // ブロックを置けるなら true
 extern void GetClientName(int id,char clientName[MAX_LEN_NAME]);
        void Goal(int chara_ID);    // ゴールの処理
 extern void MovePosition(int chara_ID); // キャラを移動させる
+extern void PutBlock(); // ブロックを置けるなら置く
 extern int AllGoal(); // 全員ゴールしていれば１
 extern void SetVec(int chara_ID, Vector3& vec); // キャラの速度ベクトルをセット
+extern void SetPlaceData(int chara_ID, PlaceData& data); //
 extern void SendAllPos(int client_num); // クライアント全員に全員の座標を送る
 
 extern void SetDirection(int chara_ID, float direction); // システムにクライアントの角度を渡す

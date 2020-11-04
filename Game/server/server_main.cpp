@@ -1,4 +1,3 @@
-
 /*
  *  ファイル名	: server_main.cpp
  *  機能	: クライアント用のメイン関数を記述
@@ -121,6 +120,7 @@ int main(int argc, char *argv[])
         for (int i = 0; i < PlayerNum; ++i) {
             try {
                 MovePosition(i);
+                PutBlock();
             }
             catch (const char* const e) {
                 fprintf(stderr, e);
