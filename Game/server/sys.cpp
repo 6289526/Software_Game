@@ -150,7 +150,7 @@ void MovePosition(int chara_ID)
 {
 
     // 横の当たり判定
-    BlockType block = Collision_CM(chara_ID, 3);
+    BlockType block = Collision_CM(chara_ID, 1);
 
     // ブロックがないなら移動
     if (block == NonBlock)
