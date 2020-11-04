@@ -156,9 +156,22 @@ bool Collision_BB() // ブロックを置けるかどうかの判定
         throw "マップ外 : z座標 : 正\n";
     }
 
-    if (terrainData[Block_X][Block_Y][Block_Z] != NonBlock) {
-        // 置けます
-        return true;
+    // 置く場所にブロックがないなら
+    if (terrainData[Block_X][Block_Y][Block_Z] == NonBlock) {
+        // 最下段なら
+        if (Block_Y - 1 < 0)
+        {
+            // 置けます
+            return true;
+        }
+        //　下の段にブロックがあるなら
+        if (terrainData[Block_X][Block_Y - 1][Block_Z] != NonBlock) {
+            // 置けます
+            return true;
+        }
+
+        // 置けません
+        return false;
     }
     else {
         // 置けません
