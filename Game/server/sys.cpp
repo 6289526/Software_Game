@@ -12,6 +12,11 @@ PlayerData PData[PLAYER_NUM] = {
     {"a", {20, 20, 20, 7, 20, 7}, {0, 0, 0}, 1, 0, false},
     {"a", {20, 20, 20, 10, 10, 10}, {0, 0, 0}, 1, 0, false}};
 
+PlaceData PlData = {
+    NonBlock,
+    {0, 0, 0}
+};
+
 ServerMap Map;
 
 // クライアント配列の先頭ポインタを返す
@@ -111,6 +116,16 @@ BlockType Collision_CM(int chara_ID, int y, int accuracy)
     return result;
 }
 
+bool Collision_BB() // ブロックを置けるかどうかの判定
+{
+    if (PlData.object == NonBlock) {
+        return false;
+    }
+    // ブロックの当たり判定をかきなさい。
+    return true;
+}
+
+
 // 名前の取得
 // id: クライアントのID
 // clientName:クライアントの名前
@@ -171,6 +186,19 @@ void MovePosition(int chara_ID)
     PData[chara_ID].velocity.z = 0;
 }
 
+void PutBlock() // ブロックを置けるなら置く
+{
+    if (Collision_BB()) {
+        // ブロック置く
+    }
+
+    PlData.object = NonBlock;
+    PlData.pos.x = 0;
+    PlData.pos.y = 0;
+    PlData.pos.z = 0;
+}
+
+
 int AllGoal()
 {
     for (int i = 0; i < PLAYER_NUM; ++i)
@@ -194,6 +222,13 @@ void SetVec(int chara_ID, Vector3 &vec)
     PData[chara_ID].velocity.y = vec.y;
     PData[chara_ID].velocity.z = vec.z;
 }
+
+
+void SetPlaceData(int chara_ID, PlaceData& data)
+{
+    PlData = data;
+}
+
 
 /*全員に座標を送る
 *
