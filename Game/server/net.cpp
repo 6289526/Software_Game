@@ -308,6 +308,7 @@ void RunCommand(int id, char com)
     /* 変数 */
     const PlayerData *pData = GetPlayerData();
     // 送るデータ
+    FloatPosition posData;
     VelocityFlag flag = {false, false, false};
     PlaceData placeData;
     bool goal = pData[id].goal;
