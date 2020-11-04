@@ -6,3 +6,5 @@ Game/server/build/*
 
 # 細野用
 compile_commands.json
+Game/client/.clangd/*
+Game/server/.clangd/*

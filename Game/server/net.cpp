@@ -1,6 +1,6 @@
 /*
 
- *  ファイル名	：net.cpp 
+ *  ファイル名	：net.cpp
  *  機能	：ネットワーク処理
  *
  */
@@ -17,6 +17,8 @@ static int NumSock;
 static fd_set Mask;
 // サーバーが強制終了状態か
 static int TerminateFlag;
+
+static int ClientCount;
 
 /*関数*/
 static int HandleError(char *);
@@ -145,7 +147,7 @@ void SetupServer(int num_cl, u_short port)
     close(rsock);
 
     /** この段階で設定した人数分のクライアントが接続している **/
-
+    ClientCount = NumClient;
     /*接続したクライアントに情報を送る*/
     for (int i = 0; i < NumClient; i++)
     {
@@ -192,6 +194,7 @@ int ControlRequests()
     fd_set read_flag = Mask;
     // 受け取るデータ
     FloatPosition data;
+    PlaceData placeData;
     float direction;
 
     // タイマー
@@ -200,7 +203,7 @@ int ControlRequests()
     timeout.tv_usec = 0; //マイクロ秒
 
     memset(&data, 0, sizeof(FloatPosition));
-
+    memset(&placeData, 0, sizeof(PlaceData));
     /** ソケット通信の多重化 **/
     fprintf(stderr, "select() is started.\n");
     /* ファイルディスクリプタの集合から読み込み可能なファイルディスクリプタを見つける*/
@@ -212,7 +215,8 @@ int ControlRequests()
     /** データの受信と送信 **/
     /*変数*/
     int i, result = 1;
-
+    // 残っているクライアントの数
+    int count = 0;
     if (TerminateFlag)
     {
         // 通信終了
@@ -221,43 +225,78 @@ int ControlRequests()
 
     for (i = 0; i < NumClient; i++)
     {
-        /* 第一引数のファイルディスクリプタがセット内にあるかを調べ、接続しているかを確認する*/
-        if (FD_ISSET(Clients[i].sock, &read_flag))
+        if (Clients[i].connect == 1)
         {
-            ReceiveData(i, &com, sizeof(char));
-            switch (com)
+            /* 第一引数のファイルディスクリプタがセット内にあるかを調べ、接続しているかを確認する*/
+            if (FD_ISSET(Clients[i].sock, &read_flag))
             {
-            case MOVE_COMMAND: 
-                ReceiveData(i, &data, sizeof(FloatPosition));
-                ReceiveData(i, &direction, sizeof(float));
+                ReceiveData(i, &com, sizeof(char));
+                switch (com)
+                {
+                case MOVE_COMMAND:
+                    ReceiveData(i, &data, sizeof(FloatPosition));
+                    ReceiveData(i, &direction, sizeof(float));
 
-                fprintf(stderr, "client[%d]: message = x:%f y:%f z:%f dir:%f\n", i, data.x, data.y, data.z, direction);
-                // 受け取った座標をシステムモジュールに渡す
-                SetVec(i, data);
-                SetDirection(i, direction);
+                    fprintf(stderr, "client[%d]: message = x:%f y:%f z:%f dir:%f\n", i, data.x, data.y, data.z, direction);
+                    // 受け取った座標をシステムモジュールに渡す
+                    SetVec(i, data);
+                    SetDirection(i, direction);
 
-                // ゲームの継続
-                result = 1;
-                break;
-            case QUIT_COMMAND: //通信の終了を要求された場合
-                fprintf(stderr, "client[%d]: quit\n", i);
+                    // ゲームの継続
+                    result = 1;
+                    break;
+                case PUT_COMMAND:
+                    ReceiveData(i, &placeData, sizeof(PlaceData));
+                    SetPlaceData(placeData);
+                    fprintf(stderr, "client[%d]: put = x:%d y:%d z:%d\n", i, placeData.pos.x, placeData.pos.y, placeData.pos.z);
 
-                // ゲームの継続
-                result = 0;
-                break;
-            default:
-                // コマンドは上記の2種類しか無いので、それ以外の場合はエラーが生じている　
-                fprintf(stderr, "ControlRequests(): %c is not a valid command.\n", com);
-                break;
+                case QUIT_COMMAND: //通信の終了を要求された場合
+                    fprintf(stderr, "client[%d]: quit\n", i);
+                    // 接続を切る
+                    Clients[i].connect = 0;
+
+                    /** ファイルディスクリプタの操作 **/
+                    // ファイルディスクリプタセットからすべてのファイルディスクリプタを削除。
+                    FD_ZERO(&Mask);
+                    // 第一引数のファイルディスクリプタをセットに追加。
+                    FD_SET(0, &Mask);
+
+                    for (int j = 0; j < NumClient; j++)
+                    {
+                        // 接続されている場合
+                        if (Clients[j].connect == 1)
+                        {
+                            // 第一引数のファイルディスクリプタをセットに追加。
+                            FD_SET(Clients[j].sock, &Mask);
+                            // 数える
+                            count++;
+                        }
+                    }
+                    // 誰も接続していない場合
+                    if (count == 0)
+                    {
+                        // 終了
+                        result = 0;
+                    }
+                    else
+                    {
+
+                        // ゲームの継続
+                        result = 1;
+                    }
+                    break;
+                default:
+                    // コマンドは上記の2種類しか無いので、それ以外の場合はエラーが生じている　
+                    fprintf(stderr, "ControlRequests(): %c is not a valid command.\n", com);
+                    break;
+                }
+
             }
         }
     }
 
     //
     return result;
-
-
-
 }
 
 /*コマンドの実行
@@ -270,8 +309,9 @@ void RunCommand(int id, char com)
     /* 変数 */
     const PlayerData *pData = GetPlayerData();
     // 送るデータ
-    FloatPosition posData;
     VelocityFlag flag = {false, false, false};
+    PlaceData placeData;
+    bool goal = pData[id].goal;
     // コマンドに応じた処理
     switch (com)
     {
@@ -288,19 +328,33 @@ void RunCommand(int id, char com)
             posData.z = pData[i].pos.z;
 
             // フラッグ設定
-            if(pData->velocity.x != 0){
+            if (pData->velocity.x != 0)
+            {
                 flag.x = true;
             }
-            if(pData->velocity.y != 0){
+            if (pData->velocity.y != 0)
+            {
                 flag.y = true;
             }
-            if(pData->velocity.z != 0){
+            if (pData->velocity.z != 0)
+            {
                 flag.z = true;
             }
             // 座標とフラッグを送信
             SendData(id, &posData, sizeof(FloatPosition));
             SendData(id, &flag, sizeof(VelocityFlag));
         }
+        break;
+    case PUT_COMMAND:
+        fprintf(stderr,"%d put.");
+        SendData(id, &placeData, sizeof(PlaceData));
+        break;
+    case FINISH_COMMAND:
+        fprintf(stderr, "All clients goaled.\n");
+        SendData(BROADCAST, &com, sizeof(com));
+    case GOAL_COMMAND:
+        fprintf(stderr, "clinet%d goaled!");
+        SendData(id, &bool, sizeof(bool));
         break;
     case TERMINATE_COMMAND:
         fprintf(stderr, "Terminate!");
@@ -337,25 +391,29 @@ void SendData(int cid, void *data, int size)
         // 終了
         exit(1);
     }
-
     if (cid == BROADCAST)
     { //全員に送るとき
         int i;
         //すべてのクライアントのソケットに情報を送る
         for (i = 0; i < NumClient; i++)
         {
-            if (write(Clients[i].sock, data, size) < 0)
-            {
-                HandleError("write()");
+            if(Clients[i].connect){
+                if (write(Clients[i].sock, data, size) < 0)
+                {
+                    HandleError("write()");
+                }
             }
         }
     }
     else
-    { //特定のクライアントに送るとき
-        //特定のソケットに情報を送る
-        if (write(Clients[cid].sock, data, size) < 0)
-        {
-            HandleError("write()");
+    {
+        if(Clients[cid].connect){
+            //特定のクライアントに送るとき
+            //特定のソケットに情報を送る
+            if (write(Clients[cid].sock, data, size) < 0)
+            {
+                HandleError("write()");
+            }
         }
     }
 }

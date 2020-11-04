@@ -1,4 +1,3 @@
-
 /*
  *  ファイル名	: server_main.cpp
  *  機能	: クライアント用のメイン関数を記述
@@ -11,6 +10,9 @@
 
 int PlayerNum;
 int PortNum;
+
+int result = 1;
+
 int GetCommand(void *args){
     SDL_mutex *mtx = (SDL_mutex *)args;
      // コマンド入力処理
@@ -53,6 +55,23 @@ int SendPosFunc(void *args)
     return 0;
 }
 
+int Select(void *args){
+    SDL_mutex *mtx = (SDL_mutex *)args;
+
+    while (1)
+    {
+        SDL_LockMutex(mtx);
+
+        result = ControlRequests(); // クライアントからのリクエストに対応
+
+        SDL_UnlockMutex(mtx);
+        SDL_Delay(10);
+    }
+
+    return 0;
+
+}
+
 // server用のmain関数
 int main(int argc, char *argv[])
 {
@@ -83,23 +102,25 @@ int main(int argc, char *argv[])
     // 座標を送るスレッド
     SDL_Thread *sendPosThread;
     SDL_Thread *getCommand;
+    SDL_Thread *SelectThread;
     // 相互排除
     SDL_mutex *mtx1 = SDL_CreateMutex();
     SDL_mutex *mtx2 = SDL_CreateMutex();
+    SDL_mutex *mtx3 = SDL_CreateMutex();
     // スレッド作成
     sendPosThread = SDL_CreateThread(SendPosFunc, "sendPosThread", mtx1);
     getCommand = SDL_CreateThread(GetCommand, "getCommand", mtx2);
+    SelectThread = SDL_CreateThread(Select, "getCommand", mtx3);
     /**SDL END**/
 
     int end = 0;
-    int result = 1;
 
     while (!end && result)
     {
-        result = ControlRequests(); // クライアントからのリクエストに対応
         for (int i = 0; i < PlayerNum; ++i) {
             try {
                 MovePosition(i);
+                PutBlock(i);
             }
             catch (const char* const e) {
                 fprintf(stderr, e);
@@ -112,6 +133,8 @@ int main(int argc, char *argv[])
             fprintf(stderr, "全員ゴール\n");
             end = 1;
         }
+
+        SDL_Delay(10);
     }
 
     TerminateServer(); // サーバー終了処理

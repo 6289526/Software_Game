@@ -24,19 +24,7 @@
 /*----------define 終了-----------*/
 
 /*----------構造体宣言 開始-----------*/
-// /*ネットワークモジュール用のクライアントの情報*/
-// typedef struct {
-//     int connect;              /*サーバーに接続しているか*/
-//     int sock;                 /*使用するソケット*/
-//     struct sockaddr_in addr;  /*ソケットの設定*/
-// } NetworkData;
-// /*システムモジュールが持ってるプレイヤーデータ*/
-// typedef struct{
-//     char name[MAX_LEN_NAME];    /*名前*/
-//     FloatCube pos;              /*位置*/
-//     int rank;                   /*順位*/
-//     int goal;                   /*ゴールしたか*/
-// } PlayerData;
+
 
 /*----------構造体宣言 終了-----------*/
 
@@ -84,16 +72,19 @@ private:
 };
 
 const PlayerData* GetPlayerData();
-       // 当たり判定
+       // キャラとマップの当たり判定
        // y : 当たり判定をとる座標ｙの補正(キャラの足元座標からの差)
-       // accuracy : 当たり判定の精度(数値+１の２乗の値の数だけ座標を調べる)
-       //            例：１で４点，２で９点の座標を調べる
-       BlockType Collision(int chara_ID, int y = 0, int accuracy = 1);
+       // accuracy : 当たり判定の精度(座標軸ごとの判定する座標数)
+       //            例：２で２・２の４点　３で３・３の９点を判定する
+       BlockType Collision_CB(int chara_ID, int y = 0, int accuracy = 2);
+       bool Collision_BB(); // ブロックを置けるなら true
 extern void GetClientName(int id,char clientName[MAX_LEN_NAME]);
        void Goal(int chara_ID);    // ゴールの処理
 extern void MovePosition(int chara_ID); // キャラを移動させる
+extern void PutBlock(); // ブロックを置けるなら置く
 extern int AllGoal(); // 全員ゴールしていれば１
 extern void SetVec(int chara_ID, Vector3& vec); // キャラの速度ベクトルをセット
+extern void SetPlaceData(PlaceData& data); // 配置したいブロックの場所をセット
 extern void SendAllPos(int client_num); // クライアント全員に全員の座標を送る
 
 extern void SetDirection(int chara_ID, float direction); // システムにクライアントの角度を渡す
