@@ -27,7 +27,7 @@ const PlayerData *GetPlayerData()
 
 void InitSys(char* file) // システム初期化
 {
-    Map.LoadMapData(file);
+    //Map.LoadMapData(file);
 }
 
 BlockType Collision_CB(int chara_ID, int y, int accuracy)
@@ -252,7 +252,7 @@ void PutBlock(int chara_ID) // ブロックを置けるなら置く
     // ブロックを置けるなら
     if (Collision_BB()) {
         // マップに追加
-        Map.PushBackObject(&PlData);
+        Map.SetObjectData(&PlData);
         // クライアント全員に送信
         RunCommand(BROADCAST, PUT_COMMAND);
     }
