@@ -346,15 +346,15 @@ void RunCommand(int id, char com)
         }
         break;
     case PUT_COMMAND:
-        fprintf(stderr,"%d put.");
+        fprintf(stderr,"%d put.", id);
         SendData(id, &placeData, sizeof(PlaceData));
         break;
     case FINISH_COMMAND:
         fprintf(stderr, "All clients goaled.\n");
         SendData(BROADCAST, &com, sizeof(com));
     case GOAL_COMMAND:
-        fprintf(stderr, "clinet%d goaled!");
-        SendData(id, &bool, sizeof(bool));
+        fprintf(stderr, "clinet%d goaled!", id);
+        SendData(id, &goal, sizeof(bool));
         break;
     case TERMINATE_COMMAND:
         fprintf(stderr, "Terminate!");
