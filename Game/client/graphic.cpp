@@ -20,7 +20,6 @@ void View3D();
 void Disp2D();
 void Disp3D();
 void DrawMap(); //マップ描画
-void DrawObject(); //設置オブジェクト描画
 void DrawCharacter();//キャラクター描画
 void Cube(FloatCube cube, SDL_Color color);
 void RotateCube(FloatCube cube, double dir, SDL_Color color);
@@ -135,7 +134,6 @@ void View3D() {
 void Disp3D(){
     DrawCharacter();
     DrawMap();
-    DrawObject();
 }
 
 //2D描画
@@ -171,18 +169,6 @@ void DrawMap(){
         glVertex3f(0.0, 0.0, map_d * MAP_MAGNIFICATION);
     glEnd();
 
-    //2次元配列データ使用時
-    // for(int i = 0; i < map_w; i++){
-    //     for(int j = 0; j < map_h; j++){
-    //         if(terrainData[i][j] > 0){
-    //             mcube = {
-    //                 i * MAGNIFICATION, 0, j * MAGNIFICATION,
-    //                 MAGNIFICATION, terrainData[i][j] * MAGNIFICATION, MAGNIFICATION
-    //             };
-    //             Cube(mcube);
-    //         }
-    //     }
-    // }
     SDL_Color mapColor = {255,255,0,255}; 
 
     //3次元配列データ使用時
@@ -199,24 +185,6 @@ void DrawMap(){
     }
 
 }
-
-//設置オブジェクト描画
-void DrawObject(){
-    const vector<PlaceData> objectData = Map.GetObjectData();
-    SDL_Color objectColor[PLAYER_NUM] = {
-        {255,0,0,255},
-        {0,255,0,255}
-    };
-
-    for(int i = 0; i < (int)objectData.size(); i++){
-        FloatCube ocube = {
-            objectData[i].pos.x * OBJECT_MAGNIFICATIO, objectData[i].pos.y * OBJECT_MAGNIFICATIO, objectData[i].pos.z * OBJECT_MAGNIFICATIO,
-            OBJECT_MAGNIFICATIO, OBJECT_MAGNIFICATIO, OBJECT_MAGNIFICATIO
-        };
-        Cube(ocube,objectColor[objectData[i].object]);
-    }
-}
-
 
 //キャラクター描画
 void DrawCharacter(){
