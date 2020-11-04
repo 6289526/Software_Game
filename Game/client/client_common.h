@@ -58,3 +58,4 @@ extern void UpdatePlaceData(PlaceData data);
 
 /* move */
 
+PlaceData BuildPlaceData(PlayerData player);
