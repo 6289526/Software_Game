@@ -25,6 +25,11 @@ const PlayerData *GetPlayerData()
     return PData;
 }
 
+void InitSys(char* file) // システム初期化
+{
+    Map.LoadMapData(file);
+}
+
 BlockType Collision_CB(int chara_ID, int y, int accuracy)
 {
 
