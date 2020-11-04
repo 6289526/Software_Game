@@ -6,7 +6,7 @@ KeybordInput::KeybordInput() : _key(SDL_GetKeyboardState(NULL))
 KeybordInput::~KeybordInput()
 {}
 
-int KeybordInput::UpdateInput(void *data){
+void KeybordInput::UpdateInput(){
 	if(SDL_PollEvent(&_Event)){
 		InputType t;
 		_Input = t;
@@ -49,5 +49,4 @@ int KeybordInput::UpdateInput(void *data){
 			_Input.L = true;
 		}
 	}
-	return 0;
 }
