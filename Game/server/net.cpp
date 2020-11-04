@@ -297,6 +297,7 @@ void RunCommand(int id, char com)
     // 送るデータ
     FloatPosition posData;
     VelocityFlag flag = {false, false, false};
+    bool goal = pData[id].goal;
     // コマンドに応じた処理
     switch (com)
     {
@@ -333,6 +334,9 @@ void RunCommand(int id, char com)
     case FINISH_COMMAND:
         fprintf(stderr, "All clients goaled.\n");
         SendData(BROADCAST, &com, sizeof(com));
+    case GOAL_COMMAND:
+        fprintf(stderr, "clinet%d goaled!");
+        SendData(id, &bool, sizeof(bool));
         break;
     case TERMINATE_COMMAND:
         fprintf(stderr, "Terminate!");
