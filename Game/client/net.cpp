@@ -205,7 +205,7 @@ int ExeCommand()
     char com;
     // ソケットから来るデータ
     FloatPosition data[MAX_NUMCLIENTS];
-    PlaceData placeData;
+    bool putFlag;
     VelocityFlag flags[MAX_NUMCLIENTS];
     // 通信を継続するかを判定する変数
     int result = 1;
@@ -234,9 +234,10 @@ int ExeCommand()
         result = 1;
         break;
     case PUT_COMMAND:
-        ReceiveData(&placeData, sizeof(PlaceData));
-        
-        fprintf(stderr, "x:%d y:%d z:%d にブロックが現れた！\n", placeData.pos.x, placeData.pos.y, placeData.pos.z);
+        ReceiveData(&putFlag, sizeof(bool));
+        fprintf(stderr, "ブロック置けた！\n");
+        result = 1;
+        break;
     case QUIT_COMMAND: // 通信終了
         // 通信を終了したことを表示
         fprintf(stderr, "other client sent quit command.\n");

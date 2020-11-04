@@ -348,6 +348,7 @@ void RunCommand(int id, char com)
         //コマンド送信
         SendData(id, &com, sizeof(char));
         SendData(id, &placeData, sizeof(PlaceData));
+        break;
     case TERMINATE_COMMAND:
         fprintf(stderr, "Terminate!");
         TerminateFlag = 1;

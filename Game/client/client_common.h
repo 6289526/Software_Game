@@ -19,6 +19,7 @@
 #include "../header/constants.h"
 #include "client_KeybordInput.h"
 #include "client_map.hpp"
+#include "client_system.h"
 
 /* ウインドウサイズ */
 enum {
@@ -46,15 +47,14 @@ extern int InCommand(char com);
 const PlayerData* GetPlayerData();
 
 extern bool InitSystem(InitData *data);
+extern ClientMap Map;
 extern int GetMyID();
 extern void SetMyID(int);
-extern PlaceData GetPlaceData();
 extern void SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients);
-
-extern void SystemRun(InputType data);
-
-extern ClientMap Map;
 extern void GetFlag(VelocityFlag* flag, int numClients);
+extern PlaceData GetPlaceData();
+extern void SystemRun(InputType data);
+extern void UpdateFlag(VelocityFlag* flags, int numClients);
+extern void UpdatePlaceData(PlaceData data);
 
 /* move */
-extern void UpdateFlag(VelocityFlag* flags, int numClients);

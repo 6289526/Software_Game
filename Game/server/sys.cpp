@@ -20,17 +20,22 @@ const PlayerData *GetPlayerData()
     return PData;
 }
 
-BlockType Collision(int chara_ID, int y, int accuracy) // 当たり判定 ブロック無 0 有 0以外 ゴールブロック -1
+BlockType Collision_CM(int chara_ID, int y, int accuracy)
 {
 
-    Pointer<int> point_X(accuracy + 1);
-    Pointer<int> point_Z(accuracy + 1);
+    if (accuracy <= 1) {
+        throw "Collision_CM : 引数　エラー\n";
+    }
 
-    const int wide = PData[chara_ID].pos.w / accuracy;  // 当たり判定を知らべる座標間距離 x座標
-    const int depth = PData[chara_ID].pos.d / accuracy; // 当たり判定を知らべる座標間距離 z座標
+    Pointer<int> point_X(accuracy);
+    Pointer<int> point_Z(accuracy);
+
+
+    const int wide = PData[chara_ID].pos.w / (accuracy - 1);  // 当たり判定を知らべる座標間距離 x座標
+    const int depth = PData[chara_ID].pos.d / (accuracy - 1); // 当たり判定を知らべる座標間距離 z座標
 
     // 当たり判定を調べる座標をすべて格納
-    for (int i = 0; i <= accuracy; ++i)
+    for (int i = 0; i < accuracy; ++i)
     {
         point_X[i] = PData[chara_ID].pos.x + PData[chara_ID].velocity.x + wide * i;
         point_Z[i] = PData[chara_ID].pos.z + PData[chara_ID].velocity.z + depth * i;
@@ -58,7 +63,7 @@ BlockType Collision(int chara_ID, int y, int accuracy) // 当たり判定 ブロ
         throw "マップ外 : y座標 : 正\n";
     }
 
-    for (int i = 0; i <= accuracy; ++i)
+    for (int i = 0; i < accuracy; ++i)
     {
         Block_X = point_X[i] / MAP_MAGNIFICATION;
 
@@ -71,7 +76,7 @@ BlockType Collision(int chara_ID, int y, int accuracy) // 当たり判定 ブロ
             throw "マップ外 : x座標 : 正\n";
         }
 
-        for (int j = 0; j <= accuracy; ++j)
+        for (int j = 0; j < accuracy; ++j)
         {
             Block_Z = point_Z[j] / MAP_MAGNIFICATION;
 
@@ -128,10 +133,10 @@ void Goal(int chara_ID)
 
 void MovePosition(int chara_ID)
 {
-    
+
     // 横の当たり判定
-    BlockType block = Collision(chara_ID, 1);
-    
+    BlockType block = Collision_CM(chara_ID, 1);
+
     // ブロックがないなら移動
     if (block == NonBlock)
     {
@@ -146,7 +151,7 @@ void MovePosition(int chara_ID)
     }
 
     // 下の当たり判定
-    block = Collision(chara_ID, 0, 1);
+    block = Collision_CM(chara_ID, 0, 3);
 
     // ブロックがないなら移動
     if (block == NonBlock)
