@@ -229,10 +229,14 @@ void MovePosition(int chara_ID)
     PData[chara_ID].velocity.z = 0;
 }
 
-void PutBlock() // ブロックを置けるなら置く
+void PutBlock(int chara_ID) // ブロックを置けるなら置く
 {
     if (Collision_BB()) {
         Map.PushBackObject(&PlData);
+        RunCommand(BROADCAST, PUT_COMMAND);
+    }else{
+        PlData.object = NonBlock;
+        RunCommand(chara_ID, DO_NOT_PUT_COMMAND);
     }
 
     PlData.object = NonBlock;

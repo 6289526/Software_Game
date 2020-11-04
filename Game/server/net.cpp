@@ -309,7 +309,7 @@ void RunCommand(int id, char com)
     const PlayerData *pData = GetPlayerData();
     // 送るデータ
     VelocityFlag flag = {false, false, false};
-    bool putflag; 
+    PlaceData placeData;
     bool goal = pData[id].goal;
     // コマンドに応じた処理
     switch (com)
@@ -346,7 +346,7 @@ void RunCommand(int id, char com)
         break;
     case PUT_COMMAND:
         fprintf(stderr,"%d put.");
-        SendData(id, &putflag, sizeof(bool));
+        SendData(id, &placeData, sizeof(PlaceData));
         break;
     case FINISH_COMMAND:
         fprintf(stderr, "All clients goaled.\n");

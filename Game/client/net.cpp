@@ -207,7 +207,7 @@ int ExeCommand()
     char com;
     // ソケットから来るデータ
     FloatPosition data[MAX_NUMCLIENTS];
-    bool putFlag;
+    PlaceData placeData;
     VelocityFlag flags[MAX_NUMCLIENTS];
     // 通信を継続するかを判定する変数
     int result = 1;
@@ -236,8 +236,13 @@ int ExeCommand()
         result = 1;
         break;
     case PUT_COMMAND:
-        ReceiveData(&putFlag, sizeof(bool));
-        fprintf(stderr, "ブロック置けた！\n");
+        ReceiveData(&placeData, sizeof(PlaceData));
+        
+        if(placeData.object != NonBlock){
+            fprintf(stderr, "ブロック置けた！\n");
+        }else{
+            fprintf(stderr, "ブロックがおけなかった\n");
+        }
         result = 1;
         break;
     case QUIT_COMMAND: // 通信終了
