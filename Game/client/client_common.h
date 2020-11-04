@@ -45,6 +45,7 @@ extern int InCommand(char com);
 
 /* system.cpp */
 const PlayerData* GetPlayerData();
+
 extern bool InitSystem(InitData *data);
 extern ClientMap Map;
 extern int GetMyID();

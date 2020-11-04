@@ -73,7 +73,6 @@ int main(int argc, char *argv[]) {
 	// 指定されたサーバー名、ポート番号に参加するクライアントとして設定する。
 	SetupClient(server_name, port);
 	/**サーバー関連 END**/
-
 	InitSystem(&initData);
 
 	while (cond && !initData.input->GetInputType().End) {

@@ -167,6 +167,7 @@ int InCommand(char com)
     /*変数*/
     // システムモジュールからデータをもらう
     const PlayerData* pData = GetPlayerData();
+    PlaceData placeData = GetPlaceData();
     // ソケットに送るデータ達
     FloatPosition posData = {pData[MyId].velocity.x, pData[MyId].velocity.y, pData[MyId].velocity.z};
     float direction = pData[MyId].direction;
@@ -174,16 +175,21 @@ int InCommand(char com)
     /** 入力されたコマンドに応じて分岐 **/
     switch (com)
     {
-    case MOVE_COMMAND: //Mが入力されたとき
+    case MOVE_COMMAND:
         // コマンド送信
         SendData(&com, sizeof(char));
         // データを送信する
         SendData(&posData, sizeof(FloatPosition));
         SendData(&direction, sizeof(float));
         break;
+    case PUT_COMMAND:
+        SendData(&com, sizeof(char));
+        SendData(&placeData, sizeof(PlaceData));
+        break;
     default:
         // 存在しないコマンドの場合はメッセージを表示して、再入力させる
         fprintf(stderr, "%c is not a valid command.\n", com);
+        break;
     }
 
     return 1;
@@ -201,6 +207,7 @@ int ExeCommand()
     char com;
     // ソケットから来るデータ
     FloatPosition data[MAX_NUMCLIENTS];
+    PlaceData placeData;
     VelocityFlag flags[MAX_NUMCLIENTS];
     // 通信を継続するかを判定する変数
     int result = 1;
@@ -209,6 +216,7 @@ int ExeCommand()
     {
         memset(&data[i], 0, sizeof(FloatPosition));
     }
+    memset(&placeData, 0, sizeof(PlaceData));
     // dataを受信する
     ReceiveData(&com, sizeof(com));
     /** 受信したデータに含まれるコマンドに応じて分岐 **/
@@ -225,6 +233,16 @@ int ExeCommand()
         UpdateFlag(flags, NumClients);
         
         // 通信継続
+        result = 1;
+        break;
+    case PUT_COMMAND:
+        ReceiveData(&placeData, sizeof(PlaceData));
+        
+        if(placeData.object != NonBlock){
+            fprintf(stderr, "ブロック置けた！\n");
+        }else{
+            fprintf(stderr, "ブロックがおけなかった\n");
+        }
         result = 1;
         break;
     case QUIT_COMMAND: // 通信終了
