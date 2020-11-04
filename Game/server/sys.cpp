@@ -1,8 +1,7 @@
 
 /*----------include 開始----------*/
 #include "server_common.h"
-#include "../header/map.hpp"
-#include "server_map.hpp"
+
 
 /*----------include 終了----------*/
 //

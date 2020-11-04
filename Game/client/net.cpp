@@ -1,7 +1,7 @@
 /*
  *  ファイル名	：net.cpp
  *  機能	：ネットワークの処理
- * 
+ *
  */
 #include "client_common.h"
 
@@ -103,6 +103,16 @@ void SetupClient(char *server_name, u_short port)
     {
         ReceiveData(&Clients[i], sizeof(NetworkData));
     }
+    // マップデータ入手
+    int terrainData[MAP_SIZE_W][MAP_SIZE_H][MAP_SIZE_D];
+    for(int l = 0; l < MAP_SIZE_W; ++l) {
+        for(int j = 0; j < MAP_SIZE_H; ++j) {
+            for(int k = 0; k < MAP_SIZE_D; ++k) {
+                ReceiveData(&(terrainData[l][j][k]), sizeof(int));
+            }
+        }
+    }
+    Map.SetMapData(MAP_SIZE_W, MAP_SIZE_H, MAP_SIZE_D, terrainData);
 
     /** ファイルディスクリプタの操作 **/
     // select関数の第一引数ので必要
@@ -144,11 +154,11 @@ int ControlRequests()
     // 通信を継続するかを判定する変数
     int result = 1;
 
-    
+
     if (FD_ISSET(sock, &read_flag))
     { //サーバーからのメッセージを受け取った場合
         result = ExeCommand();
-        
+
     }
 
     return result;
@@ -231,13 +241,13 @@ int ExeCommand()
         // 受け取った座標とフラッグをシステムモジュールにわたす
         SetPlace(data, NumClients);
         UpdateFlag(flags, NumClients);
-        
+
         // 通信継続
         result = 1;
         break;
     case PUT_COMMAND:
         ReceiveData(&placeData, sizeof(PlaceData));
-        
+
         if(placeData.object != NonBlock){
             fprintf(stderr, "ブロック置けた！\n");
         }else{
@@ -271,7 +281,7 @@ int ExeCommand()
         // 通信継続
         result = 1;
     }
-    
+
     // 値を返す
     return result;
 }
@@ -280,7 +290,7 @@ int ExeCommand()
  * 引数
  *    void *data: 送信するデータ
  *    int size: データのサイズ
- * 
+ *
 */
 void SendData(void *data, int size)
 {
@@ -303,7 +313,7 @@ void SendData(void *data, int size)
  * 引数
  *    *data: 送信するデータ
  *    size: データのサイズ
- * 
+ *
 */
 int ReceiveData(void *data, int size)
 {

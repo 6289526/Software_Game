@@ -22,7 +22,7 @@ static int ClientCount;
 
 /*関数*/
 static int HandleError(char *);
-static void SendData(int cid, void *data, int size);
+static void SendData(int cid, const void *data, int size);
 static int ReceiveData(int cid, void *data, int size);
 
 /* サーバー初期化
@@ -159,6 +159,15 @@ void SetupServer(int num_cl, u_short port)
         {
             // 接続しているクライアントの情報を送る
             SendData(i, &Clients[j], sizeof(NetworkData));
+        }
+        // マップデータ入手
+        const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
+        for(int l = 0; l < MAP_SIZE_W; ++l) {
+            for(int j = 0; j < MAP_SIZE_H; ++j) {
+                for(int k = 0; k < MAP_SIZE_D; ++k) {
+                    SendData(i, &(terrainData[l][j][k]), sizeof(int));
+                }
+            }
         }
     }
 
@@ -376,7 +385,7 @@ void RunCommand(int id, char com)
  *    void *data:送られるデータ
  *    int size:dataの型のサイズ
  */
-void SendData(int cid, void *data, int size)
+void SendData(int cid, const void *data, int size)
 {
     //全員に送らないかつ、cidが負もしくは最大人数の値を超えているとき
     if ((cid != BROADCAST) && (0 > cid || cid >= NumClient))

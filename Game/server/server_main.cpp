@@ -94,11 +94,16 @@ int main(int argc, char *argv[])
     fprintf(stderr, "Number of clients = %d\n", PlayerNum);
     //サーバーのポート番号を表示
     fprintf(stderr, "Port number = %d\n", PortNum);
+    //初期化
+    SDL_Init(SDL_INIT_EVERYTHING);
+    
+    char file[] = "../../data/mapdata.csv";
+    InitSys(file);
+
     SetupServer(PlayerNum, PortNum); // サーバー初期化
 
     /**SDL BEGIN**/
-    //初期化
-    SDL_Init(SDL_INIT_EVERYTHING);
+
     // 座標を送るスレッド
     SDL_Thread *sendPosThread;
     SDL_Thread *getCommand;
@@ -113,9 +118,6 @@ int main(int argc, char *argv[])
     SelectThread = SDL_CreateThread(Select, "getCommand", mtx3);
     /**SDL END**/
 
-    char file[] = "../../data/mapdata.csv";
-
-    InitSys(file);
 
     int end = 0;
 

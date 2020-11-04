@@ -16,6 +16,8 @@
 #include "../header/constants.h"
 #include <SDL2/SDL.h>
 #include <iostream>
+#include "../header/map.hpp"
+#include "server_map.hpp"
 //
 /*----------include 終了----------*/
 
@@ -30,7 +32,7 @@
 
 /*----------グローバル変数 開始-----------*/
 /*変数*/
-
+extern ServerMap Map;
 
 /* net.c */
 extern void SetupServer(int, u_short);
