@@ -19,8 +19,8 @@ int Select(void *args){
     while (1)
     {
         SDL_LockMutex(mtx);
-        
-        
+
+
 		cond = ControlRequests();
 
         SDL_UnlockMutex(mtx);
@@ -72,8 +72,10 @@ int main(int argc, char *argv[]) {
 	/*クライアントの作成*/
 	// 指定されたサーバー名、ポート番号に参加するクライアントとして設定する。
 	SetupClient(server_name, port);
+    InitPlayerData(); // プレイヤーデータ初期化処理
 	/**サーバー関連 END**/
 	InitSystem(&initData);
+
 
 	while (cond && !initData.input->GetInputType().End) {
 		SystemRun();
@@ -87,6 +89,7 @@ int main(int argc, char *argv[]) {
 
 	// クライアントを終了する。
 	TerminateClient();
+    EndSys();
 	SDL_Quit();
 	delete initData.input;
 	return 0;

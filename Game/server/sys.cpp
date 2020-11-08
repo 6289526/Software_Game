@@ -7,9 +7,13 @@
 //
 /*変数初期化*/
 // プレイヤー情報
-PlayerData PData[PLAYER_NUM] = {
-    {"a", {20, 20, 20, 7, 20, 7}, {0, 0, 0}, 1, 0, false},
-    {"a", {20, 20, 20, 10, 10, 10}, {0, 0, 0}, 1, 0, false}};
+
+static int Num_Clients; // クライアント人数
+static char* Name_Clients[MAX_NUMCLIENTS]; // クライアントの名前
+static FloatCube Pos_Clients = { 20, 20, 20, 10, 10, 10 }; // クライアント情報
+
+
+PlayerData* PData;
 
 PlaceData PlData = {
     NonBlock,
@@ -24,10 +28,44 @@ const PlayerData *GetPlayerData()
     return PData;
 }
 
+void SetNumClients(int n) // クライアント人数セット
+{
+    Num_Clients = n;
+}
+
+// 名前のセット
+// id: クライアントのID
+// clientName:クライアントの名前
+void SetClientName(int id, char* name)
+{
+    Name_Clients[id] = name;
+}
+
 void InitSys(char* file) // システム初期化
 {
     //Map.LoadMapData(file);
 }
+
+void InitPlayerData()// プレイヤーデータ初期化処理
+{
+    PData = new PlayerData[Num_Clients];
+    for (int i = 0; i < Num_Clients; ++i) {
+        PData[i].name = Name_Clients[i];
+        PData[i].pos = Pos_Clients;
+        PData[i].pos.x = Pos_Clients.x + i * 20;
+        Vector3 t_v = { 0, 0, 0 };
+        PData[i].velocity = t_v;
+        PData[i].direction = 0;
+        PData[i].rank = 0;
+        PData[i].goal = false;
+    }
+}
+
+void EndSys()// システム終了処理
+{
+    delete[] PData;
+}
+
 
 BlockType Collision_CB(int chara_ID, int y, int accuracy)
 {
@@ -185,15 +223,6 @@ bool Collision_BB() // ブロックを置けるかどうかの判定
 
 }
 
-
-// 名前の取得
-// id: クライアントのID
-// clientName:クライアントの名前
-void GetClientName(int id, char clientName[MAX_LEN_NAME])
-{
-    snprintf(PData[id].name, MAX_LEN_NAME, "%s", clientName);
-}
-
 void Goal(int chara_ID)
 {
     static int rank = 1;
@@ -273,7 +302,7 @@ void PutBlock(int chara_ID) // ブロックを置けるなら置く
 
 int AllGoal()
 {
-    for (int i = 0; i < PLAYER_NUM; ++i)
+    for (int i = 0; i < Num_Clients; ++i)
     {
         // ゴールしていないクライアントがいれば
         if (!PData[i].goal)

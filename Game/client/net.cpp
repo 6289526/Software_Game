@@ -91,10 +91,12 @@ void SetupClient(char *server_name, u_short port)
     ReceiveData(&NumClients, sizeof(int));
     // 受け取った人数を表示
     fprintf(stderr, "Number of Clients = %d.\n", NumClients);
+    SetNumClients(NumClients); // システムに渡す
     // 自身のIDを受け取る
     ReceiveData(&MyId, sizeof(int));
     // 受け取ったIDをシステムモジュールに渡す
     SetMyID(MyId);
+    SetClientName(MyId, user_name); // システムに渡す
     fprintf(stderr, "Your ID = %d.\n", MyId);
 
     /** 全クライアントの情報を受け取る **/

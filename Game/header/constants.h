@@ -90,7 +90,7 @@ typedef struct
 /*クライアントの情報*/
 typedef struct
 {
-	char name[MAX_LEN_NAME]; // 名前
+	char* name; // 名前
 	FloatCube pos;           // 場所
 	Vector3 velocity;        // 速度ベクトル
 	float direction;         // 向き

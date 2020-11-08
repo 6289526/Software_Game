@@ -53,6 +53,8 @@ void SetupServer(int num_cl, u_short port)
     //ゲームに参加する人数
     NumClient = num_cl;
 
+    SetNumClients(NumClient); // システムに渡す
+
     /*
   * ソケットの生成
   * ネットワークアドレスの種類：インタネット
@@ -125,7 +127,7 @@ void SetupServer(int num_cl, u_short port)
             HandleError("read()");
         }
         // 名前をシステムモジュールに渡す
-        GetClientName(i, name[i]);
+        SetClientName(i, name[i]);
         // 接続していることを示す
         Clients[i].connect = 1;
         // 使用するソケット

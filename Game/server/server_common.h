@@ -127,7 +127,15 @@ void Pointer<T>::Copy(const Pointer& p)
 
 const PlayerData* GetPlayerData();
 
+void SetNumClients(int n); // クライアント人数セット
+
+void SetClientName(int id, char* name);
+
 void InitSys(char* file); // システム初期化
+
+void InitPlayerData(); // プレイヤーデータ初期化処理
+
+void EndSys(); // システム終了処理
 
 // キャラとブロックの当たり判定
 // y : 当たり判定をとる座標ｙの補正(キャラの足元座標からの差)
@@ -136,8 +144,6 @@ void InitSys(char* file); // システム初期化
 static BlockType Collision_CB(int chara_ID, int y = 0, int accuracy = 2);
 
 static bool Collision_BB(); // ブロックを置けるなら true
-
-void GetClientName(int id,char clientName[MAX_LEN_NAME]);
 
 static void Goal(int chara_ID);    // ゴールの処理
 
