@@ -43,52 +43,115 @@ extern void RunCommand(int, char);
 using namespace std;
 
 /* sys.cpp */
+
 template <typename T>
 class Pointer{
+
 public:
-    Pointer(int size) : m_point(new T[size]) { m_size = size; }
-    Pointer(const Pointer<T>& p) {
-        Copy(p);
-    }
-    ~Pointer() { delete[] m_point; }
-    const T operator[](int n) const { return m_point[n]; }
-    T& operator[](int n)      { return m_point[n]; }
-    Pointer& operator=(const Pointer& p) {
-        delete[] m_point;
-        Copy(p);
-    }
+    Pointer(int size);
+    Pointer(const Pointer<T>& p);
+    ~Pointer();
+    const T operator[](int n) const;
+    T& operator[](int n);
+    Pointer& operator=(const Pointer& p);
+    int Size();
+
 private:
-    void Copy(const Pointer& p) {
-        m_size = p.m_size;
-        m_point = new T[m_size];
-        for (int i = 0; i < m_size; ++i) {
-            m_point[i] = p[i];
-        }
-    }
+    void Copy(const Pointer& p);
 
-
-public:
-    int m_size;
 private:
     T* m_point;
+    int m_size;
 };
 
-const PlayerData* GetPlayerData();
-extern void InitSys(char* file); // システム初期化
-       // キャラとマップの当たり判定
-       // y : 当たり判定をとる座標ｙの補正(キャラの足元座標からの差)
-       // accuracy : 当たり判定の精度(座標軸ごとの判定する座標数)
-       //            例：２で２・２の４点　３で３・３の９点を判定する
-       BlockType Collision_CB(int chara_ID, int y = 0, int accuracy = 2);
-       bool Collision_BB(); // ブロックを置けるなら true
-extern void GetClientName(int id,char clientName[MAX_LEN_NAME]);
-       void Goal(int chara_ID);    // ゴールの処理
-extern void MovePosition(int chara_ID); // キャラを移動させる
-extern void PutBlock(int chara_ID); // ブロックを置けるなら置く
-extern int AllGoal(); // 全員ゴールしていれば１
-extern void SetVec(int chara_ID, Vector3& vec); // キャラの速度ベクトルをセット
-extern void SetPlaceData(PlaceData& data); // 配置したいブロックの場所をセット
-extern void SendAllPos(int client_num); // クライアント全員に全員の座標を送る
 
-extern void SetDirection(int chara_ID, float direction); // システムにクライアントの角度を渡す
+template <class T>
+Pointer<T>::Pointer(int size)
+    : m_point(new T[size])
+{
+    m_size = size;
+}
+
+template <class T>
+Pointer<T>::Pointer(const Pointer<T>& p)
+{
+    Copy(p);
+}
+
+template <class T>
+Pointer<T>::~Pointer()
+{
+    delete[] m_point;
+}
+
+template <class T>
+const T Pointer<T>::operator[](int n) const
+{
+    if (m_size <= n) {
+        throw "Pointer [] : 範囲外\n";
+    }
+    return m_point[n];
+}
+
+template <class T>
+T& Pointer<T>::operator[](int n)
+{
+    if (m_size <= n) {
+        throw "Pointer [] : 範囲外\n";
+    }
+    return m_point[n];
+}
+
+template <class T>
+Pointer<T>& Pointer<T>::operator=(const Pointer& p)
+{
+    delete[] m_point;
+    Copy(p);
+}
+
+template <class T>
+int Pointer<T>::Size()
+{
+    return m_size;
+}
+
+template <class T>
+void Pointer<T>::Copy(const Pointer& p)
+{
+    m_size = p.m_size;
+    m_point = new T[m_size];
+    for (int i = 0; i < m_size; ++i) {
+        m_point[i] = p[i];
+    }
+}
+
+const PlayerData* GetPlayerData();
+
+void InitSys(char* file); // システム初期化
+
+// キャラとブロックの当たり判定
+// y : 当たり判定をとる座標ｙの補正(キャラの足元座標からの差)
+// accuracy : 当たり判定の精度(座標軸ごとの判定する座標数)
+//            例：２で２・２の４点　３で３・３の９点を判定する
+static BlockType Collision_CB(int chara_ID, int y = 0, int accuracy = 2);
+
+static bool Collision_BB(); // ブロックを置けるなら true
+
+void GetClientName(int id,char clientName[MAX_LEN_NAME]);
+
+static void Goal(int chara_ID);    // ゴールの処理
+
+void MovePosition(int chara_ID); // キャラを移動させる
+
+void PutBlock(int chara_ID); // ブロックを置けるなら置く
+
+int AllGoal(); // 全員ゴールしていれば１
+
+void SetVec(int chara_ID, Vector3& vec); // キャラの速度ベクトルをセット
+
+void SetPlaceData(PlaceData& data); // 配置したいブロックの場所をセット
+
+void SendAllPos(int client_num); // クライアント全員に全員の座標を送る
+
+void SetDirection(int chara_ID, float direction); // システムにクライアントの角度を渡す
 /*-----------グローバル変数 終了----------*/
