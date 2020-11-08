@@ -87,7 +87,7 @@ Pointer<T>::~Pointer()
 template <class T>
 const T Pointer<T>::operator[](int n) const
 {
-    if (m_size <= n) {
+    if (n < 0 || m_size <= n) {
         throw "Pointer [] : 範囲外\n";
     }
     return m_point[n];
@@ -96,7 +96,7 @@ const T Pointer<T>::operator[](int n) const
 template <class T>
 T& Pointer<T>::operator[](int n)
 {
-    if (m_size <= n) {
+    if (n < 0 || m_size <= n) {
         throw "Pointer [] : 範囲外\n";
     }
     return m_point[n];
