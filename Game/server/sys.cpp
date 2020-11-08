@@ -50,7 +50,7 @@ void InitPlayerData()// プレイヤーデータ初期化処理
 {
     PData = new PlayerData[Num_Clients];
     for (int i = 0; i < Num_Clients; ++i) {
-        PData[i].name = Name_Clients[i];
+        strcpy(PData[i].name, Name_Clients[i]);
         PData[i].pos = Pos_Clients;
         PData[i].pos.x = Pos_Clients.x + i * 20;
         Vector3 t_v = { 0, 0, 0 };

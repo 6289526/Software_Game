@@ -1,12 +1,13 @@
 #include "client_common.h"
 #include "graphic.h"
+#include <string.h>
 
 static int MyId; // クライアントのID
 // プレイヤーのデータ
 PlayerData* PData;
 
 static int Num_Clients; // クライアント人数
-static char* Name_Clients[MAX_NUMCLIENTS]; // クライアントの名前
+static char Name_Clients[MAX_NUMCLIENTS][MAX_LEN_NAME]; // クライアントの名前
 static FloatCube Pos_Clients = { 20, 20, 20, 10, 10, 10 }; // クライアント情報
 
 ClientMap Map; //マップ
@@ -69,14 +70,14 @@ void SetNumClients(int n) // クライアント人数セット
 // clientName:クライアントの名前
 void SetClientName(int id, char* name)
 {
-    Name_Clients[id] = name;
+	strcpy(Name_Clients[id], name);
 }
 
 void InitPlayerData()// プレイヤーデータ初期化処理
 {
     PData = new PlayerData[Num_Clients];
     for (int i = 0; i < Num_Clients; ++i) {
-        PData[i].name = Name_Clients[i];
+		strcpy(PData[i].name, Name_Clients[i]);
         PData[i].pos = Pos_Clients;
         PData[i].pos.x = Pos_Clients.x + i * 20;
         Vector3 t_v = { 0, 0, 0 };
@@ -106,8 +107,7 @@ void SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients)
 		PData[i].pos.x = moveData[i].x;
 		PData[i].pos.y = moveData[i].y;
 		PData[i].pos.z = moveData[i].z;
-		if(count % 10 == 0) fprintf(stderr, "%s client%d　は %f %f %f にいます。\n",PData[i].name, i, PData[i].pos.x, PData[i].pos.y, PData[i].pos.z);
-		count++;
+		fprintf(stderr, "[%d] %10s　は %f %f %f にいます。\n", i, PData[i].name, PData[i].pos.x, PData[i].pos.y, PData[i].pos.z);
 	}
 }
 

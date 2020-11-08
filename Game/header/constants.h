@@ -90,13 +90,19 @@ typedef struct
 /*クライアントの情報*/
 typedef struct
 {
-	char* name; // 名前
+	char name[MAX_LEN_NAME]; // 名前
 	FloatCube pos;           // 場所
 	Vector3 velocity;        // 速度ベクトル
 	float direction;         // 向き
 	int rank;                // 順位
 	bool goal;               // ゴールしているか
 } PlayerData;
+
+typedef struct
+{
+	int id;
+	char name[MAX_LEN_NAME]; // 名前
+} PlayerName;
 
 typedef enum
 {
