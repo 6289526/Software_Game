@@ -12,7 +12,6 @@ int cond = 1;
 
 static int PrintError(const char *str);
 
-
 int Select(void *args){
     SDL_mutex *mtx = (SDL_mutex *)args;
 
@@ -30,7 +29,7 @@ int Select(void *args){
     return 0;
 
 }
-
+char WiiAddress[17];
 // client用のmain関数
 int main(int argc, char *argv[]) {
 	/**SDL2関連 BEGIN******/
@@ -74,6 +73,8 @@ int main(int argc, char *argv[]) {
 	SetupClient(server_name, port);
     InitPlayerData(); // プレイヤーデータ初期化処理
 	/**サーバー関連 END**/
+
+	sprintf(WiiAddress, "%s", argv[3]);
 	InitSystem(&initData);
 
 

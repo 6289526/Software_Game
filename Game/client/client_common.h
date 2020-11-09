@@ -17,12 +17,13 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 #include "../header/constants.h"
-#include "client_KeybordInput.h"
 #include "client_map.hpp"
 #include "client_system.h"
+#include "client_WiiInput.h"
+// #include "client_KeybordInput.h"
 
 extern int Num_Clients; // クライアント人数
-
+extern char WiiAddress[17];
 /* ウインドウサイズ */
 enum {
     Wd_Width  = 640,
