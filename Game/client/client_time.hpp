@@ -5,10 +5,10 @@
 class Timer
 {
 private:
-    static std::chrono::system_clock::time_point _Prev;
+    std::chrono::system_clock::time_point _Prev;
 public:
-    double GetDeltaTime();
-    void UpdateFrame();
     Timer();
     ~Timer();
+    double GetDeltaTime();
+    void UpdateFrame();
 };

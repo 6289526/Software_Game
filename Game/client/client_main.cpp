@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	/**SDL2関連 END********/
 
-	InitData initData = {NULL};
+	InitData initData;
 
 	/**サーバー関連 BEGIN**/
 	// 参加したいサーバーのポート番号
@@ -82,6 +82,8 @@ int main(int argc, char *argv[]) {
 		/*サーバーにリクエストを送る*/
 		Disp();
 		SDL_Delay(10);
+		initData.timer->UpdateFrame(); // Update the game frame.
+		fprintf(stderr, "time %lf[ms]\n", initData.timer->GetDeltaTime());
 	}
 
 	// ウィンドウシステムの終了
@@ -91,6 +93,6 @@ int main(int argc, char *argv[]) {
 	TerminateClient();
     EndSys();
 	SDL_Quit();
-	delete initData.input;
+	ExitSystem(&initData);
 	return 0;
 }

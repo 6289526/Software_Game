@@ -58,6 +58,13 @@ bool InitSystem(InitData *data){
 		fprintf(stderr, "Failed to create a input thread.\n");
 		return false;
 	}
+
+	data->timer = new Timer();
+}
+
+void ExitSystem(InitData *data){
+	delete data->input;
+	delete data->timer;
 }
 
 void SetNumClients(int n) // クライアント人数セット

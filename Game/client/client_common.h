@@ -20,6 +20,7 @@
 #include "client_KeybordInput.h"
 #include "client_map.hpp"
 #include "client_system.h"
+#include "client_time.hpp"
 
 extern int Num_Clients; // クライアント人数
 
@@ -35,8 +36,14 @@ enum {
     Gs_Result  = 3
 };
 
-typedef struct{
+typedef struct InitData{
 	InputModuleBase *input;
+    Timer *timer;
+
+    InitData() : 
+        input(NULL),
+        timer(NULL)
+        { };
 } InitData;
 
 /* net.c */
@@ -49,6 +56,7 @@ extern int InCommand(char com);
 const PlayerData* GetPlayerData();
 
 extern bool InitSystem(InitData *data);
+extern void ExitSystem(InitData *data);
 extern ClientMap Map;
 extern int GetMyID();
 extern void SetMyID(int);
