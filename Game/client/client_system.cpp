@@ -2,7 +2,7 @@
 #include "graphic.h"
 #include <string.h>
 
-#define PLAYER_MOVE_SPEED 30
+#define PLAYER_MOVE_SPEED 3000
 #define GRAVITY 9.8
 
 static int MyId; // クライアントのID
@@ -147,11 +147,7 @@ void SystemRun()
 
 	PData[MyId].velocity.z = 0;
 	// 移動処理
-<<<<<<< HEAD
-	if (data.Forward || data.Left || data.Right || data.Left || data.Jump || !IsPlayerOnGround())
-=======
-	if (data.Forward || data.Left || data.Right || data.Left || data.Jump || data.U || data.D)
->>>>>>> 6316a8d1e32c618c96baaefbefdff0bcdf49d6ae
+	if (data.Forward || data.Left || data.Right || data.Left || data.Jump || data.U || data.D || !IsPlayerOnGround())
 	{
 		if (data.U)
 		{
@@ -169,20 +165,12 @@ void SystemRun()
 		if (data.Left)
 		{
 			data.Left = false;
-<<<<<<< HEAD
-			PData[MyId].velocity.x -= PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-=======
-			PData[MyId].velocity.x += 1;
->>>>>>> 6316a8d1e32c618c96baaefbefdff0bcdf49d6ae
+			PData[MyId].velocity.x += PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 		}
 		else if (data.Right)
 		{
 			data.Right = false;
-<<<<<<< HEAD
-			PData[MyId].velocity.x += PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-=======
-			PData[MyId].velocity.x -= 1;
->>>>>>> 6316a8d1e32c618c96baaefbefdff0bcdf49d6ae
+			PData[MyId].velocity.x -= PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 		}
 		// ジャンプ
 		if (data.Jump && IsPlayerOnGround())
@@ -198,13 +186,9 @@ void SystemRun()
 			data.D = false;
 			PData[MyId].velocity.z -= 1;
 		}
-<<<<<<< HEAD
 		else if(!IsPlayerOnGround()){
 			PData[MyId].velocity.y -= GRAVITY * Time->GetDeltaTime();
 		}
-=======
-		/////////////////////////////////
->>>>>>> 6316a8d1e32c618c96baaefbefdff0bcdf49d6ae
 
 		// 移動コマンド実行
 		InCommand(MOVE_COMMAND);
@@ -241,29 +225,19 @@ void UpdatePlaceData(PlaceData data){
 }
 
 bool IsPlayerOnGround(){
-	bool result = false;
-	if (PData[GetMyID()].pos.y)
-	{
-		
-	}
-	
-	return result;
-}
-
-BlockType Collision_CB(int y)
-{
-	int chara_ID = GetMyID();
+	int id = GetMyID();
 	int accuracy  = 2;
-	int pos[2];
+	int point_X[2], point_Z[2];
+	int y = 0;
 
-    const int wide = PData[chara_ID].pos.w / (accuracy - 1);  // 当たり判定を知らべる座標間距離 x座標
-    const int depth = PData[chara_ID].pos.d / (accuracy - 1); // 当たり判定を知らべる座標間距離 z座標
+    const int wide = PData[id].pos.w / (accuracy - 1);  // 当たり判定を知らべる座標間距離 x座標
+    const int depth = PData[id].pos.d / (accuracy - 1); // 当たり判定を知らべる座標間距離 z座標
 
     // 当たり判定を調べる座標をすべて格納
     for (int i = 0; i < accuracy; ++i)
     {
-        point_X[i] = PData[chara_ID].pos.x + PData[chara_ID].velocity.x + wide * i;
-        point_Z[i] = PData[chara_ID].pos.z + PData[chara_ID].velocity.z + depth * i;
+        point_X[i] = PData[id].pos.x + PData[id].velocity.x + wide * i;
+        point_Z[i] = PData[id].pos.z + PData[id].velocity.z + depth * i;
     }
 
     // マップデータ入手
@@ -276,43 +250,17 @@ BlockType Collision_CB(int y)
 
     // マップ配列の添え字用変数を宣言，初期化
     int Block_X = 0;
-    int Block_Y = (PData[chara_ID].pos.y + PData[chara_ID].velocity.y + y) / MAP_MAGNIFICATION;
+    int t_Block_Y = (PData[id].pos.y + PData[id].velocity.y + y);
+    int Block_Y = (PData[id].pos.y + PData[id].velocity.y + y) / MAP_MAGNIFICATION;
     int Block_Z = 0;
-
-    if (Block_Y < 0)
-    {
-        throw "マップ外 : y座標 : 負\n";
-    }
-    else if (MAP_SIZE_H <= Block_Y)
-    {
-        throw "マップ外 : y座標 : 正\n";
-    }
 
     for (int i = 0; i < accuracy; ++i)
     {
         Block_X = point_X[i] / MAP_MAGNIFICATION;
 
-        if (Block_X < 0)
-        {
-            throw "マップ外 : x座標 :負\n";
-        }
-        else if (MAP_SIZE_W <= Block_X)
-        {
-            throw "マップ外 : x座標 : 正\n";
-        }
-
         for (int j = 0; j < accuracy; ++j)
         {
             Block_Z = point_Z[j] / MAP_MAGNIFICATION;
-
-            if (Block_Z < 0)
-            {
-                throw "マップ外 : z座標 : 負\n";
-            }
-            else if (MAP_SIZE_D <= Block_Z)
-            {
-                throw "マップ外 : z座標 : 正\n";
-            }
 
             switch (terrainData[Block_X][Block_Y][Block_Z])
             {
@@ -332,8 +280,7 @@ BlockType Collision_CB(int y)
             }
         }
     }
-
-    return result;
+	return result != NonBlock;
 }
 
 // ===== * ===== マルチスレッド ===== * ===== //
