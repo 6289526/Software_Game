@@ -21,6 +21,8 @@
 #include "client_map.hpp"
 #include "client_system.h"
 
+extern int Num_Clients; // クライアント人数
+
 /* ウインドウサイズ */
 enum {
     Wd_Width  = 640,

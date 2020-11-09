@@ -227,7 +227,7 @@ int ControlRequests()
     memset(&data, 0, sizeof(FloatPosition));
     memset(&placeData, 0, sizeof(PlaceData));
     /** ソケット通信の多重化 **/
-    fprintf(stderr, "select() is started.\n");
+    //fprintf(stderr, "select() is started.\n");
     /* ファイルディスクリプタの集合から読み込み可能なファイルディスクリプタを見つける*/
     if (select(NumSock, (fd_set *)&read_flag, NULL, NULL, &timeout) == -1)
     {
@@ -259,7 +259,7 @@ int ControlRequests()
                     ReceiveData(i, &data, sizeof(FloatPosition));
                     ReceiveData(i, &direction, sizeof(float));
 
-                    fprintf(stderr, "[%d] %10s: message = x:%f y:%f z:%f dir:%f\n", i, name[i], data.x, data.y, data.z, direction);
+                    fprintf(stderr, " [%d] %10s: message = x:%6.3f   y:%6.3f   z:%6.3f   dir:%6.3f\n", i, name[i], data.x, data.y, data.z, direction);
                     // 受け取った座標をシステムモジュールに渡す
                     SetVec(i, data);
                     SetDirection(i, direction);
@@ -270,10 +270,10 @@ int ControlRequests()
                 case PUT_COMMAND:
                     ReceiveData(i, &placeData, sizeof(PlaceData));
                     SetPlaceData(placeData);
-                    fprintf(stderr, "[%d] %10s: put = x:%d y:%d z:%d\n", i, name[i], placeData.pos.x, placeData.pos.y, placeData.pos.z);
+                    fprintf(stderr, " [%d] %10s: put     = x:%6.3d   y:%6.3d   z:%6.3d\n", i, name[i], placeData.pos.x, placeData.pos.y, placeData.pos.z);
 
                 case QUIT_COMMAND: //通信の終了を要求された場合
-                    fprintf(stderr, "[%d] %10s: quit\n", i, name[i]);
+                    fprintf(stderr, " [%d] %10s: quit\n", i, name[i]);
                     // 接続を切る
                     Clients[i].connect = 0;
 
