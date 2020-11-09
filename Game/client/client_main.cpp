@@ -90,7 +90,6 @@ int main(int argc, char *argv[]) {
 
 	// クライアントを終了する。
 	TerminateClient();
-    EndSys();
 	SDL_Quit();
 	ExitSystem(&initData);
 	return 0;

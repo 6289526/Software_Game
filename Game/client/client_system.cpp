@@ -2,6 +2,9 @@
 #include "graphic.h"
 #include <string.h>
 
+#define PLAYER_MOVE_SPEED 30
+#define GRAVITY 9.8
+
 static int MyId; // クライアントのID
 // プレイヤーのデータ
 PlayerData* PData;
@@ -12,6 +15,7 @@ static FloatCube Pos_Clients = { 20, 20, 20, 9, 9, 9 }; // クライアント情
 
 ClientMap Map; //マップ
 InputModuleBase *Input; // Input Module
+Timer *Time; // FrameTimer
 
 // int GrapicThread(void *data); // This Function isn't used now.
 
@@ -27,6 +31,8 @@ int GetMyID(){ return MyId; }
 *   id: クライアントのID
 */
 void SetMyID(int id){ MyId = id; }
+
+bool IsPlayerOnGround();
 // ===== * ===== プロパティ ===== * ===== //
 
 int InputThread(void *data);
@@ -59,10 +65,13 @@ bool InitSystem(InitData *data){
 		return false;
 	}
 
-	data->timer = new Timer();
+	Time = new Timer();
+	data->timer = Time;
 }
 
+// システム終了処理
 void ExitSystem(InitData *data){
+	delete[] PData;
 	delete data->input;
 	delete data->timer;
 }
@@ -93,11 +102,6 @@ void InitPlayerData()// プレイヤーデータ初期化処理
         PData[i].rank = 0;
         PData[i].goal = false;
     }
-}
-
-void EndSys()// システム終了処理
-{
-    delete[] PData;
 }
 
 /*クライアントの位置の取得
@@ -143,30 +147,33 @@ void SystemRun()
 
 	PData[MyId].velocity.z = 0;
 	// 移動処理
-	if (data.Forward || data.Left || data.Right || data.Left || data.Jump)
+	if (data.Forward || data.Left || data.Right || data.Left || data.Jump || !IsPlayerOnGround())
 	{
 		// 前
 		if (data.Forward)
 		{
 			data.Forward = false;
-			PData[MyId].velocity.z += 1;
+			PData[MyId].velocity.z += PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 		}
 		// 左右
 		if (data.Left)
 		{
 			data.Left = false;
-			PData[MyId].velocity.x -= 1;
+			PData[MyId].velocity.x -= PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 		}
 		else if (data.Right)
 		{
 			data.Right = false;
-			PData[MyId].velocity.x += 1;
+			PData[MyId].velocity.x += PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 		}
 		// ジャンプ
-		if (data.Jump)
+		if (data.Jump && IsPlayerOnGround())
 		{
 			data.Jump = false;
 			PData[MyId].velocity.y += 5;
+		}
+		else if(!IsPlayerOnGround()){
+			PData[MyId].velocity.y -= GRAVITY * Time->GetDeltaTime();
 		}
 
 		// 移動コマンド実行
@@ -201,6 +208,102 @@ void UpdateFlag(VelocityFlag* flags, int numClients){
 // Updated place data from server
 void UpdatePlaceData(PlaceData data){
 
+}
+
+bool IsPlayerOnGround(){
+	bool result = false;
+	if (PData[GetMyID()].pos.y)
+	{
+		
+	}
+	
+	return result;
+}
+
+BlockType Collision_CB(int y)
+{
+	int chara_ID = GetMyID();
+	int accuracy  = 2;
+	int pos[2];
+
+    const int wide = PData[chara_ID].pos.w / (accuracy - 1);  // 当たり判定を知らべる座標間距離 x座標
+    const int depth = PData[chara_ID].pos.d / (accuracy - 1); // 当たり判定を知らべる座標間距離 z座標
+
+    // 当たり判定を調べる座標をすべて格納
+    for (int i = 0; i < accuracy; ++i)
+    {
+        point_X[i] = PData[chara_ID].pos.x + PData[chara_ID].velocity.x + wide * i;
+        point_Z[i] = PData[chara_ID].pos.z + PData[chara_ID].velocity.z + depth * i;
+    }
+
+    // マップデータ入手
+    const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
+
+    // 返り値用変数を宣言，初期化
+    // ゴールブロックが１個でも接触すればゴールブロックが返る
+    // ノーマルブロックが１個でも接触すればノーマルブロックが返る
+    BlockType result = NonBlock;
+
+    // マップ配列の添え字用変数を宣言，初期化
+    int Block_X = 0;
+    int Block_Y = (PData[chara_ID].pos.y + PData[chara_ID].velocity.y + y) / MAP_MAGNIFICATION;
+    int Block_Z = 0;
+
+    if (Block_Y < 0)
+    {
+        throw "マップ外 : y座標 : 負\n";
+    }
+    else if (MAP_SIZE_H <= Block_Y)
+    {
+        throw "マップ外 : y座標 : 正\n";
+    }
+
+    for (int i = 0; i < accuracy; ++i)
+    {
+        Block_X = point_X[i] / MAP_MAGNIFICATION;
+
+        if (Block_X < 0)
+        {
+            throw "マップ外 : x座標 :負\n";
+        }
+        else if (MAP_SIZE_W <= Block_X)
+        {
+            throw "マップ外 : x座標 : 正\n";
+        }
+
+        for (int j = 0; j < accuracy; ++j)
+        {
+            Block_Z = point_Z[j] / MAP_MAGNIFICATION;
+
+            if (Block_Z < 0)
+            {
+                throw "マップ外 : z座標 : 負\n";
+            }
+            else if (MAP_SIZE_D <= Block_Z)
+            {
+                throw "マップ外 : z座標 : 正\n";
+            }
+
+            switch (terrainData[Block_X][Block_Y][Block_Z])
+            {
+            case GoalBlock:
+                result = GoalBlock;
+                break;
+            case NomalBlock:
+                if (result == NonBlock)
+                {
+                    result = NomalBlock;
+                }
+                break;
+            case NonBlock:
+                break;
+            default:
+                throw "マップデータ : エラー\n";
+            }
+        }
+    }
+
+    return result;
 }
 
 // ===== * ===== マルチスレッド ===== * ===== //
