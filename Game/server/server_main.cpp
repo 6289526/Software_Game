@@ -75,8 +75,11 @@ int Select(void *args){
 // server用のmain関数
 int main(int argc, char *argv[])
 {
-
-    if (argc < 3)
+    if (argc == 2) {
+        PlayerNum = atoi(argv[1]);
+        PortNum = 51000;
+    }
+    else if (argc < 3)
     {
         PlayerNum = 1;
         PortNum = 51000;
@@ -96,11 +99,13 @@ int main(int argc, char *argv[])
     fprintf(stderr, "Port number = %d\n", PortNum);
     //初期化
     SDL_Init(SDL_INIT_EVERYTHING);
-    
+
     char file[] = "../../data/mapdata.csv";
     InitSys(file);
 
     SetupServer(PlayerNum, PortNum); // サーバー初期化
+
+    InitPlayerData(); // プレイヤーデータ初期化
 
     /**SDL BEGIN**/
 
@@ -144,6 +149,7 @@ int main(int argc, char *argv[])
     }
 
     TerminateServer(); // サーバー終了処理
+    EndSys(); // システム終了処理
     SDL_DestroyMutex(mtx1);
     SDL_DestroyMutex(mtx2);
     SDL_Quit();

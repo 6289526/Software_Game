@@ -20,6 +20,8 @@ static int TerminateFlag;
 
 static int ClientCount;
 
+static char name[MAX_NUMCLIENTS][MAX_LEN_NAME];
+
 /*関数*/
 static int HandleError(char *);
 static void SendData(int cid, const void *data, int size);
@@ -52,6 +54,8 @@ void SetupServer(int num_cl, u_short port)
 
     //ゲームに参加する人数
     NumClient = num_cl;
+
+    SetNumClients(NumClient); // システムに渡す
 
     /*
   * ソケットの生成
@@ -98,7 +102,6 @@ void SetupServer(int num_cl, u_short port)
     socklen_t len;
 
     char src[MAX_LEN_ADDR];
-    char name[MAX_NUMCLIENTS][MAX_LEN_NAME];
     /*
   *  NumClientの人数のクライアントが通信を要求してくるまで
   *  ここから先には進まない
@@ -125,7 +128,7 @@ void SetupServer(int num_cl, u_short port)
             HandleError("read()");
         }
         // 名前をシステムモジュールに渡す
-        GetClientName(i, name[i]);
+        SetClientName(i, name[i]);
         // 接続していることを示す
         Clients[i].connect = 1;
         // 使用するソケット
@@ -148,6 +151,13 @@ void SetupServer(int num_cl, u_short port)
 
     /** この段階で設定した人数分のクライアントが接続している **/
     ClientCount = NumClient;
+
+    PlayerName* Cname = new PlayerName[NumClient];
+    for (int i = 0; i < NumClient; ++i) {
+        Cname[i].id = i;
+        strcpy(Cname[i].name, name[i]);
+    }
+
     /*接続したクライアントに情報を送る*/
     for (int i = 0; i < NumClient; i++)
     {
@@ -159,7 +169,9 @@ void SetupServer(int num_cl, u_short port)
         {
             // 接続しているクライアントの情報を送る
             SendData(i, &Clients[j], sizeof(NetworkData));
+            SendData(i, &Cname[j], sizeof(PlayerName));
         }
+
         // マップデータ入手
         const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
         for(int l = 0; l < MAP_SIZE_W; ++l) {
@@ -170,6 +182,7 @@ void SetupServer(int num_cl, u_short port)
             }
         }
     }
+    delete[] Cname;
 
     /** ファイルディスクリプタの操作 **/
     // select関数の第一引数ので必要
@@ -214,7 +227,7 @@ int ControlRequests()
     memset(&data, 0, sizeof(FloatPosition));
     memset(&placeData, 0, sizeof(PlaceData));
     /** ソケット通信の多重化 **/
-    fprintf(stderr, "select() is started.\n");
+    //fprintf(stderr, "select() is started.\n");
     /* ファイルディスクリプタの集合から読み込み可能なファイルディスクリプタを見つける*/
     if (select(NumSock, (fd_set *)&read_flag, NULL, NULL, &timeout) == -1)
     {
@@ -246,7 +259,7 @@ int ControlRequests()
                     ReceiveData(i, &data, sizeof(FloatPosition));
                     ReceiveData(i, &direction, sizeof(float));
 
-                    fprintf(stderr, "client[%d]: message = x:%f y:%f z:%f dir:%f\n", i, data.x, data.y, data.z, direction);
+                    fprintf(stderr, " [%d] %10s: message = x:%6.3f   y:%6.3f   z:%6.3f   dir:%6.3f\n", i, name[i], data.x, data.y, data.z, direction);
                     // 受け取った座標をシステムモジュールに渡す
                     SetVec(i, data);
                     SetDirection(i, direction);
@@ -257,10 +270,10 @@ int ControlRequests()
                 case PUT_COMMAND:
                     ReceiveData(i, &placeData, sizeof(PlaceData));
                     SetPlaceData(placeData);
-                    fprintf(stderr, "client[%d]: put = x:%d y:%d z:%d\n", i, placeData.pos.x, placeData.pos.y, placeData.pos.z);
+                    fprintf(stderr, " [%d] %10s: put     = x:%6.3d   y:%6.3d   z:%6.3d\n", i, name[i], placeData.pos.x, placeData.pos.y, placeData.pos.z);
 
                 case QUIT_COMMAND: //通信の終了を要求された場合
-                    fprintf(stderr, "client[%d]: quit\n", i);
+                    fprintf(stderr, " [%d] %10s: quit\n", i, name[i]);
                     // 接続を切る
                     Clients[i].connect = 0;
 

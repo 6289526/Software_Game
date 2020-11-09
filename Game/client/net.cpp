@@ -19,6 +19,7 @@ static fd_set Mask;
 // クライアントの情報
 static NetworkData Clients[MAX_NUMCLIENTS];
 
+
 /*関数*/
 static int HandleError(char *);
 static void SendData(void *data, int size);
@@ -91,6 +92,7 @@ void SetupClient(char *server_name, u_short port)
     ReceiveData(&NumClients, sizeof(int));
     // 受け取った人数を表示
     fprintf(stderr, "Number of Clients = %d.\n", NumClients);
+    SetNumClients(NumClients); // システムに渡す
     // 自身のIDを受け取る
     ReceiveData(&MyId, sizeof(int));
     // 受け取ったIDをシステムモジュールに渡す
@@ -99,10 +101,17 @@ void SetupClient(char *server_name, u_short port)
 
     /** 全クライアントの情報を受け取る **/
     int i;
+    PlayerName* Name_Clients = new PlayerName[NumClients];
+
     for (i = 0; i < NumClients; i++)
     {
         ReceiveData(&Clients[i], sizeof(NetworkData));
+        ReceiveData(&Name_Clients[i], sizeof(PlayerName));
     }
+    for (int i = 0; i < NumClients; ++i) {
+        SetClientName(i, Name_Clients[i].name);
+    }
+    delete[] Name_Clients;
     // マップデータ入手
     int terrainData[MAP_SIZE_W][MAP_SIZE_H][MAP_SIZE_D];
     for(int l = 0; l < MAP_SIZE_W; ++l) {

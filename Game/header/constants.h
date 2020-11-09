@@ -12,7 +12,7 @@
 /*----------define 開始-----------*/
 #define DEFAULT_PORT 51000 	//デフォルトのポート番号
 #define MAX_LEN_NAME 10 	//名前の最大文字数
-#define MAX_NUMCLIENTS 5 	//最大参加人数
+#define MAX_NUMCLIENTS 8	//最大参加人数
 #define MAX_LEN_BUFFER 256 	//メッセージの最大文字数
 #define MAX_LEN_ADDR 32 	//ソケットの設定のサイズ
 #define BROADCAST -1 		//全員に送るとき
@@ -97,6 +97,12 @@ typedef struct
 	int rank;                // 順位
 	bool goal;               // ゴールしているか
 } PlayerData;
+
+typedef struct
+{
+	int id;
+	char name[MAX_LEN_NAME]; // 名前
+} PlayerName;
 
 typedef enum
 {

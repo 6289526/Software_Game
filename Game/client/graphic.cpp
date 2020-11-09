@@ -29,7 +29,7 @@ void RotateCube(FloatCube cube, double dir, SDL_Color color);
 
 /////////////////////////////////////////////////////////////
 void setlookat(int x, int y, int z, double dir){
-    
+
     if(dir >= 2* PI)dir -= 2*PI;
 
     lookatPlace.x += x;
@@ -44,7 +44,7 @@ void setlookat(int x, int y, int z, double dir){
 void InitGraphic(){
     window = SDL_CreateWindow("OpenGL Test", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, Wd_Width, Wd_Height, SDL_WINDOW_OPENGL);
 	context = SDL_GL_CreateContext(window);
-	
+
     InitOpenGL();
 }
 
@@ -54,7 +54,7 @@ void Disp(){
     glFlush();
     View3D();
     Disp3D();
-    glFlush();   
+    glFlush();
     View2D();
     Disp2D();
     glFlush();
@@ -65,7 +65,7 @@ void Disp(){
 
 //OpenGL初期化
 bool InitOpenGL() {
-	
+
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	glViewport(0, 0, Wd_Width, Wd_Height);
 	glClearColor(1.0, 1.0, 1.0, 1.0);
@@ -147,7 +147,7 @@ void DrawMap(){
     FloatCube mcube;
     //仮宣言
     int map_w = Map.GetMapW(), map_d = Map.GetMapD();
-    
+
     //床
     // マテリアルを設定する
     GLfloat ambient  [] = { 0.1f, 0.1f, 0.1f, 1.0f};
@@ -159,7 +159,7 @@ void DrawMap(){
     glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
     glMaterialfv(GL_FRONT, GL_SHININESS, shininess);
     glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-    
+
     //描画
     glBegin(GL_QUADS);
         glNormal3f(0.0,1.0,0.0);
@@ -169,7 +169,7 @@ void DrawMap(){
         glVertex3f(0.0, 0.0, map_d * MAP_MAGNIFICATION);
     glEnd();
 
-    SDL_Color mapColor = {255,255,0,255}; 
+    SDL_Color mapColor = {255,255,0,255};
 
     //3次元配列データ使用時
     for(int width = 0; width < map_w; width++){
@@ -192,7 +192,7 @@ void DrawCharacter(){
     SDL_Color playercolor = {0,0,255,255};
     //仮宣言
     int myid = GetMyID();
-    
+
     //視点変更
     lookatPlace.x = playerData[myid].pos.x + playerData[myid].pos.w / 2 + 60 * -sin(playerData[myid].direction);
     lookatPlace.y = playerData[myid].pos.y + 50;
@@ -202,7 +202,7 @@ void DrawCharacter(){
     lookatCenter.y = playerData[myid].pos.y + playerData[myid].pos.h / 2;
     lookatCenter.z = playerData[myid].pos.z + playerData[myid].pos.d / 2;
     // printf("%f\n",dir);
-    
+
     // 視点を設定する
     gluLookAt(
         lookatPlace.x,  lookatPlace.y,  lookatPlace.z,
@@ -211,8 +211,26 @@ void DrawCharacter(){
     );
 
 
-        for(int i = 0; i < PLAYER_NUM; i++){
+    for(int i = 0; i < Num_Clients; i++){
         FloatCube ccube = playerData[i].pos;
+
+        // キャラの色分け
+        const int difference = 85;
+        if ((i * difference) <= (255 * 3)){
+            playercolor.r = i * difference;
+            playercolor.g = i * difference;
+            if ((i * difference) <= (255 * 2)){
+                playercolor.r = 0;
+                playercolor.g = i * difference;
+                if ((i * difference) <= (255 * 1)){
+                    playercolor.r = i * difference;
+                    playercolor.g = 0;
+                }
+            }
+        }
+        else {
+            fprintf(stderr, "色足らん\n");
+        }
         RotateCube(ccube,playerData[i].direction, playercolor);
     }
 }
@@ -220,7 +238,7 @@ void DrawCharacter(){
 //FloatCubeの描画
 void Cube(FloatCube cube, SDL_Color color){
     //printf("(%f, %f, %f, %f, %f, %f)\n",cube.x, cube.y, cube.z, cube.w, cube.h, cube.d);
-            
+
     // マテリアルを設定する
     GLfloat ambient  [] = { 0.1f, 0.1f, 0.1f, 1.0f};
     GLfloat diffuse  [] = { color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f};

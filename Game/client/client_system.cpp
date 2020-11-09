@@ -1,12 +1,15 @@
 #include "client_common.h"
 #include "graphic.h"
+#include <string.h>
 
 static int MyId; // クライアントのID
 // プレイヤーのデータ
-PlayerData PData[PLAYER_NUM] = {
-	{"a", {20, 20, 20, 7, 20, 7}, {0, 0, 0},0, 1, 0},
-	{"a", {20, 20, 20, 10, 10, 10}, 1, 0}
-};
+PlayerData* PData;
+
+int Num_Clients; // クライアント人数
+static char Name_Clients[MAX_NUMCLIENTS][MAX_LEN_NAME]; // クライアントの名前
+static FloatCube Pos_Clients = { 20, 20, 20, 9, 9, 9 }; // クライアント情報
+
 ClientMap Map; //マップ
 InputModuleBase *Input; // Input Module
 
@@ -46,7 +49,7 @@ bool InitSystem(InitData *data){
 
 	Input = new KeybordInput();
 	data->input = Input;
-	
+
 	SDL_Thread *inputThread;
     SDL_mutex *input_mtx = SDL_CreateMutex(); // 相互排除
 	inputThread = SDL_CreateThread(InputThread, "inputThread", input_mtx);
@@ -55,6 +58,39 @@ bool InitSystem(InitData *data){
 		fprintf(stderr, "Failed to create a input thread.\n");
 		return false;
 	}
+}
+
+void SetNumClients(int n) // クライアント人数セット
+{
+    Num_Clients = n;
+}
+
+// 名前のセット
+// id: クライアントのID
+// clientName:クライアントの名前
+void SetClientName(int id, char* name)
+{
+	strcpy(Name_Clients[id], name);
+}
+
+void InitPlayerData()// プレイヤーデータ初期化処理
+{
+    PData = new PlayerData[Num_Clients];
+    for (int i = 0; i < Num_Clients; ++i) {
+		strcpy(PData[i].name, Name_Clients[i]);
+        PData[i].pos = Pos_Clients;
+        PData[i].pos.x = Pos_Clients.x + i * 20;
+        Vector3 t_v = { 0, 0, 0 };
+        PData[i].velocity = t_v;
+        PData[i].direction = 0;
+        PData[i].rank = 0;
+        PData[i].goal = false;
+    }
+}
+
+void EndSys()// システム終了処理
+{
+    delete[] PData;
 }
 
 /*クライアントの位置の取得
@@ -71,8 +107,7 @@ void SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients)
 		PData[i].pos.x = moveData[i].x;
 		PData[i].pos.y = moveData[i].y;
 		PData[i].pos.z = moveData[i].z;
-		if(count % 10 == 0) fprintf(stderr, "%d client%d　は %f %f %f にいます。\n",count, i, PData[i].pos.x, PData[i].pos.y, PData[i].pos.z);
-		count++;
+		fprintf(stderr, "[%d] %10s　は %f %f %f にいます。\n", i, PData[i].name, PData[i].pos.x, PData[i].pos.y, PData[i].pos.z);
 	}
 }
 
@@ -179,6 +214,6 @@ int InputThread(void *data){
 		Input->UpdateInput();
 		SDL_UnlockMutex(mtx);
 	}
-	
+
 	return 0;
 }
