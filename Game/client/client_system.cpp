@@ -2,8 +2,8 @@
 #include "graphic.h"
 #include <string.h>
 
-#define PLAYER_MOVE_SPEED 900000
-#define GRAVITY 9.8
+#define PLAYER_MOVE_SPEED 15
+#define GRAVITY 9.8 * 0.5// * 3
 
 static int MyId; // クライアントのID
 // プレイヤーのデータ
@@ -143,7 +143,7 @@ void SystemRun()
 
 	PData[MyId].velocity.x = 0;
 
-	PData[MyId].velocity.y = 0;
+	// PData[MyId].velocity.y = 0;
 
 	PData[MyId].velocity.z = 0;
 	// 移動処理
@@ -172,10 +172,13 @@ void SystemRun()
 			PData[MyId].velocity.x -= PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 		}
 		// ジャンプ
-		if (data.Jump && IsPlayerOnGround())
+		if (data.Jump && IsPlayerOnGround() == 1)
 		{
 			data.Jump = false;
-			PData[MyId].velocity.y += 1;
+			PData[MyId].velocity.y += 5;
+		}
+		else if(!IsPlayerOnGround()){
+			PData[MyId].velocity.y -= GRAVITY * Time->GetDeltaTime();
 		}
 
 		/////////////////////////////////
@@ -184,9 +187,6 @@ void SystemRun()
 		{
 			data.D = false;
 			PData[MyId].velocity.z -= 1;
-		}
-		else if(!IsPlayerOnGround()){
-			PData[MyId].velocity.y -= GRAVITY * Time->GetDeltaTime();
 		}
 
 		// 移動コマンド実行
@@ -199,6 +199,8 @@ void SystemRun()
 		data.Put = false;
 		InCommand(PUT_COMMAND);
 	}
+
+	fprintf(stderr, "time: %lf[mms] | IsGround = %d \n", Time->GetDeltaTime(), IsPlayerOnGround());
 }
 
 /*各プレイヤーのvelocityを変更する
@@ -251,7 +253,8 @@ bool IsPlayerOnGround(){
     int Block_X = 0;
     int t_Block_Y = (PData[id].pos.y + PData[id].velocity.y + y);
     int Block_Y = (PData[id].pos.y + PData[id].velocity.y + y) / MAP_MAGNIFICATION;
-    int Block_Z = 0;
+    Block_Y = clamp(Block_Y, 0, MAP_SIZE_H - 1); 
+	int Block_Z = 0;
 
     for (int i = 0; i < accuracy; ++i)
     {
