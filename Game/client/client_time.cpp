@@ -1,17 +1,27 @@
 #include "client_time.hpp"
-using namespace std::chrono;
+// using namespace std::chrono;
 
 Timer::Timer()
 {
-    _Prev = system_clock::now();
+    UpdateFrame();
 }
 
 Timer::~Timer() { }
 
 double Timer::GetDeltaTime(){
-    return static_cast<double>(duration_cast<microseconds>(_Prev - system_clock::now()).count() / 1000.0);
+    // return static_cast<double>(duration_cast<microseconds>(system_clock::now() - _Prev).count() / 1000.0);
+    return static_cast<double>(clock() - _Prev) / CLOCKS_PER_SEC;
 }
 
 void Timer::UpdateFrame(){
-    _Prev = system_clock::now();
+    // _Prev = system_clock::now();
+    _Prev = clock();
+    
+    /*clock_t start = clock();
+
+    // 何かの処理
+
+    clock_t end = clock();
+
+    const double time = static_cast<double>(end - start) / CLOCKS_PER_SEC * 1000.0;*/
 }

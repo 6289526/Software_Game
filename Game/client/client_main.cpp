@@ -83,7 +83,6 @@ int main(int argc, char *argv[]) {
 		Disp();
 		SDL_Delay(10);
 		initData.timer->UpdateFrame(); // Update the game frame.
-		fprintf(stderr, "time %lf[ms]\n", initData.timer->GetDeltaTime());
 	}
 
 	// ウィンドウシステムの終了
