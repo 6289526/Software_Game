@@ -4,10 +4,11 @@
  */
 
 #pragma once
-#include "client_input.h"  
+#include "client_input.h"
+extern "C"{  
 #include "wiimote.h"	// Wiiリモコンを用いるために必要なヘッダファイル
 #include "wiimote_api.h"	// Wiiリモコンを用いるために必要なヘッダファイル
-
+}
 class WiiInput : public InputModuleBase
 {
 private:
