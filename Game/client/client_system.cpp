@@ -2,7 +2,7 @@
 #include "graphic.h"
 #include <string.h>
 
-#define PLAYER_MOVE_SPEED 3000
+#define PLAYER_MOVE_SPEED 900000
 #define GRAVITY 9.8
 
 static int MyId; // クライアントのID
