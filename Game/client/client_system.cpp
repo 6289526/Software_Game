@@ -34,7 +34,7 @@ void SetMyID(int id){ MyId = id; }
 
 bool IsPlayerOnGround();
 // ===== * ===== プロパティ ===== * ===== //
-
+int clamp(const int __val, const int __lo, const int __hi);
 int InputThread(void *data);
 
 
@@ -256,10 +256,12 @@ bool IsPlayerOnGround(){
     for (int i = 0; i < accuracy; ++i)
     {
         Block_X = point_X[i] / MAP_MAGNIFICATION;
+		Block_X = clamp(Block_X, 0, MAP_SIZE_H - 1);
 
         for (int j = 0; j < accuracy; ++j)
         {
             Block_Z = point_Z[j] / MAP_MAGNIFICATION;
+			Block_Z = clamp(Block_Z, 0, MAP_SIZE_D - 1);
 
             switch (terrainData[Block_X][Block_Y][Block_Z])
             {
@@ -281,6 +283,12 @@ bool IsPlayerOnGround(){
     }
 	return result != NonBlock;
 }
+
+int clamp(const int __val, const int __lo, const int __hi)
+{
+  return (__val < __lo) ? __lo : (__hi < __val) ? __hi : __val;
+}
+
 
 // ===== * ===== マルチスレッド ===== * ===== //
 
