@@ -142,7 +142,6 @@ void SystemRun()
 		{
 			data.U = false;
 			PData[MyId].velocity.y -= 1;
-			fprintf(stderr,"U\n");
 		}
 		// 前
 		if (data.Forward)
