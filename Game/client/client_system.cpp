@@ -8,7 +8,7 @@ PlayerData* PData;
 
 int Num_Clients; // クライアント人数
 static char Name_Clients[MAX_NUMCLIENTS][MAX_LEN_NAME]; // クライアントの名前
-static FloatCube Pos_Clients = { 20, 20, 20, 9, 9, 9 }; // クライアント情報
+static FloatCube Pos_Clients = { PLAYER_X, PLAYER_Y, PLAYER_Z, PLAYER_W, PLAYER_D, PLAYER_H }; // クライアント情報
 
 ClientMap Map; //マップ
 InputModuleBase *Input; // Input Module
@@ -136,8 +136,14 @@ void SystemRun()
 
 	PData[MyId].velocity.z = 0;
 	// 移動処理
-	if (data.Forward || data.Left || data.Right || data.Left || data.Jump)
+	if (data.Forward || data.Left || data.Right || data.Left || data.Jump || data.U || data.D)
 	{
+		if (data.U)
+		{
+			data.U = false;
+			PData[MyId].velocity.y -= 1;
+			fprintf(stderr,"U\n");
+		}
 		// 前
 		if (data.Forward)
 		{
@@ -159,8 +165,17 @@ void SystemRun()
 		if (data.Jump)
 		{
 			data.Jump = false;
-			PData[MyId].velocity.y -= 5;
+			PData[MyId].velocity.y += 1;
 		}
+
+		/////////////////////////////////
+
+		if (data.D)
+		{
+			data.D = false;
+			PData[MyId].velocity.z -= 1;
+		}
+		/////////////////////////////////
 
 		// 移動コマンド実行
 		InCommand(MOVE_COMMAND);

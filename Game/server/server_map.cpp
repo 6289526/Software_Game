@@ -16,7 +16,7 @@ void ServerMap::LoadMapData(char* fileName){
             fscanf(fp,"%d ",&baceTerrainData);
             for(int hight = 1; hight <= baceTerrainData; hight++){
                 _TerrainData[width][hight][depth] = NomalBlock;
-                fprintf(stderr,"(%d,%d,%d) = 1\n",width,hight,depth);
+                //fprintf(stderr,"(%d,%d,%d) = 1\n",width,hight,depth);
             }
             if(_MapH < baceTerrainData) _MapH = baceTerrainData;
         }
@@ -24,4 +24,6 @@ void ServerMap::LoadMapData(char* fileName){
     fclose(fp);
     //仮
     _TerrainData[3][0][4] = GoalBlock;
+    _TerrainData[39][0][39] = 1;
+    _TerrainData[39][1][39] = 1;
 }
