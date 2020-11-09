@@ -254,7 +254,6 @@ void MovePosition(int chara_ID)
     {
         Goal(chara_ID);
     }
-    if(block == NomalBlock) fprintf(stderr,"hoge\n");
     // 下の当たり判定
     block = Collision_CB(chara_ID, 0, 3);
 
@@ -270,7 +269,7 @@ void MovePosition(int chara_ID)
         Goal(chara_ID);
     }
 
-    if(block == NomalBlock) fprintf(stderr,"hogehoge\n");
+
     // 速度を０に戻す
     PData[chara_ID].velocity.x = 0;
     PData[chara_ID].velocity.y = 0;
