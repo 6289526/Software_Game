@@ -17,6 +17,13 @@
 #define MAX_LEN_ADDR 32 	//ソケットの設定のサイズ
 #define BROADCAST -1 		//全員に送るとき
 #define PLAYER_NUM 2 		// クライアントの人数
+
+#define PLAYER_X 30 		// クライアントの
+#define PLAYER_Y 30 		// クライアントの
+#define PLAYER_Z 30 		// クライアントの初期座標
+#define PLAYER_W 9 			// クライアントの
+#define PLAYER_D 9 			// クライアントの
+#define PLAYER_H 18 		// クライアントの大きさ
 /*クライアントが使用するコマンド*/
 #define MOVE_COMMAND 'M'
 #define PUT_COMMAND 'P'
