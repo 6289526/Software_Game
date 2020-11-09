@@ -154,12 +154,12 @@ void SystemRun()
 		if (data.Left)
 		{
 			data.Left = false;
-			PData[MyId].velocity.x -= 1;
+			PData[MyId].velocity.x += 1;
 		}
 		else if (data.Right)
 		{
 			data.Right = false;
-			PData[MyId].velocity.x += 1;
+			PData[MyId].velocity.x -= 1;
 		}
 		// ジャンプ
 		if (data.Jump)
