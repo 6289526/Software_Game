@@ -8,7 +8,7 @@ PlayerData* PData;
 
 int Num_Clients; // クライアント人数
 static char Name_Clients[MAX_NUMCLIENTS][MAX_LEN_NAME]; // クライアントの名前
-static FloatCube Pos_Clients = { PLAYER_X, PLAYER_Y, PLAYER_Z, PLAYER_W, PLAYER_D, PLAYER_H }; // クライアント情報
+static FloatCube Pos_Clients = { PLAYER_X, PLAYER_Y, PLAYER_Z, PLAYER_W, PLAYER_H, PLAYER_D }; // クライアント情報
 
 ClientMap Map; //マップ
 InputModuleBase *Input; // Input Module
