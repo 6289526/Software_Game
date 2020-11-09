@@ -159,7 +159,7 @@ void SystemRun()
 		if (data.Jump)
 		{
 			data.Jump = false;
-			PData[MyId].velocity.y += 5;
+			PData[MyId].velocity.y -= 5;
 		}
 
 		// 移動コマンド実行

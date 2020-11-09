@@ -10,7 +10,7 @@
 
 static int Num_Clients; // クライアント人数
 static char* Name_Clients[MAX_NUMCLIENTS]; // クライアントの名前
-static FloatCube Pos_Clients = { 20, 20, 20, 9, 9, 9 }; // クライアント情報
+static FloatCube Pos_Clients = { 20, 50, 20, 9, 9, 9 }; // クライアント情報
 
 
 PlayerData* PData;
@@ -43,7 +43,7 @@ void SetClientName(int id, char* name)
 
 void InitSys(char* file) // システム初期化
 {
-    //Map.LoadMapData(file);
+    Map.LoadMapData(file);
 }
 
 void InitPlayerData()// プレイヤーデータ初期化処理
@@ -239,7 +239,7 @@ void MovePosition(int chara_ID)
 {
 
     // 横の当たり判定
-    BlockType block = Collision_CB(chara_ID, 1);
+    BlockType block = Collision_CB(chara_ID, 2);
 
     // ブロックがないなら移動
     if (block == NonBlock)
@@ -253,7 +253,7 @@ void MovePosition(int chara_ID)
     {
         Goal(chara_ID);
     }
-
+    if(block == NomalBlock) fprintf(stderr,"hoge\n");
     // 下の当たり判定
     block = Collision_CB(chara_ID, 0, 3);
 
@@ -269,6 +269,7 @@ void MovePosition(int chara_ID)
         Goal(chara_ID);
     }
 
+    if(block == NomalBlock) fprintf(stderr,"hogehoge\n");
     // 速度を０に戻す
     PData[chara_ID].velocity.x = 0;
     PData[chara_ID].velocity.y = 0;

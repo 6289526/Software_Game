@@ -4,24 +4,24 @@
 void ServerMap::LoadMapData(char* fileName){
     FILE *fp = fopen(fileName,"r");
     if (fp == NULL) {
-        printf("failed to open map data file.");
+        printf("failed to open map data file.\n");
     }
     //幅、奥行の読み取り
-    fscanf(fp,"%d,%d\n",&_MapW,&_MapD);
+    fscanf(fp,"%d %d\n",&_MapW,&_MapD);
     int baceTerrainData = 0;
     //マップデータの設定
     for(int depth = 0; depth < _MapD; depth++){
         for(int width = 0; width < _MapW; width++){
-            _TerrainData[width * 2][0][depth * 2] = 1;
-            fscanf(fp,"%d,",&baceTerrainData);
+            _TerrainData[width][0][depth] = 1;
+            fscanf(fp,"%d ",&baceTerrainData);
             for(int hight = 1; hight <= baceTerrainData; hight++){
-                _TerrainData[width * 2][hight * 2][depth * 2] = 1;
-                _TerrainData[(width * 2) - 1][(hight * 2) - 1][(depth * 2) - 1] = 1;
+                _TerrainData[width][hight][depth] = NomalBlock;
+                fprintf(stderr,"(%d,%d,%d) = 1\n",width,hight,depth);
             }
             if(_MapH < baceTerrainData) _MapH = baceTerrainData;
         }
     }
-    _MapW *= 2;
-    _MapH *= 2;
-    _MapW *= 2;
+    fclose(fp);
+    //仮
+    _TerrainData[3][0][4] = GoalBlock;
 }
