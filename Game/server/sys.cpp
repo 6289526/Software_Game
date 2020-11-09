@@ -10,7 +10,7 @@
 
 static int Num_Clients; // クライアント人数
 static char* Name_Clients[MAX_NUMCLIENTS]; // クライアントの名前
-static FloatCube Pos_Clients = { 20, 20, 20, 9, 9, 9 }; // クライアント情報
+static FloatCube Pos_Clients = { PLAYER_X, PLAYER_Y, PLAYER_Z, PLAYER_W, PLAYER_D, PLAYER_H }; // クライアント情報
 
 
 PlayerData* PData;
@@ -43,7 +43,7 @@ void SetClientName(int id, char* name)
 
 void InitSys(char* file) // システム初期化
 {
-    //Map.LoadMapData(file);
+    Map.LoadMapData(file);
 }
 
 void InitPlayerData()// プレイヤーデータ初期化処理
@@ -98,10 +98,11 @@ BlockType Collision_CB(int chara_ID, int y, int accuracy)
 
     // マップ配列の添え字用変数を宣言，初期化
     int Block_X = 0;
+    int t_Block_Y = (PData[chara_ID].pos.y + PData[chara_ID].velocity.y + y);
     int Block_Y = (PData[chara_ID].pos.y + PData[chara_ID].velocity.y + y) / MAP_MAGNIFICATION;
     int Block_Z = 0;
 
-    if (Block_Y < 0)
+    if (t_Block_Y < 0)
     {
         throw "マップ外 : y座標 : 負\n";
     }
@@ -114,7 +115,7 @@ BlockType Collision_CB(int chara_ID, int y, int accuracy)
     {
         Block_X = point_X[i] / MAP_MAGNIFICATION;
 
-        if (Block_X < 0)
+        if (point_X[i] < 0)
         {
             throw "マップ外 : x座標 :負\n";
         }
@@ -127,7 +128,7 @@ BlockType Collision_CB(int chara_ID, int y, int accuracy)
         {
             Block_Z = point_Z[j] / MAP_MAGNIFICATION;
 
-            if (Block_Z < 0)
+            if (point_Z[j] < 0)
             {
                 throw "マップ外 : z座標 : 負\n";
             }
@@ -239,7 +240,7 @@ void MovePosition(int chara_ID)
 {
 
     // 横の当たり判定
-    BlockType block = Collision_CB(chara_ID, 1);
+    BlockType block = Collision_CB(chara_ID, 2);
 
     // ブロックがないなら移動
     if (block == NonBlock)
@@ -253,7 +254,7 @@ void MovePosition(int chara_ID)
     {
         Goal(chara_ID);
     }
-
+    if(block == NomalBlock) fprintf(stderr,"hoge\n");
     // 下の当たり判定
     block = Collision_CB(chara_ID, 0, 3);
 
@@ -269,6 +270,7 @@ void MovePosition(int chara_ID)
         Goal(chara_ID);
     }
 
+    if(block == NomalBlock) fprintf(stderr,"hogehoge\n");
     // 速度を０に戻す
     PData[chara_ID].velocity.x = 0;
     PData[chara_ID].velocity.y = 0;

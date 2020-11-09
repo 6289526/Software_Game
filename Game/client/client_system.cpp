@@ -11,7 +11,7 @@ PlayerData* PData;
 
 int Num_Clients; // クライアント人数
 static char Name_Clients[MAX_NUMCLIENTS][MAX_LEN_NAME]; // クライアントの名前
-static FloatCube Pos_Clients = { 20, 20, 20, 9, 9, 9 }; // クライアント情報
+static FloatCube Pos_Clients = { PLAYER_X, PLAYER_Y, PLAYER_Z, PLAYER_W, PLAYER_D, PLAYER_H }; // クライアント情報
 
 ClientMap Map; //マップ
 InputModuleBase *Input; // Input Module
@@ -147,8 +147,18 @@ void SystemRun()
 
 	PData[MyId].velocity.z = 0;
 	// 移動処理
+<<<<<<< HEAD
 	if (data.Forward || data.Left || data.Right || data.Left || data.Jump || !IsPlayerOnGround())
+=======
+	if (data.Forward || data.Left || data.Right || data.Left || data.Jump || data.U || data.D)
+>>>>>>> 6316a8d1e32c618c96baaefbefdff0bcdf49d6ae
 	{
+		if (data.U)
+		{
+			data.U = false;
+			PData[MyId].velocity.y -= 1;
+			fprintf(stderr,"U\n");
+		}
 		// 前
 		if (data.Forward)
 		{
@@ -159,22 +169,42 @@ void SystemRun()
 		if (data.Left)
 		{
 			data.Left = false;
+<<<<<<< HEAD
 			PData[MyId].velocity.x -= PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+=======
+			PData[MyId].velocity.x += 1;
+>>>>>>> 6316a8d1e32c618c96baaefbefdff0bcdf49d6ae
 		}
 		else if (data.Right)
 		{
 			data.Right = false;
+<<<<<<< HEAD
 			PData[MyId].velocity.x += PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+=======
+			PData[MyId].velocity.x -= 1;
+>>>>>>> 6316a8d1e32c618c96baaefbefdff0bcdf49d6ae
 		}
 		// ジャンプ
 		if (data.Jump && IsPlayerOnGround())
 		{
 			data.Jump = false;
-			PData[MyId].velocity.y += 5;
+			PData[MyId].velocity.y += 1;
 		}
+
+		/////////////////////////////////
+
+		if (data.D)
+		{
+			data.D = false;
+			PData[MyId].velocity.z -= 1;
+		}
+<<<<<<< HEAD
 		else if(!IsPlayerOnGround()){
 			PData[MyId].velocity.y -= GRAVITY * Time->GetDeltaTime();
 		}
+=======
+		/////////////////////////////////
+>>>>>>> 6316a8d1e32c618c96baaefbefdff0bcdf49d6ae
 
 		// 移動コマンド実行
 		InCommand(MOVE_COMMAND);
