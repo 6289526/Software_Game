@@ -5,6 +5,7 @@
 
 #pragma once
 #include "client_input.h"
+// c言語のライブラリなので言語リンケージの指定が必要
 extern "C"{  
 #include "wiimote.h"	// Wiiリモコンを用いるために必要なヘッダファイル
 #include "wiimote_api.h"	// Wiiリモコンを用いるために必要なヘッダファイル
