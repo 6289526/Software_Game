@@ -60,4 +60,6 @@ public:
     virtual void UpdateInput() = 0;
 
     InputType GetInputType();
+
+    bool IsMoveButtonDown();
 };
