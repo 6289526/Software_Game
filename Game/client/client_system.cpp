@@ -2,7 +2,8 @@
 #include "graphic.h"
 #include <string.h>
 
-#define PLAYER_MOVE_SPEED 15
+
+#define PLAYER_MOVE_SPEED 40
 #define PLAYER_ROTATE_SPEED 4
 #define GRAVITY 9.8 * 0.5// * 3
 
@@ -269,7 +270,7 @@ bool IsPlayerOnGround(){
     int Block_X = 0;
     int t_Block_Y = (PData[id].pos.y + PData[id].velocity.y + y);
     int Block_Y = (PData[id].pos.y + PData[id].velocity.y + y) / MAP_MAGNIFICATION;
-    Block_Y = clamp(Block_Y, 0, MAP_SIZE_H - 1); 
+    Block_Y = clamp(Block_Y, 0, MAP_SIZE_H - 1);
 	int Block_Z = 0;
 
     for (int i = 0; i < accuracy; ++i)
