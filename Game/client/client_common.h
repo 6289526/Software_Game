@@ -71,3 +71,4 @@ extern void UpdatePlaceData(PlaceData data);
 /* move */
 
 PlaceData BuildPlaceData(PlayerData player);
+Vector3 GetMoveDirection(PlayerData player, float angle);
