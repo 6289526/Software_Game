@@ -9,6 +9,7 @@ set(CLIENT_SRC
     client_main
     client_input
     client_WiiInput
+    client_KeybordInput
     net
     graphic
     client_system

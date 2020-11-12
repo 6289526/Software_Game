@@ -62,7 +62,11 @@ int main(int argc, char *argv[]) {
 		case 3:
 			sprintf(server_name, "%s", argv[1]);
 			port = (u_short)atoi(argv[2]);
+			sprintf(WiiAddress, "%s", argv[3]);
 			break;
+		case 4:
+			sprintf(server_name, "%s", argv[1]);
+			port = (u_short)atoi(argv[2]);
 		default:
 			// 引数の数が足りない、もしくは多すぎるときメッセージを表示して終了
 			fprintf(stderr, "Usage: %s [server name] [port number]\n", argv[0]);
@@ -74,12 +78,10 @@ int main(int argc, char *argv[]) {
     InitPlayerData(); // プレイヤーデータ初期化処理
 	/**サーバー関連 END**/
 
-	sprintf(WiiAddress, "%s", argv[3]);
 	InitSystem(&initData);
 
 
 	while (cond && !initData.input->GetInputType().End) {
-		SystemRun();
 		/*サーバーにリクエストを送る*/
 		Disp();
 		SDL_Delay(10);
