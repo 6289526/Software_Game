@@ -322,6 +322,7 @@ int InputThread(void *data)
 		SDL_LockMutex(mtx);
 		// 入力受け付け
 		Input->UpdateInput();
+		/*サーバーにリクエストを送る*/
 		SystemRun();
 		SDL_UnlockMutex(mtx);
 	}

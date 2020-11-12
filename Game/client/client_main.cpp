@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
 		sprintf(server_name, "%s", argv[1]);
 		port = (u_short)atoi(argv[2]);
 		break;
-	case 4:
+	case 4://Wiiリモコン使うとき
 		sprintf(server_name, "%s", argv[1]);
 		port = (u_short)atoi(argv[2]);
 		sprintf(WiiAddress, "%s", argv[3]);
@@ -83,7 +83,6 @@ int main(int argc, char *argv[])
 
 	while (cond && !initData.input->GetInputType().End)
 	{
-		/*サーバーにリクエストを送る*/
 		Disp();
 		SDL_Delay(10);
 		initData.timer->UpdateFrame(); // Update the game frame.
