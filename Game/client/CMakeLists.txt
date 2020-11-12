@@ -8,6 +8,7 @@ set(CLIENT_CODE
     client_main
     client_input
     client_KeybordInput
+    client_WiiInput
     net
     graphic
     client_system
