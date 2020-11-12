@@ -1,15 +1,5 @@
 #buildフォルダ内でcmake ..
 # 変数を宣言し、値を入れる。
-set(MAIN_CODE client_main)
-set(INPUT_CODE client_input)
-set(KEYBORD_CODE client_KeybordInput)
-set(NET_CODE net)
-#set(WINDOW_CODE window)
-set(GRAPHIC_CODE graphic)
-set(SYSTEM_CODE client_system)
-set(MOVE_CODE client_move)
-set(MAP_CODE client_map)
-set(TIME_CODE client_time)
 
 set(SORYUTION_NAME client)
 set(CLIENT_CODE
@@ -21,7 +11,7 @@ set(CLIENT_CODE
     client_system
     client_move
     client_map
-    
+    client_time
 )
 # CMakeの最低バージョンを記述
 cmake_minimum_required(VERSION 2.8)
