@@ -8,13 +8,13 @@
 
 static int MyId; // クライアントのID
 // プレイヤーのデータ
-PlayerData* PData;
+PlayerData *PData;
 
-int Num_Clients; // クライアント人数
+int Num_Clients;										// クライアント人数
 static char Name_Clients[MAX_NUMCLIENTS][MAX_LEN_NAME]; // クライアントの名前
 static FloatCube Pos_Clients = { PLAYER_X, PLAYER_Y, PLAYER_Z, PLAYER_W, PLAYER_H, PLAYER_D }; // クライアント情報
 
-ClientMap Map; //マップ
+ClientMap Map;			//マップ
 InputModuleBase *Input; // Input Module
 Timer *Time; // FrameTimer
 
@@ -22,10 +22,10 @@ Timer *Time; // FrameTimer
 
 // ===== * ===== プロパティ ===== * ===== //
 // クライアント配列の先頭ポインタを返す
-const PlayerData* GetPlayerData(){ return PData; }
+const PlayerData *GetPlayerData() { return PData; }
 
 // このクライアントのIDを返す
-int GetMyID(){ return MyId; }
+int GetMyID() { return MyId; }
 
 /*クライアントのID取得
 * 引数
@@ -38,8 +38,8 @@ bool IsPlayerOnGround();
 int clamp(const int __val, const int __lo, const int __hi);
 int InputThread(void *data);
 
-
-bool InitSystem(InitData *data){
+bool InitSystem(InitData *data)
+{
 	// SDL_Thread *thread;
 
 	InitGraphic(); // グラフィックの初期化
@@ -54,11 +54,11 @@ bool InitSystem(InitData *data){
 	SDL_DetachThread(thread);
 	*/
 
-	Input = new KeybordInput();
+	Input = new WiiInput(WiiAddress);
 	data->input = Input;
 
 	SDL_Thread *inputThread;
-    SDL_mutex *input_mtx = SDL_CreateMutex(); // 相互排除
+	SDL_mutex *input_mtx = SDL_CreateMutex(); // 相互排除
 	inputThread = SDL_CreateThread(InputThread, "inputThread", input_mtx);
 	if (inputThread == NULL)
 	{
@@ -79,30 +79,31 @@ void ExitSystem(InitData *data){
 
 void SetNumClients(int n) // クライアント人数セット
 {
-    Num_Clients = n;
+	Num_Clients = n;
 }
 
 // 名前のセット
 // id: クライアントのID
 // clientName:クライアントの名前
-void SetClientName(int id, char* name)
+void SetClientName(int id, char *name)
 {
 	strcpy(Name_Clients[id], name);
 }
 
-void InitPlayerData()// プレイヤーデータ初期化処理
+void InitPlayerData() // プレイヤーデータ初期化処理
 {
-    PData = new PlayerData[Num_Clients];
-    for (int i = 0; i < Num_Clients; ++i) {
+	PData = new PlayerData[Num_Clients];
+	for (int i = 0; i < Num_Clients; ++i)
+	{
 		strcpy(PData[i].name, Name_Clients[i]);
-        PData[i].pos = Pos_Clients;
-        PData[i].pos.x = Pos_Clients.x + i * 20;
-        Vector3 t_v = { 0, 0, 0 };
-        PData[i].velocity = t_v;
-        PData[i].direction = 0;
-        PData[i].rank = 0;
-        PData[i].goal = false;
-    }
+		PData[i].pos = Pos_Clients;
+		PData[i].pos.x = Pos_Clients.x + i * 20;
+		Vector3 t_v = {0, 0, 0};
+		PData[i].velocity = t_v;
+		PData[i].direction = 0;
+		PData[i].rank = 0;
+		PData[i].goal = false;
+	}
 }
 
 /*クライアントの位置の取得
@@ -119,17 +120,18 @@ void SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients)
 		PData[i].pos.x = moveData[i].x;
 		PData[i].pos.y = moveData[i].y;
 		PData[i].pos.z = moveData[i].z;
-		fprintf(stderr, "[%d] %10s　は %f %f %f にいます。\n", i, PData[i].name, PData[i].pos.x, PData[i].pos.y, PData[i].pos.z);
+		//fprintf(stderr, "[%d] %10s　は %f %f %f にいます。\n", i, PData[i].name, PData[i].pos.x, PData[i].pos.y, PData[i].pos.z);
 	}
 }
 
 /*現在の設置データを返す
 *	返り値: MyIDのキャラの設置データ
 */
-PlaceData GetPlaceData(){
+PlaceData GetPlaceData()
+{
 	PlaceData data;
 	data.object = NomalBlock;
-	data.pos = { PData[GetMyID()].pos.x, PData[GetMyID()].pos.y, PData[GetMyID()].pos.z };
+	data.pos = {PData[GetMyID()].pos.x, PData[GetMyID()].pos.y, PData[GetMyID()].pos.z};
 	return data;
 }
 
@@ -141,12 +143,11 @@ PlaceData GetPlaceData(){
 void SystemRun()
 {
 	InputType data = Input->GetInputType();
-
 	PData[MyId].velocity.x = 0;
 
 	// PData[MyId].velocity.y = 0;
 
-	PData[MyId].velocity.z = 0;
+	PData[MyId].velocity.z = 0; 
 	// 移動処理
 	if (Input->IsMoveButtonDown() || !IsPlayerOnGround())
 	{
@@ -216,7 +217,8 @@ void SystemRun()
 /*各プレイヤーのvelocityを変更する
 * 引数
 */
-void UpdateFlag(VelocityFlag* flags, int numClients){
+void UpdateFlag(VelocityFlag *flags, int numClients)
+{
 	for (int i = 0; i < numClients; i++)
 	{
 		if (flags[i].x == false)
@@ -231,8 +233,8 @@ void UpdateFlag(VelocityFlag* flags, int numClients){
 }
 
 // Updated place data from server
-void UpdatePlaceData(PlaceData data){
-
+void UpdatePlaceData(PlaceData data)
+{
 }
 
 bool IsPlayerOnGround(){
@@ -311,14 +313,16 @@ int clamp(const int __val, const int __lo, const int __hi)
 	return 0;
 }*/
 
-int InputThread(void *data){
-    SDL_mutex *mtx = (SDL_mutex *)data;
+int InputThread(void *data)
+{
+	SDL_mutex *mtx = (SDL_mutex *)data;
 
-    while (1)
-    {
-        SDL_LockMutex(mtx);
+	while (1)
+	{
+		SDL_LockMutex(mtx);
 		// 入力受け付け
 		Input->UpdateInput();
+		SystemRun();
 		SDL_UnlockMutex(mtx);
 	}
 
