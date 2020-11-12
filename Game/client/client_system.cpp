@@ -159,18 +159,21 @@ void SystemRun()
 		if (data.Forward)
 		{
 			data.Forward = false;
-			PData[MyId].velocity.z += PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 0).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 0).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 		}
 		// 左右
 		if (data.Left)
 		{
 			data.Left = false;
-			PData[MyId].velocity.x += PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 90).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 90).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 		}
 		else if (data.Right)
 		{
 			data.Right = false;
-			PData[MyId].velocity.x -= PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 270).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 270).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 		}
 		// ジャンプ
 		if (data.Jump && IsPlayerOnGround() == 1)
@@ -196,8 +199,11 @@ void SystemRun()
 		if (data.D)
 		{
 			data.D = false;
-			PData[MyId].velocity.z -= PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 180).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 180).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 		}
+
+		fprintf(stderr, "dir = %f\n", PData[MyId].direction);
 
 		// 移動コマンド実行
 		InCommand(MOVE_COMMAND);
@@ -209,8 +215,6 @@ void SystemRun()
 		data.Put = false;
 		InCommand(PUT_COMMAND);
 	}
-
-	fprintf(stderr, "time: %lf[mms] | IsGround = %d \n", Time->GetDeltaTime(), IsPlayerOnGround());
 }
 
 /*各プレイヤーのvelocityを変更する
