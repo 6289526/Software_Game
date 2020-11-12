@@ -2,7 +2,7 @@
 
 #define WIDTH_MY_WINDOW 1000 //ウィンドウの横幅
 #define HEIGHT_MY_WINDOW 640 //ウィンドウの縦幅
-#define FONT_PATH "./fonts/PixelMplus12-Regular.ttf"
+#define FONT_PATH "PixelMplus12-Regular.ttf"
 typedef int32_t i32;
 typedef uint32_t u32;
 typedef int32_t b32;
