@@ -28,6 +28,7 @@ pkg_check_modules(SDL2ttf REQUIRED SDL2_ttf)
 find_package(PkgConfig)
 pkg_check_modules(SDL2image REQUIRED SDL2_image)
 
+set(CMAKE_CXX_FLAGS "-O0 -g")
 #ヘッダファイルのパスを指定
 
 include_directories(${SDL2_INCLUDE_DIRS} ${SDL2ttf_INCLUDE_DIRS} ${SDL2image_INCLUDE_DIRS} ${WIIMOTE_HEADER})
