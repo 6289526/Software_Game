@@ -3,6 +3,7 @@
 #include <string.h>
 
 #define PLAYER_MOVE_SPEED 15
+#define PLAYER_ROTATE_SPEED 4
 #define GRAVITY 9.8 * 0.5// * 3
 
 static int MyId; // クライアントのID
@@ -147,7 +148,7 @@ void SystemRun()
 
 	PData[MyId].velocity.z = 0;
 	// 移動処理
-	if (data.Forward || data.Left || data.Right || data.Left || data.Jump || data.U || data.D || !IsPlayerOnGround())
+	if (Input->IsMoveButtonDown() || !IsPlayerOnGround())
 	{
 		if (data.U)
 		{
@@ -181,12 +182,21 @@ void SystemRun()
 			PData[MyId].velocity.y -= GRAVITY * Time->GetDeltaTime();
 		}
 
+		if (data.R)
+		{
+			PData[MyId].direction -= PLAYER_ROTATE_SPEED * Time->GetDeltaTime();
+		}
+		if (data.L)
+		{
+			PData[MyId].direction += PLAYER_ROTATE_SPEED * Time->GetDeltaTime();
+		}
+
 		/////////////////////////////////
 
 		if (data.D)
 		{
 			data.D = false;
-			PData[MyId].velocity.z -= 1;
+			PData[MyId].velocity.z -= PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 		}
 
 		// 移動コマンド実行
