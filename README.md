@@ -14,3 +14,6 @@
 
 ## オブジェクト図
 ![object-image](class-diagram/Outputs/SG_ObjectModel.png)
+
+### wiiリモコンに関するライブラリのインストール
+sudo apt-get install libbluetooth3 libbluetooth3-dbg libbluetooth-dev
