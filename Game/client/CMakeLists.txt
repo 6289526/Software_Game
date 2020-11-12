@@ -2,19 +2,18 @@
 
 #buildフォルダ内でcmake ..
 # 変数を宣言し、値を入れる。
-set(SORYUTION_NAME client)
 set(WIIMOTE_HEADER /usr/local/include/libcwiimote-0.4.0/libcwiimote/)
-# set(WIIMOTEAPI_HEADER /usr/local/include/libcwiimote-0.4.0/libcwiimote/wiimote_api.h)
-set(CLIENT_SRC
+set(SORYUTION_NAME client)
+set(CLIENT_CODE
     client_main
     client_input
-    client_WiiInput
     client_KeybordInput
     net
     graphic
     client_system
     client_move
     client_map
+    client_time
 )
 # CMakeの最低バージョンを記述
 cmake_minimum_required(VERSION 2.8)
@@ -33,7 +32,7 @@ pkg_check_modules(SDL2image REQUIRED SDL2_image)
 include_directories(${SDL2_INCLUDE_DIRS} ${SDL2ttf_INCLUDE_DIRS} ${SDL2image_INCLUDE_DIRS} ${WIIMOTE_HEADER})
 
 # 実行ファイル名とソース指定
-add_executable( ${SORYUTION_NAME} ${CLIENT_SRC} )
+add_executable( ${SORYUTION_NAME} ${CLIENT_CODE})
 
 #リンク先のライブラリを指定
 target_link_libraries( ${SORYUTION_NAME} ${SDL2_LIBRARIES}  ${SDL2ttf_LIBRARIES} ${SDL2image_LIBRARIES} -lGL -lGLU -lcwiimote -lbluetooth -L/usr/local/lib -lm)
