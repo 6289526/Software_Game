@@ -12,7 +12,6 @@ int cond = 1;
 
 static int PrintError(const char *str);
 
-
 int Select(void *args){
     SDL_mutex *mtx = (SDL_mutex *)args;
 
@@ -30,7 +29,7 @@ int Select(void *args){
     return 0;
 
 }
-
+char WiiAddress[17];
 // client用のmain関数
 int main(int argc, char *argv[]) {
 	/**SDL2関連 BEGIN******/
@@ -63,7 +62,11 @@ int main(int argc, char *argv[]) {
 		case 3:
 			sprintf(server_name, "%s", argv[1]);
 			port = (u_short)atoi(argv[2]);
+			sprintf(WiiAddress, "%s", argv[3]);
 			break;
+		case 4:
+			sprintf(server_name, "%s", argv[1]);
+			port = (u_short)atoi(argv[2]);
 		default:
 			// 引数の数が足りない、もしくは多すぎるときメッセージを表示して終了
 			fprintf(stderr, "Usage: %s [server name] [port number]\n", argv[0]);
@@ -74,11 +77,11 @@ int main(int argc, char *argv[]) {
 	SetupClient(server_name, port);
     InitPlayerData(); // プレイヤーデータ初期化処理
 	/**サーバー関連 END**/
+
 	InitSystem(&initData);
 
 
 	while (cond && !initData.input->GetInputType().End) {
-		SystemRun();
 		/*サーバーにリクエストを送る*/
 		Disp();
 		SDL_Delay(10);
