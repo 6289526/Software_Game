@@ -148,7 +148,7 @@ void SystemRun()
 
 	// PData[MyId].velocity.y = 0;
 
-	PData[MyId].velocity.z = 0; 
+	PData[MyId].velocity.z = 0;
 	// 移動処理
 	if (Input->IsMoveButtonDown() || !IsPlayerOnGround())
 	{
