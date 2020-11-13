@@ -457,7 +457,7 @@ void MovePosition(int chara_ID)
 {
 
     // 横の当たり判定
-    Collision t_Collision = Collision_CB_Side(chara_ID, 2);
+    Collision t_Collision = Collision_CB_Side(chara_ID, 3);
 
     // 移動後の座標に書き換え
     PData[chara_ID].pos.x += PData[chara_ID].velocity.x;

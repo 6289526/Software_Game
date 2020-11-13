@@ -55,7 +55,7 @@ bool InitSystem(InitData *data)
 	SDL_DetachThread(thread);
 	*/
 
-	Input = new WiiInput(WiiAddress);
+	Input = new KeybordInput();
 	data->input = Input;
 
 	SDL_Thread *inputThread;
