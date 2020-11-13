@@ -150,9 +150,13 @@ void SystemRun()
 	// PData[MyId].velocity.y = 0;
 
 	PData[MyId].velocity.z = 0;
+
+	bool isMoved = false; // プレイヤーが動いたかどうか
+
 	// 移動処理
-	if (Input->IsMoveButtonDown() || !IsPlayerOnGround())
+	if (Input->IsMoveButtonDown())
 	{
+		isMoved = true;
 		if (data.U)
 		{
 			data.U = false;
@@ -178,15 +182,6 @@ void SystemRun()
 			PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 270).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 			PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 270).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 		}
-		// ジャンプ
-		if (data.Jump && IsPlayerOnGround() == 1)
-		{
-			data.Jump = false;
-			PData[MyId].velocity.y += 5;
-		}
-		else if(!IsPlayerOnGround()){
-			PData[MyId].velocity.y -= GRAVITY * Time->GetDeltaTime();
-		}
 
 		if (data.R)
 		{
@@ -205,12 +200,26 @@ void SystemRun()
 			PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 180).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 			PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 180).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 		}
+	}
 
-		fprintf(stderr, "dir = %f\n", PData[MyId].direction);
+	// ジャンプ
+	if (data.Jump && IsPlayerOnGround())
+	{
+		isMoved = true;
+		data.Jump = false;
+		PData[MyId].velocity.y += 5;
+	}
+	else if(!IsPlayerOnGround()){
+		isMoved = true;
+		PData[MyId].velocity.y -= GRAVITY * Time->GetDeltaTime();
+	}
 
+	if (isMoved)
+	{
 		// 移動コマンド実行
 		InCommand(MOVE_COMMAND);
 	}
+	
 
 	// 設置処理
 	if (data.Put)
