@@ -7,7 +7,7 @@ set(SORYUTION_NAME client)
 set(CLIENT_CODE
     client_main
     client_input
-    client_KeybordInput
+    client_KeyboardInput
     net
     graphic
     client_system

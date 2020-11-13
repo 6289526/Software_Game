@@ -1,12 +1,12 @@
-#include "client_KeybordInput.h"
+#include "client_KeyboardInput.h"
 
-KeybordInput::KeybordInput() : _key(SDL_GetKeyboardState(NULL))
+KeyboardInput::KeyboardInput() : _key(SDL_GetKeyboardState(NULL))
 {}
 
-KeybordInput::~KeybordInput()
+KeyboardInput::~KeyboardInput()
 {}
 
-void KeybordInput::UpdateInput(){
+void KeyboardInput::UpdateInput(){
 	if(SDL_PollEvent(&_Event)){
 		InputType t;
 		_Input = t;

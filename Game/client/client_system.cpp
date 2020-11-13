@@ -19,7 +19,7 @@ ClientMap Map;			//マップ
 InputModuleBase *Input; // Input Module
 Timer *Time; // FrameTimer
 
-// int GrapicThread(void *data); // This Function isn't used now.
+// int GraphicThread(void *data); // This Function isn't used now.
 
 // ===== * ===== プロパティ ===== * ===== //
 // クライアント配列の先頭ポインタを返す
@@ -46,7 +46,7 @@ bool InitSystem(InitData *data)
 	InitGraphic(); // グラフィックの初期化
 	/*
 	// グラフィックのスレッド化
-	thread = SDL_CreateThread(GrapicThread, "GrapicThread", NULL);
+	thread = SDL_CreateThread(GraphicThread, "GraphicThread", NULL);
 	if (thread == NULL)
 	{
 		fprintf(stderr, "Failed to create a graphics red.\n");
@@ -56,7 +56,7 @@ bool InitSystem(InitData *data)
 	*/
 
 	// Input = new WiiInput(WiiAddress);
-	Input = new KeybordInput();
+	Input = new KeyboardInput();
 	data->input = Input;
 
 	SDL_Thread *inputThread;
@@ -314,7 +314,7 @@ int clamp(const int __val, const int __lo, const int __hi)
 // ===== * ===== マルチスレッド ===== * ===== //
 
 // グラフィック用の
-/*int GrapicThread(void *data){
+/*int GraphicThread(void *data){
 	Disp();
 	return 0;
 }*/

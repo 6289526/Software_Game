@@ -3,7 +3,6 @@ InputModuleBase::InputModuleBase(){
 }
 
 InputModuleBase::~InputModuleBase(){
-    // printf("siieeeeeeee");
 }
 
 // 現在の入力情報を返す
