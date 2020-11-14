@@ -4,7 +4,7 @@
         {
             "label": "build server",// このタスクの名前
             "type": "shell",        // 実行方法，通常はshell
-            "command": "mkdir -p build && cd build && cmake .. && make",      // 実行するコマンド
+            "command": "mkdir -p build && cd build && chmod 777 ../debug.sh && ../debug.sh && cmake -DCMAKE_BUILD_TYPE=Debug .. && make",      // 実行するコマンド
             "args": [],             // コマンドの引数
             "group": {              // タスクのグループ，通常は記載の通り
                 "kind": "build",
