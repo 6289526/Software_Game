@@ -259,7 +259,7 @@ Collision Collision_CB_Side(const int chara_ID, const int y, const int accuracy)
 
   if (Count_Front + Count_Right + Count_Left + Count_Back == -4) {
       throw "Collision_CB_Side : ブロックに埋まってる\n";
-      // fprintf(stderr, "Collision_CB_Side : ブロックに埋まってる\n");
+      //fprintf(stderr, "Collision_CB_Side : ブロックに埋まってる\n");
   }
 
   Collision_Dire t_dire = Non; // 当たり判定で押し戻す方向
@@ -452,7 +452,7 @@ void MovePosition(int chara_ID) {
   // 移動後の座標に書き換え
   PData[chara_ID].pos.x += PData[chara_ID].velocity.x;
   PData[chara_ID].pos.z += PData[chara_ID].velocity.z;
-
+/*
   switch (t_Collision_Side.dire) {
   case Front:
     PData[chara_ID].pos.z =
@@ -473,7 +473,7 @@ void MovePosition(int chara_ID) {
   default:
     break;
   }
-
+*/
   // 速度を０に戻す
   PData[chara_ID].velocity.x = 0;
   // PData[chara_ID].velocity.y = 0;
