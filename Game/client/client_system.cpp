@@ -18,7 +18,7 @@ ClientMap Map;			//マップ
 InputModuleBase *Input; // Input Module
 Timer *Time;			// FrameTimer
 
-// int GrapicThread(void *data); // This Function isn't used now.
+// int GraphicThread(void *data); // This Function isn't used now.
 
 // ===== * ===== プロパティ ===== * ===== //
 // クライアント配列の先頭ポインタを返す
@@ -40,22 +40,8 @@ int InputThread(void *data);
 
 bool InitSystem(InitData *data)
 {
-	// SDL_Thread *thread;
-
-	InitGraphic(); // グラフィックの初期化
-	/*
-	// グラフィックのスレッド化
-	thread = SDL_CreateThread(GrapicThread, "GrapicThread", NULL);
-	if (thread == NULL)
-	{
-		fprintf(stderr, "Failed to create a graphics red.\n");
-		return false;
-	}
-	SDL_DetachThread(thread);
-	*/
 	char control;
-	fprintf(stderr, "Which controller you want to use?\n");
-	fprintf(stderr, "wii: w\n keyboar: k\n");
+	fprintf(stderr, "Which controller you want to use?\n  wii: w\n  keyboar: k\n");
 	scanf("%c", &control);
 	if (control == 'w')
 	{
@@ -66,6 +52,20 @@ bool InitSystem(InitData *data)
 		Input = new KeybordInput();
 	}
 	data->input = Input;
+
+	// SDL_Thread *thread;
+
+	InitGraphic(); // グラフィックの初期化
+	/*
+	// グラフィックのスレッド化
+	thread = SDL_CreateThread(GraphicThread, "GraphicThread", NULL);
+	if (thread == NULL)
+	{
+		fprintf(stderr, "Failed to create a graphics red.\n");
+		return false;
+	}
+	SDL_DetachThread(thread);
+	*/
 
 	SDL_Thread *inputThread;
 	SDL_mutex *input_mtx = SDL_CreateMutex(); // 相互排除
@@ -324,7 +324,7 @@ int clamp(const int __val, const int __lo, const int __hi)
 // ===== * ===== マルチスレッド ===== * ===== //
 
 // グラフィック用の
-/*int GrapicThread(void *data){
+/*int GraphicThread(void *data){
 	Disp();
 	return 0;
 }*/
