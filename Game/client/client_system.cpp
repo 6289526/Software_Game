@@ -2,9 +2,11 @@
 #include "graphic.h"
 #include <string.h>
 
-#define PLAYER_MOVE_SPEED 15
+#define PLAYER_MOVE_SPEED 40
 #define PLAYER_ROTATE_SPEED 4
 #define GRAVITY 9.8 * 0.5// * 3
+#define TERMINAL_SPEED PLAYER_Y // 終端速度
+
 
 static int MyId; // クライアントのID
 // プレイヤーのデータ
@@ -199,6 +201,16 @@ void SystemRun()
 			PData[MyId].velocity.z -= PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 		}
 
+		if (TERMINAL_SPEED < PData[MyId].velocity.x) {
+			PData[MyId].velocity.x = TERMINAL_SPEED;
+		}
+		if (TERMINAL_SPEED < PData[MyId].velocity.y) {
+			PData[MyId].velocity.y = TERMINAL_SPEED;
+		}
+		if (TERMINAL_SPEED < PData[MyId].velocity.z) {
+			PData[MyId].velocity.z = TERMINAL_SPEED;
+		}
+
 		// 移動コマンド実行
 		InCommand(MOVE_COMMAND);
 	}
@@ -210,7 +222,7 @@ void SystemRun()
 		InCommand(PUT_COMMAND);
 	}
 
-	fprintf(stderr, "time: %lf[mms] | IsGround = %d \n", Time->GetDeltaTime(), IsPlayerOnGround());
+	//fprintf(stderr, "time: %lf[mms] | IsGround = %d \n", Time->GetDeltaTime(), IsPlayerOnGround());
 }
 
 /*各プレイヤーのvelocityを変更する
@@ -263,7 +275,7 @@ bool IsPlayerOnGround(){
     int Block_X = 0;
     int t_Block_Y = (PData[id].pos.y + PData[id].velocity.y + y);
     int Block_Y = (PData[id].pos.y + PData[id].velocity.y + y) / MAP_MAGNIFICATION;
-    Block_Y = clamp(Block_Y, 0, MAP_SIZE_H - 1); 
+    Block_Y = clamp(Block_Y, 0, MAP_SIZE_H - 1);
 	int Block_Z = 0;
 
     for (int i = 0; i < accuracy; ++i)

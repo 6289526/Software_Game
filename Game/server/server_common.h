@@ -55,6 +55,7 @@ public:
     T& operator[](int n);
     Pointer& operator=(const Pointer& p);
     int Size();
+    const T* Get() const ;
 
 private:
     void Copy(const Pointer& p);
@@ -66,7 +67,7 @@ private:
 
 
 template <class T>
-Pointer<T>::Pointer(int size)
+inline Pointer<T>::Pointer(int size)
     : m_point(new T[size])
 {
     m_size = size;
@@ -79,13 +80,13 @@ Pointer<T>::Pointer(const Pointer<T>& p)
 }
 
 template <class T>
-Pointer<T>::~Pointer()
+inline Pointer<T>::~Pointer()
 {
     delete[] m_point;
 }
 
 template <class T>
-const T Pointer<T>::operator[](int n) const
+inline const T Pointer<T>::operator[](int n) const
 {
     if (n < 0 || m_size <= n) {
         throw "Pointer [] : 範囲外\n";
@@ -94,7 +95,7 @@ const T Pointer<T>::operator[](int n) const
 }
 
 template <class T>
-T& Pointer<T>::operator[](int n)
+inline T& Pointer<T>::operator[](int n)
 {
     if (n < 0 || m_size <= n) {
         throw "Pointer [] : 範囲外\n";
@@ -110,9 +111,14 @@ Pointer<T>& Pointer<T>::operator=(const Pointer& p)
 }
 
 template <class T>
-int Pointer<T>::Size()
+inline int Pointer<T>::Size()
 {
     return m_size;
+}
+
+template <class T>
+const T* Pointer<T>::Get() const {
+    return m_point;
 }
 
 template <class T>
@@ -124,6 +130,21 @@ void Pointer<T>::Copy(const Pointer& p)
         m_point[i] = p[i];
     }
 }
+
+// 当たり判定で跳ね返す方向
+enum Collision_Dire {
+    Non,
+    Right,
+    Back,
+    Left,
+    Front,
+    Under
+};
+
+struct Collision {
+    Collision_Dire dire; // キャラを跳ね返す方向
+    int power; // キャラを跳ね返す力
+};
 
 const PlayerData* GetPlayerData();
 
@@ -137,11 +158,16 @@ void InitPlayerData(); // プレイヤーデータ初期化処理
 
 void EndSys(); // システム終了処理
 
+static int BuryCheck_Side(const int chara_ID, const int accuracy, int block_X, const int block_Y, int block_Z, const float* point_X, const float* point_Z, const Collision_Dire flag);
+
+static int BuryCheck_Under(const int chara_ID, const int accuracy, int block_X, int block_Y, int block_Z, const float* point_X, const float* point_Z, const Collision_Dire flag);
+
 // キャラとブロックの当たり判定
-// y : 当たり判定をとる座標ｙの補正(キャラの足元座標からの差)
-// accuracy : 当たり判定の精度(座標軸ごとの判定する座標数)
-//            例：２で２・２の４点　３で３・３の９点を判定する
-static BlockType Collision_CB(int chara_ID, int y = 0, int accuracy = 2);
+// ｙ ： 基準面の高さの補正
+// accuracy : 当たり判定の精度の調整　１以上 かつ キャラの幅・高さ以下の値
+static Collision Collision_CB_Side(const int chara_ID, const int y = 0, const int accuracy = PLAYER_W);
+
+static Collision Collision_CB_Under(int chara_ID, int y, int accuracy);
 
 static bool Collision_BB(); // ブロックを置けるなら true
 
