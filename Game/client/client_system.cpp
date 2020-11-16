@@ -216,7 +216,7 @@ void SystemRun()
 			PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 180).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 		}
 
-		fprintf(stderr, "dir = %f\n", PData[MyId].direction);
+		fprintf(stderr, "pos= (%f, %f, %f), dir= %f, g= %d\n", PData[MyId].pos.x, PData[MyId].pos.y, PData[MyId].pos.z, PData[MyId].direction, (int)IsPlayerOnGround());
 
 		// 移動コマンド実行
 		InCommand(MOVE_COMMAND);
