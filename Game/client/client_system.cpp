@@ -54,7 +54,8 @@ bool InitSystem(InitData *data)
 	SDL_DetachThread(thread);
 	*/
 
-	Input = new WiiInput(WiiAddress);
+	// Input = new WiiInput(WiiAddress);
+	Input = new KeybordInput();
 	data->input = Input;
 
 	SDL_Thread *inputThread;
@@ -323,7 +324,7 @@ int InputThread(void *data)
 		// 入力受け付け
 		Input->UpdateInput();
 		/*サーバーにリクエストを送る*/
-		SystemRun();
+		//SystemRun();
 		SDL_UnlockMutex(mtx);
 	}
 

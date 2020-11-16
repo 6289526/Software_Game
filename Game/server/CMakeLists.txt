@@ -26,5 +26,16 @@ include_directories(${SDL2_INCLUDE_DIRS} ${SDL2ttf_INCLUDE_DIRS} ${SDL2image_INC
 # 実行ファイル名とソース指定
 add_executable( ${SORYUTION_NAME} ${SERVER_CODE})
 
+#コンパイルオプション
+target_compile_options(${SORYUTION_NAME} PUBLIC
+  $<$<CONFIG:Release>:-O3>             # Release
+  $<$<CONFIG:Debug>:-O0 -g>            # Debug
+  $<$<CONFIG:RelWithDebgInfo>:-O3 -g>  # RelWithDebInfo
+)
+
+target_compile_definitions(${SORYUTION_NAME} PUBLIC
+    $<$<CONFIG:Debug>:DEBUG>     # Debug時
+)
+
 #リンク先のライブラリを指定
 target_link_libraries( ${SORYUTION_NAME} ${SDL2_LIBRARIES}  ${SDL2ttf_LIBRARIES} ${SDL2image_LIBRARIES})

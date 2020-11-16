@@ -39,7 +39,6 @@ void WiiInput::UpdateInput()
         }
 
 
-        /** **/
         // Bボタンが押された時
         if (_wiimote.keys.b)
         {
@@ -47,7 +46,7 @@ void WiiInput::UpdateInput()
             _Input.Put = true;
         }
 
-        /**移動関連**/
+        // 移動関連
         // 1ボタンが押された時
         if (_wiimote.keys.one)
         {
