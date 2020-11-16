@@ -6,7 +6,7 @@
             "type": "cppdbg",       // デバッグの言語
             "request": "launch",    // デバッグ開始時に実行
             "program": "${workspaceFolder}/build/client",  // デバッグ対象のプログラム
-            "args": ["localhost", "51000"], // デバッグ対象プログラムの引数
+            "args": ["localhost", "51000", "D8:6B:F7:48:67:0D"], // デバッグ対象プログラムの引数
             "stopAtEntry": true,    // デバッグ開始直後に停止
             "cwd": "${workspaceFolder}",    // カレントディレクトリ
             "environment": [    // 環境変数の設定，gdb起動には下記が必要

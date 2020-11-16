@@ -28,6 +28,7 @@ int Select(void *args)
 	return 0;
 }
 char WiiAddress[17];
+InputType _______Type;
 // client用のmain関数
 int main(int argc, char *argv[])
 {
@@ -36,7 +37,7 @@ int main(int argc, char *argv[])
 	/**SDL2関連 END********/
 
 	InitData initData;
-
+	
 	/**サーバー関連 BEGIN**/
 	// 参加したいサーバーのポート番号
 	u_short port = DEFAULT_PORT;
@@ -81,8 +82,9 @@ int main(int argc, char *argv[])
 
 	InitSystem(&initData);
 
-	while (cond && !initData.input->GetInputType().End)
+	while (cond && !_______Type.End)
 	{
+		_______Type = initData.input->GetInputType();
 		SystemRun();
 		Disp();
 		SDL_Delay(10);

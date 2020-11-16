@@ -4,19 +4,19 @@
 
 #define PLAYER_MOVE_SPEED 15
 #define PLAYER_ROTATE_SPEED 4
-#define GRAVITY 9.8 * 0.5// * 3
+#define GRAVITY 9.8 * 0.5 // * 3
 
 static int MyId; // クライアントのID
 // プレイヤーのデータ
 PlayerData *PData;
 
-int Num_Clients;										// クライアント人数
-static char Name_Clients[MAX_NUMCLIENTS][MAX_LEN_NAME]; // クライアントの名前
-static FloatCube Pos_Clients = { PLAYER_X, PLAYER_Y, PLAYER_Z, PLAYER_W, PLAYER_H, PLAYER_D }; // クライアント情報
+int Num_Clients;																			 // クライアント人数
+static char Name_Clients[MAX_NUMCLIENTS][MAX_LEN_NAME];										 // クライアントの名前
+static FloatCube Pos_Clients = {PLAYER_X, PLAYER_Y, PLAYER_Z, PLAYER_W, PLAYER_H, PLAYER_D}; // クライアント情報
 
 ClientMap Map;			//マップ
 InputModuleBase *Input; // Input Module
-Timer *Time; // FrameTimer
+Timer *Time;			// FrameTimer
 
 // int GrapicThread(void *data); // This Function isn't used now.
 
@@ -31,7 +31,7 @@ int GetMyID() { return MyId; }
 * 引数
 *   id: クライアントのID
 */
-void SetMyID(int id){ MyId = id; }
+void SetMyID(int id) { MyId = id; }
 
 bool IsPlayerOnGround();
 // ===== * ===== プロパティ ===== * ===== //
@@ -53,9 +53,18 @@ bool InitSystem(InitData *data)
 	}
 	SDL_DetachThread(thread);
 	*/
-
-	// Input = new WiiInput(WiiAddress);
-	Input = new KeybordInput();
+	char controller;
+	fprintf(stderr, "Which controller do you want to use?\n");
+	fprintf(stderr, "Wii: 'w'\nKeyboard: 'k'\n");
+	scanf("%c", &controller);
+	if (controller == 'w')
+	{
+		Input = new WiiInput(WiiAddress);
+	}
+	else
+	{
+		Input = new KeybordInput();
+	}
 	data->input = Input;
 
 	SDL_Thread *inputThread;
@@ -72,7 +81,8 @@ bool InitSystem(InitData *data)
 }
 
 // システム終了処理
-void ExitSystem(InitData *data){
+void ExitSystem(InitData *data)
+{
 	delete[] PData;
 	delete data->input;
 	delete data->timer;
@@ -121,7 +131,7 @@ void SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients)
 		PData[i].pos.x = moveData[i].x;
 		PData[i].pos.y = moveData[i].y;
 		PData[i].pos.z = moveData[i].z;
-		//fprintf(stderr, "[%d] %10s　は %f %f %f にいます。\n", i, PData[i].name, PData[i].pos.x, PData[i].pos.y, PData[i].pos.z);
+		fprintf(stderr, "[%d] %10s　は %f %f %f にいます。\n", i, PData[i].name, PData[i].pos.x, PData[i].pos.y, PData[i].pos.z);
 	}
 }
 
@@ -143,12 +153,13 @@ PlaceData GetPlaceData()
 */
 void SystemRun()
 {
-	InputType data = Input->GetInputType();
+	// InputType data = Input->GetInputType();
+	InputType data = _______Type;
 	PData[MyId].velocity.x = 0;
 
 	// PData[MyId].velocity.y = 0;
 
-	PData[MyId].velocity.z = 0; 
+	PData[MyId].velocity.z = 0;
 	// 移動処理
 	if (Input->IsMoveButtonDown() || !IsPlayerOnGround())
 	{
@@ -180,7 +191,8 @@ void SystemRun()
 			data.Jump = false;
 			PData[MyId].velocity.y += 5;
 		}
-		else if(!IsPlayerOnGround()){
+		else if (!IsPlayerOnGround())
+		{
 			PData[MyId].velocity.y -= GRAVITY * Time->GetDeltaTime();
 		}
 
@@ -238,73 +250,73 @@ void UpdatePlaceData(PlaceData data)
 {
 }
 
-bool IsPlayerOnGround(){
+bool IsPlayerOnGround()
+{
 	int id = GetMyID();
-	int accuracy  = 2;
+	int accuracy = 2;
 	int point_X[2], point_Z[2];
 	int y = 0;
 
-    const int wide = PData[id].pos.w / (accuracy - 1);  // 当たり判定を知らべる座標間距離 x座標
-    const int depth = PData[id].pos.d / (accuracy - 1); // 当たり判定を知らべる座標間距離 z座標
+	const int wide = PData[id].pos.w / (accuracy - 1);	// 当たり判定を知らべる座標間距離 x座標
+	const int depth = PData[id].pos.d / (accuracy - 1); // 当たり判定を知らべる座標間距離 z座標
 
-    // 当たり判定を調べる座標をすべて格納
-    for (int i = 0; i < accuracy; ++i)
-    {
-        point_X[i] = PData[id].pos.x + PData[id].velocity.x + wide * i;
-        point_Z[i] = PData[id].pos.z + PData[id].velocity.z + depth * i;
-    }
+	// 当たり判定を調べる座標をすべて格納
+	for (int i = 0; i < accuracy; ++i)
+	{
+		point_X[i] = PData[id].pos.x + PData[id].velocity.x + wide * i;
+		point_Z[i] = PData[id].pos.z + PData[id].velocity.z + depth * i;
+	}
 
-    // マップデータ入手
-    const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
+	// マップデータ入手
+	const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
 
-    // 返り値用変数を宣言，初期化
-    // ゴールブロックが１個でも接触すればゴールブロックが返る
-    // ノーマルブロックが１個でも接触すればノーマルブロックが返る
-    BlockType result = NonBlock;
+	// 返り値用変数を宣言，初期化
+	// ゴールブロックが１個でも接触すればゴールブロックが返る
+	// ノーマルブロックが１個でも接触すればノーマルブロックが返る
+	BlockType result = NonBlock;
 
-    // マップ配列の添え字用変数を宣言，初期化
-    int Block_X = 0;
-    int t_Block_Y = (PData[id].pos.y + PData[id].velocity.y + y);
-    int Block_Y = (PData[id].pos.y + PData[id].velocity.y + y) / MAP_MAGNIFICATION;
-    Block_Y = clamp(Block_Y, 0, MAP_SIZE_H - 1); 
+	// マップ配列の添え字用変数を宣言，初期化
+	int Block_X = 0;
+	int t_Block_Y = (PData[id].pos.y + PData[id].velocity.y + y);
+	int Block_Y = (PData[id].pos.y + PData[id].velocity.y + y) / MAP_MAGNIFICATION;
+	Block_Y = clamp(Block_Y, 0, MAP_SIZE_H - 1);
 	int Block_Z = 0;
 
-    for (int i = 0; i < accuracy; ++i)
-    {
-        Block_X = point_X[i] / MAP_MAGNIFICATION;
+	for (int i = 0; i < accuracy; ++i)
+	{
+		Block_X = point_X[i] / MAP_MAGNIFICATION;
 		Block_X = clamp(Block_X, 0, MAP_SIZE_H - 1);
 
-        for (int j = 0; j < accuracy; ++j)
-        {
-            Block_Z = point_Z[j] / MAP_MAGNIFICATION;
+		for (int j = 0; j < accuracy; ++j)
+		{
+			Block_Z = point_Z[j] / MAP_MAGNIFICATION;
 			Block_Z = clamp(Block_Z, 0, MAP_SIZE_D - 1);
 
-            switch (terrainData[Block_X][Block_Y][Block_Z])
-            {
-            case GoalBlock:
-                result = GoalBlock;
-                break;
-            case NomalBlock:
-                if (result == NonBlock)
-                {
-                    result = NomalBlock;
-                }
-                break;
-            case NonBlock:
-                break;
-            default:
-                throw "マップデータ : エラー\n";
-            }
-        }
-    }
+			switch (terrainData[Block_X][Block_Y][Block_Z])
+			{
+			case GoalBlock:
+				result = GoalBlock;
+				break;
+			case NomalBlock:
+				if (result == NonBlock)
+				{
+					result = NomalBlock;
+				}
+				break;
+			case NonBlock:
+				break;
+			default:
+				throw "マップデータ : エラー\n";
+			}
+		}
+	}
 	return result != NonBlock;
 }
 
 int clamp(const int __val, const int __lo, const int __hi)
 {
-  return (__val < __lo) ? __lo : (__hi < __val) ? __hi : __val;
+	return (__val < __lo) ? __lo : (__hi < __val) ? __hi : __val;
 }
-
 
 // ===== * ===== マルチスレッド ===== * ===== //
 
@@ -324,7 +336,7 @@ int InputThread(void *data)
 		// 入力受け付け
 		Input->UpdateInput();
 		/*サーバーにリクエストを送る*/
-		//SystemRun();
+		
 		SDL_UnlockMutex(mtx);
 	}
 

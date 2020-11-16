@@ -25,6 +25,7 @@
 
 extern int Num_Clients; // クライアント人数
 extern char WiiAddress[17];
+extern InputType _______Type;
 /* ウインドウサイズ */
 enum {
     Wd_Width  = 640,

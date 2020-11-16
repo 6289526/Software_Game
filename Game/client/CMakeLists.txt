@@ -36,9 +36,9 @@ add_executable( ${SORYUTION_NAME} ${CLIENT_CODE})
 
 #コンパイルオプション
 target_compile_options(${SORYUTION_NAME} PUBLIC
-  $<$<CONFIG:Release>:-O3>             # Release
-  $<$<CONFIG:Debug>:-O0 -g>            # Debug
-  $<$<CONFIG:RelWithDebgInfo>:-O3 -g>  # RelWithDebInfo
+    $<$<CONFIG:Release>:-O3>             # Release
+    $<$<CONFIG:Debug>:-O0 -g>            # Debug
+    $<$<CONFIG:RelWithDebgInfo>:-O3 -g>  # RelWithDebInfo
 )
 
 target_compile_definitions(${SORYUTION_NAME} PUBLIC

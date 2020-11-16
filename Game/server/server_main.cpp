@@ -99,15 +99,13 @@ int main(int argc, char *argv[])
     fprintf(stderr, "Port number = %d\n", PortNum);
     //初期化
     SDL_Init(SDL_INIT_EVERYTHING);
-    
     #ifdef DEBUG
-    char file[] = "build/mapdata.csv";
+    char file[] = "../data/mapdata.csv";
     #else
     char file[] = "../../data/mapdata.csv";
     #endif
-    
     InitSys(file);
-
+    
     SetupServer(PlayerNum, PortNum); // サーバー初期化
 
     InitPlayerData(); // プレイヤーデータ初期化
