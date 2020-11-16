@@ -134,7 +134,7 @@ void SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients)
 		PData[i].pos.x = moveData[i].x;
 		PData[i].pos.y = moveData[i].y;
 		PData[i].pos.z = moveData[i].z;
-		//fprintf(stderr, "[%d] %10s　は %f %f %f にいます。\n", i, PData[i].name, PData[i].pos.x, PData[i].pos.y, PData[i].pos.z);
+		fprintf(stderr, "[%d] %10s　は %f %f %f にいます。\n", i, PData[i].name, PData[i].pos.x, PData[i].pos.y, PData[i].pos.z);
 	}
 }
 
@@ -230,7 +230,7 @@ void SystemRun()
 			PData[MyId].velocity.z = TERMINAL_SPEED;
 		}
 
-		fprintf(stderr, "dir = %f\n", PData[MyId].direction);
+		//fprintf(stderr, "dir = %f\n", PData[MyId].direction);
 
 		// 移動コマンド実行
 		InCommand(MOVE_COMMAND);
