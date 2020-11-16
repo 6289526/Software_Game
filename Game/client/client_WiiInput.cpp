@@ -1,5 +1,4 @@
 #include "client_WiiInput.h"
-/*
 WiiInput::WiiInput(char Address[17]) : _wiimote(WIIMOTE_INIT), _report(WIIMOTE_REPORT_INIT) // レポートタイプ用
 {
     fprintf(stderr, "%s\n", Address);
@@ -69,4 +68,4 @@ void WiiInput::UpdateInput()
         }
         
     }
-}*/
+}

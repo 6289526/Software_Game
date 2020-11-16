@@ -8,6 +8,7 @@ set(CLIENT_CODE
     client_main
     client_input
     client_KeybordInput
+    client_WiiInput
     net
     graphic
     client_system
@@ -45,4 +46,4 @@ target_compile_definitions(${SORYUTION_NAME} PUBLIC
 )
 
 #リンク先のライブラリを指定
-target_link_libraries( ${SORYUTION_NAME} ${SDL2_LIBRARIES}  ${SDL2ttf_LIBRARIES} ${SDL2image_LIBRARIES} -lGL -lGLU -L/usr/local/lib -lm)
+target_link_libraries( ${SORYUTION_NAME} ${SDL2_LIBRARIES}  ${SDL2ttf_LIBRARIES} ${SDL2image_LIBRARIES} -lGL -lGLU -lcwiimote -lbluetooth -L/usr/local/lib -lm)

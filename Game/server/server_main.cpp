@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
     SDL_Init(SDL_INIT_EVERYTHING);
     
     #ifdef DEBUG
-    char file[] = "build/mapdata.csv";
+    char file[] = "../data/mapdata.csv";
     #else
     char file[] = "../../data/mapdata.csv";
     #endif
