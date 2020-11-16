@@ -16,7 +16,7 @@ EXE = $(OUTDIR)/$(PROGNAME)
 
 .PHONY: all
 
-all: $(EXE)
+all: clean $(EXE)
 
 
 $(EXE): $(OBJS)
@@ -25,3 +25,6 @@ $(EXE): $(OBJS)
 
 $(OBJS):
 	$(CXX) $(CXXFLAGS) -c $(patsubst $(OUTDIR)%.o,$(SRCDIR)%.cpp,$@) -o $@
+
+clean:
+	rm -rf $(OUTDIR)/*~ $(OUTDIR)/*.o $(EXE)
