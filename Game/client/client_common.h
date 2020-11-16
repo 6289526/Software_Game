@@ -19,7 +19,7 @@
 #include "../header/constants.h"
 #include "client_map.hpp"
 #include "client_system.h"
-#include "client_WiiInput.h"
+// #include "client_WiiInput.h"
 #include "client_KeybordInput.h"
 #include "client_time.hpp"
 
@@ -41,7 +41,7 @@ typedef struct InitData{
 	InputModuleBase *input;
     Timer *timer;
 
-    InitData() : 
+    InitData() :
         input(NULL),
         timer(NULL)
         { };
