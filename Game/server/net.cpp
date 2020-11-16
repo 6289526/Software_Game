@@ -271,7 +271,7 @@ int ControlRequests()
                     ReceiveData(i, &placeData, sizeof(PlaceData));
                     SetPlaceData(placeData);
                     fprintf(stderr, " [%d] %10s: put     = x:%6.3d   y:%6.3d   z:%6.3d\n", i, name[i], placeData.pos.x, placeData.pos.y, placeData.pos.z);
-
+                    break;
                 case QUIT_COMMAND: //通信の終了を要求された場合
                     fprintf(stderr, " [%d] %10s: quit\n", i, name[i]);
                     // 接続を切る
