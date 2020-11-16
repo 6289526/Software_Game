@@ -4,44 +4,45 @@
 
 #define PLAYER_MOVE_SPEED 40
 #define PLAYER_ROTATE_SPEED 4
+
 #define GRAVITY 9.8 * 0.5// * 3
 #define TERMINAL_SPEED PLAYER_Y // 終端速度
 
 
 static int MyId; // クライアントのID
 // プレイヤーのデータ
-PlayerData* PData;
+PlayerData *PData;
 
-int Num_Clients; // クライアント人数
-static char Name_Clients[MAX_NUMCLIENTS][MAX_LEN_NAME]; // クライアントの名前
-static FloatCube Pos_Clients = { PLAYER_X, PLAYER_Y, PLAYER_Z, PLAYER_W, PLAYER_H, PLAYER_D }; // クライアント情報
+int Num_Clients;																			 // クライアント人数
+static char Name_Clients[MAX_NUMCLIENTS][MAX_LEN_NAME];										 // クライアントの名前
+static FloatCube Pos_Clients = {PLAYER_X, PLAYER_Y, PLAYER_Z, PLAYER_W, PLAYER_H, PLAYER_D}; // クライアント情報
 
-ClientMap Map; //マップ
+ClientMap Map;			//マップ
 InputModuleBase *Input; // Input Module
-Timer *Time; // FrameTimer
+Timer *Time;			// FrameTimer
 
 // int GrapicThread(void *data); // This Function isn't used now.
 
 // ===== * ===== プロパティ ===== * ===== //
 // クライアント配列の先頭ポインタを返す
-const PlayerData* GetPlayerData(){ return PData; }
+const PlayerData *GetPlayerData() { return PData; }
 
 // このクライアントのIDを返す
-int GetMyID(){ return MyId; }
+int GetMyID() { return MyId; }
 
 /*クライアントのID取得
 * 引数
 *   id: クライアントのID
 */
-void SetMyID(int id){ MyId = id; }
+void SetMyID(int id) { MyId = id; }
 
 bool IsPlayerOnGround();
 // ===== * ===== プロパティ ===== * ===== //
 int clamp(const int __val, const int __lo, const int __hi);
 int InputThread(void *data);
 
-
-bool InitSystem(InitData *data){
+bool InitSystem(InitData *data)
+{
 	// SDL_Thread *thread;
 
 	InitGraphic(); // グラフィックの初期化
@@ -55,12 +56,22 @@ bool InitSystem(InitData *data){
 	}
 	SDL_DetachThread(thread);
 	*/
-
-	Input = new KeybordInput();
+	char control;
+	fprintf(stderr, "Which controller you want to use?\n");
+	fprintf(stderr, "wii: w\n keyboar: k\n");
+	scanf("%c", &control);
+	if (control == 'w')
+	{
+		Input = new WiiInput(WiiAddress);
+	}
+	else
+	{
+		Input = new KeybordInput();
+	}
 	data->input = Input;
 
 	SDL_Thread *inputThread;
-    SDL_mutex *input_mtx = SDL_CreateMutex(); // 相互排除
+	SDL_mutex *input_mtx = SDL_CreateMutex(); // 相互排除
 	inputThread = SDL_CreateThread(InputThread, "inputThread", input_mtx);
 	if (inputThread == NULL)
 	{
@@ -73,7 +84,8 @@ bool InitSystem(InitData *data){
 }
 
 // システム終了処理
-void ExitSystem(InitData *data){
+void ExitSystem(InitData *data)
+{
 	delete[] PData;
 	delete data->input;
 	delete data->timer;
@@ -81,30 +93,31 @@ void ExitSystem(InitData *data){
 
 void SetNumClients(int n) // クライアント人数セット
 {
-    Num_Clients = n;
+	Num_Clients = n;
 }
 
 // 名前のセット
 // id: クライアントのID
 // clientName:クライアントの名前
-void SetClientName(int id, char* name)
+void SetClientName(int id, char *name)
 {
 	strcpy(Name_Clients[id], name);
 }
 
-void InitPlayerData()// プレイヤーデータ初期化処理
+void InitPlayerData() // プレイヤーデータ初期化処理
 {
-    PData = new PlayerData[Num_Clients];
-    for (int i = 0; i < Num_Clients; ++i) {
+	PData = new PlayerData[Num_Clients];
+	for (int i = 0; i < Num_Clients; ++i)
+	{
 		strcpy(PData[i].name, Name_Clients[i]);
-        PData[i].pos = Pos_Clients;
-        PData[i].pos.x = Pos_Clients.x + i * 20;
-        Vector3 t_v = { 0, 0, 0 };
-        PData[i].velocity = t_v;
-        PData[i].direction = 0;
-        PData[i].rank = 0;
-        PData[i].goal = false;
-    }
+		PData[i].pos = Pos_Clients;
+		PData[i].pos.x = Pos_Clients.x + i * 20;
+		Vector3 t_v = {0, 0, 0};
+		PData[i].velocity = t_v;
+		PData[i].direction = 0;
+		PData[i].rank = 0;
+		PData[i].goal = false;
+	}
 }
 
 /*クライアントの位置の取得
@@ -121,17 +134,18 @@ void SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients)
 		PData[i].pos.x = moveData[i].x;
 		PData[i].pos.y = moveData[i].y;
 		PData[i].pos.z = moveData[i].z;
-		fprintf(stderr, "[%d] %10s　は %f %f %f にいます。\n", i, PData[i].name, PData[i].pos.x, PData[i].pos.y, PData[i].pos.z);
+		//fprintf(stderr, "[%d] %10s　は %f %f %f にいます。\n", i, PData[i].name, PData[i].pos.x, PData[i].pos.y, PData[i].pos.z);
 	}
 }
 
 /*現在の設置データを返す
 *	返り値: MyIDのキャラの設置データ
 */
-PlaceData GetPlaceData(){
+PlaceData GetPlaceData()
+{
 	PlaceData data;
 	data.object = NomalBlock;
-	data.pos = { PData[GetMyID()].pos.x, PData[GetMyID()].pos.y, PData[GetMyID()].pos.z };
+	data.pos = {PData[GetMyID()].pos.x, PData[GetMyID()].pos.y, PData[GetMyID()].pos.z};
 	return data;
 }
 
@@ -143,7 +157,6 @@ PlaceData GetPlaceData(){
 void SystemRun()
 {
 	InputType data = Input->GetInputType();
-
 	PData[MyId].velocity.x = 0;
 
 	// PData[MyId].velocity.y = 0;
@@ -161,18 +174,21 @@ void SystemRun()
 		if (data.Forward)
 		{
 			data.Forward = false;
-			PData[MyId].velocity.z += PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 0).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 0).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 		}
 		// 左右
 		if (data.Left)
 		{
 			data.Left = false;
-			PData[MyId].velocity.x += PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 90).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 90).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 		}
 		else if (data.Right)
 		{
 			data.Right = false;
-			PData[MyId].velocity.x -= PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 270).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 270).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 		}
 		// ジャンプ
 		if (data.Jump && IsPlayerOnGround() == 1)
@@ -180,7 +196,8 @@ void SystemRun()
 			data.Jump = false;
 			PData[MyId].velocity.y += 5;
 		}
-		else if(!IsPlayerOnGround()){
+		else if (!IsPlayerOnGround())
+		{
 			PData[MyId].velocity.y -= GRAVITY * Time->GetDeltaTime();
 		}
 
@@ -198,8 +215,10 @@ void SystemRun()
 		if (data.D)
 		{
 			data.D = false;
-			PData[MyId].velocity.z -= PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 180).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 180).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 		}
+
 
 		if (TERMINAL_SPEED < PData[MyId].velocity.x) {
 			PData[MyId].velocity.x = TERMINAL_SPEED;
@@ -210,6 +229,8 @@ void SystemRun()
 		if (TERMINAL_SPEED < PData[MyId].velocity.z) {
 			PData[MyId].velocity.z = TERMINAL_SPEED;
 		}
+
+		fprintf(stderr, "dir = %f\n", PData[MyId].direction);
 
 		// 移動コマンド実行
 		InCommand(MOVE_COMMAND);
@@ -228,7 +249,8 @@ void SystemRun()
 /*各プレイヤーのvelocityを変更する
 * 引数
 */
-void UpdateFlag(VelocityFlag* flags, int numClients){
+void UpdateFlag(VelocityFlag *flags, int numClients)
+{
 	for (int i = 0; i < numClients; i++)
 	{
 		if (flags[i].x == false)
@@ -243,13 +265,14 @@ void UpdateFlag(VelocityFlag* flags, int numClients){
 }
 
 // Updated place data from server
-void UpdatePlaceData(PlaceData data){
-
+void UpdatePlaceData(PlaceData data)
+{
 }
 
-bool IsPlayerOnGround(){
+bool IsPlayerOnGround()
+{
 	int id = GetMyID();
-	int accuracy  = 2;
+	int accuracy = 2;
 	int point_X[2], point_Z[2];
 	int y = 0;
 
@@ -278,42 +301,41 @@ bool IsPlayerOnGround(){
     Block_Y = clamp(Block_Y, 0, MAP_SIZE_H - 1);
 	int Block_Z = 0;
 
-    for (int i = 0; i < accuracy; ++i)
-    {
-        Block_X = point_X[i] / MAP_MAGNIFICATION;
+	for (int i = 0; i < accuracy; ++i)
+	{
+		Block_X = point_X[i] / MAP_MAGNIFICATION;
 		Block_X = clamp(Block_X, 0, MAP_SIZE_H - 1);
 
-        for (int j = 0; j < accuracy; ++j)
-        {
-            Block_Z = point_Z[j] / MAP_MAGNIFICATION;
+		for (int j = 0; j < accuracy; ++j)
+		{
+			Block_Z = point_Z[j] / MAP_MAGNIFICATION;
 			Block_Z = clamp(Block_Z, 0, MAP_SIZE_D - 1);
 
-            switch (terrainData[Block_X][Block_Y][Block_Z])
-            {
-            case GoalBlock:
-                result = GoalBlock;
-                break;
-            case NomalBlock:
-                if (result == NonBlock)
-                {
-                    result = NomalBlock;
-                }
-                break;
-            case NonBlock:
-                break;
-            default:
-                throw "マップデータ : エラー\n";
-            }
-        }
-    }
+			switch (terrainData[Block_X][Block_Y][Block_Z])
+			{
+			case GoalBlock:
+				result = GoalBlock;
+				break;
+			case NomalBlock:
+				if (result == NonBlock)
+				{
+					result = NomalBlock;
+				}
+				break;
+			case NonBlock:
+				break;
+			default:
+				throw "マップデータ : エラー\n";
+			}
+		}
+	}
 	return result != NonBlock;
 }
 
 int clamp(const int __val, const int __lo, const int __hi)
 {
-  return (__val < __lo) ? __lo : (__hi < __val) ? __hi : __val;
+	return (__val < __lo) ? __lo : (__hi < __val) ? __hi : __val;
 }
-
 
 // ===== * ===== マルチスレッド ===== * ===== //
 
@@ -323,14 +345,16 @@ int clamp(const int __val, const int __lo, const int __hi)
 	return 0;
 }*/
 
-int InputThread(void *data){
-    SDL_mutex *mtx = (SDL_mutex *)data;
+int InputThread(void *data)
+{
+	SDL_mutex *mtx = (SDL_mutex *)data;
 
-    while (1)
-    {
-        SDL_LockMutex(mtx);
+	while (1)
+	{
+		SDL_LockMutex(mtx);
 		// 入力受け付け
 		Input->UpdateInput();
+		SystemRun();
 		SDL_UnlockMutex(mtx);
 	}
 
