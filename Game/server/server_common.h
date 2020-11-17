@@ -167,7 +167,7 @@ static int BuryCheck_Under(const int chara_ID, const int accuracy, int block_X, 
 // accuracy : 当たり判定の精度の調整　１以上 かつ キャラの幅・高さ以下の値
 static Collision Collision_CB_Side(const int chara_ID, const int y = 0, const int accuracy = PLAYER_W);
 
-static Collision Collision_CB_Under(int chara_ID, int y, int accuracy);
+static Collision Collision_CB_Under(const int chara_ID, const int y, const int accuracy = PLAYER_W);
 
 static bool Collision_BB(); // ブロックを置けるなら true
 

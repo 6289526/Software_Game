@@ -198,6 +198,8 @@ static int BuryCheck_Under(const int chara_ID, const int accuracy, int block_X, 
         }
     }
 
+    fprintf(stderr, "%d\n", Bury_Count);
+
     return Bury_Count; // 埋まっているピクセルが返る
 }
 
@@ -300,7 +302,7 @@ Collision Collision_CB_Side(const int chara_ID, const int y, const int accuracy)
   return ret;
 }
 
-Collision Collision_CB_Under(int chara_ID, int y, int accuracy) {
+Collision Collision_CB_Under(const int chara_ID, const int y, const int accuracy) {
 
     // 当たり判定の精度が正しいかどうか
     if (accuracy < 1 || PLAYER_D < accuracy || PLAYER_W < accuracy) {
@@ -432,7 +434,7 @@ void Goal(int chara_ID) {
 void MovePosition(int chara_ID) {
 
     // 下の当たり判定
-    Collision t_Collision_Under = Collision_CB_Under(chara_ID, 0, 3);
+    Collision t_Collision_Under = Collision_CB_Under(chara_ID, 0);
 
     // 移動後の座標に書き換え
     PData[chara_ID].pos.y += PData[chara_ID].velocity.y;
@@ -452,7 +454,7 @@ void MovePosition(int chara_ID) {
   // 移動後の座標に書き換え
   PData[chara_ID].pos.x += PData[chara_ID].velocity.x;
   PData[chara_ID].pos.z += PData[chara_ID].velocity.z;
-/*
+
   switch (t_Collision_Side.dire) {
   case Front:
     PData[chara_ID].pos.z =
@@ -473,10 +475,10 @@ void MovePosition(int chara_ID) {
   default:
     break;
   }
-*/
+
   // 速度を０に戻す
   PData[chara_ID].velocity.x = 0;
-  // PData[chara_ID].velocity.y = 0;
+  PData[chara_ID].velocity.y = 0;
   PData[chara_ID].velocity.z = 0;
 }
 
