@@ -6,8 +6,8 @@
 #define FONT_PATH "fonts/PixelMplus12-Regular.ttf"
 #define MAX_STRING 255
 #define MESSAGE_NUM 5
-const int SCREEN_WIDTH = 1240;
-const int SCREEN_HEIGHT = 620;
+const int SCREEN_WIDTH = 1237;
+const int SCREEN_HEIGHT = 696;
 
 typedef struct
 {
@@ -233,11 +233,11 @@ int ControlSetUp()
         SDL_FreeSurface(surface);
         SDL_DestroyTexture(texture);
     }
-    else if (GetResult == -1)
+    else
     {
         //TTF_SetFontOutline(font, 1);//枠抜きで描写するとき
-        surface = TTF_RenderUTF8_Blended(font, "Can't Find your Wiilimocon!", (SDL_Color){255, 255, 255, 255});
-        fprintf(stderr, "Can't Find your Wiilimocon!\n");
+        surface = TTF_RenderUTF8_Blended(font, "Select Keyboard", (SDL_Color){255, 255, 255, 255});
+        fprintf(stderr, "Select Keyboard!\n");
         //surfaceからTextureを作る
         texture = SDL_CreateTextureFromSurface(renderer, surface);
 
