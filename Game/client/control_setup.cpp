@@ -6,8 +6,8 @@
 #define FONT_PATH "fonts/PixelMplus12-Regular.ttf"
 #define MAX_STRING 255
 #define MESSAGE_NUM 5
-const int SCREEN_WIDTH = 1980;
-const int SCREEN_HEIGHT = 1240;
+const int SCREEN_WIDTH = 1240;
+const int SCREEN_HEIGHT = 620;
 
 typedef struct
 {
@@ -30,6 +30,10 @@ static char *Text[MESSAGE_NUM] = {
     {"please push K Key."},
     {"*"}};
 
+static char *ImagePath[2] = { 
+    {"Game.png"},
+    {"TITLE.png"},
+};
 /*プロトタイプ*/
 static void InitInput();
 static InputData InputEvents(SDL_Event event);
@@ -78,8 +82,10 @@ int ControlSetUp()
     SDL_mutex *mtx1 = SDL_CreateMutex();
     GetAddressThread = SDL_CreateThread(GetAddress, "Draw", mtx1);
 
+    SDL_Surface *image[2];
     SDL_Surface *surface;
     SDL_Texture *texture;
+
     SDL_Event event;
     //文字を描写したTextureのサイズを取得する
     int iw, ih;
@@ -90,13 +96,29 @@ int ControlSetUp()
     float alpha = 0;
 
     /*描画*/
+    image[0] = IMG_Load(ImagePath[0]);
+    image[1] = IMG_Load(ImagePath[1]);
     while (data.finish != 1 && GetResult == 0)
     {
         /*キーボード入力取得 kキーでwhileループ抜ける*/
         data = InputEvents(event);
 
         SDL_RenderClear(renderer);
+        //surfaceからTextureを作る
+        texture = SDL_CreateTextureFromSurface(renderer, image[1]);
 
+        SDL_SetRenderDrawColor(renderer, 0, 85, 150, 255);
+
+        SDL_QueryTexture(texture, NULL, NULL, &iw, &ih);
+
+        SDL_Rect txtRect = (SDL_Rect){0, 0, iw, ih};
+        SDL_Rect pasteRect = (SDL_Rect){0, 0, iw, ih};
+
+        //Textureを描写する
+        //描写元の描写する部分,描写先の描写する部分)
+        //サイズが違うと勝手にTextureを伸展してくれる
+        SDL_RenderCopy(renderer, texture, &txtRect, &pasteRect);
+        SDL_DestroyTexture(texture);
         for (int i = 0; i < MESSAGE_NUM - 1; i++)
         {
             //TTF_SetFontOutline(font, 1);//枠抜きで描写するとき
@@ -109,7 +131,7 @@ int ControlSetUp()
             SDL_QueryTexture(texture, NULL, NULL, &iw, &ih);
 
             SDL_Rect txtRect = (SDL_Rect){0, 0, iw, ih};
-            SDL_Rect pasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - iw / 2, SCREEN_HEIGHT / 3 + i * ih + i * ih / 2, iw, ih};
+            SDL_Rect pasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - iw / 2, SCREEN_HEIGHT / 10 + i * ih + i * ih / 2, iw, ih};
 
             //Textureを描写する
             //描写元の描写する部分,描写先の描写する部分)
@@ -173,6 +195,22 @@ int ControlSetUp()
 
     /*結果の描画*/
     SDL_RenderClear(renderer);
+    SDL_RenderClear(renderer);
+    //surfaceからTextureを作る
+    texture = SDL_CreateTextureFromSurface(renderer, image[0]);
+
+    SDL_SetRenderDrawColor(renderer, 0, 85, 150, 255);
+
+    SDL_QueryTexture(texture, NULL, NULL, &iw, &ih);
+
+    SDL_Rect txtRect = (SDL_Rect){0, 0, iw, ih};
+    SDL_Rect pasteRect = (SDL_Rect){0, 0, iw, ih};
+
+    //Textureを描写する
+    //描写元の描写する部分,描写先の描写する部分)
+    //サイズが違うと勝手にTextureを伸展してくれる
+    SDL_RenderCopy(renderer, texture, &txtRect, &pasteRect);
+    SDL_DestroyTexture(texture);
     if (GetResult == 1)
     {
         //TTF_SetFontOutline(font, 1);//枠抜きで描写するとき
