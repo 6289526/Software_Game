@@ -134,9 +134,10 @@ int BuryCheck_Side(const int chara_ID, const int accuracy, int block_X,
   return Bury_Count; // 埋まっているピクセルが返る
 }
 
-static int BuryCheck_Under(const int chara_ID, const int accuracy, int block_X,
-                           int block_Y, int block_Z, const float *point_X,
-                           const float *point_Z, const Collision_Dire flag) {
+static int BuryCheck_Under(const int chara_ID, const int y, const int accuracy,
+                           int block_X, int block_Y, int block_Z,
+                           const float *point_X, const float *point_Z,
+                           const Collision_Dire flag) {
   int chara_size;   // キャラの大きさ
   float base_point; // 計算に使う基準座標
   enum PN_sign { positive = 1, negative = -1 } PN_flag; // 正負を扱う
@@ -147,7 +148,7 @@ static int BuryCheck_Under(const int chara_ID, const int accuracy, int block_X,
     chara_size = PData[chara_ID].pos.h;
     // なぜかvelocityを足さないとグラフィクがぶれる
     // 偉い人計算してください
-    base_point = PData[chara_ID].pos.y + PData[chara_ID].velocity.y;
+    base_point = PData[chara_ID].pos.y + PData[chara_ID].velocity.y + y;
     PN_flag = positive;
     break;
   default:
@@ -170,7 +171,7 @@ static int BuryCheck_Under(const int chara_ID, const int accuracy, int block_X,
       if (terrainData[block_X][static_cast<int>(base_point / MAP_MAGNIFICATION)]
                      [block_Z] == NomalBlock) {
         // どこまで埋まっているか調べる
-        for (int k = 0; k <= chara_size; ++k) {
+        for (int k = 0; k <= chara_size - y; ++k) {
 
           block_Y = (base_point + (k * PN_flag)) / MAP_MAGNIFICATION;
 
@@ -292,7 +293,7 @@ Collision Collision_CB_Side(const int chara_ID, const int y,
   Collision ret; // 返り値
   ret.dire = t_dire;
   ret.power = t_Max_Count;
-  
+
   // なんかよくわからん補正　これがないとグラフィックがぶれる
   // これでうまく行けるんで書いときます　誰か計算して理由教えて
   if (ret.dire == Left || ret.dire == Front) {
@@ -355,7 +356,7 @@ Collision Collision_CB_Under(const int chara_ID, const int y,
   }
 
   int Count_Under =
-      BuryCheck_Under(chara_ID, accuracy, Block_X, Block_Y, Block_Z,
+      BuryCheck_Under(chara_ID, 0, accuracy, Block_X, Block_Y, Block_Z,
                       point_X.Get(), point_Z.Get(), Under);
 
   if (Count_Under == -1) {

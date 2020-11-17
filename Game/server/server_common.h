@@ -126,9 +126,10 @@ static int BuryCheck_Side(const int chara_ID, const int accuracy, int block_X,
                           const int block_Y, int block_Z, const float *point_X,
                           const float *point_Z, const Collision_Dire flag);
 
-static int BuryCheck_Under(const int chara_ID, const int accuracy, int block_X,
-                           int block_Y, int block_Z, const float *point_X,
-                           const float *point_Z, const Collision_Dire flag);
+static int BuryCheck_Under(const int chara_ID, const int y, const int accuracy,
+                           int block_X, int block_Y, int block_Z,
+                           const float *point_X, const float *point_Z,
+                           const Collision_Dire flag);
 
 // キャラとブロックの当たり判定
 // ｙ ： 基準面の高さの補正
