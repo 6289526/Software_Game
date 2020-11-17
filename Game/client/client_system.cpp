@@ -42,7 +42,7 @@ bool InitSystem(InitData *data)
 {
 	// SDL_Thread *thread;
 
-	InitGraphic(); // グラフィックの初期化
+	
 	/*
 	// グラフィックのスレッド化
 	thread = SDL_CreateThread(GrapicThread, "GrapicThread", NULL);
@@ -53,20 +53,19 @@ bool InitSystem(InitData *data)
 	}
 	SDL_DetachThread(thread);
 	*/
-	char controller;
-	fprintf(stderr, "Which controller do you want to use?\n");
-	fprintf(stderr, "Wii: 'w'\nKeyboard: 'k'\n");
-	scanf("%c", &controller);
-	if (controller == 'w')
-	{
-		Input = new WiiInput(WiiAddress);
-	}
-	else
+	/*入力方式の選択またwiiリモコンのアドレスを取得*/
+	ControlSetUp();
+	if (strcmp(WiiAddress, "") == 0)
 	{
 		Input = new KeybordInput();
 	}
-	data->input = Input;
+	else
+	{
+		Input = new WiiInput(WiiAddress);
+	}
 
+	data->input = Input;
+	InitGraphic(); // グラフィックの初期化
 	SDL_Thread *inputThread;
 	SDL_mutex *input_mtx = SDL_CreateMutex(); // 相互排除
 	inputThread = SDL_CreateThread(InputThread, "inputThread", input_mtx);
@@ -131,7 +130,7 @@ void SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients)
 		PData[i].pos.x = moveData[i].x;
 		PData[i].pos.y = moveData[i].y;
 		PData[i].pos.z = moveData[i].z;
-		fprintf(stderr, "[%d] %10s　は %f %f %f にいます。\n", i, PData[i].name, PData[i].pos.x, PData[i].pos.y, PData[i].pos.z);
+		//fprintf(stderr, "[%d] %10s　は %f %f %f にいます。\n", i, PData[i].name, PData[i].pos.x, PData[i].pos.y, PData[i].pos.z);
 	}
 }
 
@@ -153,10 +152,10 @@ PlaceData GetPlaceData()
 */
 void SystemRun()
 {
-	// InputType data = Input->GetInputType();
-	InputType data = _______Type;
+	InputType data = Input->GetInputType();
+	
 	PData[MyId].velocity.x = 0;
-
+	fprintf(stderr, "f:%d l:%d r:%d e:%d\n", data.Forward, data.Left, data.Right, data.End);
 	// PData[MyId].velocity.y = 0;
 
 	PData[MyId].velocity.z = 0;
@@ -171,29 +170,29 @@ void SystemRun()
 		// 前
 		if (data.Forward)
 		{
-			data.Forward = false;
-			PData[MyId].velocity.z += PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			// data.Forward = false;
+			PData[MyId].velocity.z += 5*PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 		}
 		// 左右
 		if (data.Left)
 		{
-			data.Left = false;
-			PData[MyId].velocity.x += PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			// data.Left = false;
+			PData[MyId].velocity.x += 5*PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 		}
 		else if (data.Right)
 		{
-			data.Right = false;
-			PData[MyId].velocity.x -= PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			// data.Right = false;
+			PData[MyId].velocity.x -= 5*PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 		}
 		// ジャンプ
 		if (data.Jump && IsPlayerOnGround() == 1)
 		{
-			data.Jump = false;
+			// data.Jump = false;
 			PData[MyId].velocity.y += 5;
 		}
 		else if (!IsPlayerOnGround())
 		{
-			PData[MyId].velocity.y -= GRAVITY * Time->GetDeltaTime();
+			PData[MyId].velocity.y -= 5*GRAVITY * Time->GetDeltaTime();
 		}
 
 		if (data.R)
@@ -336,7 +335,6 @@ int InputThread(void *data)
 		// 入力受け付け
 		Input->UpdateInput();
 		/*サーバーにリクエストを送る*/
-		
 		SDL_UnlockMutex(mtx);
 	}
 

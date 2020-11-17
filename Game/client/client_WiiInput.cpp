@@ -21,29 +21,32 @@ void WiiInput::UpdateInput()
 {
     if (wiimote_is_open(&_wiimote))
     {
-        InputType t;
-        _Input = t;
+        InputType t = _Input;
+        // _Input = t;
         // Wiiリモコンの状態を取得・更新する
         if (wiimote_update(&_wiimote) < 0)
         {
             wiimote_disconnect(&_wiimote);
-        
         }
 
         // ***** Wiiのキー（ボタン）ごとに処理 *****
         // HOMEボタンが押された時(終了処理)
         if (_wiimote.keys.home)
         {
-            wiimote_disconnect(&_wiimote);   // Wiiリモコンとの接続を解除
+            wiimote_disconnect(&_wiimote); // Wiiリモコンとの接続を解除
             _Input.End = true;
         }
-
 
         // Bボタンが押された時
         if (_wiimote.keys.b)
         {
             fprintf(stderr, "B\n");
             _Input.Put = true;
+        }
+        else if (!_wiimote.keys.b)
+        {
+            // fprintf(stderr, "B\n");
+            _Input.Put = false;
         }
 
         // 移動関連
@@ -52,21 +55,36 @@ void WiiInput::UpdateInput()
         {
             _Input.Jump = true;
         }
+        else if (!_wiimote.keys.one)
+        {
+            _Input.Jump = false;
+        }
 
         // 2ボタンが押された時
         if (_wiimote.keys.two)
         {
             _Input.Forward = true;
         }
-        
+        else if (!_wiimote.keys.two)
+        {
+            _Input.Forward = false;
+        }
+
         if (_wiimote.keys.up)
         { // 上
             _Input.Left = true;
         }
+        else if (!_wiimote.keys.up)
+        {
+            _Input.Left = false;
+        }
+
         if (_wiimote.keys.down)
         { // 下
             _Input.Right = true;
         }
-        
+        else if(!_wiimote.keys.down){
+            _Input.Right = false;
+        }
     }
 }

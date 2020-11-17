@@ -6,10 +6,12 @@
 #include "client_common.h"
 #include "graphic.h"
 
+
 // ループするかを判定
 int cond = 1;
 
 static int PrintError(const char *str);
+
 
 int Select(void *args)
 {
@@ -35,15 +37,14 @@ int main(int argc, char *argv[])
 	/**SDL2関連 BEGIN******/
 	SDL_Init(SDL_INIT_EVERYTHING);
 	/**SDL2関連 END********/
-
-	InitData initData;
 	
+
 	/**サーバー関連 BEGIN**/
 	// 参加したいサーバーのポート番号
 	u_short port = DEFAULT_PORT;
 	// 参加したいサーバーの名前
 	char server_name[MAX_LEN_NAME];
-
+	InitData initData;
 	//multithread
 	SDL_Thread *SelectThread;
 	SDL_mutex *mtx1 = SDL_CreateMutex();
@@ -64,11 +65,11 @@ int main(int argc, char *argv[])
 		sprintf(server_name, "%s", argv[1]);
 		port = (u_short)atoi(argv[2]);
 		break;
-	case 4://Wiiリモコン使うとき
-		sprintf(server_name, "%s", argv[1]);
-		port = (u_short)atoi(argv[2]);
-		sprintf(WiiAddress, "%s", argv[3]);
-		break;
+	// case 4://Wiiリモコン使うとき
+	// 	sprintf(server_name, "%s", argv[1]);
+	// 	port = (u_short)atoi(argv[2]);
+	// 	sprintf(WiiAddress, "%s", argv[3]);
+	// 	break;
 	default:
 		// 引数の数が足りない、もしくは多すぎるときメッセージを表示して終了
 		fprintf(stderr, "Usage: %s [server name] [port number]\n", argv[0]);
@@ -79,12 +80,10 @@ int main(int argc, char *argv[])
 	SetupClient(server_name, port);
 	InitPlayerData(); // プレイヤーデータ初期化処理
 	/**サーバー関連 END**/
-
 	InitSystem(&initData);
 
-	while (cond && !_______Type.End)
+	while (cond && !initData.input->GetInputType().End)
 	{
-		_______Type = initData.input->GetInputType();
 		SystemRun();
 		Disp();
 		SDL_Delay(10);
@@ -92,7 +91,7 @@ int main(int argc, char *argv[])
 	}
 
 	// ウィンドウシステムの終了
-	//TerminateWindowSys();
+	// TerminateWindowSys();
 
 	// クライアントを終了する。
 	TerminateClient();
@@ -100,3 +99,30 @@ int main(int argc, char *argv[])
 	ExitSystem(&initData);
 	return 0;
 }
+
+// /*
+// wiiリモコンのMACアドレスの取得
+// */
+// void GetWiiAddress(){
+	
+// 	FILE *fp;
+// 	char command[MAX_STRING];
+// 	char output[MAX_STRING];
+// 	sprintf(command, "hcitool scan"); 
+    
+// 	if ((fp = popen(command, "r")) == NULL) {
+// 	/*Failure*/
+// 	}
+// 	int index = 0;
+// 	char trash[50];
+// 	while (fgets(output, MAX_STRING, fp) != NULL) {
+// 		if(index == 1){
+// 			sscanf(output, "%s %s", WiiAddress, trash);
+// 			fprintf(stderr, "%s\n", WiiAddress);
+// 		}
+// 		index++;
+// 	}
+// 	if (pclose(fp) == -1) {
+// 	/*Failure*/
+// 	}
+// }
