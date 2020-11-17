@@ -2,13 +2,13 @@
 
 #buildフォルダ内でcmake ..
 # 変数を宣言し、値を入れる。
-#set(WIIMOTE_HEADER /usr/local/include/libcwiimote-0.4.0/libcwiimote/)
+set(WIIMOTE_HEADER /usr/local/include/libcwiimote-0.4.0/libcwiimote/)
 set(SORYUTION_NAME client)
 set(CLIENT_CODE
     client_main
     client_input
     client_KeybordInput
-    #client_WiiInput
+    client_WiiInput
     net
     graphic
     client_system
@@ -29,7 +29,7 @@ find_package(PkgConfig)
 pkg_check_modules(SDL2image REQUIRED SDL2_image)
 
 #ヘッダファイルのパスを指定
-include_directories(${SDL2_INCLUDE_DIRS} ${SDL2ttf_INCLUDE_DIRS} ${SDL2image_INCLUDE_DIRS})
+include_directories(${SDL2_INCLUDE_DIRS} ${SDL2ttf_INCLUDE_DIRS} ${SDL2image_INCLUDE_DIRS} ${WIIMOTE_HEADER})
 
 # 実行ファイル名とソース指定
 add_executable( ${SORYUTION_NAME} ${CLIENT_CODE})
@@ -46,4 +46,4 @@ target_compile_definitions(${SORYUTION_NAME} PUBLIC
 )
 
 #リンク先のライブラリを指定
-target_link_libraries( ${SORYUTION_NAME} ${SDL2_LIBRARIES}  ${SDL2ttf_LIBRARIES} ${SDL2image_LIBRARIES} -lGL -lGLU -L/usr/local/lib -lm)
+target_link_libraries( ${SORYUTION_NAME} ${SDL2_LIBRARIES}  ${SDL2ttf_LIBRARIES} ${SDL2image_LIBRARIES} -lGL -lGLU -lcwiimote -lbluetooth -L/usr/local/lib -lm)

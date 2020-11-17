@@ -62,7 +62,7 @@ bool InitSystem(InitData *data)
 	scanf("%c", &control);
 	if (control == 'w')
 	{
-		// Input = new WiiInput(WiiAddress);
+		Input = new WiiInput(WiiAddress);
 	}
 	else
 	{
