@@ -56,153 +56,149 @@ void EndSys() // システム終了処理
   delete[] PData;
 }
 
-int BuryCheck_Side(const int chara_ID, const int accuracy, int block_X, const int block_Y, int block_Z, const float* point_X, const float* point_Z, const Collision_Dire flag) {
-    int chara_size; // キャラの大きさ
-    float base_point; // 計算に使う基準座標
-    enum PN_sign {
-        positive = 1,
-        negative = -1
-    } PN_flag; // 正負を扱う
+int BuryCheck_Side(const int chara_ID, const int accuracy, int block_X,
+                   const int block_Y, int block_Z, const float *point_X,
+                   const float *point_Z, const Collision_Dire flag) {
+  int chara_size;   // キャラの大きさ
+  float base_point; // 計算に使う基準座標
+  enum PN_sign { positive = 1, negative = -1 } PN_flag; // 正負を扱う
 
-    // 当たり判定の向きごとの初期化
-    switch (flag) {
-        case Front:
-            chara_size = PData[chara_ID].pos.d;
-            base_point = point_Z[accuracy - 1];
-            PN_flag = negative;
-            break;
-        case Right:
-            chara_size = PData[chara_ID].pos.w;
-            base_point = point_X[0];
-            PN_flag = positive;
-            break;
-        case Left :
-            chara_size = PData[chara_ID].pos.w;
-            base_point = point_X[accuracy - 1];
-            PN_flag = negative;
-            break;
-        case Back :
-            chara_size = PData[chara_ID].pos.d;
-            base_point = point_Z[0];
-            PN_flag = positive;
-            break;
-        default:
-            throw "BuryCheck : 引数 flag が不正\n";
-            break;
+  // 当たり判定の向きごとの初期化
+  switch (flag) {
+  case Front:
+    chara_size = PData[chara_ID].pos.d;
+    base_point = point_Z[accuracy - 1];
+    PN_flag = negative;
+    break;
+  case Right:
+    chara_size = PData[chara_ID].pos.w;
+    base_point = point_X[0];
+    PN_flag = positive;
+    break;
+  case Left:
+    chara_size = PData[chara_ID].pos.w;
+    base_point = point_X[accuracy - 1];
+    PN_flag = negative;
+    break;
+  case Back:
+    chara_size = PData[chara_ID].pos.d;
+    base_point = point_Z[0];
+    PN_flag = positive;
+    break;
+  default:
+    throw "BuryCheck : 引数 flag が不正\n";
+    break;
+  }
+
+  // マップデータ入手
+  const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
+
+  int Bury_Count = 0; // 返り値　埋まり具合
+
+  // 調べる点を順にスキャンしていく
+  for (int i = 1; i < (accuracy - 1); ++i) {
+    if (flag == Front || flag == Back) {
+      block_X = point_X[i] / MAP_MAGNIFICATION;
+    } else if (flag == Right || flag == Left) {
+      block_Z = point_Z[i] / MAP_MAGNIFICATION;
     }
 
-    // マップデータ入手
-    const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
+    int t_Count = 0;
 
-    int Bury_Count = 0; // 返り値　埋まり具合
+    // どこまで埋まっているか調べる
+    for (int j = 0; j <= chara_size; ++j) {
+      if (flag == Front || flag == Back) {
+        block_Z = (base_point + (j * PN_flag)) / MAP_MAGNIFICATION;
+      } else if (flag == Right || flag == Left) {
+        block_X = (base_point + (j * PN_flag)) / MAP_MAGNIFICATION;
+      }
 
-    // 調べる点を順にスキャンしていく
-    for (int i = 1; i < (accuracy - 1); ++i) {
-        if (flag == Front || flag == Back) {
-            block_X = point_X[i] / MAP_MAGNIFICATION;
+      if (terrainData[block_X][block_Y][block_Z] == NomalBlock) {
+        // 最も深くめり込んだ深さを計算
+        if (Bury_Count < ++t_Count) {
+          ++Bury_Count;
+
+          // 埋まっている(かもしれない)
+          if (chara_size <= j) {
+            return -1;
+          }
         }
-        else if (flag == Right || flag == Left) {
-            block_Z = point_Z[i] / MAP_MAGNIFICATION;
-        }
+      }
+      // 埋まっていなければ抜ける
+      else {
+        break;
+      }
+    }
+  }
 
-        int t_Count = 0;
+  return Bury_Count; // 埋まっているピクセルが返る
+}
 
+static int BuryCheck_Under(const int chara_ID, const int accuracy, int block_X,
+                           int block_Y, int block_Z, const float *point_X,
+                           const float *point_Z, const Collision_Dire flag) {
+  int chara_size;   // キャラの大きさ
+  float base_point; // 計算に使う基準座標
+  enum PN_sign { positive = 1, negative = -1 } PN_flag; // 正負を扱う
+
+  // 当たり判定の向きごとの初期化
+  switch (flag) {
+  case Under:
+    chara_size = PData[chara_ID].pos.h;
+    // なぜかvelocityを足さないとグラフィクがぶれる
+    // 偉い人計算してください
+    base_point = PData[chara_ID].pos.y + PData[chara_ID].velocity.y;
+    PN_flag = positive;
+    break;
+  default:
+    throw "BuryCheck : 引数 flag が不正\n";
+    break;
+  }
+
+  // マップデータ入手
+  const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
+
+  int Bury_Count = 0; // 返り値　埋まり具合
+
+  for (int i = 1; i < (accuracy - 1); ++i) {
+    block_X = point_X[i] / MAP_MAGNIFICATION;
+    for (int j = 1; j < (accuracy - 1); ++j) {
+      block_Z = point_Z[i] / MAP_MAGNIFICATION;
+
+      int t_Count = 0;
+
+      if (terrainData[block_X][static_cast<int>(base_point / MAP_MAGNIFICATION)]
+                     [block_Z] == NomalBlock) {
         // どこまで埋まっているか調べる
-        for (int j = 0; j <= chara_size; ++j) {
-            if (flag == Front || flag == Back) {
-                block_Z = (base_point + (j * PN_flag)) / MAP_MAGNIFICATION;
-            }
-            else if (flag == Right || flag == Left) {
-                block_X = (base_point + (j * PN_flag)) / MAP_MAGNIFICATION;
-            }
+        for (int k = 0; k <= chara_size; ++k) {
 
-            if (terrainData[block_X][block_Y][block_Z] == NomalBlock) {
-                // 最も深くめり込んだ深さを計算
-                if (Bury_Count < ++t_Count) {
-                    ++Bury_Count;
+          block_Y = (base_point + (k * PN_flag)) / MAP_MAGNIFICATION;
 
-                    // 埋まっている(かもしれない)
-                    if (chara_size <= j) {
-                        return -1;
-                    }
-                }
+          if (terrainData[block_X][block_Y][block_Z] == NomalBlock) {
+            // 最も深くめり込んだ深さを計算
+            if (Bury_Count < ++t_Count) {
+              ++Bury_Count;
+
+              // 埋まっている(かもしれない)
+              if (chara_size <= k) {
+                return -1;
+              }
             }
-            // 埋まっていなければ抜ける
-            else {
-                break;
-            }
+          }
+          // 埋まっていなければ抜ける
+          else {
+            break;
+          }
         }
+      }
     }
+  }
 
-    return Bury_Count; // 埋まっているピクセルが返る
+  return Bury_Count; // 埋まっているピクセルが返る
 }
 
-static int BuryCheck_Under(const int chara_ID, const int accuracy, int block_X, int block_Y, int block_Z, const float* point_X, const float* point_Z, const Collision_Dire flag) {
-    int chara_size; // キャラの大きさ
-    float base_point; // 計算に使う基準座標
-    enum PN_sign {
-        positive = 1,
-        negative = -1
-    } PN_flag; // 正負を扱う
-
-    // 当たり判定の向きごとの初期化
-    switch (flag) {
-        case Under:
-            chara_size = PData[chara_ID].pos.h;
-            // なぜかvelocityを足さないとグラフィクがぶれる
-            // 偉い人計算してください
-            base_point = PData[chara_ID].pos.y + PData[chara_ID].velocity.y;
-            PN_flag = positive;
-            break;
-        default:
-            throw "BuryCheck : 引数 flag が不正\n";
-            break;
-    }
-
-    // マップデータ入手
-    const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
-
-    int Bury_Count = 0; // 返り値　埋まり具合
-
-    for (int i = 1; i < (accuracy - 1); ++i) {
-        block_X = point_X[i] / MAP_MAGNIFICATION;
-        for (int j = 1; j < (accuracy - 1); ++j) {
-            block_Z = point_Z[i] / MAP_MAGNIFICATION;
-
-            int t_Count = 0;
-
-            if (terrainData[block_X][static_cast<int>(base_point / MAP_MAGNIFICATION)][block_Z] == NomalBlock) {
-                // どこまで埋まっているか調べる
-                for (int k = 0; k <= chara_size; ++k) {
-
-                    block_Y = (base_point + (k * PN_flag)) / MAP_MAGNIFICATION;
-
-                    if (terrainData[block_X][block_Y][block_Z] == NomalBlock) {
-                        // 最も深くめり込んだ深さを計算
-                        if (Bury_Count < ++t_Count) {
-                            ++Bury_Count;
-
-                            // 埋まっている(かもしれない)
-                            if (chara_size <= k) {
-                                return -1;
-                            }
-                        }
-                    }
-                    // 埋まっていなければ抜ける
-                    else {
-                        break;
-                    }
-                }
-            }
-
-        }
-    }
-
-    return Bury_Count; // 埋まっているピクセルが返る
-}
-
-
-Collision Collision_CB_Side(const int chara_ID, const int y, const int accuracy) {
+Collision Collision_CB_Side(const int chara_ID, const int y,
+                            const int accuracy) {
   // 当たり判定の精度が正しいかどうか
   if (accuracy < 1 || PLAYER_D < accuracy || PLAYER_W < accuracy) {
     throw "Collision_CM : 引数　エラー\n";
@@ -252,14 +248,20 @@ Collision Collision_CB_Side(const int chara_ID, const int y, const int accuracy)
     throw "マップ外 : z座標 : 正\n";
   }
 
-  int Count_Front = BuryCheck_Side(chara_ID, accuracy, Block_X, Block_Y, Block_Z, point_X.Get(), point_Z.Get(), Front);
-  int Count_Right = BuryCheck_Side(chara_ID, accuracy, Block_X, Block_Y, Block_Z, point_X.Get(), point_Z.Get(), Right);
-  int Count_Left  = BuryCheck_Side(chara_ID, accuracy, Block_X, Block_Y, Block_Z, point_X.Get(), point_Z.Get(), Left);
-  int Count_Back  = BuryCheck_Side(chara_ID, accuracy, Block_X, Block_Y, Block_Z, point_X.Get(), point_Z.Get(), Back);
+  int Count_Front =
+      BuryCheck_Side(chara_ID, accuracy, Block_X, Block_Y, Block_Z,
+                     point_X.Get(), point_Z.Get(), Front);
+  int Count_Right =
+      BuryCheck_Side(chara_ID, accuracy, Block_X, Block_Y, Block_Z,
+                     point_X.Get(), point_Z.Get(), Right);
+  int Count_Left = BuryCheck_Side(chara_ID, accuracy, Block_X, Block_Y, Block_Z,
+                                  point_X.Get(), point_Z.Get(), Left);
+  int Count_Back = BuryCheck_Side(chara_ID, accuracy, Block_X, Block_Y, Block_Z,
+                                  point_X.Get(), point_Z.Get(), Back);
 
   if (Count_Front + Count_Right + Count_Left + Count_Back == -4) {
-      throw "Collision_CB_Side : ブロックに埋まってる\n";
-      //fprintf(stderr, "Collision_CB_Side : ブロックに埋まってる\n");
+    throw "Collision_CB_Side : ブロックに埋まってる\n";
+    // fprintf(stderr, "Collision_CB_Side : ブロックに埋まってる\n");
   }
 
   Collision_Dire t_dire = Non; // 当たり判定で押し戻す方向
@@ -290,7 +292,7 @@ Collision Collision_CB_Side(const int chara_ID, const int y, const int accuracy)
   Collision ret; // 返り値
   ret.dire = t_dire;
   ret.power = t_Max_Count;
-
+  
   // なんかよくわからん補正　これがないとグラフィックがぶれる
   // これでうまく行けるんで書いときます　誰か計算して理由教えて
   if (ret.dire == Left || ret.dire == Front) {
@@ -300,12 +302,13 @@ Collision Collision_CB_Side(const int chara_ID, const int y, const int accuracy)
   return ret;
 }
 
-Collision Collision_CB_Under(const int chara_ID, const int y, const int accuracy) {
+Collision Collision_CB_Under(const int chara_ID, const int y,
+                             const int accuracy) {
 
-    // 当たり判定の精度が正しいかどうか
-    if (accuracy < 1 || PLAYER_D < accuracy || PLAYER_W < accuracy) {
-      throw "Collision_CB_Under : 引数　エラー\n";
-    }
+  // 当たり判定の精度が正しいかどうか
+  if (accuracy < 1 || PLAYER_D < accuracy || PLAYER_W < accuracy) {
+    throw "Collision_CB_Under : 引数　エラー\n";
+  }
 
   Pointer<float> point_X(accuracy); // 調べる座標ｘ
   Pointer<float> point_Z(accuracy); // 調べる座標ｚ
@@ -333,7 +336,8 @@ Collision Collision_CB_Under(const int chara_ID, const int y, const int accuracy
     throw "マップ外 : x座標 : 正\n";
   }
 
-  const float t_Block_Y = (PData[chara_ID].pos.y + PData[chara_ID].velocity.y + y);
+  const float t_Block_Y =
+      (PData[chara_ID].pos.y + PData[chara_ID].velocity.y + y);
   int Block_Y = t_Block_Y / MAP_MAGNIFICATION;
 
   if (t_Block_Y < 0) {
@@ -350,18 +354,20 @@ Collision Collision_CB_Under(const int chara_ID, const int y, const int accuracy
     throw "マップ外 : z座標 : 正\n";
   }
 
-  int Count_Under = BuryCheck_Under(chara_ID, accuracy, Block_X, Block_Y, Block_Z, point_X.Get(), point_Z.Get(), Under);
+  int Count_Under =
+      BuryCheck_Under(chara_ID, accuracy, Block_X, Block_Y, Block_Z,
+                      point_X.Get(), point_Z.Get(), Under);
 
   if (Count_Under == -1) {
-      throw "Collision_CB_Under : ブロックに埋まってる\n";
-      // fprintf(stderr, "Collision_CB_Under : ブロックに埋まってる\n");
+    throw "Collision_CB_Under : ブロックに埋まってる\n";
+    // fprintf(stderr, "Collision_CB_Under : ブロックに埋まってる\n");
   }
 
-  Collision ret = { Non, 0 }; // 返り値
+  Collision ret = {Non, 0}; // 返り値
 
   if (0 < Count_Under) {
-      ret.dire = Under;
-      ret.power = Count_Under;
+    ret.dire = Under;
+    ret.power = Count_Under;
   }
 
   return ret;
@@ -431,20 +437,20 @@ void Goal(int chara_ID) {
 
 void MovePosition(int chara_ID) {
 
-    // 下の当たり判定
-    Collision t_Collision_Under = Collision_CB_Under(chara_ID, 0);
+  // 下の当たり判定
+  Collision t_Collision_Under = Collision_CB_Under(chara_ID, 0);
 
-    // 移動後の座標に書き換え
-    PData[chara_ID].pos.y += PData[chara_ID].velocity.y;
+  // 移動後の座標に書き換え
+  PData[chara_ID].pos.y += PData[chara_ID].velocity.y;
 
-    switch (t_Collision_Under.dire) {
-    case Under:
-      PData[chara_ID].pos.y = static_cast<int>(PData[chara_ID].pos.y + t_Collision_Under.power);
-      break;
-    default:
-      break;
-    }
-
+  switch (t_Collision_Under.dire) {
+  case Under:
+    PData[chara_ID].pos.y =
+        static_cast<int>(PData[chara_ID].pos.y + t_Collision_Under.power);
+    break;
+  default:
+    break;
+  }
 
   // 横の当たり判定
   Collision t_Collision_Side = Collision_CB_Side(chara_ID, 1);
