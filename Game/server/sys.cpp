@@ -198,8 +198,6 @@ static int BuryCheck_Under(const int chara_ID, const int accuracy, int block_X, 
         }
     }
 
-    fprintf(stderr, "%d\n", Bury_Count);
-
     return Bury_Count; // 埋まっているピクセルが返る
 }
 
