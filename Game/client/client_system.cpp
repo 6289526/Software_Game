@@ -198,16 +198,20 @@ void SystemRun()
 		}
 		else if (!IsPlayerOnGround())
 		{
-			PData[MyId].velocity.y -= GRAVITY * Time->GetDeltaTime();
+			// PData[MyId].velocity.y -= GRAVITY * Time->GetDeltaTime();
 		}
 
 		if (data.R)
 		{
-			PData[MyId].direction -= PLAYER_ROTATE_SPEED * Time->GetDeltaTime();
+			// PData[MyId].direction -= PLAYER_ROTATE_SPEED * Time->GetDeltaTime();
+			data.R = false;
+			PData[MyId].velocity.y -= 1;
 		}
 		if (data.L)
 		{
-			PData[MyId].direction += PLAYER_ROTATE_SPEED * Time->GetDeltaTime();
+			// PData[MyId].direction += PLAYER_ROTATE_SPEED * Time->GetDeltaTime();
+			data.L = false;
+			PData[MyId].velocity.y += 1;
 		}
 
 		/////////////////////////////////
