@@ -201,7 +201,7 @@ static int BuryCheck_Under(const int chara_ID, const int y, const int accuracy,
 Collision Collision_CB_Side(const int chara_ID, const int y,
                             const int accuracy) {
   // 当たり判定の精度が正しいかどうか
-  if (accuracy < 1 || PLAYER_D < accuracy || PLAYER_W < accuracy) {
+  if (accuracy < 3 || PLAYER_D < accuracy || PLAYER_W < accuracy) {
     throw "Collision_CM : 引数　エラー\n";
   }
 
@@ -261,8 +261,8 @@ Collision Collision_CB_Side(const int chara_ID, const int y,
                                   point_X.Get(), point_Z.Get(), Back);
 
   if (Count_Front + Count_Right + Count_Left + Count_Back == -4) {
-    throw "Collision_CB_Side : ブロックに埋まってる\n";
-    // fprintf(stderr, "Collision_CB_Side : ブロックに埋まってる\n");
+    // throw "Collision_CB_Side : ブロックに埋まってる\n";
+    fprintf(stderr, "Collision_CB_Side : ブロックに埋まってる\n");
   }
 
   Collision_Dire t_dire = Non; // 当たり判定で押し戻す方向
@@ -307,7 +307,7 @@ Collision Collision_CB_Under(const int chara_ID, const int y,
                              const int accuracy) {
 
   // 当たり判定の精度が正しいかどうか
-  if (accuracy < 1 || PLAYER_D < accuracy || PLAYER_W < accuracy) {
+  if (accuracy < 3 || PLAYER_D < accuracy || PLAYER_W < accuracy) {
     throw "Collision_CB_Under : 引数　エラー\n";
   }
 
@@ -360,8 +360,8 @@ Collision Collision_CB_Under(const int chara_ID, const int y,
                       point_X.Get(), point_Z.Get(), Under);
 
   if (Count_Under == -1) {
-    throw "Collision_CB_Under : ブロックに埋まってる\n";
-    // fprintf(stderr, "Collision_CB_Under : ブロックに埋まってる\n");
+    // throw "Collision_CB_Under : ブロックに埋まってる\n";
+    fprintf(stderr, "Collision_CB_Under : ブロックに埋まってる\n");
   }
 
   Collision ret = {Non, 0}; // 返り値
@@ -453,6 +453,8 @@ void MovePosition(int chara_ID) {
     break;
   }
 
+  PData[chara_ID].velocity.y = 0;
+
   // 横の当たり判定
   Collision t_Collision_Side = Collision_CB_Side(chara_ID, 1);
 
@@ -483,7 +485,6 @@ void MovePosition(int chara_ID) {
 
   // 速度を０に戻す
   PData[chara_ID].velocity.x = 0;
-  PData[chara_ID].velocity.y = 0;
   PData[chara_ID].velocity.z = 0;
 }
 
