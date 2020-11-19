@@ -2,8 +2,9 @@
 #include "graphic.h"
 #include <string.h>
 
-#define PLAYER_MOVE_SPEED 20
+#define PLAYER_MOVE_SPEED 40
 #define PLAYER_ROTATE_SPEED 4
+#define PLAYER_JUMP_POWER 2
 
 #define GRAVITY 9.8 * 0.5// * 3
 #define TERMINAL_SPEED PLAYER_Y // 終端速度
@@ -173,13 +174,14 @@ PlaceData GetPlaceData()
 void SystemRun()
 {
 	InputType data = Input->GetInputType();
+	bool isOnGround;
 	try
 	{
-		bool isOnGround = IsPlayerOnGround();
+		isOnGround = IsPlayerOnGround();
 	}
 	catch(char const* e) // エラー処理
 	{
-		fprintf(stderr,"%s", e)
+		fprintf(stderr,"%s", e);
 	}
 	PData[MyId].velocity.x = 0;
 
@@ -219,7 +221,7 @@ void SystemRun()
 		if (data.Jump && isOnGround == 1)
 		{
 			data.Jump = false;
-			PData[MyId].velocity.y += 5;
+			PData[MyId].velocity.y += PLAYER_JUMP_POWER;
 		}
 		else if (!isOnGround)
 		{

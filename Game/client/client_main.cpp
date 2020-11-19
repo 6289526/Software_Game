@@ -82,17 +82,13 @@ int main(int argc, char *argv[])
 	/**サーバー関連 END**/
 	InitSystem(&initData);
 
-	try{
-		while (cond && !initData.input->GetInputType().End)
-		{
-			SystemRun();
+	while (cond && !initData.input->GetInputType().End)
+	{
+		SystemRun();
 
-			Disp();
-			SDL_Delay(10);
-			initData.timer->UpdateFrame(); // Update the game frame.
-		}
-	}catch(char const *e){
-		fprintf(stderr,"%s", e);
+		Disp();
+		SDL_Delay(10);
+		initData.timer->UpdateFrame(); // Update the game frame.
 	}
 
 	// ウィンドウシステムの終了
