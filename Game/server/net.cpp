@@ -157,8 +157,9 @@ void SetupServer(int num_cl, u_short port)
     /** この段階で設定した人数分のクライアントが接続している **/
     ClientCount = NumClient;
 
-    PlayerName* Cname = new PlayerName[NumClient];
-    for (int i = 0; i < NumClient; ++i) {
+    PlayerName *Cname = new PlayerName[NumClient];
+    for (int i = 0; i < NumClient; ++i)
+    {
         Cname[i].id = i;
         strcpy(Cname[i].name, name[i]);
     }
@@ -179,9 +180,12 @@ void SetupServer(int num_cl, u_short port)
 
         // マップデータ入手
         const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
-        for(int l = 0; l < MAP_SIZE_W; ++l) {
-            for(int j = 0; j < MAP_SIZE_H; ++j) {
-                for(int k = 0; k < MAP_SIZE_D; ++k) {
+        for (int l = 0; l < MAP_SIZE_W; ++l)
+        {
+            for (int j = 0; j < MAP_SIZE_H; ++j)
+            {
+                for (int k = 0; k < MAP_SIZE_D; ++k)
+                {
                     SendData(i, &(terrainData[l][j][k]), sizeof(int));
                 }
             }
@@ -276,6 +280,9 @@ int ControlRequests()
                 case PUT_COMMAND:
                     ReceiveData(i, &placeData, sizeof(PlaceData));
                     SetPlaceData(placeData);
+                    for(int i = 0; i < NumClient; i++){
+                        PutBlock(i);
+                    }
                     fprintf(stderr, " [%d] %10s: put     = x:%6.3d   y:%6.3d   z:%6.3d\n", i, name[i], placeData.pos.x, placeData.pos.y, placeData.pos.z);
                     break;
                 case QUIT_COMMAND: //通信の終了を要求された場合
@@ -318,7 +325,6 @@ int ControlRequests()
                     fprintf(stderr, "ControlRequests(): %c is not a valid command.\n", com);
                     break;
                 }
-
             }
         }
     }
@@ -339,7 +345,7 @@ void RunCommand(int id, char com)
     // 送るデータ
     FloatPosition posData;
     VelocityFlag flag = {false, false, false};
-    PlaceData placeData;
+    PlaceData placeData = GetPlaceData();
     bool goal = pData[id].goal;
     // コマンドに応じた処理
     switch (com)
@@ -375,7 +381,9 @@ void RunCommand(int id, char com)
         }
         break;
     case PUT_COMMAND:
-        fprintf(stderr,"%d put.", id);
+        //コマンド送信
+        SendData(id, &com, sizeof(char));
+        fprintf(stderr, "%d put.", id);
         SendData(id, &placeData, sizeof(PlaceData));
         break;
     case FINISH_COMMAND:
@@ -426,7 +434,8 @@ void SendData(int cid, const void *data, int size)
         //すべてのクライアントのソケットに情報を送る
         for (i = 0; i < NumClient; i++)
         {
-            if(Clients[i].connect){
+            if (Clients[i].connect)
+            {
                 if (write(Clients[i].sock, data, size) < 0)
                 {
                     char s[] = "write()";
@@ -437,7 +446,8 @@ void SendData(int cid, const void *data, int size)
     }
     else
     {
-        if(Clients[cid].connect){
+        if (Clients[cid].connect)
+        {
             //特定のクライアントに送るとき
             //特定のソケットに情報を送る
             if (write(Clients[cid].sock, data, size) < 0)

@@ -134,7 +134,6 @@ int main(int argc, char *argv[])
         for (int i = 0; i < PlayerNum; ++i) {
             try {
                 MovePosition(i);
-                PutBlock(i);
             }
             catch (const char* const e) {
                 fprintf(stderr, "%s", e);
