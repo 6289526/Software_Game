@@ -2,7 +2,7 @@
 #include "graphic.h"
 #include <string.h>
 
-#define PLAYER_MOVE_SPEED 15
+#define PLAYER_MOVE_SPEED 40
 #define PLAYER_ROTATE_SPEED 4
 #define GRAVITY 9.8 * 0.5 // * 3
 
@@ -195,7 +195,7 @@ void SystemRun()
 		}
 		else if (!IsPlayerOnGround())
 		{
-			PData[MyId].velocity.y -= 5*GRAVITY * Time->GetDeltaTime();
+			PData[MyId].velocity.y -= GRAVITY * Time->GetDeltaTime();
 		}
 
 		if (data.R)
