@@ -1,6 +1,7 @@
 
 /*----------include 開始----------*/
 #include "server_common.h"
+#include <iostream>
 
 /*----------include 終了----------*/
 //
@@ -160,30 +161,27 @@ static int BuryCheck_Under(const int chara_ID, const int y, const int accuracy,
   const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
 
   int Bury_Count = 0; // 返り値　埋まり具合
+  int Errer_Count = 0;
 
   for (int i = 1; i < (accuracy - 1); ++i) {
     block_X = point_X[i] / MAP_MAGNIFICATION;
     for (int j = 1; j < (accuracy - 1); ++j) {
       block_Z = point_Z[i] / MAP_MAGNIFICATION;
-
-      int t_Count = 0;
-
       if (terrainData[block_X][static_cast<int>(base_point / MAP_MAGNIFICATION)]
                      [block_Z] == NomalBlock) {
+        int t_Count = 0;
         // どこまで埋まっているか調べる
         for (int k = 0; k <= chara_size - y; ++k) {
 
           block_Y = (base_point + (k * PN_flag)) / MAP_MAGNIFICATION;
 
           if (terrainData[block_X][block_Y][block_Z] == NomalBlock) {
-            // 最も深くめり込んだ深さを計算
-            if (Bury_Count < ++t_Count) {
-              ++Bury_Count;
-
-              // 埋まっている(かもしれない)
-              if (chara_size <= k) {
-                return -1;
-              }
+            // その点の埋まっている程度をカウント
+            ++t_Count;
+            // 埋まっている(かもしれない)
+            if (chara_size <= k) {
+              ++Errer_Count;
+              t_Count = 0;
             }
           }
           // 埋まっていなければ抜ける
@@ -191,8 +189,18 @@ static int BuryCheck_Under(const int chara_ID, const int y, const int accuracy,
             break;
           }
         }
+        // 最も埋まっている部分の埋まっている程度にする
+        if (std::max(t_Count, Bury_Count) == t_Count) {
+          Bury_Count = t_Count;
+        }
       }
     }
+  }
+
+  fprintf(stderr, "%d \n", Errer_Count);
+  // 全体が埋まっていたら
+  if (Errer_Count == ((accuracy - 2) * (accuracy - 2))) {
+    return -1;
   }
 
   return Bury_Count; // 埋まっているピクセルが返る
@@ -461,7 +469,7 @@ void MovePosition(int chara_ID) {
   // 移動後の座標に書き換え
   PData[chara_ID].pos.x += PData[chara_ID].velocity.x;
   PData[chara_ID].pos.z += PData[chara_ID].velocity.z;
-
+/*
   switch (t_Collision_Side.dire) {
   case Front:
     PData[chara_ID].pos.z =
@@ -482,7 +490,7 @@ void MovePosition(int chara_ID) {
   default:
     break;
   }
-
+*/
   // 速度を０に戻す
   PData[chara_ID].velocity.x = 0;
   PData[chara_ID].velocity.z = 0;

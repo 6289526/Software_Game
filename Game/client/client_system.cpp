@@ -2,7 +2,7 @@
 #include "graphic.h"
 #include <string.h>
 
-#define PLAYER_MOVE_SPEED 4
+#define PLAYER_MOVE_SPEED 1
 #define PLAYER_ROTATE_SPEED 4
 
 #define GRAVITY 9.8 * 0.5// * 3
