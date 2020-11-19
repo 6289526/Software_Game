@@ -21,7 +21,7 @@ ClientMap Map;			//マップ
 InputModuleBase *Input; // Input Module
 Timer *Time;			// FrameTimer
 
-// int GrapicThread(void *data); // This Function isn't used now.
+// int GraphicThread(void *data); // This Function isn't used now.
 
 // ===== * ===== プロパティ ===== * ===== //
 // クライアント配列の先頭ポインタを返す
@@ -43,12 +43,25 @@ int InputThread(void *data);
 
 bool InitSystem(InitData *data)
 {
+	char control;
+	fprintf(stderr, "Which controller you want to use?\n  wii: w\n  keyboar: k\n");
+	scanf("%c", &control);
+	if (control == 'w')
+	{
+		Input = new WiiInput(WiiAddress);
+	}
+	else
+	{
+		Input = new KeybordInput();
+	}
+	data->input = Input;
+
 	// SDL_Thread *thread;
 
 	
 	/*
 	// グラフィックのスレッド化
-	thread = SDL_CreateThread(GrapicThread, "GrapicThread", NULL);
+	thread = SDL_CreateThread(GraphicThread, "GraphicThread", NULL);
 	if (thread == NULL)
 	{
 		fprintf(stderr, "Failed to create a graphics red.\n");
@@ -83,6 +96,7 @@ bool InitSystem(InitData *data)
 
 	Time = new Timer();
 	data->timer = Time;
+	return true;
 }
 
 // システム終了処理
@@ -114,8 +128,7 @@ void InitPlayerData() // プレイヤーデータ初期化処理
 		strcpy(PData[i].name, Name_Clients[i]);
 		PData[i].pos = Pos_Clients;
 		PData[i].pos.x = Pos_Clients.x + i * 20;
-		Vector3 t_v = {0, 0, 0};
-		PData[i].velocity = t_v;
+		PData[i].velocity = {0, 0, 0};
 		PData[i].direction = 0;
 		PData[i].rank = 0;
 		PData[i].goal = false;
@@ -147,7 +160,7 @@ PlaceData GetPlaceData()
 {
 	PlaceData data;
 	data.object = NomalBlock;
-	data.pos = {PData[GetMyID()].pos.x, PData[GetMyID()].pos.y, PData[GetMyID()].pos.z};
+	data.pos = {(int)PData[GetMyID()].pos.x, (int)PData[GetMyID()].pos.y, (int)PData[GetMyID()].pos.z};
 	return data;
 }
 
@@ -331,7 +344,7 @@ int clamp(const int __val, const int __lo, const int __hi)
 // ===== * ===== マルチスレッド ===== * ===== //
 
 // グラフィック用の
-/*int GrapicThread(void *data){
+/*int GraphicThread(void *data){
 	Disp();
 	return 0;
 }*/

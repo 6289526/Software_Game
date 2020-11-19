@@ -45,7 +45,8 @@ void SetupClient(char *server_name, u_short port)
     // サーバーの名前を取得する
     if ((server = gethostbyname(server_name)) == NULL)
     {
-        HandleError("gethostbyname()");
+        char m[] = "gethostbyname()";
+        HandleError(m);
     }
     /*
   * ソケットの生成
@@ -56,7 +57,8 @@ void SetupClient(char *server_name, u_short port)
     sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock < 0)
     {
-        HandleError("socket()");
+        char m[] = "socket()";
+        HandleError(m);
     }
 
     /*sv_addrの設定*/
@@ -67,7 +69,8 @@ void SetupClient(char *server_name, u_short port)
     /*sv_adderの設定でソケットで接続を開く*/
     if (connect(sock, (struct sockaddr *)&sv_addr, sizeof(sv_addr)) != 0)
     {
-        HandleError("connect()");
+        char m[] = "connect()";
+        HandleError(m);
     }
 
     /*名前の入力*/
@@ -76,7 +79,8 @@ void SetupClient(char *server_name, u_short port)
     char user_name[MAX_LEN_NAME];
     if (fgets(user_name, sizeof(user_name), stdin) == NULL)
     {
-        HandleError("fgets()");
+        char m[] = "fgets()";
+        HandleError(m);
     }
     // 名前の後ろをナル文字にする
     user_name[strlen(user_name) - 1] = '\0';
@@ -158,7 +162,8 @@ int ControlRequests()
   */
     if (select(NumSock, (fd_set *)&read_flag, NULL, NULL, &timeout) == -1)
     {
-        HandleError("select()");
+        char m[] = "select()";
+        HandleError(m);
     }
     // 通信を継続するかを判定する変数
     int result = 1;
@@ -314,7 +319,8 @@ void SendData(void *data, int size)
     /*ソケットにデータを送る*/
     if (write(sock, data, size) == -1)
     {
-        HandleError("write()");
+        char m[] = "write()";
+        HandleError(m);
     }
 }
 
