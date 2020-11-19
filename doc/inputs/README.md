@@ -11,5 +11,5 @@
 - ゲーム終了
 
 ### リンク
-- [キーボード](./keybord/button.md)
-- [リモコン類](./wii_controler/button.md)
+- [キーボード](./keyboard/README.md)
+- [リモコン類](./wii_controller/README.md)
