@@ -1,0 +1,196 @@
+@startuml SG_ClassModuleForClient
+!include IncludeFiles/Setting.pu
+!define _VERSION_ 0.1.0
+!define _FILE_CODE_ ClassModuleForClient
+!define _LAST_MODIFIED_ 2020-11-19
+!include IncludeFiles/Layout.pu
+
+object NetworkData <<struct>>{
+    int connect
+    int sock
+    sockaddr_in addr
+}
+
+object PlayerData <<struct>>{
+    char[] name
+    FloatCube cube
+    float dir
+    int rank
+    bool goal
+}
+
+package Server {
+	object ServerNetwork
+}
+
+class BaseMapData{
+    # int[][][] _TerrainData
+    # vector<PlaceData> _ObjectDatas
+    # int _MapW, _MapH, _MapD
+
+    + const int(* GetTerrainData())
+    + const vector<PlaceData> GetObjectData()
+    + void PushBackObject(PlaceData *objectData)
+}
+
+package Client{
+	class Network{
+		- int NumClients
+		- int MyId
+		- int sock
+		- int NumSock
+		- fd_set Mask
+		- NetworkData Clients[MAX_NUMCLIENTS]
+
+		+ void SetupClient(char *server_name, u_short port)
+		+ void TerminateClient()
+		+ int ControlRequests()
+		+ int InCommand(char com)
+		- int ExeCommand()
+		- int HandleError(char *)
+		- void SendData(void *data, int size)
+		- int ReceiveData(void *data, int size)
+	}
+
+	object Map{
+		+ void SetMapData(int W,int H, int D, int terrainData[][][])
+	}
+
+	package System {
+		class System{
+			+ ClientMap Map
+			- int myId
+			- PlayerData[] PlayerDatas
+			- int Num_Clients
+			- char[][] Name_Clients
+			- FloatCube Pos_Clients
+			- InputModuleBase *Input
+			- Timer *Time
+			+ bool InitSystem(InitData *data)
+			+ void ExitSystem(InitData *data)
+			+ void SystemRun()
+
+			+ const PlayerData* GetPlayerData()
+			+ int GetMyID()
+			+ void SetMyID(int)
+			+ void SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients)
+			+ void GetFlag(VelocityFlag* flag, int numClients)
+			+ PlaceData GetPlaceData()
+			+ void UpdateFlag(VelocityFlag* flags, int numClients)
+			+ void UpdatePlaceData(PlaceData data)
+			- bool IsPlayerOnGround()
+			- int clamp(const int __val, const int __lo, const int __hi)
+			- int InputThread(void *data)
+		}
+
+		class Move{
+			PlaceData BuildPlaceData(PlayerData player)
+		}
+
+		class Timer{
+			- clock_t _Prev
+			- clock_t _Now
+			+ double GetDeltaTime()
+			+ void UpdateFrame()
+		}
+
+		class Control{
+			- const int SCREEN_WIDTH
+			- const int SCREEN_HEIGHT
+			- const Uint8 *Key
+			- TTF_Font *font
+			- static InputData Data
+			- static int GetResult
+			- static char *Text[MESSAGE_NUM]
+			- static char *ImagePath[2]
+
+			+ int ControlSetUp()
+			- int GetAddress(void *args)
+			- void InitInput()
+			- InputData InputEvents(SDL_Event event)
+			- int GetWiiAddress()
+		}
+		System -- Move
+		System -- Timer
+		System -- Control
+	}
+
+	class Graphic{
+		- FloatPosition lookatPlace
+		- FloatPosition lookatCenter
+		- FloatPosition lookatUp
+		- const double PI
+		- SDL_Window *window
+		- SDL_GLContext context
+
+		+ void Disp()
+		+ void InitGraphic()
+		- bool InitOpenGL()
+		- void View2D()
+		- void View3D()
+		- void Disp2D()
+		- void Disp3D()
+		- void DrawMap()
+		- void DrawCharacter()
+		- void Cube(FloatCube cube, SDL_Color color)
+		- void RotateCube(FloatCube cube, double dir, SDL_Color color)
+	}
+
+	package Input{
+		object InputData <<struct>>{
+			bool Forward
+			bool Right
+			bool Left
+			bool Jump
+			bool Put
+			bool U
+			bool D
+			bool R
+			bool L
+			bool End
+		}
+
+		abstract InputModuleBase{
+			# InputType _Input
+			# SDL_Event _Event
+
+			+ abstract void UpdateInput()
+			+ InputType GetInputType()
+			+ bool IsMoveButtonDown()
+		}
+
+		class KeybordInput{
+			- const Uint8 *_key
+		}
+
+		class WiiInput{
+			- wiimote_t _wiimote
+			- wiimote_report_t _report
+		}
+
+		InputModuleBase -> InputData
+		InputModuleBase <|-- KeybordInput
+		InputModuleBase <|-- WiiInput
+	}
+
+	class MapData{
+		+ void SetMapData(int mapW atc...)
+	}
+
+	Network <--> System
+	System <- Graphic
+	Map <-- System
+	Map <-- Graphic
+	System -> InputModuleBase
+	MapData -- Map
+	BaseMapData <|-- MapData
+	'InputData .. (Input, System)
+}
+
+'== ネットワーク間のデータのやり取り =='
+ServerNetwork <---> Network
+'Network <.> "n" OtherClient : 相互参照
+'(Network, OtherClient) . PlayerData
+'== ネットワーク間のデータのやり取り =='
+
+@enduml
