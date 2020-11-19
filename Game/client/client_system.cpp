@@ -177,7 +177,7 @@ void SystemRun()
 	InputType data = Input->GetInputType();
 
 	PData[MyId].velocity.x = 0;
-	fprintf(stderr, "f:%d l:%d r:%d e:%d\n", data.Forward, data.Left, data.Right, data.End);
+	// fprintf(stderr, "f:%d l:%d r:%d e:%d\n", data.Forward, data.Left, data.Right, data.End);
 	// PData[MyId].velocity.y = 0;
 
 	PData[MyId].velocity.z = 0;
@@ -248,7 +248,7 @@ void SystemRun()
 	}
 
 
-	fprintf(stderr, "time: %lf[mms] | IsGround = %d \n", Time->GetDeltaTime(), IsPlayerOnGround());
+	// fprintf(stderr, "time: %lf[mms] | IsGround = %d \n", Time->GetDeltaTime(), IsPlayerOnGround());
 }
 
 /*各プレイヤーのvelocityを変更する
