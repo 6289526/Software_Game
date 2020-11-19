@@ -8,6 +8,7 @@
 #else
 #define FONT_PATH "../fonts/PixelMplus12-Regular.ttf"
 #endif
+
 #define MAX_STRING 255
 #define MESSAGE_NUM 5
 const int SCREEN_WIDTH = 1237;
@@ -80,8 +81,9 @@ int ControlSetUp()
 
     if (!font)
     {
-        printf("TTF_OpenFont: %s\n", TTF_GetError());
-        return -1;
+        printf("TTF_OpenFont: %s %s\n", TTF_GetError(), FONT_PATH);
+
+        exit(1);
     }
 
     /*ウィンドウ作ります*/
