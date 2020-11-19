@@ -3,7 +3,11 @@
 */
 #include "client_common.h"
 
+#ifdef DEBUG
+#define FONT_PATH "fonts/PixelMplus12-Regular.ttf"
+#else
 #define FONT_PATH "../fonts/PixelMplus12-Regular.ttf"
+#endif
 #define MAX_STRING 128
 #define MESSAGE_NUM 5
 const int SCREEN_WIDTH = 1237;
@@ -30,10 +34,17 @@ static char Text[MESSAGE_NUM][MAX_STRING] = {
     {"please push K Key."},
     {"*"}};
 
-static char ImagePath[2][MAX_STRING] = {
+#ifdef DEBUG
+static char *ImagePath[2] = { 
+    {"Game.png"},
+    {"TITLE.png"},
+};
+#else
+static char *ImagePath[2] = { 
     {"../Game.png"},
     {"../TITLE.png"},
 };
+#endif 
 /*プロトタイプ*/
 static void InitInput();
 static InputData InputEvents(SDL_Event event);
@@ -69,8 +80,9 @@ int ControlSetUp()
 
     if (!font)
     {
-        printf("TTF_OpenFont: %s\n", TTF_GetError());
-        return -1;
+        printf("TTF_OpenFont: %s %s\n", TTF_GetError(), FONT_PATH);
+
+        exit(1);
     }
 
     /*ウィンドウ作ります*/
