@@ -23,23 +23,23 @@ Timer *Time;			// FrameTimer
 
 // ===== * ===== プロトタイプ宣言 ===== * ===== //
 const PlayerData *GetPlayerData();
-int GetMyID();
-void SetMyID(int id);
-bool InitSystem(InitData *data);
-void ExitSystem(InitData *data);
+extern int GetMyID();
+extern void SetMyID(int id);
+extern bool InitSystem(InitData *data);
+extern void ExitSystem(InitData *data);
 void SetNumClients(int n);
 void SetClientName(int id, char *name);
 void InitPlayerData();
-void SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients);
-PlaceData GetPlaceData();
-void SystemRun();
-void UpdateFlag(VelocityFlag *flags, int numClients);
-void UpdatePlaceData(PlaceData data);
+extern void SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients);
+extern PlaceData GetPlaceData();
+extern void SystemRun();
+extern void UpdateFlag(VelocityFlag *flags, int numClients);
+extern void UpdatePlaceData(PlaceData data);
 bool IsPlayerOnGround();
 int clamp(const int __val, const int __lo, const int __hi);
-static int BuryCheck_Under(const int id, const int y, const int accuracy,
-						   int block_X, int block_Y, int block_Z,
-						   const float *point_X, const float *point_Z);
+int BuryCheck_Under(const int id, const int y, const int accuracy,
+					int block_X, int block_Y, int block_Z,
+					const float *point_X, const float *point_Z);
 // int GraphicThread(void *data); // This Function isn't used now.
 int InputThread(void *data);
 
