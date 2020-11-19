@@ -317,6 +317,10 @@ Collision Collision_CB_Side(const int chara_ID, const int y,
   {
     // throw "Collision_CB_Side : ブロックに埋まってる\n";
     fprintf(stderr, "Collision_CB_Side : ブロックに埋まってる\n");
+    Count_Front = 0;
+    Count_Right = 0;
+    Count_Left = 0;
+    Count_Back = 0;
   }
 
   Collision_Dire t_dire = Non; // 当たり判定で押し戻す方向
