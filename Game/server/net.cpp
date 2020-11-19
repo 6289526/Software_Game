@@ -66,7 +66,8 @@ void SetupServer(int num_cl, u_short port)
     rsock = socket(AF_INET, SOCK_STREAM, 0);
     if (rsock < 0)
     {
-        HandleError("socket()");
+        char s[] = "socket()";
+        HandleError(s);
     }
     fprintf(stderr, "sock() for request socket is done successfully.\n");
 
@@ -84,14 +85,16 @@ void SetupServer(int num_cl, u_short port)
     /*ソケットにsv_adderの設定を結びつける*/
     if (bind(rsock, (struct sockaddr *)&sv_addr, sizeof(sv_addr)) != 0)
     {
-        HandleError("bind()");
+        char s[] = "bind()";
+        HandleError(s);
     }
     fprintf(stderr, "bind() is done successfully.\n");
 
     /*接続準備*/
     if (listen(rsock, NumClient) != 0)
     {
-        HandleError("listen()");
+        char s[] = "listen()";
+        HandleError(s);
     }
     fprintf(stderr, "listen() is started.\n");
 
@@ -114,7 +117,8 @@ void SetupServer(int num_cl, u_short port)
         sock = accept(rsock, (struct sockaddr *)&cl_addr, &len);
         if (sock < 0)
         {
-            HandleError("accept()");
+            char s[] = "accept()";
+            HandleError(s);
         }
         /*ソケットの最大個数を更新*/
         if (max_sock < sock)
@@ -125,7 +129,8 @@ void SetupServer(int num_cl, u_short port)
         /*クライアントからの名前を読み込む*/
         if (read(sock, name[i], MAX_LEN_NAME) == -1)
         {
-            HandleError("read()");
+            char s[] = "read()";
+            HandleError(s);
         }
         // 名前をシステムモジュールに渡す
         SetClientName(i, name[i]);
@@ -231,7 +236,8 @@ int ControlRequests()
     /* ファイルディスクリプタの集合から読み込み可能なファイルディスクリプタを見つける*/
     if (select(NumSock, (fd_set *)&read_flag, NULL, NULL, &timeout) == -1)
     {
-        HandleError("select()");
+        char s[] = "select()";
+        HandleError(s);
     }
 
     /** データの受信と送信 **/
@@ -423,7 +429,8 @@ void SendData(int cid, const void *data, int size)
             if(Clients[i].connect){
                 if (write(Clients[i].sock, data, size) < 0)
                 {
-                    HandleError("write()");
+                    char s[] = "write()";
+                    HandleError(s);
                 }
             }
         }
@@ -435,7 +442,8 @@ void SendData(int cid, const void *data, int size)
             //特定のソケットに情報を送る
             if (write(Clients[cid].sock, data, size) < 0)
             {
-                HandleError("write()");
+                char s[] = "write()";
+                HandleError(s);
             }
         }
     }
