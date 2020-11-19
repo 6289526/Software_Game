@@ -2,7 +2,7 @@
 #include "graphic.h"
 #include <string.h>
 
-#define PLAYER_MOVE_SPEED 1
+#define PLAYER_MOVE_SPEED 20
 #define PLAYER_ROTATE_SPEED 4
 
 #define GRAVITY 9.8 * 0.5// * 3
@@ -43,22 +43,25 @@ int InputThread(void *data);
 
 bool InitSystem(InitData *data)
 {
-	char control;
-	fprintf(stderr, "Which controller you want to use?\n  wii: w\n  keyboar: k\n");
-	scanf("%c", &control);
-	if (control == 'w')
-	{
-		Input = new WiiInput(WiiAddress);
-	}
-	else
+	/*入力方式の選択またwiiリモコンのアドレスを取得*/
+	ControlSetUp();
+
+	InitGraphic(); // グラフィックの初期化
+
+	if (strcmp(WiiAddress, "") == 0)
 	{
 		Input = new KeybordInput();
 	}
+	else
+	{
+		Input = new WiiInput(WiiAddress);
+	}
+
 	data->input = Input;
 
 	// SDL_Thread *thread;
 
-	
+
 	/*
 	// グラフィックのスレッド化
 	thread = SDL_CreateThread(GraphicThread, "GraphicThread", NULL);
@@ -84,7 +87,7 @@ bool InitSystem(InitData *data)
 	}
 
 	data->input = Input;
-	
+
 	SDL_Thread *inputThread;
 	SDL_mutex *input_mtx = SDL_CreateMutex(); // 相互排除
 	inputThread = SDL_CreateThread(InputThread, "inputThread", input_mtx);
@@ -172,7 +175,7 @@ PlaceData GetPlaceData()
 void SystemRun()
 {
 	InputType data = Input->GetInputType();
-	
+
 	PData[MyId].velocity.x = 0;
 	fprintf(stderr, "f:%d l:%d r:%d e:%d\n", data.Forward, data.Left, data.Right, data.End);
 	// PData[MyId].velocity.y = 0;
@@ -211,20 +214,18 @@ void SystemRun()
 		}
 		else if (!IsPlayerOnGround())
 		{
-			// PData[MyId].velocity.y -= GRAVITY * Time->GetDeltaTime();
+			PData[MyId].velocity.y -= GRAVITY * Time->GetDeltaTime();
 		}
 
 		if (data.R)
 		{
-			// PData[MyId].direction -= PLAYER_ROTATE_SPEED * Time->GetDeltaTime();
+			PData[MyId].direction -= PLAYER_ROTATE_SPEED * Time->GetDeltaTime();
 			data.R = false;
-			PData[MyId].velocity.y = PLAYER_MOVE_SPEED;
 		}
 		if (data.L)
 		{
-			// PData[MyId].direction += PLAYER_ROTATE_SPEED * Time->GetDeltaTime();
+			PData[MyId].direction += PLAYER_ROTATE_SPEED * Time->GetDeltaTime();
 			data.L = false;
-			PData[MyId].velocity.y = -PLAYER_MOVE_SPEED;
 		}
 
 		/////////////////////////////////

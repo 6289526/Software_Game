@@ -3,7 +3,7 @@
 */
 #include "client_common.h"
 
-#define FONT_PATH "fonts/PixelMplus12-Regular.ttf"
+#define FONT_PATH "../fonts/PixelMplus12-Regular.ttf"
 #define MAX_STRING 128
 #define MESSAGE_NUM 5
 const int SCREEN_WIDTH = 1237;
@@ -30,9 +30,9 @@ static char Text[MESSAGE_NUM][MAX_STRING] = {
     {"please push K Key."},
     {"*"}};
 
-static char ImagePath[2][MAX_STRING] = { 
-    {"Game.png"},
-    {"TITLE.png"},
+static char ImagePath[2][MAX_STRING] = {
+    {"../Game.png"},
+    {"../TITLE.png"},
 };
 /*プロトタイプ*/
 static void InitInput();
@@ -144,7 +144,7 @@ int ControlSetUp()
         /*くるくるするやつを描画*/
         for (int i = 0; i < 3; i++)
         {
-            
+
             //TTF_SetFontOutline(font, 1);//枠抜きで描写するとき
             surface = TTF_RenderUTF8_Blended(font, Text[4], (SDL_Color){255, 255, 255, 255});
             //surfaceからTextureを作る

@@ -20,7 +20,7 @@
 
 
 #define PLAYER_X 40 		// クライアントの
-#define PLAYER_Y 40 		// クライアントの
+#define PLAYER_Y 30 		// クライアントの
 #define PLAYER_Z 40 		// クライアントの初期座標
 #define PLAYER_W 10 		// クライアントの
 #define PLAYER_D 10			// クライアントの
