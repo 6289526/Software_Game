@@ -45,7 +45,7 @@ bool InitSystem(InitData *data)
 {
 	// SDL_Thread *thread;
 
-	InitGraphic(); // グラフィックの初期化
+	
 	/*
 	// グラフィックのスレッド化
 	thread = SDL_CreateThread(GrapicThread, "GrapicThread", NULL);
@@ -56,20 +56,22 @@ bool InitSystem(InitData *data)
 	}
 	SDL_DetachThread(thread);
 	*/
-	char control;
-	fprintf(stderr, "Which controller you want to use?\n");
-	fprintf(stderr, "wii: w\n keyboar: k\n");
-	scanf("%c", &control);
-	if (control == 'w')
-	{
-		Input = new WiiInput(WiiAddress);
-	}
-	else
+	/*入力方式の選択またwiiリモコンのアドレスを取得*/
+	ControlSetUp();
+
+	InitGraphic(); // グラフィックの初期化
+
+	if (strcmp(WiiAddress, "") == 0)
 	{
 		Input = new KeybordInput();
 	}
-	data->input = Input;
+	else
+	{
+		Input = new WiiInput(WiiAddress);
+	}
 
+	data->input = Input;
+	
 	SDL_Thread *inputThread;
 	SDL_mutex *input_mtx = SDL_CreateMutex(); // 相互排除
 	inputThread = SDL_CreateThread(InputThread, "inputThread", input_mtx);
@@ -157,8 +159,9 @@ PlaceData GetPlaceData()
 void SystemRun()
 {
 	InputType data = Input->GetInputType();
+	
 	PData[MyId].velocity.x = 0;
-
+	fprintf(stderr, "f:%d l:%d r:%d e:%d\n", data.Forward, data.Left, data.Right, data.End);
 	// PData[MyId].velocity.y = 0;
 
 	PData[MyId].velocity.z = 0;
@@ -173,33 +176,24 @@ void SystemRun()
 		// 前
 		if (data.Forward)
 		{
-			data.Forward = false;
-			// PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 0).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-			// PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 0).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-			PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 0).x * PLAYER_MOVE_SPEED;
-			PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 0).z * PLAYER_MOVE_SPEED;
+			// data.Forward = false;
+			PData[MyId].velocity.z += 5*PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 		}
 		// 左右
 		if (data.Left)
 		{
-			data.Left = false;
-			// PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 90).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-			// PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 90).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-			PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 90).x * PLAYER_MOVE_SPEED;
-			PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 90).z * PLAYER_MOVE_SPEED;
+			// data.Left = false;
+			PData[MyId].velocity.x += 5*PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 		}
 		else if (data.Right)
 		{
-			data.Right = false;
-			// PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 270).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-			// PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 270).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-			PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 270).x * PLAYER_MOVE_SPEED;
-			PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 270).z * PLAYER_MOVE_SPEED;
+			// data.Right = false;
+			PData[MyId].velocity.x -= 5*PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 		}
 		// ジャンプ
 		if (data.Jump && IsPlayerOnGround() == 1)
 		{
-			data.Jump = false;
+			// data.Jump = false;
 			PData[MyId].velocity.y += 5;
 		}
 		else if (!IsPlayerOnGround())
@@ -225,24 +219,8 @@ void SystemRun()
 		if (data.D)
 		{
 			data.D = false;
-			// PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 180).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-			// PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 180).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-			PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 180).x * PLAYER_MOVE_SPEED;
-			PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 180).z * PLAYER_MOVE_SPEED;
+			PData[MyId].velocity.z -= PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 		}
-
-
-		if (TERMINAL_SPEED < PData[MyId].velocity.x) {
-			PData[MyId].velocity.x = TERMINAL_SPEED;
-		}
-		if (TERMINAL_SPEED < PData[MyId].velocity.y) {
-			PData[MyId].velocity.y = TERMINAL_SPEED;
-		}
-		if (TERMINAL_SPEED < PData[MyId].velocity.z) {
-			PData[MyId].velocity.z = TERMINAL_SPEED;
-		}
-
-		//fprintf(stderr, "dir = %f\n", PData[MyId].direction);
 
 		// 移動コマンド実行
 		InCommand(MOVE_COMMAND);
@@ -255,7 +233,8 @@ void SystemRun()
 		InCommand(PUT_COMMAND);
 	}
 
-	//fprintf(stderr, "time: %lf[mms] | IsGround = %d \n", Time->GetDeltaTime(), IsPlayerOnGround());
+
+	fprintf(stderr, "time: %lf[mms] | IsGround = %d \n", Time->GetDeltaTime(), IsPlayerOnGround());
 }
 
 /*各プレイヤーのvelocityを変更する
@@ -366,6 +345,8 @@ int InputThread(void *data)
 		SDL_LockMutex(mtx);
 		// 入力受け付け
 		Input->UpdateInput();
+
+		/*サーバーにリクエストを送る*/
 		SDL_UnlockMutex(mtx);
 	}
 

@@ -18,12 +18,14 @@
 #define BROADCAST -1 		//全員に送るとき
 #define PLAYER_NUM 2 		// クライアントの人数
 
+
 #define PLAYER_X 40 		// クライアントの
 #define PLAYER_Y 40 		// クライアントの
 #define PLAYER_Z 40 		// クライアントの初期座標
 #define PLAYER_W 10 		// クライアントの
 #define PLAYER_D 10			// クライアントの
 #define PLAYER_H 20 		// クライアントの大きさ
+
 /*クライアントが使用するコマンド*/
 #define MOVE_COMMAND 'M'
 #define PUT_COMMAND 'P'

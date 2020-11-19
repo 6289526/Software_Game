@@ -197,7 +197,6 @@ static int BuryCheck_Under(const int chara_ID, const int y, const int accuracy,
     }
   }
 
-  fprintf(stderr, "%d \n", Errer_Count);
   // 全体が埋まっていたら
   if (Errer_Count == ((accuracy - 2) * (accuracy - 2))) {
     return -1;
@@ -313,7 +312,6 @@ Collision Collision_CB_Side(const int chara_ID, const int y,
 
 Collision Collision_CB_Under(const int chara_ID, const int y,
                              const int accuracy) {
-
   // 当たり判定の精度が正しいかどうか
   if (accuracy < 3 || PLAYER_D < accuracy || PLAYER_W < accuracy) {
     throw "Collision_CB_Under : 引数　エラー\n";
@@ -461,7 +459,7 @@ void MovePosition(int chara_ID) {
     break;
   }
 
-  PData[chara_ID].velocity.y = 0;
+  // PData[chara_ID].velocity.y = 0;
 
   // 横の当たり判定
   Collision t_Collision_Side = Collision_CB_Side(chara_ID, 1);

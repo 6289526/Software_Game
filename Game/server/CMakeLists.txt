@@ -19,7 +19,7 @@ find_package(PkgConfig)
 pkg_check_modules(SDL2ttf REQUIRED SDL2_ttf)
 find_package(PkgConfig)
 pkg_check_modules(SDL2image REQUIRED SDL2_image)
-
+set(CMAKE_CXX_FLAGS "-O0 -g")
 #ヘッダファイルのパスを指定
 include_directories(${SDL2_INCLUDE_DIRS} ${SDL2ttf_INCLUDE_DIRS} ${SDL2image_INCLUDE_DIRS})
 
@@ -28,9 +28,9 @@ add_executable( ${SORYUTION_NAME} ${SERVER_CODE})
 
 #コンパイルオプション
 target_compile_options(${SORYUTION_NAME} PUBLIC
-  $<$<CONFIG:Release>:-O3>             # Release
-  $<$<CONFIG:Debug>:-O0 -g>            # Debug
-  $<$<CONFIG:RelWithDebgInfo>:-O3 -g>  # RelWithDebInfo
+    $<$<CONFIG:Release>:-O3>             # Release
+    $<$<CONFIG:Debug>:-O0 -g>            # Debug
+    $<$<CONFIG:RelWithDebgInfo>:-O3 -g>  # RelWithDebInfo
 )
 
 target_compile_definitions(${SORYUTION_NAME} PUBLIC
