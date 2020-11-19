@@ -4,20 +4,20 @@
  */
 #pragma once
 /*----------include 開始----------*/
+#include "../header/constants.h"
+#include "../header/map.hpp"
+#include "server_map.hpp"
+#include <SDL2/SDL.h>
+#include <arpa/inet.h>
+#include <errno.h>
+#include <iostream>
+#include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 #include <sys/socket.h>
 #include <sys/types.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <errno.h>
-#include "../header/constants.h"
-#include <SDL2/SDL.h>
-#include <iostream>
-#include "../header/map.hpp"
-#include "server_map.hpp"
+#include <unistd.h>
 //
 /*----------include 終了----------*/
 
@@ -26,7 +26,6 @@
 /*----------define 終了-----------*/
 
 /*----------構造体宣言 開始-----------*/
-
 
 /*----------構造体宣言 終了-----------*/
 
@@ -44,108 +43,106 @@ using namespace std;
 
 /* sys.cpp */
 
-template <typename T>
-class Pointer{
+template <typename T> class Pointer {
 
 public:
-    Pointer(int size);
-    Pointer(const Pointer<T>& p);
-    ~Pointer();
-    const T operator[](int n) const;
-    T& operator[](int n);
-    Pointer& operator=(const Pointer& p);
-    int Size();
+  Pointer(int size);
+  Pointer(const Pointer<T> &p);
+  ~Pointer();
+  const T operator[](int n) const;
+  T &operator[](int n);
+  Pointer &operator=(const Pointer &p);
+  int Size();
+  const T *Get() const;
 
 private:
-    void Copy(const Pointer& p);
+  void Copy(const Pointer &p);
 
 private:
-    T* m_point;
-    int m_size;
+  T *m_point;
+  int m_size;
 };
 
-
-template <class T>
-Pointer<T>::Pointer(int size)
-    : m_point(new T[size])
-{
-    m_size = size;
+template <class T> inline Pointer<T>::Pointer(int size) : m_point(new T[size]) {
+  m_size = size;
 }
 
-template <class T>
-Pointer<T>::Pointer(const Pointer<T>& p)
-{
-    Copy(p);
+template <class T> Pointer<T>::Pointer(const Pointer<T> &p) { Copy(p); }
+
+template <class T> inline Pointer<T>::~Pointer() { delete[] m_point; }
+
+template <class T> inline const T Pointer<T>::operator[](int n) const {
+  if (n < 0 || m_size <= n) {
+    throw "Pointer [] : 範囲外\n";
+  }
+  return m_point[n];
 }
 
-template <class T>
-Pointer<T>::~Pointer()
-{
-    delete[] m_point;
+template <class T> inline T &Pointer<T>::operator[](int n) {
+  if (n < 0 || m_size <= n) {
+    throw "Pointer [] : 範囲外\n";
+  }
+  return m_point[n];
 }
 
-template <class T>
-const T Pointer<T>::operator[](int n) const
-{
-    if (n < 0 || m_size <= n) {
-        throw "Pointer [] : 範囲外\n";
-    }
-    return m_point[n];
+template <class T> Pointer<T> &Pointer<T>::operator=(const Pointer &p) {
+  delete[] m_point;
+  Copy(p);
 }
 
-template <class T>
-T& Pointer<T>::operator[](int n)
-{
-    if (n < 0 || m_size <= n) {
-        throw "Pointer [] : 範囲外\n";
-    }
-    return m_point[n];
+template <class T> inline int Pointer<T>::Size() { return m_size; }
+
+template <class T> const T *Pointer<T>::Get() const { return m_point; }
+
+template <class T> void Pointer<T>::Copy(const Pointer &p) {
+  m_size = p.m_size;
+  m_point = new T[m_size];
+  for (int i = 0; i < m_size; ++i) {
+    m_point[i] = p[i];
+  }
 }
 
-template <class T>
-Pointer<T>& Pointer<T>::operator=(const Pointer& p)
-{
-    delete[] m_point;
-    Copy(p);
-}
+// 当たり判定で跳ね返す方向
+enum Collision_Dire { Non, Right, Back, Left, Front, Under };
 
-template <class T>
-int Pointer<T>::Size()
-{
-    return m_size;
-}
+struct Collision {
+  Collision_Dire dire; // キャラを跳ね返す方向
+  int power;           // キャラを跳ね返す力
+};
 
-template <class T>
-void Pointer<T>::Copy(const Pointer& p)
-{
-    m_size = p.m_size;
-    m_point = new T[m_size];
-    for (int i = 0; i < m_size; ++i) {
-        m_point[i] = p[i];
-    }
-}
-
-const PlayerData* GetPlayerData();
+const PlayerData *GetPlayerData();
 
 void SetNumClients(int n); // クライアント人数セット
 
-void SetClientName(int id, char* name);
+void SetClientName(int id, char *name);
 
-void InitSys(char* file); // システム初期化
+void InitSys(char *file); // システム初期化
 
 void InitPlayerData(); // プレイヤーデータ初期化処理
 
 void EndSys(); // システム終了処理
 
+static int BuryCheck_Side(const int chara_ID, const int accuracy, int block_X,
+                          const int block_Y, int block_Z, const float *point_X,
+                          const float *point_Z, const Collision_Dire flag);
+
+static int BuryCheck_Under(const int chara_ID, const int y, const int accuracy,
+                           int block_X, int block_Y, int block_Z,
+                           const float *point_X, const float *point_Z,
+                           const Collision_Dire flag);
+
 // キャラとブロックの当たり判定
-// y : 当たり判定をとる座標ｙの補正(キャラの足元座標からの差)
-// accuracy : 当たり判定の精度(座標軸ごとの判定する座標数)
-//            例：２で２・２の４点　３で３・３の９点を判定する
-static BlockType Collision_CB(int chara_ID, int y = 0, int accuracy = 2);
+// ｙ ： 基準面の高さの補正
+// accuracy : 当たり判定の精度の調整　１以上 かつ キャラの幅・高さ以下の値
+static Collision Collision_CB_Side(const int chara_ID, const int y = 0,
+                                   const int accuracy = PLAYER_W);
+
+static Collision Collision_CB_Under(const int chara_ID, const int y,
+                                    const int accuracy = PLAYER_W);
 
 static bool Collision_BB(); // ブロックを置けるなら true
 
-static void Goal(int chara_ID);    // ゴールの処理
+static void Goal(int chara_ID); // ゴールの処理
 
 void MovePosition(int chara_ID); // キャラを移動させる
 
@@ -153,11 +150,12 @@ void PutBlock(int chara_ID); // ブロックを置けるなら置く
 
 int AllGoal(); // 全員ゴールしていれば１
 
-void SetVec(int chara_ID, Vector3& vec); // キャラの速度ベクトルをセット
+void SetVec(int chara_ID, Vector3 &vec); // キャラの速度ベクトルをセット
 
-void SetPlaceData(PlaceData& data); // 配置したいブロックの場所をセット
+void SetPlaceData(PlaceData &data); // 配置したいブロックの場所をセット
 
 void SendAllPos(int client_num); // クライアント全員に全員の座標を送る
 
-void SetDirection(int chara_ID, float direction); // システムにクライアントの角度を渡す
+void SetDirection(int chara_ID,
+                  float direction); // システムにクライアントの角度を渡す
 /*-----------グローバル変数 終了----------*/

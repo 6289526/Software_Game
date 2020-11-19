@@ -2,9 +2,12 @@
 #include "graphic.h"
 #include <string.h>
 
-#define PLAYER_MOVE_SPEED 40
+#define PLAYER_MOVE_SPEED 1
 #define PLAYER_ROTATE_SPEED 4
-#define GRAVITY 9.8 * 0.5 // * 3
+
+#define GRAVITY 9.8 * 0.5// * 3
+#define TERMINAL_SPEED PLAYER_Y // 終端速度
+
 
 static int MyId; // クライアントのID
 // プレイヤーのデータ
@@ -133,7 +136,7 @@ void SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients)
 		PData[i].pos.x = moveData[i].x;
 		PData[i].pos.y = moveData[i].y;
 		PData[i].pos.z = moveData[i].z;
-		//fprintf(stderr, "[%d] %10s　は %f %f %f にいます。\n", i, PData[i].name, PData[i].pos.x, PData[i].pos.y, PData[i].pos.z);
+		fprintf(stderr, "[%d] %10s　は %f %f %f にいます。\n", i, PData[i].name, PData[i].pos.x, PData[i].pos.y, PData[i].pos.z);
 	}
 }
 
@@ -195,16 +198,20 @@ void SystemRun()
 		}
 		else if (!IsPlayerOnGround())
 		{
-			PData[MyId].velocity.y -= GRAVITY * Time->GetDeltaTime();
+			// PData[MyId].velocity.y -= GRAVITY * Time->GetDeltaTime();
 		}
 
 		if (data.R)
 		{
-			PData[MyId].direction -= PLAYER_ROTATE_SPEED * Time->GetDeltaTime();
+			// PData[MyId].direction -= PLAYER_ROTATE_SPEED * Time->GetDeltaTime();
+			data.R = false;
+			PData[MyId].velocity.y = PLAYER_MOVE_SPEED;
 		}
 		if (data.L)
 		{
-			PData[MyId].direction += PLAYER_ROTATE_SPEED * Time->GetDeltaTime();
+			// PData[MyId].direction += PLAYER_ROTATE_SPEED * Time->GetDeltaTime();
+			data.L = false;
+			PData[MyId].velocity.y = -PLAYER_MOVE_SPEED;
 		}
 
 		/////////////////////////////////
@@ -225,6 +232,7 @@ void SystemRun()
 		data.Put = false;
 		InCommand(PUT_COMMAND);
 	}
+
 
 	fprintf(stderr, "time: %lf[mms] | IsGround = %d \n", Time->GetDeltaTime(), IsPlayerOnGround());
 }
@@ -259,29 +267,29 @@ bool IsPlayerOnGround()
 	int point_X[2], point_Z[2];
 	int y = 0;
 
-	const int wide = PData[id].pos.w / (accuracy - 1);	// 当たり判定を知らべる座標間距離 x座標
-	const int depth = PData[id].pos.d / (accuracy - 1); // 当たり判定を知らべる座標間距離 z座標
+    const int wide = PData[id].pos.w / (accuracy - 1);  // 当たり判定を知らべる座標間距離 x座標
+    const int depth = PData[id].pos.d / (accuracy - 1); // 当たり判定を知らべる座標間距離 z座標
 
-	// 当たり判定を調べる座標をすべて格納
-	for (int i = 0; i < accuracy; ++i)
-	{
-		point_X[i] = PData[id].pos.x + PData[id].velocity.x + wide * i;
-		point_Z[i] = PData[id].pos.z + PData[id].velocity.z + depth * i;
-	}
+    // 当たり判定を調べる座標をすべて格納
+    for (int i = 0; i < accuracy; ++i)
+    {
+        point_X[i] = PData[id].pos.x + PData[id].velocity.x + wide * i;
+        point_Z[i] = PData[id].pos.z + PData[id].velocity.z + depth * i;
+    }
 
-	// マップデータ入手
-	const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
+    // マップデータ入手
+    const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
 
-	// 返り値用変数を宣言，初期化
-	// ゴールブロックが１個でも接触すればゴールブロックが返る
-	// ノーマルブロックが１個でも接触すればノーマルブロックが返る
-	BlockType result = NonBlock;
+    // 返り値用変数を宣言，初期化
+    // ゴールブロックが１個でも接触すればゴールブロックが返る
+    // ノーマルブロックが１個でも接触すればノーマルブロックが返る
+    BlockType result = NonBlock;
 
-	// マップ配列の添え字用変数を宣言，初期化
-	int Block_X = 0;
-	int t_Block_Y = (PData[id].pos.y + PData[id].velocity.y + y);
-	int Block_Y = (PData[id].pos.y + PData[id].velocity.y + y) / MAP_MAGNIFICATION;
-	Block_Y = clamp(Block_Y, 0, MAP_SIZE_H - 1);
+    // マップ配列の添え字用変数を宣言，初期化
+    int Block_X = 0;
+    int t_Block_Y = (PData[id].pos.y + PData[id].velocity.y + y);
+    int Block_Y = (PData[id].pos.y + PData[id].velocity.y + y) / MAP_MAGNIFICATION;
+    Block_Y = clamp(Block_Y, 0, MAP_SIZE_H - 1);
 	int Block_Z = 0;
 
 	for (int i = 0; i < accuracy; ++i)
@@ -337,6 +345,7 @@ int InputThread(void *data)
 		SDL_LockMutex(mtx);
 		// 入力受け付け
 		Input->UpdateInput();
+
 		/*サーバーにリクエストを送る*/
 		SDL_UnlockMutex(mtx);
 	}
