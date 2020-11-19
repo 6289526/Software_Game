@@ -157,14 +157,15 @@ PlaceData GetPlaceData()
 void SystemRun()
 {
 	InputType data = Input->GetInputType();
-
+	bool isOnGround = IsPlayerOnGround();
 	PData[MyId].velocity.x = 0;
-	// fprintf(stderr, "f:%d l:%d r:%d e:%d\n", data.Forward, data.Left, data.Right, data.End);
-	// PData[MyId].velocity.y = 0;
+
+	if (isOnGround)
+		PData[MyId].velocity.y = 0;
 
 	PData[MyId].velocity.z = 0;
 	// 移動処理
-	if (Input->IsMoveButtonDown() || !IsPlayerOnGround())
+	if (Input->IsMoveButtonDown() || !isOnGround)
 	{
 		if (data.U)
 		{
@@ -174,27 +175,30 @@ void SystemRun()
 		// 前
 		if (data.Forward)
 		{
-			// data.Forward = false;
-			PData[MyId].velocity.z += 5*PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			data.Forward = false;
+			PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 0).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 0).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 		}
 		// 左右
 		if (data.Left)
 		{
-			// data.Left = false;
-			PData[MyId].velocity.x += 5*PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			data.Left = false;
+			PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 90).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 90).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 		}
 		else if (data.Right)
 		{
-			// data.Right = false;
-			PData[MyId].velocity.x -= 5*PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			data.Right = false;
+			PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 270).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 270).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 		}
 		// ジャンプ
-		if (data.Jump && IsPlayerOnGround() == 1)
+		if (data.Jump && isOnGround == 1)
 		{
-			// data.Jump = false;
+			data.Jump = false;
 			PData[MyId].velocity.y += 5;
 		}
-		else if (!IsPlayerOnGround())
+		else if (!isOnGround)
 		{
 			PData[MyId].velocity.y -= GRAVITY * Time->GetDeltaTime();
 		}
@@ -210,12 +214,23 @@ void SystemRun()
 			data.L = false;
 		}
 
-		/////////////////////////////////
-
+		///////////////////////////////// デバッグ用 後ろに下がる
 		if (data.D)
 		{
 			data.D = false;
-			PData[MyId].velocity.z -= PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 180).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 180).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+		}
+		/////////////////////////////////
+
+		if (TERMINAL_SPEED < PData[MyId].velocity.x) {
+			PData[MyId].velocity.x = TERMINAL_SPEED;
+		}
+		if (TERMINAL_SPEED < PData[MyId].velocity.y) {
+			PData[MyId].velocity.y = TERMINAL_SPEED;
+		}
+		if (TERMINAL_SPEED < PData[MyId].velocity.z) {
+			PData[MyId].velocity.z = TERMINAL_SPEED;
 		}
 
 		// 移動コマンド実行
