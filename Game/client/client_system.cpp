@@ -37,7 +37,7 @@ extern void UpdateFlag(VelocityFlag *flags, int numClients);
 extern void UpdatePlaceData(PlaceData data);
 bool IsPlayerOnGround();
 int clamp(const int __val, const int __lo, const int __hi);
-int BuryCheck_Under(const int id, const int y, const int accuracy,
+static int BuryCheck_Under(const int id, const int y, const int accuracy,
 					int block_X, int block_Y, int block_Z,
 					const float *point_X, const float *point_Z);
 // int GraphicThread(void *data); // This Function isn't used now.
