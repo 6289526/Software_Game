@@ -308,10 +308,13 @@ int GetWiiAddress()
     char trash[50];
     while (fgets(output, MAX_STRING, fp) != NULL)
     {
-        if (index == 1)
+        if (index >= 1)
         {
+            if(strcmp(trash, "Nintendo RVL-CNT-01") == 0){
             sscanf(output, "%s %s", WiiAddress, trash);
             fprintf(stderr, "%s\n", WiiAddress);
+            break;
+            }
         }
         index++;
     }
