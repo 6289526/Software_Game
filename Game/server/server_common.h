@@ -158,4 +158,6 @@ void SendAllPos(int client_num); // クライアント全員に全員の座標�
 
 void SetDirection(int chara_ID,
                   float direction); // システムにクライアントの角度を渡す
+
+PlaceData GetPlaceData();
 /*-----------グローバル変数 終了----------*/
