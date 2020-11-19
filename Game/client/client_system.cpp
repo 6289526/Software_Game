@@ -10,8 +10,7 @@
 
 
 static int MyId; // クライアントのID
-// プレイヤーのデータ
-PlayerData *PData;
+PlayerData *PData; // プレイヤーのデータ
 
 int Num_Clients;																			 // クライアント人数
 static char Name_Clients[MAX_NUMCLIENTS][MAX_LEN_NAME];										 // クライアントの名前
@@ -21,7 +20,24 @@ ClientMap Map;			//マップ
 InputModuleBase *Input; // Input Module
 Timer *Time;			// FrameTimer
 
+// ===== * ===== プロトタイプ宣言 ===== * ===== //
+const PlayerData *GetPlayerData();
+int GetMyID();
+void SetMyID(int id);
+bool InitSystem(InitData *data);
+void ExitSystem(InitData *data);
+void SetNumClients(int n);
+void SetClientName(int id, char *name);
+void InitPlayerData();
+void SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients);
+PlaceData GetPlaceData();
+void SystemRun();
+void UpdateFlag(VelocityFlag *flags, int numClients);
+void UpdatePlaceData(PlaceData data);
+bool IsPlayerOnGround();
+int clamp(const int __val, const int __lo, const int __hi);
 // int GraphicThread(void *data); // This Function isn't used now.
+int InputThread(void *data);
 
 // ===== * ===== プロパティ ===== * ===== //
 // クライアント配列の先頭ポインタを返す
@@ -36,10 +52,7 @@ int GetMyID() { return MyId; }
 */
 void SetMyID(int id) { MyId = id; }
 
-bool IsPlayerOnGround();
-// ===== * ===== プロパティ ===== * ===== //
-int clamp(const int __val, const int __lo, const int __hi);
-int InputThread(void *data);
+// ----- * ----- //
 
 bool InitSystem(InitData *data)
 {
