@@ -43,25 +43,7 @@ int InputThread(void *data);
 
 bool InitSystem(InitData *data)
 {
-	/*入力方式の選択またwiiリモコンのアドレスを取得*/
-	ControlSetUp();
-
-	InitGraphic(); // グラフィックの初期化
-
-	if (strcmp(WiiAddress, "") == 0)
-	{
-		Input = new KeybordInput();
-	}
-	else
-	{
-		Input = new WiiInput(WiiAddress);
-	}
-
-	data->input = Input;
-
 	// SDL_Thread *thread;
-
-
 	/*
 	// グラフィックのスレッド化
 	thread = SDL_CreateThread(GraphicThread, "GraphicThread", NULL);
