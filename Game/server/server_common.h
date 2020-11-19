@@ -125,21 +125,6 @@ void Pointer<T>::Copy(const Pointer& p)
     }
 }
 
-// 当たり判定で跳ね返す方向
-enum Collision_Dire {
-    Non,
-    _Goal,
-    Right,
-    Back,
-    Left,
-    Front
-};
-
-struct Collision {
-    Collision_Dire dire; // キャラを跳ね返す方向
-    int power; // キャラを跳ね返す力
-};
-
 const PlayerData* GetPlayerData();
 
 void SetNumClients(int n); // クライアント人数セット
@@ -153,11 +138,10 @@ void InitPlayerData(); // プレイヤーデータ初期化処理
 void EndSys(); // システム終了処理
 
 // キャラとブロックの当たり判定
-// ｙ ： 基準面の高さの補正
-// accuracy : 当たり判定の精度の調整　１以上 かつ キャラの幅・高さ以下の値
-static Collision Collision_CB_Side(const int chara_ID, const int y = 0, const int accuracy = PLAYER_W);
-
-static BlockType Collision_CB_Under(int chara_ID, int y, int accuracy);
+// y : 当たり判定をとる座標ｙの補正(キャラの足元座標からの差)
+// accuracy : 当たり判定の精度(座標軸ごとの判定する座標数)
+//            例：２で２・２の４点　３で３・３の９点を判定する
+static BlockType Collision_CB(int chara_ID, int y = 0, int accuracy = 2);
 
 static bool Collision_BB(); // ブロックを置けるなら true
 
