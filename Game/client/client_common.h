@@ -25,6 +25,7 @@
 
 extern int Num_Clients; // クライアント人数
 extern char WiiAddress[17];
+extern InputType _______Type;
 /* ウインドウサイズ */
 enum {
     Wd_Width  = 640,
@@ -71,4 +72,7 @@ extern void UpdatePlaceData(PlaceData data);
 /* move */
 
 PlaceData BuildPlaceData(PlayerData player);
-Vector3 GetMoveDirection(PlayerData player, float angle);
+
+
+/*control_setup*/
+extern int ControlSetUp();
