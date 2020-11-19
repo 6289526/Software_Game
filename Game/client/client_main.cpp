@@ -11,26 +11,12 @@
 int cond = 1;
 
 static int PrintError(const char *str);
+int Select(void *args);
 
-
-int Select(void *args)
-{
-	SDL_mutex *mtx = (SDL_mutex *)args;
-
-	while (1)
-	{
-		SDL_LockMutex(mtx);
-
-		cond = ControlRequests();
-
-		SDL_UnlockMutex(mtx);
-		SDL_Delay(10);
-	}
-
-	return 0;
-}
 char WiiAddress[17];
 InputType _______Type;
+
+
 // client用のmain関数
 int main(int argc, char *argv[])
 {
@@ -98,6 +84,23 @@ int main(int argc, char *argv[])
 	TerminateClient();
 	SDL_Quit();
 	ExitSystem(&initData);
+	return 0;
+}
+
+int Select(void *args)
+{
+	SDL_mutex *mtx = (SDL_mutex *)args;
+
+	while (1)
+	{
+		SDL_LockMutex(mtx);
+
+		cond = ControlRequests();
+
+		SDL_UnlockMutex(mtx);
+		SDL_Delay(10);
+	}
+
 	return 0;
 }
 
