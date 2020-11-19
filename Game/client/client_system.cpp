@@ -173,7 +173,14 @@ PlaceData GetPlaceData()
 void SystemRun()
 {
 	InputType data = Input->GetInputType();
-	bool isOnGround = IsPlayerOnGround();
+	try
+	{
+		bool isOnGround = IsPlayerOnGround();
+	}
+	catch(char const* e) // エラー処理
+	{
+		fprintf(stderr,"%s", e)
+	}
 	PData[MyId].velocity.x = 0;
 
 	if (isOnGround)
@@ -290,8 +297,8 @@ void UpdatePlaceData(PlaceData data)
 bool IsPlayerOnGround()
 {
 	int id = GetMyID();
-	int accuracy = 2;
-	float point_X[2], point_Z[2]; // 調べる座標
+	int accuracy = 3;
+	float point_X[accuracy], point_Z[accuracy]; // 調べる座標
 	int y = 0;
 
 	// 当たり判定の精度が正しいかどうか
@@ -353,14 +360,15 @@ bool IsPlayerOnGround()
 
 	int Count_Under =
 		BuryCheck_Under(id, 0, accuracy, Block_X, Block_Y, Block_Z, point_X, point_Z);
+	fprintf(stderr, "under count: %d", Count_Under);
 
 	if (Count_Under == -1)
 	{
-		// throw "Collision_CB_Under : ブロックに埋まってる\n";
-		fprintf(stderr, "Collision_CB_Under : ブロックに埋まってる\n");
+		throw "Collision_CB_Under : ブロックに埋まってる\n";
+		// fprintf(stderr, "Collision_CB_Under : ブロックに埋まってる\n");
 	}
 
-	if (0 <= Count_Under)
+	if (0 < Count_Under)
 	{
 		return true; // やや埋まっている or ピッタリ
 	}
