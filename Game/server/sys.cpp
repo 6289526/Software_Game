@@ -469,7 +469,7 @@ void MovePosition(int chara_ID) {
   // 移動後の座標に書き換え
   PData[chara_ID].pos.x += PData[chara_ID].velocity.x;
   PData[chara_ID].pos.z += PData[chara_ID].velocity.z;
-/*
+
   switch (t_Collision_Side.dire) {
   case Front:
     PData[chara_ID].pos.z =
@@ -490,7 +490,7 @@ void MovePosition(int chara_ID) {
   default:
     break;
   }
-*/
+
   // 速度を０に戻す
   PData[chara_ID].velocity.x = 0;
   PData[chara_ID].velocity.z = 0;
