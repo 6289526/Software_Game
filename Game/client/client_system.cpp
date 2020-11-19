@@ -362,7 +362,6 @@ bool IsPlayerOnGround()
 
 	int Count_Under =
 		BuryCheck_Under(id, 0, accuracy, Block_X, Block_Y, Block_Z, point_X, point_Z);
-	fprintf(stderr, "under count: %d", Count_Under);
 
 	if (Count_Under == -1)
 	{
