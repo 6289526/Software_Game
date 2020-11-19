@@ -85,6 +85,7 @@ int main(int argc, char *argv[])
 	while (cond && !initData.input->GetInputType().End)
 	{
 		SystemRun();
+
 		Disp();
 		SDL_Delay(10);
 		initData.timer->UpdateFrame(); // Update the game frame.

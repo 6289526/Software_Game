@@ -42,7 +42,7 @@ typedef struct InitData{
 	InputModuleBase *input;
     Timer *timer;
 
-    InitData() : 
+    InitData() :
         input(NULL),
         timer(NULL)
         { };

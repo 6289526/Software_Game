@@ -137,7 +137,7 @@ int main(int argc, char *argv[])
                 PutBlock(i);
             }
             catch (const char* const e) {
-                fprintf(stderr, e);
+                fprintf(stderr, "%s", e);
             }
         }
 

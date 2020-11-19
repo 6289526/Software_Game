@@ -8,8 +8,7 @@
 #else
 #define FONT_PATH "../fonts/PixelMplus12-Regular.ttf"
 #endif
-
-#define MAX_STRING 255
+#define MAX_STRING 128
 #define MESSAGE_NUM 5
 const int SCREEN_WIDTH = 1237;
 const int SCREEN_HEIGHT = 696;
@@ -28,7 +27,7 @@ static InputData Data;
 // WIIリモコンを見つけられたか
 static int GetResult;
 // メッセージ
-static char *Text[MESSAGE_NUM] = {
+static char Text[MESSAGE_NUM][MAX_STRING] = {
     {"If you want to use Wiilimocon,"},
     {"please push 1 and 2."},
     {"If you want to use Keyboard,"},
@@ -157,7 +156,7 @@ int ControlSetUp()
         /*くるくるするやつを描画*/
         for (int i = 0; i < 3; i++)
         {
-            
+
             //TTF_SetFontOutline(font, 1);//枠抜きで描写するとき
             surface = TTF_RenderUTF8_Blended(font, Text[4], (SDL_Color){255, 255, 255, 255});
             //surfaceからTextureを作る
@@ -168,7 +167,7 @@ int ControlSetUp()
             SDL_QueryTexture(texture, NULL, NULL, &iw, &ih);
 
             SDL_Rect txtRect = (SDL_Rect){0, 0, iw, ih};
-            SDL_Rect pasteRect = (SDL_Rect){SCREEN_WIDTH / 2 + 100 * sin(angle[i] * M_PI / 180.0), SCREEN_HEIGHT * 2 / 3 - 100 * cos(angle[i] * M_PI / 180.0), iw, ih};
+            SDL_Rect pasteRect = (SDL_Rect){(int)(SCREEN_WIDTH / 2 + 100 * sin(angle[i] * M_PI / 180.0)), (int)(SCREEN_HEIGHT * 2 / 3 - 100 * cos(angle[i] * M_PI / 180.0)), iw, ih};
 
             //Textureを描写する
             //描写元の描写する部分,描写先の描写する部分)
