@@ -519,7 +519,7 @@ void PutBlock(int chara_ID) // ブロックを置けるなら置く
     // データ書き換え
     PlData.object = NonBlock;
     // ブロックを置くクライアントのみに送信
-    RunCommand(chara_ID, DO_NOT_PUT_COMMAND);
+    RunCommand(chara_ID, PUT_COMMAND);
   }
 }
 
