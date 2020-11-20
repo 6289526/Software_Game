@@ -8,6 +8,8 @@ FloatPosition lookatCenter = {5.0f, 0.0f, 5.0f};
 FloatPosition lookatUp = {0.0f, 1.0f, 0.0f};
 const double PI = 3.141592;
 
+GLuint BlockTexture[BLOCK_TYPE_NUM];
+
 //SDL2関連
 
 SDL_Window *window = NULL;
@@ -15,14 +17,15 @@ SDL_GLContext context = NULL;
 
 //内部関数
 bool InitOpenGL();
+void SetBlockTexture();
 void View2D();
 void View3D();
 void Disp2D();
 void Disp3D();
 void DrawMap(); //マップ描画
 void DrawCharacter();//キャラクター描画
-void Cube(FloatCube cube, SDL_Color color);
-void RotateCube(FloatCube cube, double dir, SDL_Color color);
+void Cube(FloatCube cube, SDL_Color *color);
+void RotateCube(FloatCube cube, double dir, SDL_Color *color);
 
 
 /*public*/
@@ -46,6 +49,7 @@ void InitGraphic(){
 	context = SDL_GL_CreateContext(window);
 
     InitOpenGL();
+    SetBlockTexture();
 }
 
 //画面描画
@@ -87,6 +91,37 @@ bool InitOpenGL() {
 	return true;
 }
 
+void SetBlockTexture(){
+    #ifdef DEBUG
+    char fileName[BLOCK_TYPE_NUM][20] = {"../data/cat.bmp"};
+    #else
+    char fileName[BLOCK_TYPE_NUM][20] = {"../../data/cat.bmp"};
+    #endif
+    
+    for(int i = 0; i < BLOCK_TYPE_NUM; i++){
+        SDL_Surface *img = IMG_Load(fileName[i]);
+        if(!img){
+            //エラー処理
+            fprintf(stderr,"image file \"%s\" cannot loaded",fileName[i]);
+        }else{
+            glGenTextures(1,&(BlockTexture[i]));
+            glBindTexture(GL_TEXTURE_2D,BlockTexture[i]);
+            int Mode = GL_RGB;
+            if(img->format->BytesPerPixel == 4){
+                Mode = GL_RGBA;
+            }
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+            
+            glTexImage2D(GL_TEXTURE_2D, 0, img->format->BytesPerPixel, img->w, img->h, 0, Mode, GL_UNSIGNED_BYTE, img->pixels);
+            SDL_FreeSurface(img);
+            
+        }
+    }
+}
+
 //2D描画用設定
 void View2D() {
     glDisable(GL_DEPTH_TEST); //Depthバッファ無効
@@ -124,6 +159,7 @@ void View3D() {
     glPopMatrix();// モデルビュー行列を復元
     glPushMatrix();// 現在のモデルビュー行列を保存
     glLoadIdentity();// 単位行列を設定
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
     glOrtho(0.0, 640, 420, 0.0, 0.0, 0.0);
 	glEnable(GL_LIGHTING);
@@ -174,12 +210,13 @@ void DrawMap(){
     //3次元配列データ使用時
     for(int width = 0; width < map_w; width++){
         for(int depth = 0; depth < map_d; depth++){
-            for(int hight = 0; terrainData[width][hight][depth] == 1; hight++){
+            for(int hight = 0; (terrainData[width][hight][depth] >= 1 || terrainData[width][hight][depth] == -1); hight++){
                 mcube = {
                     width * MAP_MAGNIFICATION, hight * MAP_MAGNIFICATION, depth * MAP_MAGNIFICATION,
                     MAP_MAGNIFICATION, MAP_MAGNIFICATION, MAP_MAGNIFICATION
                 };
-                Cube(mcube,mapColor);
+                if(terrainData[width][hight][depth] >= 1) Cube(mcube,&mapColor);
+                else Cube(mcube,NULL);
             }
         }
     }
@@ -231,79 +268,113 @@ void DrawCharacter(){
         else {
             fprintf(stderr, "色足らん\n");
         }
-        RotateCube(ccube,playerData[i].direction, playercolor);
+        RotateCube(ccube,playerData[i].direction, &playercolor);
     }
 }
 
 //FloatCubeの描画
-void Cube(FloatCube cube, SDL_Color color){
+void Cube(FloatCube cube, SDL_Color *color){
     //printf("(%f, %f, %f, %f, %f, %f)\n",cube.x, cube.y, cube.z, cube.w, cube.h, cube.d);
 
     // マテリアルを設定する
+    GLfloat diffuse[] = {1,1,1,1};
+    if(color != NULL){
+        diffuse[0] = color->r / 255.0f;
+        diffuse[1] = color->g / 255.0f;
+        diffuse[2] = color->b / 255.0f;
+        diffuse[3] = color->a / 255.0f;
+    }else{
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D,BlockTexture[0]);
+    }
+
+
     GLfloat ambient  [] = { 0.1f, 0.1f, 0.1f, 1.0f};
-    GLfloat diffuse  [] = { color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f};
     GLfloat specular [] = { 1.0f, 1.0f, 1.0f, 1.0f};
     GLfloat shininess[] = { 0.0f};
     glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse);
     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient);
     glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
     glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
-    glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+    glPolygonMode(GL_FRONT,GL_FILL);
+
+    FloatPosition base[4] = {
+        {cube.x,cube.y,cube.z},
+        {cube.x + cube.w,cube.y,cube.z},
+        {cube.x + cube.w,cube.y,cube.z+cube.d},
+        {cube.x,cube.y,cube.z+cube.d}
+    };
+    FloatPosition top[4];
+
+    for(int i = 0; i < 4; i++){
+        top[i] = base[i];
+        top[i].y += cube.h;
+    }
 
     // 立方体を描画する
     glBegin(GL_QUADS);
         //手前
         glNormal3f(0.0,0.0,-1.0);
-        glVertex3f(cube.x, cube.y, cube.z);
-        glVertex3f(cube.x + cube.w, cube.y, cube.z);
-        glVertex3f(cube.x + cube.w, cube.y + cube.h, cube.z);
-        glVertex3f(cube.x, cube.y + cube.h, cube.z);
+        glTexCoord2f(1.0, 1.0);glVertex3f(base[0].x, base[0].y, base[0].z);
+        glTexCoord2f(1.0, 0.0);glVertex3f(top[0].x,top[0].y,top[0].z);
+        glTexCoord2f(0.0, 0.0);glVertex3f(top[1].x,top[1].y,top[1].z);
+        glTexCoord2f(0.0, 1.0);glVertex3f(base[1].x, base[1].y, base[1].z);
         //左
         glNormal3f(-1.0,0.0,0.0);
-        glVertex3f(cube.x, cube.y + cube.h, cube.z);
-        glVertex3f(cube.x, cube.y + cube.h, cube.z + cube.d);
-        glVertex3f(cube.x, cube.y, cube.z + cube.d);
-        glVertex3f(cube.x, cube.y, cube.z);
+        glTexCoord2f(1.0, 1.0);glVertex3f(base[1].x, base[1].y, base[1].z);
+        glTexCoord2f(1.0, 0.0);glVertex3f(top[1].x,top[1].y,top[1].z);
+        glTexCoord2f(0.0, 0.0);glVertex3f(top[2].x,top[2].y,top[2].z);
+        glTexCoord2f(0.0, 1.0);glVertex3f(base[2].x, base[2].y, base[2].z);
         //下
         glNormal3f(0.0,-1.0,0.0);
-        glVertex3f(cube.x, cube.y, cube.z);
-        glVertex3f(cube.x + cube.w, cube.y, cube.z);
-        glVertex3f(cube.x + cube.w, cube.y, cube.z + cube.d);
-        glVertex3f(cube.x, cube.y, cube.z + cube.d);
+        glTexCoord2f(1.0, 0.0);glVertex3f(base[0].x, base[0].y, base[0].z);
+        glTexCoord2f(0.0, 0.0);glVertex3f(base[1].x, base[1].y, base[1].z);
+        glTexCoord2f(0.0, 1.0);glVertex3f(base[2].x, base[2].y, base[2].z);
+        glTexCoord2f(1.0, 1.0);glVertex3f(base[3].x, base[3].y, base[3].z);
         //奥
         glNormal3f(0.0,0.0,1.0);
-        glVertex3f(cube.x, cube.y, cube.z + cube.d);
-        glVertex3f(cube.x + cube.w, cube.y, cube.z + cube.d);
-        glVertex3f(cube.x + cube.w, cube.y + cube.h, cube.z + cube.d);
-        glVertex3f(cube.x, cube.y + cube.h, cube.z + cube.d);
+        glTexCoord2f(1.0, 1.0);glVertex3f(base[2].x, base[2].y, base[2].z);
+        glTexCoord2f(1.0, 0.0);glVertex3f(top[2].x,top[2].y,top[2].z);
+        glTexCoord2f(0.0, 0.0);glVertex3f(top[3].x,top[3].y,top[3].z);
+        glTexCoord2f(0.0, 1.0);glVertex3f(base[3].x, base[3].y, base[3].z);
         //上
         glNormal3f(0.0,1.0,0.0);
-        glVertex3f(cube.x + cube.w, cube.y + cube.h, cube.z + cube.d);
-        glVertex3f(cube.x, cube.y + cube.h, cube.z + cube.d);
-        glVertex3f(cube.x, cube.y + cube.h, cube.z);
-        glVertex3f(cube.x + cube.w, cube.y + cube.h, cube.z);
+        glTexCoord2f(1.0, 1.0);glVertex3f(top[0].x,top[0].y,top[0].z);
+        glTexCoord2f(0.0, 1.0);glVertex3f(top[1].x,top[1].y,top[1].z);
+        glTexCoord2f(0.0, 0.0);glVertex3f(top[2].x,top[2].y,top[2].z);
+        glTexCoord2f(1.0, 0.0);glVertex3f(top[3].x,top[3].y,top[3].z);
         //右
         glNormal3f(1.0,0.0,0.0);
-        glVertex3f(cube.x + cube.w, cube.y + cube.h, cube.z);
-        glVertex3f(cube.x + cube.w, cube.y, cube.z);
-        glVertex3f(cube.x + cube.w, cube.y, cube.z + cube.d);
-        glVertex3f(cube.x + cube.w, cube.y + cube.h, cube.z + cube.d);
+        glTexCoord2f(0.0, 1.0);glVertex3f(base[0].x, base[0].y, base[0].z);
+        glTexCoord2f(0.0, 0.0);glVertex3f(top[0].x,top[0].y,top[0].z);
+        glTexCoord2f(1.0, 0.0);glVertex3f(top[3].x,top[3].y,top[3].z);
+        glTexCoord2f(1.0, 1.0);glVertex3f(base[3].x, base[3].y, base[3].z);
     glEnd();
+    
+    glDisable(GL_TEXTURE_2D);
 }
 
 
 
-void RotateCube(FloatCube cube, double dir, SDL_Color color){
+void RotateCube(FloatCube cube, double dir, SDL_Color *color){
+
     // マテリアルを設定する
+    GLfloat diffuse[] = {1,1,1,1};
+    if(color != NULL){
+        diffuse[0] = color->r / 255.0f;
+        diffuse[1] = color->g / 255.0f;
+        diffuse[2] = color->b / 255.0f;
+        diffuse[3] = color->a / 255.0f;
+    }
+
     GLfloat ambient  [] = { 0.1f, 0.1f, 0.1f, 1.0f};
-    GLfloat diffuse  [] = { color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f};
     GLfloat specular [] = { 1.0f, 1.0f, 1.0f, 1.0f};
     GLfloat shininess[] = { 0.0f};
     glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse);
     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient);
     glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
     glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
-    glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+    glPolygonMode(GL_FRONT,GL_FILL);
 
     //座標変換
     FloatPosition defbase[4] = {

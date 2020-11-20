@@ -2,8 +2,9 @@
 #include "graphic.h"
 #include <string.h>
 
-#define PLAYER_MOVE_SPEED 20
+#define PLAYER_MOVE_SPEED 40
 #define PLAYER_ROTATE_SPEED 4
+#define PLAYER_JUMP_POWER 2
 
 #define GRAVITY 9.8 * 0.5		// * 3
 #define TERMINAL_SPEED PLAYER_Y // 終端速度
@@ -21,20 +22,23 @@ Timer *Time;			// FrameTimer
 
 // ===== * ===== プロトタイプ宣言 ===== * ===== //
 const PlayerData *GetPlayerData();
-int GetMyID();
-void SetMyID(int id);
-bool InitSystem(InitData *data);
-void ExitSystem(InitData *data);
+extern int GetMyID();
+extern void SetMyID(int id);
+extern bool InitSystem(InitData *data);
+extern void ExitSystem(InitData *data);
 void SetNumClients(int n);
 void SetClientName(int id, char *name);
 void InitPlayerData();
-void SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients);
-PlaceData GetPlaceData();
-void SystemRun();
-void UpdateFlag(VelocityFlag *flags, int numClients);
-void UpdatePlaceData(PlaceData data);
+extern void SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients);
+extern PlaceData GetPlaceData();
+extern void SystemRun();
+extern void UpdateFlag(VelocityFlag *flags, int numClients);
+extern void UpdatePlaceData(PlaceData data);
 bool IsPlayerOnGround();
 int clamp(const int __val, const int __lo, const int __hi);
+int BuryCheck_Under(const int id, const int y, const int accuracy,
+					int block_X, int block_Y, int block_Z,
+					const float *point_X, const float *point_Z);
 // int GraphicThread(void *data); // This Function isn't used now.
 int InputThread(void *data);
 
@@ -169,7 +173,15 @@ PlaceData GetPlaceData()
 void SystemRun()
 {
 	InputType data = Input->SystemGetInputType();
-	bool isOnGround = IsPlayerOnGround();
+	bool isOnGround;
+	try
+	{
+		isOnGround = IsPlayerOnGround();
+	}
+	catch(char const* e) // エラー処理
+	{
+		fprintf(stderr,"%s", e);
+	}
 	PData[MyId].velocity.x = 0;
 	if (data.Jump || data.Put)
 		fprintf(stderr, "%d %d %d\n", data.Forward, data.Jump, data.Put);
@@ -209,7 +221,7 @@ void SystemRun()
 		if (data.Jump && isOnGround == 1)
 		{
 			data.Jump = false;
-			PData[MyId].velocity.y += 5;
+			PData[MyId].velocity.y += PLAYER_JUMP_POWER;
 		}
 		else if (!isOnGround)
 		{
@@ -289,12 +301,20 @@ void UpdatePlaceData(PlaceData data)
 bool IsPlayerOnGround()
 {
 	int id = GetMyID();
-	int accuracy = 2;
-	int point_X[2], point_Z[2];
+	int accuracy = 3;
+	float point_X[accuracy], point_Z[accuracy]; // 調べる座標
 	int y = 0;
 
-	const int wide = PData[id].pos.w / (accuracy - 1);	// 当たり判定を知らべる座標間距離 x座標
-	const int depth = PData[id].pos.d / (accuracy - 1); // 当たり判定を知らべる座標間距離 z座標
+	// 当たり判定の精度が正しいかどうか
+	if (accuracy < 3 || PLAYER_D < accuracy || PLAYER_W < accuracy)
+	{
+		throw "Collision_CB_Under : 引数　エラー\n";
+	}
+
+	const int wide = PData[id].pos.w /
+					(accuracy - 1); // 当たり判定を知らべる座標間距離 x座標
+	const int depth = PData[id].pos.d /
+						(accuracy - 1); // 当たり判定を知らべる座標間距離 z座標
 
 	// 当たり判定を調べる座標をすべて格納
 	for (int i = 0; i < accuracy; ++i)
@@ -306,52 +326,137 @@ bool IsPlayerOnGround()
 	// マップデータ入手
 	const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
 
-	// 返り値用変数を宣言，初期化
-	// ゴールブロックが１個でも接触すればゴールブロックが返る
-	// ノーマルブロックが１個でも接触すればノーマルブロックが返る
-	BlockType result = NonBlock;
+	// マップ配列用添字　の宣言　と　範囲のエラー処理
+	int Block_X = point_X[accuracy - 1] / MAP_MAGNIFICATION;
 
-	// マップ配列の添え字用変数を宣言，初期化
-	int Block_X = 0;
-	int t_Block_Y = (PData[id].pos.y + PData[id].velocity.y + y);
-	int Block_Y = (PData[id].pos.y + PData[id].velocity.y + y) / MAP_MAGNIFICATION;
-	Block_Y = clamp(Block_Y, 0, MAP_SIZE_H - 1);
-	int Block_Z = 0;
-
-	for (int i = 0; i < accuracy; ++i)
+	if (point_X[0] < 0)
 	{
-		Block_X = point_X[i] / MAP_MAGNIFICATION;
-		Block_X = clamp(Block_X, 0, MAP_SIZE_H - 1);
-
-		for (int j = 0; j < accuracy; ++j)
-		{
-			Block_Z = point_Z[j] / MAP_MAGNIFICATION;
-			Block_Z = clamp(Block_Z, 0, MAP_SIZE_D - 1);
-
-			switch (terrainData[Block_X][Block_Y][Block_Z])
-			{
-			case GoalBlock:
-				result = GoalBlock;
-				break;
-			case NomalBlock:
-				if (result == NonBlock)
-				{
-					result = NomalBlock;
-				}
-				break;
-			case NonBlock:
-				break;
-			default:
-				throw "マップデータ : エラー\n";
-			}
-		}
+		throw "マップ外 : x座標 :負\n";
 	}
-	return result != NonBlock;
+	else if (MAP_SIZE_W <= Block_X)
+	{
+		throw "マップ外 : x座標 : 正\n";
+	}
+
+	const float t_Block_Y =
+		(PData[id].pos.y + PData[id].velocity.y + y);
+	int Block_Y = t_Block_Y / MAP_MAGNIFICATION;
+
+	if (t_Block_Y < 0)
+	{
+		throw "マップ外 : y座標 : 負\n";
+	}
+	else if (MAP_SIZE_H <= Block_Y)
+	{
+		throw "マップ外 : y座標 : 正\n";
+	}
+
+	int Block_Z = point_Z[accuracy - 1] / MAP_MAGNIFICATION;
+
+	if (point_Z[0] < 0)
+	{
+		throw "マップ外 : z座標 :負\n";
+	}
+	else if (MAP_SIZE_W <= Block_Z)
+	{
+		throw "マップ外 : z座標 : 正\n";
+	}
+
+	int Count_Under =
+		BuryCheck_Under(id, 0, accuracy, Block_X, Block_Y, Block_Z, point_X, point_Z);
+
+	if (Count_Under == -1)
+	{
+		throw "Collision_CB_Under : ブロックに埋まってる\n";
+		// fprintf(stderr, "Collision_CB_Under : ブロックに埋まってる\n");
+	}
+
+	if (0 < Count_Under)
+	{
+		return true; // やや埋まっている or ピッタリ
+	}
+
+	return false;
 }
 
 int clamp(const int __val, const int __lo, const int __hi)
 {
 	return (__val < __lo) ? __lo : (__hi < __val) ? __hi : __val;
+}
+
+// 埋まっているピクセルが返る
+int BuryCheck_Under(const int id, const int y, const int accuracy,
+						   int block_X, int block_Y, int block_Z,
+						   const float *point_X, const float *point_Z)
+{
+	int chara_size;   // キャラの大きさ
+	float base_point; // 計算に使う基準座標
+	enum PN_sign
+	{
+		positive = 1,
+		negative = -1
+	} PN_flag; // 正負を扱う
+
+	chara_size = PData[id].pos.h;
+	// なぜかvelocityを足さないとグラフィクがぶれる
+	// 偉い人計算してください
+	base_point = PData[id].pos.y + PData[id].velocity.y + y;
+	PN_flag = positive;
+
+	// マップデータ入手
+	const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
+
+	int Bury_Count = 0; // 返り値　埋まり具合
+	int Error_Count = 0;
+
+	for (int i = 1; i < (accuracy - 1); ++i)
+	{
+		block_X = point_X[i] / MAP_MAGNIFICATION;
+		for (int j = 1; j < (accuracy - 1); ++j)
+		{
+			block_Z = point_Z[i] / MAP_MAGNIFICATION;
+			if (terrainData[block_X][static_cast<int>(base_point / MAP_MAGNIFICATION)]
+							[block_Z] == NomalBlock)
+			{
+				int t_Count = 0;
+				// どこまで埋まっているか調べる
+				for (int k = 0; k <= chara_size - y; ++k)
+				{
+					block_Y = (base_point + (k * PN_flag)) / MAP_MAGNIFICATION;
+
+					if (terrainData[block_X][block_Y][block_Z] == NomalBlock)
+					{
+						// その点の埋まっている程度をカウント
+						++t_Count;
+						// 埋まっている(かもしれない)
+						if (chara_size <= k)
+						{
+						++Error_Count;
+						t_Count = 0;
+						}
+					}
+					// 埋まっていなければ抜ける
+					else
+					{
+						break;
+					}
+				}
+				// 最も埋まっている部分の埋まっている程度にする
+				if (std::max(t_Count, Bury_Count) == t_Count)
+				{
+					Bury_Count = t_Count;
+				}
+			}
+		}
+	}
+
+	// 全体が埋まっていたら
+	if (Error_Count == ((accuracy - 2) * (accuracy - 2)))
+	{
+		return -1;
+	}
+
+	return Bury_Count; // 埋まっているピクセルが返る
 }
 
 // ===== * ===== マルチスレッド ===== * ===== //
