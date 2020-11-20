@@ -11,7 +11,7 @@ InputType InputModuleBase::GetInputType(){
     return _Input;
 }
 
-// SystemRun内で呼ばれる専用の入力情報を返す
+// SystemRun内で呼ばれる。専用の処理を行い、入力情報を返す。
 // SystemRun以外で呼び出さないこと!!
 InputType InputModuleBase::SystemGetInputType(){
     // すでに置いたなら置かせない
