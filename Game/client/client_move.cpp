@@ -1,8 +1,10 @@
 #include "client_common.h"
 #include "math.h"
+#include "client_move.h"
 
 #define PI 3.14159265358979323846
 
+// ===== * ===== プロトタイプ宣言 ===== * ===== //
 float DegreeToRadian(float degree){ return degree * PI / 180.0; }
 float RadianToDegree(float radian){ return radian * 180.0 / PI; }
 
@@ -29,7 +31,7 @@ PlaceData BuildPlaceData(PlayerData playerData, float handLength){
 *   Vector3: 向きベクトル
 *   float:   Additional Angle (base value is 0)
 */
-Vector3 GetMoveDirection(PlayerData player, float angle = 0.0f){
+Vector3 GetMoveDirection(PlayerData player, float angle){
     Vector3 result;
     result.z = cos(player.direction + DegreeToRadian(angle));    
     result.x = sin(player.direction + DegreeToRadian(angle));
