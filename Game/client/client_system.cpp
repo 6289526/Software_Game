@@ -383,9 +383,9 @@ int clamp(const int __val, const int __lo, const int __hi)
 }
 
 // 埋まっているピクセルが返る
-static int BuryCheck_Under(const int id, const int y, const int accuracy,
-						   int block_X, int block_Y, int block_Z,
-						   const float *point_X, const float *point_Z)
+int BuryCheck_Under(const int id, const int y, const int accuracy,
+					int block_X, int block_Y, int block_Z,
+					const float *point_X, const float *point_Z)
 {
 	int chara_size;   // キャラの大きさ
 	float base_point; // 計算に使う基準座標
