@@ -5,6 +5,7 @@
 #define PLAYER_MOVE_SPEED 40
 #define PLAYER_ROTATE_SPEED 4
 #define PLAYER_JUMP_POWER 2
+#define PLAYER_HAND_LENGTH 3
 
 #define GRAVITY 9.8 * 0.5// * 3
 #define TERMINAL_SPEED PLAYER_Y // 終端速度

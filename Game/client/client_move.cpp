@@ -12,15 +12,14 @@ float RadianToDegree(float radian){ return radian * 180.0 / PI; }
 * 返り値
 *   PlaceData: 設置するブロックのデータ
 */
-PlaceData BuildPlaceData(PlayerData player){
-    PlaceData data;
-    float handLength = 3.0f;
+PlaceData BuildPlaceData(PlayerData playerData, float handLength){
+    PlaceData result;
 
-    data.object = BlockType::NomalBlock;
-    data.pos.x = player.pos.x / MAP_MAGNIFICATION + sin(player.direction) * handLength;
-    data.pos.z = player.pos.z / MAP_MAGNIFICATION + cos(player.direction) * handLength;
+    result.object = BlockType::NomalBlock;
+    result.pos.x = playerData.pos.x / MAP_MAGNIFICATION + sin(playerData.direction) * handLength;
+    result.pos.z = playerData.pos.z / MAP_MAGNIFICATION + cos(playerData.direction) * handLength;
 
-    return data;
+    return result;
 }
 
 /*プレイヤーの移動向きを返す
