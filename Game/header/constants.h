@@ -55,6 +55,16 @@ typedef struct
 } FloatPosition;
 typedef FloatPosition Vector3;
 
+typedef struct {
+	int x;	// x座標
+	int y;	// y座標
+} Vector2Int;
+
+typedef struct {
+	float x;// x座標
+	float y;// y座標
+} Vector2;
+
 enum {
 	NO_ZERO = 1,
 	ZERO = 0

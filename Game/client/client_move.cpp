@@ -20,6 +20,8 @@ PlaceData BuildPlaceData(PlayerData playerData, float handLength){
     result.object = BlockType::NomalBlock;
     result.pos.x = playerData.pos.x / MAP_MAGNIFICATION + sin(playerData.direction) * handLength;
     result.pos.z = playerData.pos.z / MAP_MAGNIFICATION + cos(playerData.direction) * handLength;
+    Vector2Int v2 = {result.pos.x, result.pos.z};
+    result.pos.y = GetPutableBlockHeightFromMap(v2);
 
     return result;
 }
@@ -37,4 +39,19 @@ Vector3 GetMoveDirection(PlayerData player, float angle){
     result.x = sin(player.direction + DegreeToRadian(angle));
     result.y = 0;
     return result;
+}
+
+int GetPutableBlockHeightFromMap(Vector2Int pos){ 
+    const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
+
+    for (int height = 0; height < MAP_SIZE_H; height++)
+    {
+        if (terrainData[pos.x][height][pos.y] == BlockType::NonBlock)
+        {
+            return height;
+        }
+    }
+
+    fprintf(stderr, "(%d, %d)はすべてブロックで埋まっています\n", pos.x, pos.y);
+    return MAP_SIZE_H;
 }
