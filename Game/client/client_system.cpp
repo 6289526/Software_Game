@@ -6,7 +6,7 @@
 #define PLAYER_MOVE_SPEED 40	// 移動速度
 #define PLAYER_ROTATE_SPEED 4	// 回転速度
 #define PLAYER_JUMP_POWER 2		// ジャンプ力
-#define PLAYER_HAND_LENGTH 3	// 手の長さ(ブロックの設置先までの距離)
+#define PLAYER_HAND_LENGTH 3.0f	// 手の長さ(ブロックの設置先までの距離)
 
 #define GRAVITY 9.8 * 0.5		// 重力
 #define TERMINAL_SPEED PLAYER_Y // 終端速度
@@ -162,9 +162,9 @@ void SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients)
 */
 PlaceData GetPlaceData()
 {
-	PlaceData data;
-	data.object = NomalBlock;
-	data.pos = {(int)PData[GetMyID()].pos.x, (int)PData[GetMyID()].pos.y, (int)PData[GetMyID()].pos.z};
+	PlaceData data = BuildPlaceData(PData[GetMyID()], PLAYER_HAND_LENGTH);
+	// data.object = NomalBlock;
+	// data.pos = {(int)PData[GetMyID()].pos.x, (int)PData[GetMyID()].pos.y, (int)PData[GetMyID()].pos.z};
 	return data;
 }
 
