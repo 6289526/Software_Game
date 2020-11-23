@@ -1,12 +1,14 @@
 #include "client_common.h"
 #include "graphic.h"
+#include "client_move.h"
 #include <string.h>
 
-#define PLAYER_MOVE_SPEED 40
-#define PLAYER_ROTATE_SPEED 4
-#define PLAYER_JUMP_POWER 2
+#define PLAYER_MOVE_SPEED 40	// 移動速度
+#define PLAYER_ROTATE_SPEED 4	// 回転速度
+#define PLAYER_JUMP_POWER 2		// ジャンプ力
+#define PLAYER_HAND_LENGTH 40.0f	// 手の長さ(ブロックの設置先までの距離)
 
-#define GRAVITY 9.8 * 0.5		// * 3
+#define GRAVITY 9.8 * 0.5		// 重力
 #define TERMINAL_SPEED PLAYER_Y // 終端速度
 
 static int MyId;   // クライアントのID
@@ -163,9 +165,13 @@ void SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients)
 */
 PlaceData GetPlaceData()
 {
-	PlaceData data;
-	data.object = NomalBlock;
-	data.pos = {(int)PData[GetMyID()].pos.x, (int)PData[GetMyID()].pos.y, (int)PData[GetMyID()].pos.z+30};
+
+	PlaceData data = BuildPlaceData(PData[GetMyID()], PLAYER_HAND_LENGTH);
+	// data.object = NomalBlock;
+	// data.pos = {(int)PData[GetMyID()].pos.x, (int)PData[GetMyID()].pos.y, (int)PData[GetMyID()].pos.z};
+	
+	fprintf(stderr, "(%d, %d, %d)の位置にブロック設置を要求します\n", data.pos.x, data.pos.y, data.pos.z);
+
 	return data;
 }
 
@@ -414,8 +420,8 @@ int clamp(const int __val, const int __lo, const int __hi)
 
 // 埋まっているピクセルが返る
 int BuryCheck_Under(const int id, const int y, const int accuracy,
-							int block_X, int block_Y, int block_Z,
-							const float *point_X, const float *point_Z)
+					int block_X, int block_Y, int block_Z,
+					const float *point_X, const float *point_Z)
 {
 	int chara_size;   // キャラの大きさ
 	float base_point; // 計算に使う基準座標

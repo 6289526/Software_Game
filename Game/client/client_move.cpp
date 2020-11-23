@@ -1,8 +1,10 @@
 #include "client_common.h"
 #include "math.h"
+#include "client_move.h"
 
 #define PI 3.14159265358979323846
 
+// ===== * ===== プロトタイプ宣言 ===== * ===== //
 float DegreeToRadian(float degree){ return degree * PI / 180.0; }
 float RadianToDegree(float radian){ return radian * 180.0 / PI; }
 
@@ -12,15 +14,16 @@ float RadianToDegree(float radian){ return radian * 180.0 / PI; }
 * 返り値
 *   PlaceData: 設置するブロックのデータ
 */
-PlaceData BuildPlaceData(PlayerData player){
-    PlaceData data;
-    float handLength = 3.0f;
+PlaceData BuildPlaceData(PlayerData playerData, float handLength){
+    PlaceData result;
 
-    data.object = BlockType::NomalBlock;
-    data.pos.x = player.pos.x / MAP_MAGNIFICATION + sin(player.direction) * handLength;
-    data.pos.z = player.pos.z / MAP_MAGNIFICATION + cos(player.direction) * handLength;
+    result.object = BlockType::NomalBlock;
+    result.pos.x = playerData.pos.x / MAP_MAGNIFICATION + sin(playerData.direction) * handLength;
+    result.pos.z = playerData.pos.z / MAP_MAGNIFICATION + cos(playerData.direction) * handLength;
+    Vector2Int v2 = {result.pos.x, result.pos.z};
+    result.pos.y = GetPutableBlockHeightFromMap(v2);
 
-    return data;
+    return result;
 }
 
 /*プレイヤーの移動向きを返す
@@ -30,10 +33,25 @@ PlaceData BuildPlaceData(PlayerData player){
 *   Vector3: 向きベクトル
 *   float:   Additional Angle (base value is 0)
 */
-Vector3 GetMoveDirection(PlayerData player, float angle = 0.0f){
+Vector3 GetMoveDirection(PlayerData player, float angle){
     Vector3 result;
     result.z = cos(player.direction + DegreeToRadian(angle));    
     result.x = sin(player.direction + DegreeToRadian(angle));
     result.y = 0;
     return result;
+}
+
+int GetPutableBlockHeightFromMap(Vector2Int pos){ 
+    const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
+
+    for (int height = 0; height < MAP_SIZE_H; height++)
+    {
+        if (terrainData[pos.x][height][pos.y] == BlockType::NonBlock)
+        {
+            return height;
+        }
+    }
+
+    fprintf(stderr, "(%d, %d)はすべてブロックで埋まっています\n", pos.x, pos.y);
+    return MAP_SIZE_H;
 }
