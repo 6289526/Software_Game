@@ -45,6 +45,6 @@ class MapData{
         //     _ObjectDatas.push_back(*objectData);
         // }
         void SetObjectData(PlaceData *objectData){
-            _TerrainData[objectData->pos.x][objectData->pos.y][objectData->pos.z] = objectData->object;
+            _TerrainData[objectData->pos.x / MAP_MAGNIFICATION][objectData->pos.y / MAP_MAGNIFICATION][objectData->pos.z / MAP_MAGNIFICATION] = objectData->object;
         }
 };
