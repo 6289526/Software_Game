@@ -200,7 +200,7 @@ static int BuryCheck_Under(const int chara_ID, const int y, const int accuracy,
           Goal(chara_ID);
           fprintf(stderr, "hogehoge\n");
         }
-      }  
+      }
     }
   }
 
@@ -216,7 +216,7 @@ Collision Collision_CB_Side(const int chara_ID, const int y,
                             const int accuracy) {
   // 当たり判定の精度が正しいかどうか
   if (accuracy < 3 || PLAYER_D < accuracy || PLAYER_W < accuracy) {
-    throw "Collision_CM : 引数　エラー\n";
+    throw "Collision_CB_Side : 引数　エラー\n";
   }
 
   Pointer<float> point_X(accuracy); // 調べる座標ｘ
