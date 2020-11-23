@@ -23,7 +23,6 @@ int main(int argc, char *argv[])
 	/**SDL2関連 BEGIN******/
 	SDL_Init(SDL_INIT_EVERYTHING);
 	/**SDL2関連 END********/
-	
 
 	/**サーバー関連 BEGIN**/
 	// 参加したいサーバーのポート番号
@@ -69,6 +68,7 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 	/*クライアントの作成*/
+	InitControl(&initData);
 	// 指定されたサーバー名、ポート番号に参加するクライアントとして設定する。
 	SetupClient(server_name, port);
 	InitPlayerData(); // プレイヤーデータ初期化処理
@@ -115,12 +115,12 @@ int Select(void *args)
 // wiiリモコンのMACアドレスの取得
 // */
 // void GetWiiAddress(){
-	
+
 // 	FILE *fp;
 // 	char command[MAX_STRING];
 // 	char output[MAX_STRING];
-// 	sprintf(command, "hcitool scan"); 
-    
+// 	sprintf(command, "hcitool scan");
+
 // 	if ((fp = popen(command, "r")) == NULL) {
 // 	/*Failure*/
 // 	}

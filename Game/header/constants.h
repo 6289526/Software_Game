@@ -11,7 +11,7 @@
 
 /*----------define 開始-----------*/
 #define DEFAULT_PORT 51000 	//デフォルトのポート番号
-#define MAX_LEN_NAME 10 	//名前の最大文字数
+#define MAX_LEN_NAME 32 	//名前の最大文字数
 #define MAX_NUMCLIENTS 8	//最大参加人数
 #define MAX_LEN_BUFFER 256 	//メッセージの最大文字数
 #define MAX_LEN_ADDR 32 	//ソケットの設定のサイズ

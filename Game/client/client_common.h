@@ -55,6 +55,7 @@ extern int ControlRequests();
 extern int InCommand(char com);
 
 /* system.cpp */
+extern void InitControl(InitData *data);
 const PlayerData* GetPlayerData();
 
 extern bool InitSystem(InitData *data);
