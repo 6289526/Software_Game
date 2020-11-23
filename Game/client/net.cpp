@@ -191,7 +191,6 @@ int InCommand(char com)
     /*変数*/
     // システムモジュールからデータをもらう
     const PlayerData* pData = GetPlayerData();
-    PlaceData placeData = GetPlaceData();
     // ソケットに送るデータ達
     FloatPosition posData = {pData[MyId].velocity.x, pData[MyId].velocity.y, pData[MyId].velocity.z};
     float direction = pData[MyId].direction;
@@ -207,6 +206,8 @@ int InCommand(char com)
         SendData(&direction, sizeof(float));
         break;
     case PUT_COMMAND:
+        PlaceData placeData;
+        placeData = GetPlaceData();
         SendData(&com, sizeof(char));
         SendData(&placeData, sizeof(PlaceData));
         break;
