@@ -165,6 +165,7 @@ PlaceData GetPlaceData()
 	return data;
 }
 
+
 /*移動処理とか設置処理
 * 引数
 *   data: 入力データ

@@ -269,7 +269,7 @@ int ControlRequests()
                     ReceiveData(i, &data, sizeof(FloatPosition));
                     ReceiveData(i, &direction, sizeof(float));
 
-                    fprintf(stderr, " [%d] %10s: message = x:%6.3f   y:%6.3f   z:%6.3f   dir:%6.3f\n", i, name[i], data.x, data.y, data.z, direction);
+                    // fprintf(stderr, " [%d] %10s: message = x:%6.3f   y:%6.3f   z:%6.3f   dir:%6.3f\n", i, name[i], data.x, data.y, data.z, direction);
                     // 受け取った座標をシステムモジュールに渡す
                     SetVec(i, data);
                     SetDirection(i, direction);
@@ -398,8 +398,9 @@ void RunCommand(int id, char com)
         fprintf(stderr, "All clients goaled.\n");
         SendData(BROADCAST, &com, sizeof(com));
     case GOAL_COMMAND:
+        SendData(id, &com, sizeof(&com));
         fprintf(stderr, "clinet%d goaled!", id);
-        SendData(id, &goal, sizeof(bool));
+        // SendData(id, &goal, sizeof(bool));
         break;
     case TERMINATE_COMMAND:
         fprintf(stderr, "Terminate!");

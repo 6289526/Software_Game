@@ -264,6 +264,7 @@ int ExeCommand()
 
         if(placeData.object != NonBlock){
             fprintf(stderr, "ブロック置けた！\n");
+            
         }else{
             fprintf(stderr, "ブロックがおけなかった\n");
         }
