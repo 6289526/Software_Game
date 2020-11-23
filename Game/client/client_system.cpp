@@ -161,7 +161,7 @@ PlaceData GetPlaceData()
 {
 	PlaceData data;
 	data.object = NomalBlock;
-	data.pos = {(int)PData[GetMyID()].pos.x, (int)PData[GetMyID()].pos.y, (int)PData[GetMyID()].pos.z};
+	data.pos = {(int)PData[GetMyID()].pos.x, (int)PData[GetMyID()].pos.y, (int)PData[GetMyID()].pos.z+30};
 	return data;
 }
 
