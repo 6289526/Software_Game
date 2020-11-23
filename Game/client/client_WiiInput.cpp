@@ -22,6 +22,7 @@ void WiiInput::UpdateInput()
     if (wiimote_is_open(&_wiimote))
     {
         InputType t = _Input;
+        _Input = t;
         // _Input = t;
         // Wiiリモコンの状態を取得・更新する
         if (wiimote_update(&_wiimote) < 0)
@@ -40,7 +41,11 @@ void WiiInput::UpdateInput()
         // Bボタンが押された時
         if (_wiimote.keys.b)
         {
-            fprintf(stderr, "B\n");
+            if (_Input.Put)
+            {
+                fprintf(stderr, "B\n");
+            }
+
             _Input.Put = true;
         }
         else
