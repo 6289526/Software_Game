@@ -35,12 +35,12 @@ static char Text[MESSAGE_NUM][MAX_STRING] = {
     {"*"}};
 
 #ifdef DEBUG
-static char *ImagePath[2] = { 
+static char ImagePath[2][MAX_STRING] = { 
     {"Game.png"},
     {"TITLE.png"},
 };
 #else
-static char *ImagePath[2] = { 
+static char ImagePath[2][MAX_STRING] = { 
     {"../Game.png"},
     {"../TITLE.png"},
 };
