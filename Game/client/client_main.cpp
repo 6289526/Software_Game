@@ -13,7 +13,7 @@ int cond = 1;
 static int PrintError(const char *str);
 int Select(void *args);
 
-char WiiAddress[17];
+char WiiAddress[18];
 InputType _______Type;
 
 

@@ -317,7 +317,7 @@ int GetWiiAddress()
         return -1;
     }
     int index = 0;
-    char address[17];
+    char address[18];
     char trash1[50];
     char trash2[50];
     while (fgets(output, MAX_STRING, fp) != NULL)

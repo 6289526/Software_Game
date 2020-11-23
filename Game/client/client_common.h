@@ -24,7 +24,7 @@
 #include "client_time.hpp"
 
 extern int Num_Clients; // クライアント人数
-extern char WiiAddress[17];
+extern char WiiAddress[18];
 extern InputType _______Type;
 /* ウインドウサイズ */
 enum {
