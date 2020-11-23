@@ -24,7 +24,7 @@
 #include "client_time.hpp"
 
 extern int Num_Clients; // クライアント人数
-extern char WiiAddress[17];
+extern char WiiAddress[18];
 extern InputType _______Type;
 /* ウインドウサイズ */
 enum {
@@ -55,6 +55,7 @@ extern int ControlRequests();
 extern int InCommand(char com);
 
 /* system.cpp */
+extern void InitControl(InitData *data);
 const PlayerData* GetPlayerData();
 
 extern bool InitSystem(InitData *data);
@@ -67,6 +68,7 @@ extern void UpdateFlag(VelocityFlag* flag, int numClients);
 extern PlaceData GetPlaceData();
 extern void SystemRun();
 extern void UpdatePlaceData(PlaceData data);
+
 
 /*control_setup*/
 extern int ControlSetUp();
