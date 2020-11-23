@@ -8,11 +8,7 @@
 #define PLAYER_JUMP_POWER 2		// ジャンプ力
 #define PLAYER_HAND_LENGTH 3.0f	// 手の長さ(ブロックの設置先までの距離)
 
-<<<<<<< HEAD
 #define GRAVITY 9.8 * 0.5		// 重力
-=======
-#define GRAVITY 9.8 * 0.5		// * 3
->>>>>>> 6a51b0e7168a99bf4f974f09a4134f729618f486
 #define TERMINAL_SPEED PLAYER_Y // 終端速度
 
 static int MyId;   // クライアントのID
@@ -394,13 +390,8 @@ int clamp(const int __val, const int __lo, const int __hi)
 
 // 埋まっているピクセルが返る
 int BuryCheck_Under(const int id, const int y, const int accuracy,
-<<<<<<< HEAD
 					int block_X, int block_Y, int block_Z,
 					const float *point_X, const float *point_Z)
-=======
-							int block_X, int block_Y, int block_Z,
-							const float *point_X, const float *point_Z)
->>>>>>> 6a51b0e7168a99bf4f974f09a4134f729618f486
 {
 	int chara_size;   // キャラの大きさ
 	float base_point; // 計算に使う基準座標
