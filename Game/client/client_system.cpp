@@ -6,11 +6,10 @@
 #define PLAYER_ROTATE_SPEED 4
 #define PLAYER_JUMP_POWER 2
 
-#define GRAVITY 9.8 * 0.5// * 3
+#define GRAVITY 9.8 * 0.5		// * 3
 #define TERMINAL_SPEED PLAYER_Y // 終端速度
 
-
-static int MyId; // クライアントのID
+static int MyId;   // クライアントのID
 PlayerData *PData; // プレイヤーのデータ
 
 int Num_Clients;																			 // クライアント人数
@@ -151,7 +150,7 @@ void SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients)
 		PData[i].pos.x = moveData[i].x;
 		PData[i].pos.y = moveData[i].y;
 		PData[i].pos.z = moveData[i].z;
-		fprintf(stderr, "[%d] %10s　は %f %f %f にいます。\n", i, PData[i].name, PData[i].pos.x, PData[i].pos.y, PData[i].pos.z);
+		//fprintf(stderr, "[%d] %10s　は %f %f %f にいます。\n", i, PData[i].name, PData[i].pos.x, PData[i].pos.y, PData[i].pos.z);
 	}
 }
 
@@ -173,7 +172,7 @@ PlaceData GetPlaceData()
 */
 void SystemRun()
 {
-	InputType data = Input->GetInputType();
+	InputType data = Input->SystemGetInputType();
 	bool isOnGround;
 	try
 	{
@@ -184,7 +183,8 @@ void SystemRun()
 		fprintf(stderr,"%s", e);
 	}
 	PData[MyId].velocity.x = 0;
-
+	if (data.Jump || data.Put)
+		fprintf(stderr, "%d %d %d\n", data.Forward, data.Jump, data.Put);
 	if (isOnGround)
 		PData[MyId].velocity.y = 0;
 
@@ -248,13 +248,16 @@ void SystemRun()
 		}
 		/////////////////////////////////
 
-		if (TERMINAL_SPEED < PData[MyId].velocity.x) {
+		if (TERMINAL_SPEED < PData[MyId].velocity.x)
+		{
 			PData[MyId].velocity.x = TERMINAL_SPEED;
 		}
-		if (TERMINAL_SPEED < PData[MyId].velocity.y) {
+		if (TERMINAL_SPEED < PData[MyId].velocity.y)
+		{
 			PData[MyId].velocity.y = TERMINAL_SPEED;
 		}
-		if (TERMINAL_SPEED < PData[MyId].velocity.z) {
+		if (TERMINAL_SPEED < PData[MyId].velocity.z)
+		{
 			PData[MyId].velocity.z = TERMINAL_SPEED;
 		}
 
@@ -268,7 +271,6 @@ void SystemRun()
 		data.Put = false;
 		InCommand(PUT_COMMAND);
 	}
-
 
 	// fprintf(stderr, "time: %lf[mms] | IsGround = %d \n", Time->GetDeltaTime(), IsPlayerOnGround());
 }
@@ -383,9 +385,9 @@ int clamp(const int __val, const int __lo, const int __hi)
 }
 
 // 埋まっているピクセルが返る
-static int BuryCheck_Under(const int id, const int y, const int accuracy,
-						   int block_X, int block_Y, int block_Z,
-						   const float *point_X, const float *point_Z)
+int BuryCheck_Under(const int id, const int y, const int accuracy,
+							int block_X, int block_Y, int block_Z,
+							const float *point_X, const float *point_Z)
 {
 	int chara_size;   // キャラの大きさ
 	float base_point; // 計算に使う基準座標
@@ -474,7 +476,6 @@ int InputThread(void *data)
 		SDL_LockMutex(mtx);
 		// 入力受け付け
 		Input->UpdateInput();
-
 		/*サーバーにリクエストを送る*/
 		SDL_UnlockMutex(mtx);
 	}

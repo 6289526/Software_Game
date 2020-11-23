@@ -280,7 +280,8 @@ int ControlRequests()
                 case PUT_COMMAND:
                     ReceiveData(i, &placeData, sizeof(PlaceData));
                     SetPlaceData(placeData);
-                    for(int i = 0; i < NumClient; i++){
+                    for (int i = 0; i < NumClient; i++)
+                    {
                         PutBlock(i);
                     }
                     fprintf(stderr, " [%d] %10s: put     = x:%6.3d   y:%6.3d   z:%6.3d\n", i, name[i], placeData.pos.x, placeData.pos.y, placeData.pos.z);
@@ -383,7 +384,14 @@ void RunCommand(int id, char com)
     case PUT_COMMAND:
         //コマンド送信
         SendData(id, &com, sizeof(char));
-        fprintf(stderr, "%d put.", id);
+        if (placeData.object == NonBlock)
+        {
+            fprintf(stderr, "%d can't put\n", id);
+        }
+        else
+        {
+            fprintf(stderr, "%d put.\n", id);
+        }
         SendData(id, &placeData, sizeof(PlaceData));
         break;
     case FINISH_COMMAND:

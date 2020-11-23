@@ -92,7 +92,12 @@ bool InitOpenGL() {
 }
 
 void SetBlockTexture(){
-    char fileName[BLOCK_TYPE_NUM][10] = {"cat.bmp"};
+    #ifdef DEBUG
+    char fileName[BLOCK_TYPE_NUM][20] = {"../data/cat.bmp"};
+    #else
+    char fileName[BLOCK_TYPE_NUM][20] = {"../../data/cat.bmp"};
+    #endif
+    
     for(int i = 0; i < BLOCK_TYPE_NUM; i++){
         SDL_Surface *img = IMG_Load(fileName[i]);
         if(!img){

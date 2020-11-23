@@ -54,12 +54,14 @@ class InputModuleBase
 protected:
     InputType _Input;
     SDL_Event _Event;
+    bool _putFlag;
+    bool _jumpFlag;
 public:
     InputModuleBase();
     virtual ~InputModuleBase();
     virtual void UpdateInput() = 0;
 
     InputType GetInputType();
-
+    InputType SystemGetInputType();
     bool IsMoveButtonDown();
 };
