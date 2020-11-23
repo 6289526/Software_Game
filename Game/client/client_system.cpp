@@ -56,6 +56,19 @@ int GetMyID() { return MyId; }
 void SetMyID(int id) { MyId = id; }
 
 // ----- * ----- //
+void InitControl(InitData *data){
+	ControlSetUp();
+	if (strcmp(WiiAddress, "") == 0)
+	{
+		Input = new KeybordInput();
+	}
+	else
+	{
+		Input = new WiiInput(WiiAddress);
+	}
+
+	data->input = Input;
+}
 
 bool InitSystem(InitData *data)
 {
@@ -71,20 +84,11 @@ bool InitSystem(InitData *data)
 	SDL_DetachThread(thread);
 	*/
 	/*入力方式の選択またwiiリモコンのアドレスを取得*/
-	ControlSetUp();
+
 
 	InitGraphic(); // グラフィックの初期化
 
-	if (strcmp(WiiAddress, "") == 0)
-	{
-		Input = new KeybordInput();
-	}
-	else
-	{
-		Input = new WiiInput(WiiAddress);
-	}
 
-	data->input = Input;
 
 	SDL_Thread *inputThread;
 	SDL_mutex *input_mtx = SDL_CreateMutex(); // 相互排除
@@ -161,9 +165,10 @@ PlaceData GetPlaceData()
 {
 	PlaceData data;
 	data.object = NomalBlock;
-	data.pos = {(int)PData[GetMyID()].pos.x, (int)PData[GetMyID()].pos.y, (int)PData[GetMyID()].pos.z};
+	data.pos = {(int)PData[GetMyID()].pos.x, (int)PData[GetMyID()].pos.y, (int)PData[GetMyID()].pos.z+30};
 	return data;
 }
+
 
 /*移動処理とか設置処理
 * 引数
@@ -201,21 +206,43 @@ void SystemRun()
 		if (data.Forward)
 		{
 			data.Forward = false;
-			PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 0).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-			PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 0).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			if(strcmp(WiiAddress, "") != 0){
+				PData[MyId].velocity.x += 5*GetMoveDirection(PData[MyId], 0).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+				PData[MyId].velocity.z += 5*GetMoveDirection(PData[MyId], 0).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			}
+			else{
+				PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 0).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+				PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 0).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			}
 		}
 		// 左右
 		if (data.Left)
 		{
 			data.Left = false;
-			PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 90).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-			PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 90).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			if(strcmp(WiiAddress, "") != 0){
+				PData[MyId].velocity.x += 5*GetMoveDirection(PData[MyId], 90).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+				PData[MyId].velocity.z += 5*GetMoveDirection(PData[MyId], 90).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+				PData[MyId].direction += PLAYER_ROTATE_SPEED * Time->GetDeltaTime();
+			}
+			else
+			{
+				PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 90).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+				PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 90).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			}
 		}
+
 		else if (data.Right)
 		{
 			data.Right = false;
+			if(strcmp(WiiAddress, "") != 0){
+				PData[MyId].velocity.x += 5*GetMoveDirection(PData[MyId], 270).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+				PData[MyId].velocity.z += 5*GetMoveDirection(PData[MyId], 270).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+				PData[MyId].direction -= PLAYER_ROTATE_SPEED * Time->GetDeltaTime();
+			}
+			else{
 			PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 270).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 			PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 270).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			}
 		}
 		// ジャンプ
 		if (data.Jump && isOnGround == 1)
@@ -296,6 +323,7 @@ void UpdateFlag(VelocityFlag *flags, int numClients)
 // Updated place data from server
 void UpdatePlaceData(PlaceData data)
 {
+	Map.SetObjectData(&data);
 }
 
 bool IsPlayerOnGround()
