@@ -28,7 +28,14 @@ int main(int argc, char *argv[])
 	/**サーバー関連 BEGIN**/
 	// 参加したいサーバーのポート番号
 	u_short port = DEFAULT_PORT;
-	// 参加したいサーバーの名前
+	// 参加したいサーバーの名前if (strcmp(WiiAddress, "") == 0)
+    // {
+    //     return -1;
+    // }
+    // else
+    // {
+    //     return 1;
+    // }
 	char server_name[MAX_LEN_NAME];
 	InitData initData;
 	//multithread

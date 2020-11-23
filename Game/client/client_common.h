@@ -67,7 +67,7 @@ extern void UpdateFlag(VelocityFlag* flag, int numClients);
 extern PlaceData GetPlaceData();
 extern void SystemRun();
 extern void UpdatePlaceData(PlaceData data);
-
+// extern void SetPlaceData(PlaceData data);
 /* move */
 
 PlaceData BuildPlaceData(PlayerData player);

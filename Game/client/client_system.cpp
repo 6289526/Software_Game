@@ -297,6 +297,7 @@ void UpdateFlag(VelocityFlag *flags, int numClients)
 // Updated place data from server
 void UpdatePlaceData(PlaceData data)
 {
+	Map.SetObjectData(&data);
 }
 
 bool IsPlayerOnGround()

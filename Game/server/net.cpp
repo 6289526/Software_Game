@@ -284,7 +284,7 @@ int ControlRequests()
                     {
                         PutBlock(i);
                     }
-                    fprintf(stderr, " [%d] %10s: put     = x:%6.3d   y:%6.3d   z:%6.3d\n", i, name[i], placeData.pos.x, placeData.pos.y, placeData.pos.z);
+                    //fprintf(stderr, " [%d] %10s: put     = x:%6.3d   y:%6.3d   z:%6.3d\n", i, name[i], placeData.pos.x, placeData.pos.y, placeData.pos.z);
                     break;
                 case QUIT_COMMAND: //通信の終了を要求された場合
                     fprintf(stderr, " [%d] %10s: quit\n", i, name[i]);
@@ -392,11 +392,12 @@ void RunCommand(int id, char com)
         {
             fprintf(stderr, "%d put.\n", id);
         }
-        SendData(id, &placeData, sizeof(PlaceData));
+        SendData(BROADCAST, &placeData, sizeof(PlaceData));
         break;
     case FINISH_COMMAND:
         fprintf(stderr, "All clients goaled.\n");
         SendData(BROADCAST, &com, sizeof(com));
+        break;
     case GOAL_COMMAND:
         SendData(id, &com, sizeof(&com));
         fprintf(stderr, "clinet%d goaled!", id);
@@ -406,7 +407,7 @@ void RunCommand(int id, char com)
         fprintf(stderr, "Terminate!");
         TerminateFlag = 1;
         // コマンド送信 この時全員
-        SendData(id, &com, sizeof(com));
+        SendData(BROADCAST, &com, sizeof(com));
         break;
 
     default:
