@@ -1,4 +1,5 @@
 # createMap
+![AppImage](createMap 2020_11_24 22_34_43.png)
 
 ## 使用手順
 まずググってyarnをインストールしよう
