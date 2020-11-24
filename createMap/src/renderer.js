@@ -4,7 +4,7 @@ window.addEventListener('load', init);
 let width = 650;
 let height = 200;
 // 1辺あたりに配置するオブジェクトの個数
-let CELL_NUM_X = 21;
+let CELL_NUM_X = 20;
 let CELL_NUM_Y = 20;
 let renderer;
 let scene;
@@ -45,14 +45,14 @@ function setMap() {
     // シーンを作成こうするとsceneを更新できる
     scene = new THREE.Scene();
     // 一応更新
-    CELL_NUM_X = ArrayData[0][0] + 1;
+    CELL_NUM_X = ArrayData[0][0];
     CELL_NUM_Y = ArrayData[0][1];
     // 空のジオメトリを作成
     const geometry = new THREE.Geometry();
     // console.log("setMap");
     // Box
     // for (let i = 0; i < CELL_NUM; i++) {
-    for (let j = 1; j < CELL_NUM_X; j++) {
+    for (let j = 1; j < CELL_NUM_X+1; j++) {
         for (let k = 0; k < CELL_NUM_Y; k++) {
             // 立方体個別の要素を作成
             const sampleGeometry = new THREE.BoxGeometry(10, 10 * (ArrayData[j][k] + 1), 10);
