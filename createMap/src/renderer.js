@@ -1,8 +1,8 @@
 // ページの読み込みを待つ
 window.addEventListener('load', init);
 // サイズを指定
-let width = 960;
-let height = 540;
+let width = 650;
+let height = 200;
 // 1辺あたりに配置するオブジェクトの個数
 let CELL_NUM_X = 21;
 let CELL_NUM_Y = 20;
@@ -84,12 +84,12 @@ function tick() {
     // レンダリング
     renderer.render(scene, camera);
 
-    // レンダリング情報を画面に表示
-    document.getElementById('info').innerHTML = JSON.stringify(
-        renderer.info.render,
-        '',
-        '    '
-    );
+    // // レンダリング情報を画面に表示
+    // document.getElementById('info').innerHTML = JSON.stringify(
+    //     renderer.info.render,
+    //     '',
+    //     '    '
+    // );
 
     // フレームレートを表示
     stats.update();

@@ -19,8 +19,8 @@ let mainWindow;
 
 function createWindow() {
     mainWindow = new BrowserWindow({
-        width: 960,
-        height: 540,
+        width: 700,
+        height: 650,
         webPreferences: {
             preload: `${__dirname}/preload.js`,    // preloadを追加
             enableRemoteModule: true,               // warning対策
