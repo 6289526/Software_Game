@@ -213,24 +213,50 @@ function readFile(path) {
         // まず、行ごとに区切る
         let cutText = text.toString().split('\n');
         // console.log(cutText);
-        for (var i = 0; i < ArrayData[0][0]+1; i++) {
+
+        // 一行を区切る
+        let cutCutText = cutText[0].split(/\s+/);
+        // エディター上での縦幅
+        ArrayData[0][0] = Number(cutCutText[0]);
+        // エディター上での横幅
+        ArrayData[0][1] = Number(cutCutText[1]);
+
+        // マップデータを転写
+        for (var i = 1; i < ArrayData[0][0]+1; i++) {
             // console.log('cutText' + i + ':' + cutText[i]);
             // つぎに空白で区切る
-            let cutCutText = cutText[i].split(/\s+/);
-            // console.log('length:' + ArrayData[i].length);
-            for (let j = 0; j < ArrayData[i].length; j++) {
-                // console.log('cutText:' + cutCutText[j]);
-                // 数値に変換して代入
-                if (Number.isNaN(cutCutText[j])) {
-                    ArrayData[i][j] = -1;
-                } else if (isNaN(cutCutText[j])) {
-                    ArrayData[i][j] = -1;
-                }else{
-                    ArrayData[i][j] = Number(cutCutText[j]);
+            cutCutText = cutText[i].split(/\s+/);
+            
+            if (ArrayData.length > i) {// 配列の要素数が足りている場合
+                // console.log('length:' + ArrayData[i].length);
+                for (let j = 0; j < ArrayData[0][1]; j++) {
+                    // console.log('cutText:' + cutCutText[j]);
+                    // 数値に変換して代入
+                    if (Number.isNaN(cutCutText[j])) {
+                        ArrayData[i][j] = -1;
+                    } else if (isNaN(cutCutText[j])) {
+                        ArrayData[i][j] = -1;
+                    } else {
+                        ArrayData[i][j] = Number(cutCutText[j]);
+                    }
                 }
-
+            }
+            else {//足りない場合
+                let subArray = [];
+                // console.log('length:' + ArrayData[i].length);
+                for (let j = 0; j < ArrayData[0][1]; j++) {
+                    if (Number.isNaN(cutCutText[j])) {
+                        subArray[j] = -1;
+                    } else if (isNaN(cutCutText[j])) {
+                        subArray[j] = -1;
+                    } else {
+                        subArray[j] = Number(cutCutText[j]);
+                    }
+                }
+                ArrayData.push(subArray);
             }
         }
+
         console.log(ArrayData);
 
         // エディターに表示
