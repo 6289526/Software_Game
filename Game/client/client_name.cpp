@@ -1,0 +1,252 @@
+/*
+    キーボードかwiiリモコンかを選択でき,Wiiリモコンのアドレスを取得する
+*/
+#include "client_common.h"
+
+#ifdef DEBUG
+#define FONT_PATH "fonts/PixelMplus12-Regular.ttf"
+#else
+#define FONT_PATH "../fonts/PixelMplus12-Regular.ttf"
+#endif
+#define MAX_STRING 128
+#define MESSAGE_NUM 5
+const int SCREEN_WIDTH = 1237;
+const int SCREEN_HEIGHT = 696;
+
+typedef struct
+{
+    int finish;
+} InputData;
+
+//　SDLのキーボード入力で必要
+const Uint8 *Key;
+// フォント
+TTF_Font *font;
+//読み取ったデータ
+static InputData Data;
+
+// メッセージ
+static char Text[MESSAGE_NUM][MAX_STRING] = {
+    {"Please set your name."},
+    {"please push 1 and 2."},
+    {"If you want to use Keyboard,"},
+    {"please push K Key."},
+    {"*"}};
+
+#ifdef DEBUG
+static char ImagePath[2][MAX_STRING] = {
+    {"Game.png"},
+    {"TITLE.png"},
+};
+#else
+static char ImagePath[2][MAX_STRING] = {
+    {"../Game.png"},
+    {"../TITLE.png"},
+};
+#endif
+/*プロトタイプ*/
+static void InitInput();
+static void InputEvents(SDL_Event event);
+// static int GetWiiAddress();
+
+/*wiiリモコンのアドレスを取得できる*/
+int GetAddress(void *args)
+{
+    SDL_mutex *mtx = (SDL_mutex *)args;
+
+    SDL_LockMutex(mtx);
+
+    GetResult = GetWiiAddress();
+
+    SDL_UnlockMutex(mtx);
+
+    return 0;
+}
+
+/*必要な情報を描画*/
+char* NameSetUp()
+{
+    SDL_Window *window = NULL;
+    SDL_Renderer *renderer = NULL;
+    // 入力モジュール初期化
+    InputData data;
+
+    InitInput();
+    //Initialize TTF
+    TTF_Init();
+
+    font = TTF_OpenFont(FONT_PATH, 40);
+
+    if (!font)
+    {
+        printf("TTF_OpenFont: %s %s\n", TTF_GetError(), FONT_PATH);
+
+        exit(1);
+    }
+
+    /*ウィンドウ作ります*/
+    window = SDL_CreateWindow("Draw Text Test", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+
+    
+
+    SDL_Surface *image[2];
+    SDL_Surface *surface;
+    SDL_Texture *texture;
+
+    SDL_Event event;
+    //文字を描写したTextureのサイズを取得する
+    int iw, ih;
+
+    /*くるくる回るやつの角度*/
+    
+
+    /*描画*/
+    image[0] = IMG_Load(ImagePath[0]);
+    image[1] = IMG_Load(ImagePath[1]);
+    while (data.finish != 1 && GetResult == 0)
+    {
+        /*キーボード入力取得 kキーでwhileループ抜ける*/
+        data = InputEvents(event);
+
+        SDL_RenderClear(renderer);
+        //surfaceからTextureを作る
+        //texture = SDL_CreateTextureFromSurface(renderer, image[1]);
+
+        SDL_SetRenderDrawColor(renderer, 0, 85, 150, 255);
+
+        SDL_QueryTexture(texture, NULL, NULL, &iw, &ih);
+
+        SDL_Rect txtRect = (SDL_Rect){0, 0, iw, ih};
+        SDL_Rect pasteRect = (SDL_Rect){0, 0, iw, ih};
+
+        //Textureを描写する
+        //描写元の描写する部分,描写先の描写する部分)
+        //サイズが違うと勝手にTextureを伸展してくれる
+        SDL_RenderCopy(renderer, texture, &txtRect, &pasteRect);
+        SDL_DestroyTexture(texture);
+        for (int i = 0; i < MESSAGE_NUM - 1; i++)
+        {
+            //TTF_SetFontOutline(font, 1);//枠抜きで描写するとき
+            surface = TTF_RenderUTF8_Blended(font, Text[i], (SDL_Color){255, 255, 255, 255});
+            //surfaceからTextureを作る
+            texture = SDL_CreateTextureFromSurface(renderer, surface);
+
+            SDL_SetRenderDrawColor(renderer, 0, 85, 150, 255);
+
+            SDL_QueryTexture(texture, NULL, NULL, &iw, &ih);
+
+            SDL_Rect txtRect = (SDL_Rect){0, 0, iw, ih};
+            SDL_Rect pasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - iw / 2, SCREEN_HEIGHT / 10 + i * ih + i * ih / 2, iw, ih};
+
+            //Textureを描写する
+            //描写元の描写する部分,描写先の描写する部分)
+            //サイズが違うと勝手にTextureを伸展してくれる
+            SDL_RenderCopy(renderer, texture, &txtRect, &pasteRect);
+            SDL_FreeSurface(surface);
+            SDL_DestroyTexture(texture);
+        }
+
+        /*くるくるするやつを描画*/
+        
+
+        //windowにレンダリングする
+        SDL_RenderPresent(renderer);
+        /*ホット一息*/
+        SDL_Delay(10);
+    }
+
+    /*結果の描画*/
+    SDL_RenderClear(renderer);
+    SDL_RenderClear(renderer);
+    //surfaceからTextureを作る
+    texture = SDL_CreateTextureFromSurface(renderer, image[0]);
+
+    SDL_SetRenderDrawColor(renderer, 0, 85, 150, 255);
+
+    SDL_QueryTexture(texture, NULL, NULL, &iw, &ih);
+
+    SDL_Rect txtRect = (SDL_Rect){0, 0, iw, ih};
+    SDL_Rect pasteRect = (SDL_Rect){0, 0, iw, ih};
+
+    //Textureを描写する
+    //描写元の描写する部分,描写先の描写する部分)
+    //サイズが違うと勝手にTextureを伸展してくれる
+    SDL_RenderCopy(renderer, texture, &txtRect, &pasteRect);
+    SDL_DestroyTexture(texture);
+    if (GetResult == 1)
+    {
+        //TTF_SetFontOutline(font, 1);//枠抜きで描写するとき
+        surface = TTF_RenderUTF8_Blended(font, "Find your Wiilimocon!", (SDL_Color){255, 255, 255, 255});
+        fprintf(stderr, "Find your Wiilimocon!\n");
+        //surfaceからTextureを作る
+        texture = SDL_CreateTextureFromSurface(renderer, surface);
+
+        SDL_SetRenderDrawColor(renderer, 0, 85, 150, 255);
+
+        SDL_QueryTexture(texture, NULL, NULL, &iw, &ih);
+
+        SDL_Rect txtRect = (SDL_Rect){0, 0, iw, ih};
+        SDL_Rect pasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - iw / 2, SCREEN_HEIGHT / 2 - ih / 2, iw, ih};
+
+        //Textureを描写する
+        //描写元の描写する部分,描写先の描写する部分)
+        //サイズが違うと勝手にTextureを伸展してくれる
+        SDL_RenderCopy(renderer, texture, &txtRect, &pasteRect);
+        SDL_FreeSurface(surface);
+        SDL_DestroyTexture(texture);
+    }
+    else
+    {
+        //TTF_SetFontOutline(font, 1);//枠抜きで描写するとき
+        surface = TTF_RenderUTF8_Blended(font, "Select Keyboard", (SDL_Color){255, 255, 255, 255});
+        fprintf(stderr, "Select Keyboard!\n");
+        //surfaceからTextureを作る
+        texture = SDL_CreateTextureFromSurface(renderer, surface);
+
+        SDL_SetRenderDrawColor(renderer, 0, 85, 150, 255);
+
+        SDL_QueryTexture(texture, NULL, NULL, &iw, &ih);
+
+        SDL_Rect txtRect = (SDL_Rect){0, 0, iw, ih};
+        SDL_Rect pasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - iw / 2, SCREEN_HEIGHT / 2 - ih / 2, iw, ih};
+
+        //Textureを描写する
+        //描写元の描写する部分,描写先の描写する部分)
+        //サイズが違うと勝手にTextureを伸展してくれる
+        SDL_RenderCopy(renderer, texture, &txtRect, &pasteRect);
+        SDL_FreeSurface(surface);
+        SDL_DestroyTexture(texture);
+    }
+    //windowにレンダリングする
+    SDL_RenderPresent(renderer);
+    /*一秒待つ*/
+    SDL_Delay(1000);
+
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    TTF_CloseFont(font);
+    TTF_Quit();
+
+    return 0;
+}
+
+//入力システムの初期化
+void InitInput()
+{
+    Key = SDL_GetKeyboardState(NULL);
+}
+
+/*キーボードの読み取り*/
+InputData InputEvents(SDL_Event event)
+{
+    if (SDL_PollEvent(&event))
+    {
+        /**キーボードを使う場合**/
+        if (Key[SDL_SCANCODE_K])
+        {
+            Data.finish = 1;
+        }
+    }
+    return Data;
+}

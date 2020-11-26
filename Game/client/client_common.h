@@ -72,3 +72,6 @@ extern void UpdatePlaceData(PlaceData data);
 
 /*control_setup*/
 extern int ControlSetUp();
+
+/*name_setup*/
+extern char* NameSetUp();

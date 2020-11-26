@@ -74,14 +74,10 @@ void SetupClient(char *server_name, u_short port)
     }
 
     /*名前の入力*/
-    fprintf(stderr, "Input your name: ");
+    // fprintf(stderr, "Input your name: ");
     // 名前を格納する変数
     char user_name[MAX_LEN_NAME];
-    if (fgets(user_name, sizeof(user_name), stdin) == NULL)
-    {
-        char m[] = "fgets()";
-        HandleError(m);
-    }
+    sprintf(user_name, "%s", NameSetUp());
     // 名前の後ろをナル文字にする
     user_name[strlen(user_name) - 1] = '\0';
     // 名前を送信する
@@ -341,7 +337,7 @@ int ReceiveData(void *data, int size)
     {
         //メッセージを表示して終了
         fprintf(stderr, "ReceiveData(): data is illegal.\n");
-        exit(1);
+        return -1;
     }
     // ソケットに送られてきたデータをdataに読み込む
     return (read(sock, data, size));
