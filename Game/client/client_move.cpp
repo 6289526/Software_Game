@@ -18,9 +18,9 @@ PlaceData BuildPlaceData(PlayerData playerData, float handLength){
     PlaceData result;
 
     result.object = BlockType::NomalBlock;
-    result.pos.x = playerData.pos.x / MAP_MAGNIFICATION + sin(playerData.direction) * handLength;
-    result.pos.z = playerData.pos.z / MAP_MAGNIFICATION + cos(playerData.direction) * handLength;
-    Vector2Int v2 = {result.pos.x, result.pos.z};
+    result.pos.x = playerData.pos.x + sin(playerData.direction) * handLength;
+    result.pos.z = playerData.pos.z + cos(playerData.direction) * handLength;
+    Vector2Int v2 = {result.pos.x / MAP_MAGNIFICATION, result.pos.z / MAP_MAGNIFICATION};
     result.pos.y = GetPutableBlockHeightFromMap(v2);
 
     return result;
@@ -48,7 +48,7 @@ int GetPutableBlockHeightFromMap(Vector2Int pos){
     {
         if (terrainData[pos.x][height][pos.y] == BlockType::NonBlock)
         {
-            return height;
+            return height * MAP_MAGNIFICATION + MAP_MAGNIFICATION / 2;
         }
     }
 
