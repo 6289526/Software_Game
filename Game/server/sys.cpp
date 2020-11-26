@@ -437,9 +437,6 @@ static void Collision_CC_Side(FloatCube &player_1, FloatCube &player_2) {
       player_2.z -= overlap * sin(angle) / 2;
     }
   }
-
-  fprintf(stderr, "%f, %f, %f, %f\n", overlap, distance, x_distance,
-          y_distance);
 }
 
 // 横と縦を呼び出す
