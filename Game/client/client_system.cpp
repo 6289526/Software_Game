@@ -200,7 +200,6 @@ void SystemRun()
 		fprintf(stderr,"%s", e);
 	}
 	PData[MyId].velocity.x = 0;
-
 	if (isOnGround)
 		PData[MyId].velocity.y = 0;
 

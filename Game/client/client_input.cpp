@@ -29,7 +29,6 @@ InputType InputModuleBase::SystemGetInputType(){
     if(_Input.Jump){
         _jumpFlag = true;
     }
-
     return _Input;
 }
 

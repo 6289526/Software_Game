@@ -16,6 +16,7 @@ set(CLIENT_CODE
     client_map
     client_time
     control_setup
+    client_name
     client_gamestate
 )
 # CMakeの最低バージョンを記述
