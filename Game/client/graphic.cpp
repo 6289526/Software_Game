@@ -102,7 +102,7 @@ bool InitOpenGL() {
 }
 
 void SetBlockTexture(){
-    
+
     for(int i = 0; i < BLOCK_TYPE_NUM; i++){
         SDL_Surface *img = IMG_Load(TextureFileName[i]);
         if(!img){
@@ -119,10 +119,10 @@ void SetBlockTexture(){
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-            
+
             glTexImage2D(GL_TEXTURE_2D, 0, img->format->BytesPerPixel, img->w, img->h, 0, Mode, GL_UNSIGNED_BYTE, img->pixels);
             SDL_FreeSurface(img);
-            
+
         }
     }
 }
@@ -215,12 +215,12 @@ void DrawMap(){
     //3次元配列データ使用時
     for(int width = 0; width < map_w; width++){
         for(int depth = 0; depth < map_d; depth++){
-            for(int hight = 0; (terrainData[width][hight][depth] >= 1 || terrainData[width][hight][depth] == -1); hight++){
+            for(int hight = 0; hight < MAP_SIZE_H; hight++){
                 mcube = {
                     width * MAP_MAGNIFICATION, hight * MAP_MAGNIFICATION, depth * MAP_MAGNIFICATION,
                     MAP_MAGNIFICATION, MAP_MAGNIFICATION, MAP_MAGNIFICATION
                 };
-                DrowMapBlock(mcube,(BlockType)(terrainData[width][hight][depth]));
+                if(terrainData[width][hight][depth] != 0) DrowMapBlock(mcube,(BlockType)(terrainData[width][hight][depth]));
             }
         }
     }
@@ -278,7 +278,7 @@ void DrawCharacter(){
 
 
 void DrowMapBlock(FloatCube cube, BlockType block){
-    
+
     glEnable(GL_TEXTURE_2D);
     if(block == GoalBlock) glBindTexture(GL_TEXTURE_2D,BlockTexture[0]);
     else if(block < BLOCK_TYPE_NUM) glBindTexture(GL_TEXTURE_2D,BlockTexture[block]);
@@ -346,7 +346,7 @@ void DrowMapBlock(FloatCube cube, BlockType block){
         glTexCoord2f(0.0, 0.5);glVertex3f(top[3].x,top[3].y,top[3].z);
         glTexCoord2f(0.0, 1.0);glVertex3f(base[3].x, base[3].y, base[3].z);
     glEnd();
-    
+
     glDisable(GL_TEXTURE_2D);
 }
 
