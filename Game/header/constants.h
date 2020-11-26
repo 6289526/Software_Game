@@ -11,7 +11,7 @@
 
 /*----------define 開始-----------*/
 #define DEFAULT_PORT 51000 	//デフォルトのポート番号
-#define MAX_LEN_NAME 10 	//名前の最大文字数
+#define MAX_LEN_NAME 32 	//名前の最大文字数
 #define MAX_NUMCLIENTS 8	//最大参加人数
 #define MAX_LEN_BUFFER 256 	//メッセージの最大文字数
 #define MAX_LEN_ADDR 32 	//ソケットの設定のサイズ
@@ -54,6 +54,16 @@ typedef struct
 	float z; //z座標
 } FloatPosition;
 typedef FloatPosition Vector3;
+
+typedef struct {
+	int x;	// x座標
+	int y;	// y座標
+} Vector2Int;
+
+typedef struct {
+	float x;// x座標
+	float y;// y座標
+} Vector2;
 
 enum {
 	NO_ZERO = 1,

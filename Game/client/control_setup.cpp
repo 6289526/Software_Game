@@ -35,16 +35,16 @@ static char Text[MESSAGE_NUM][MAX_STRING] = {
     {"*"}};
 
 #ifdef DEBUG
-static char ImagePath[2][MAX_STRING] = { 
+static char ImagePath[2][MAX_STRING] = {
     {"Game.png"},
     {"TITLE.png"},
 };
 #else
-static char ImagePath[2][MAX_STRING] = { 
+static char ImagePath[2][MAX_STRING] = {
     {"../Game.png"},
     {"../TITLE.png"},
 };
-#endif 
+#endif
 /*プロトタイプ*/
 static void InitInput();
 static InputData InputEvents(SDL_Event event);
@@ -317,15 +317,22 @@ int GetWiiAddress()
         return -1;
     }
     int index = 0;
-    char trash[50];
+    char address[18];
+    char trash1[50];
+    char trash2[50];
     while (fgets(output, MAX_STRING, fp) != NULL)
     {
         if (index >= 1)
         {
-            if(strcmp(trash, "Nintendo RVL-CNT-01") == 0){
-            sscanf(output, "%s %s", WiiAddress, trash);
-            fprintf(stderr, "%s\n", WiiAddress);
-            break;
+            fprintf(stderr, "%s\n", output);
+            sscanf(output, "%s %s %s", address, trash1, trash2);
+            fprintf(stderr, "%s\n", trash1);
+            if (strcmp(trash1, "Nintendo") == 0)
+            {
+                sprintf(WiiAddress, "%s", address);
+                fprintf(stderr, "%s\n", WiiAddress);
+                return 1;
+                // break;
             }
         }
         index++;
@@ -335,12 +342,14 @@ int GetWiiAddress()
         /*Failure*/
         return -1;
     }
-    if (strcmp(WiiAddress, "") == 0)
-    {
-        return -1;
-    }
-    else
-    {
-        return 1;
-    }
+
+    return -1;
+    // if (strcmp(WiiAddress, "") == 0)
+    // {
+    //     return -1;
+    // }
+    // else
+    // {
+    //     return 1;
+    // }
 }

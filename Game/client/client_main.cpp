@@ -13,7 +13,7 @@ int cond = 1;
 static int PrintError(const char *str);
 int Select(void *args);
 
-char WiiAddress[17];
+char WiiAddress[18];
 InputType _______Type;
 
 
@@ -23,12 +23,18 @@ int main(int argc, char *argv[])
 	/**SDL2関連 BEGIN******/
 	SDL_Init(SDL_INIT_EVERYTHING);
 	/**SDL2関連 END********/
-	
 
 	/**サーバー関連 BEGIN**/
 	// 参加したいサーバーのポート番号
 	u_short port = DEFAULT_PORT;
-	// 参加したいサーバーの名前
+	// 参加したいサーバーの名前if (strcmp(WiiAddress, "") == 0)
+    // {
+    //     return -1;
+    // }
+    // else
+    // {
+    //     return 1;
+    // }
 	char server_name[MAX_LEN_NAME];
 	InitData initData;
 	//multithread
@@ -62,6 +68,7 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 	/*クライアントの作成*/
+	InitControl(&initData);
 	// 指定されたサーバー名、ポート番号に参加するクライアントとして設定する。
 	SetupClient(server_name, port);
 	InitPlayerData(); // プレイヤーデータ初期化処理
@@ -108,12 +115,12 @@ int Select(void *args)
 // wiiリモコンのMACアドレスの取得
 // */
 // void GetWiiAddress(){
-	
+
 // 	FILE *fp;
 // 	char command[MAX_STRING];
 // 	char output[MAX_STRING];
-// 	sprintf(command, "hcitool scan"); 
-    
+// 	sprintf(command, "hcitool scan");
+
 // 	if ((fp = popen(command, "r")) == NULL) {
 // 	/*Failure*/
 // 	}

@@ -22,6 +22,7 @@ void WiiInput::UpdateInput()
     if (wiimote_is_open(&_wiimote))
     {
         InputType t = _Input;
+        _Input = t;
         // _Input = t;
         // Wiiリモコンの状態を取得・更新する
         if (wiimote_update(&_wiimote) < 0)
@@ -40,13 +41,17 @@ void WiiInput::UpdateInput()
         // Bボタンが押された時
         if (_wiimote.keys.b)
         {
-            fprintf(stderr, "B\n");
+            if (_Input.Put)
+            {
+                fprintf(stderr, "B\n");
+            }
+
             _Input.Put = true;
         }
-        else if (!_wiimote.keys.b)
+        else
         {
-            // fprintf(stderr, "B\n");
-            _Input.Put = false;
+
+            _putFlag = false;
         }
 
         // 移動関連
@@ -55,9 +60,9 @@ void WiiInput::UpdateInput()
         {
             _Input.Jump = true;
         }
-        else if (!_wiimote.keys.one)
+        else
         {
-            _Input.Jump = false;
+            _jumpFlag = false;
         }
 
         // 2ボタンが押された時
@@ -65,7 +70,7 @@ void WiiInput::UpdateInput()
         {
             _Input.Forward = true;
         }
-        else if (!_wiimote.keys.two)
+        else
         {
             _Input.Forward = false;
         }
@@ -74,7 +79,7 @@ void WiiInput::UpdateInput()
         { // 上
             _Input.Left = true;
         }
-        else if (!_wiimote.keys.up)
+        else
         {
             _Input.Left = false;
         }
@@ -83,7 +88,8 @@ void WiiInput::UpdateInput()
         { // 下
             _Input.Right = true;
         }
-        else if(!_wiimote.keys.down){
+        else
+        {
             _Input.Right = false;
         }
     }

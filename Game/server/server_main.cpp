@@ -13,9 +13,10 @@ int PortNum;
 
 int result = 1;
 
-int GetCommand(void *args){
+int GetCommand(void *args)
+{
     SDL_mutex *mtx = (SDL_mutex *)args;
-     // コマンド入力処理
+    // コマンド入力処理
     char str[25];
     char com, buf[24];
 
@@ -24,10 +25,12 @@ int GetCommand(void *args){
         SDL_LockMutex(mtx);
 
         /**コマンド入力**/
-        if(fgets(str, 25, stdin)){
+        if (fgets(str, 25, stdin))
+        {
             sscanf(str, "%c %s", &com, buf);
             fprintf(stderr, "%c\n", com);
-            if(com == TERMINATE_COMMAND){
+            if (com == TERMINATE_COMMAND)
+            {
                 RunCommand(BROADCAST, com);
                 break;
             }
@@ -41,41 +44,54 @@ int GetCommand(void *args){
 int SendPosFunc(void *args)
 {
     SDL_mutex *mtx = (SDL_mutex *)args;
-
-    while (1)
+    try
     {
-        SDL_LockMutex(mtx);
+        while (1)
+        {
+            SDL_LockMutex(mtx);
 
-        SendAllPos(PlayerNum); // クライアントの座標を全員に送る(別スレッドにする予定)
+            SendAllPos(PlayerNum); // クライアントの座標を全員に送る(別スレッドにする予定)
 
-        SDL_UnlockMutex(mtx);
-        SDL_Delay(10);
+            SDL_UnlockMutex(mtx);
+            SDL_Delay(10);
+        }
+    }
+    catch (char const *err)
+    {
+        fprintf(stderr, "%s", err);
     }
 
     return 0;
 }
 
-int Select(void *args){
+int Select(void *args)
+{
     SDL_mutex *mtx = (SDL_mutex *)args;
-
-    while (1)
+    try
     {
-        SDL_LockMutex(mtx);
+        while (1)
+        {
+            SDL_LockMutex(mtx);
 
-        result = ControlRequests(); // クライアントからのリクエストに対応
+            result = ControlRequests(); // クライアントからのリクエストに対応
 
-        SDL_UnlockMutex(mtx);
-        SDL_Delay(10);
+            SDL_UnlockMutex(mtx);
+            SDL_Delay(10);
+        }
+    }
+    catch (char const *err)
+    {
+        fprintf(stderr, "%s", err);
     }
 
     return 0;
-
 }
 
 // server用のmain関数
 int main(int argc, char *argv[])
 {
-    if (argc == 2) {
+    if (argc == 2)
+    {
         PlayerNum = atoi(argv[1]);
         PortNum = 51000;
     }
@@ -84,11 +100,13 @@ int main(int argc, char *argv[])
         PlayerNum = 1;
         PortNum = 51000;
     }
-    else if (argc == 3) {
+    else if (argc == 3)
+    {
         PlayerNum = atoi(argv[1]);
         PortNum = atoi(argv[2]);
     }
-    else {
+    else
+    {
         fprintf(stderr, "引数が多いんじゃあああ\n");
         return 0;
     }
@@ -99,13 +117,13 @@ int main(int argc, char *argv[])
     fprintf(stderr, "Port number = %d\n", PortNum);
     //初期化
     SDL_Init(SDL_INIT_EVERYTHING);
-    #ifdef DEBUG
+#ifdef DEBUG
     char file[] = "../data/mapdata.csv";
-    #else
+#else
     char file[] = "../../data/mapdata.csv";
-    #endif
+#endif
     InitSys(file);
-    
+
     SetupServer(PlayerNum, PortNum); // サーバー初期化
 
     InitPlayerData(); // プレイヤーデータ初期化
@@ -126,20 +144,21 @@ int main(int argc, char *argv[])
     SelectThread = SDL_CreateThread(Select, "getCommand", mtx3);
     /**SDL END**/
 
-
     int end = 0;
 
     while (!end && result)
     {
-        for (int i = 0; i < PlayerNum; ++i) {
-            try {
+        for (int i = 0; i < PlayerNum; ++i)
+        {
+            try
+            {
                 MovePosition(i);
             }
-            catch (const char* const e) {
+            catch (const char *const e)
+            {
                 fprintf(stderr, "%s", e);
             }
         }
-
         // 全員ゴール
         if (AllGoal())
         {
@@ -151,7 +170,7 @@ int main(int argc, char *argv[])
     }
 
     TerminateServer(); // サーバー終了処理
-    EndSys(); // システム終了処理
+    EndSys();          // システム終了処理
     SDL_DestroyMutex(mtx1);
     SDL_DestroyMutex(mtx2);
     SDL_Quit();

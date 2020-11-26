@@ -23,20 +23,20 @@ InputType InputModuleBase::SystemGetInputType(){
     }
 
     // すでにジャンプ済みならジャンプさせない
-    if(_jumpFlag){ 
+    if(_jumpFlag){
         _Input.Jump = false;
     }
     if(_Input.Jump){
         _jumpFlag = true;
     }
     if(_Input.Jump || _Input.Put)
-    fprintf(stderr, "%d %d %d %d\n", _Input.Jump, _jumpFlag,  _Input.Put, _putFlag);
+    // fprintf(stderr, "%d %d %d %d\n", _Input.Jump, _jumpFlag,  _Input.Put, _putFlag);
     return _Input;
 }
 
 bool InputModuleBase::IsMoveButtonDown(){
     bool result = false;
-    result = result | _Input.Forward; // 
+    result = result | _Input.Forward; //
     result = result | _Input.Right;
     result = result | _Input.Left;
     result = result | _Input.Jump;
