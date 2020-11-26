@@ -143,7 +143,7 @@ static Collision Collision_CB_Under(const int chara_ID, const int y,
                                     const int accuracy = PLAYER_W);
 
 // キャラとキャラの当たり判定
-static void Collision_CC_Side(PlayerData& player_1, PlayerData& player_2);
+static void Collision_CC_Side(FloatCube& player_1, FloatCube& player_2);
 
 // 横と縦を呼び出す
 static void Collision_CC(int chara_num);
