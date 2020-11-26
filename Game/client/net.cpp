@@ -265,11 +265,12 @@ int ExeCommand()
 
         if(placeData.object != NonBlock){
             fprintf(stderr, "ブロック置けた！\n");
+            UpdatePlaceData(placeData);
             
         }else{
             fprintf(stderr, "ブロックがおけなかった\n");
         }
-        UpdatePlaceData(placeData);
+        
         result = 1;
         break;
     case QUIT_COMMAND: // 通信終了
