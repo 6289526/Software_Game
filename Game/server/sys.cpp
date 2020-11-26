@@ -1,6 +1,7 @@
 
 /*----------include 開始----------*/
 #include "server_common.h"
+#include <cmath>
 #include <iostream>
 
 /*----------include 終了----------*/
@@ -193,8 +194,7 @@ static int BuryCheck_Under(const int chara_ID, const int y, const int accuracy,
         if (std::max(t_Count, Bury_Count) == t_Count) {
           Bury_Count = t_Count;
         }
-      }
-      else if (terrainData[block_X][block_Y][block_Z] == GoalBlock) {
+      } else if (terrainData[block_X][block_Y][block_Z] == GoalBlock) {
         fprintf(stderr, "hoge\n");
         if (PData[chara_ID].goal == false) {
           Goal(chara_ID);
@@ -389,6 +389,64 @@ Collision Collision_CB_Under(const int chara_ID, const int y,
   }
 
   return ret;
+}
+
+// キャラとキャラの当たり判定
+static void Collision_CC_Side(PlayerData &player_1, PlayerData &player_2) {
+  // キャラの中心座標
+  Vector2 Center_1, Center_2;
+
+  // キャラの半径
+  float radius_1 = player_1.pos.w / 2;
+  float radius_2 = player_2.pos.w / 2;
+
+  Center_1.x = player_1.pos.x + radius_1;
+  Center_2.x = player_2.pos.x + radius_2;
+
+  // y じゃなくて z　だよ
+  Center_1.y = player_1.pos.z + radius_1;
+  Center_2.y = player_2.pos.z + radius_2;
+
+  // キャラ間距離
+  const float x_distance = fabs(Center_1.x - Center_2.x);
+  const float y_distance = fabs(Center_1.y - Center_2.y);
+  const float distance =
+      fabs(sqrt(x_distance * x_distance + y_distance * y_distance));
+
+  float overlap = 0; // キャラの重なり
+  float angle = 0; // 2キャラの角度
+
+  if (radius_1 + radius_2 < distance) {
+    overlap = distance - (radius_1 + radius_2);
+    angle = atan(y_distance / x_distance);
+
+    if (Center_1.x < Center_2.x) {
+      player_1.pos.x -= overlap * cos(angle) / 2;
+      player_2.pos.x += overlap * cos(angle) / 2;
+    }
+    else {
+      player_1.pos.x -= overlap * cos(angle) / 2;
+      player_2.pos.x += overlap * cos(angle) / 2;
+    }
+
+    if (Center_1.y < Center_2.y) {
+      player_1.pos.z -= overlap * sin(angle) / 2;
+      player_2.pos.z += overlap * sin(angle) / 2;
+    }
+
+    fprintf(stderr, "hoge");
+  }
+}
+
+// 横と縦を呼び出す
+static void Collision_CC(int chara_num) {
+  for (int i = 0; i < chara_num; ++i) {
+    for (int j = 0; j < chara_num; ++j) {
+      if (i != j) {
+        Collision_CC_Side(PData[i], PData[j]);
+      }
+    }
+  }
 }
 
 bool Collision_BB() // ブロックを置けるかどうかの判定

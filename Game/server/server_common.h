@@ -142,6 +142,12 @@ static Collision Collision_CB_Side(const int chara_ID, const int y = 0,
 static Collision Collision_CB_Under(const int chara_ID, const int y,
                                     const int accuracy = PLAYER_W);
 
+// キャラとキャラの当たり判定
+static void Collision_CC_Side(PlayerData& player_1, PlayerData& player_2);
+
+// 横と縦を呼び出す
+static void Collision_CC(int chara_num);
+
 static bool Collision_BB(); // ブロックを置けるなら true
 
 static void Goal(int chara_ID); // ゴールの処理
