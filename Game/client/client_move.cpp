@@ -48,7 +48,7 @@ int GetPutableBlockHeightFromMap(Vector2Int pos){
     {
         if (terrainData[pos.x][height][pos.y] == BlockType::NonBlock)
         {
-            return height;
+            return height * MAP_MAGNIFICATION + MAP_MAGNIFICATION / 2;
         }
     }
 
