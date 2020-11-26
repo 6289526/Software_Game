@@ -1,6 +1,7 @@
 
 /*----------include 開始----------*/
 #include "server_common.h"
+#include <cmath>
 #include <iostream>
 
 /*----------include 終了----------*/
@@ -193,8 +194,7 @@ static int BuryCheck_Under(const int chara_ID, const int y, const int accuracy,
         if (std::max(t_Count, Bury_Count) == t_Count) {
           Bury_Count = t_Count;
         }
-      }
-      else if (terrainData[block_X][block_Y][block_Z] == GoalBlock) {
+      } else if (terrainData[block_X][block_Y][block_Z] == GoalBlock) {
         fprintf(stderr, "hoge\n");
         if (PData[chara_ID].goal == false) {
           Goal(chara_ID);
@@ -245,8 +245,7 @@ Collision Collision_CB_Side(const int chara_ID, const int y,
     throw "マップ外 : x座標 : 正\n";
   }
 
-  const float t_Block_Y =
-      (PData[chara_ID].pos.y + PData[chara_ID].velocity.y + y);
+  const float t_Block_Y = (PData[chara_ID].pos.y + y);
   int Block_Y = t_Block_Y / MAP_MAGNIFICATION;
 
   if (t_Block_Y < 0) {
@@ -391,6 +390,73 @@ Collision Collision_CB_Under(const int chara_ID, const int y,
   return ret;
 }
 
+// キャラとキャラの当たり判定
+static void Collision_CC_Side(FloatCube &player_1, FloatCube &player_2) {
+  // キャラの半径
+  const float radius_1 =
+      (player_1.w < player_1.d) ? player_1.d / 2 : player_1.w / 2;
+  const float radius_2 =
+      (player_2.w < player_2.d) ? player_2.d / 2 : player_2.w / 2;
+
+  // キャラの中心座標
+  Vector2 Center_1, Center_2;
+
+  Center_1.x = player_1.x + radius_1;
+  Center_2.x = player_2.x + radius_2;
+
+  // y じゃなくて z　だよ
+  Center_1.y = player_1.z + radius_1;
+  Center_2.y = player_2.z + radius_2;
+
+  // キャラ間距離
+  const float x_distance = fabs(Center_1.x - Center_2.x);
+  const float y_distance = fabs(Center_1.y - Center_2.y);
+  const float distance =
+      fabs(sqrt(x_distance * x_distance + y_distance * y_distance));
+
+  float overlap = 0; // キャラの重なり
+  float angle = 0;   // 2キャラの角度
+
+  if (distance < radius_1 + radius_2) {
+    overlap = (radius_1 + radius_2) - distance;
+    angle = atan(y_distance / x_distance);
+
+    if (Center_1.x < Center_2.x) {
+      player_1.x -= overlap * cos(angle) / 2;
+      player_2.x += overlap * cos(angle) / 2;
+    } else {
+      player_1.x += overlap * cos(angle) / 2;
+      player_2.x -= overlap * cos(angle) / 2;
+    }
+
+    if (Center_1.y < Center_2.y) {
+      player_1.z -= overlap * sin(angle) / 2;
+      player_2.z += overlap * sin(angle) / 2;
+    } else {
+      player_1.z += overlap * sin(angle) / 2;
+      player_2.z -= overlap * sin(angle) / 2;
+    }
+  }
+
+  fprintf(stderr, "%f, %f, %f, %f\n", overlap, distance, x_distance,
+          y_distance);
+}
+
+// 横と縦を呼び出す
+static void Collision_CC(int chara_num) {
+  for (int i = 0; i < chara_num; ++i) {
+    for (int j = 0; j < chara_num; ++j) {
+      if (i < j) {
+        break;
+      }
+
+      if (i != j) {
+        Collision_CC_Side(PData[i].pos, PData[j].pos);
+      }
+    }
+  }
+}
+
 bool Collision_BB() // ブロックを置けるかどうかの判定
 {
   if (PlData.object == NonBlock) {
@@ -454,6 +520,9 @@ void Goal(int chara_ID) {
 }
 
 void MovePosition(int chara_ID) {
+
+  // キャラキャラの当たり判定
+  Collision_CC(Num_Clients);
 
   // 下の当たり判定
   Collision t_Collision_Under = Collision_CB_Under(chara_ID, 0);
