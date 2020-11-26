@@ -1,0 +1,38 @@
+{
+  "name": "createMap",
+  "version": "1.0.0",
+  "main": "./src/main.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron ./src/main.js"
+  },
+  "devDependencies": {
+    "electron": "^11.0.2",
+    "electron-builder": "^22.9.1"
+  },
+  "build": {
+    "appId": "com.electron.createMap",
+    "directories": {
+      "output": "/mnt/c/users/qripu/myfolder"
+    },
+    "files": [
+      "src/**",
+      "./**"
+    ],
+    "mac": {
+      
+      "target": [
+        "dmg"
+      ]
+    },
+    "win": {
+      
+      "target": "nsis"
+    },
+    "nsis":{
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  }
+
+}
