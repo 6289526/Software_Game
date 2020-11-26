@@ -195,10 +195,8 @@ static int BuryCheck_Under(const int chara_ID, const int y, const int accuracy,
           Bury_Count = t_Count;
         }
       } else if (terrainData[block_X][block_Y][block_Z] == GoalBlock) {
-        fprintf(stderr, "hoge\n");
         if (PData[chara_ID].goal == false) {
           Goal(chara_ID);
-          fprintf(stderr, "hogehoge\n");
         }
       }
     }
@@ -240,26 +238,26 @@ Collision Collision_CB_Side(const int chara_ID, const int y,
   int Block_X = point_X[accuracy - 1] / MAP_MAGNIFICATION;
 
   if (point_X[0] < 0) {
-    throw "マップ外 : x座標 :負\n";
+    throw "Collision_CB_Side : マップ外 : x座標 :負\n";
   } else if (MAP_SIZE_W <= Block_X) {
-    throw "マップ外 : x座標 : 正\n";
+    throw "Collision_CB_Side : マップ外 : x座標 : 正\n";
   }
 
   const float t_Block_Y = (PData[chara_ID].pos.y + y);
   int Block_Y = t_Block_Y / MAP_MAGNIFICATION;
 
   if (t_Block_Y < 0) {
-    throw "マップ外 : y座標 : 負\n";
+    throw "Collision_CB_Side : マップ外 : y座標 : 負\n";
   } else if (MAP_SIZE_H <= Block_Y) {
-    throw "マップ外 : y座標 : 正\n";
+    throw "Collision_CB_Side : マップ外 : y座標 : 正\n";
   }
 
   int Block_Z = point_Z[accuracy - 1] / MAP_MAGNIFICATION;
 
   if (point_Z[0] < 0) {
-    throw "マップ外 : z座標 :負\n";
+    throw "Collision_CB_Side : マップ外 : z座標 :負\n";
   } else if (MAP_SIZE_W <= Block_Z) {
-    throw "マップ外 : z座標 : 正\n";
+    throw "Collision_CB_Side : マップ外 : z座標 : 正\n";
   }
 
   int Count_Front =
@@ -348,9 +346,9 @@ Collision Collision_CB_Under(const int chara_ID, const int y,
   int Block_X = point_X[accuracy - 1] / MAP_MAGNIFICATION;
 
   if (point_X[0] < 0) {
-    throw "マップ外 : x座標 :負\n";
+    throw "Collision_CB_Under : マップ外 : x座標 :負\n";
   } else if (MAP_SIZE_W <= Block_X) {
-    throw "マップ外 : x座標 : 正\n";
+    throw "Collision_CB_Under : マップ外 : x座標 : 正\n";
   }
 
   const float t_Block_Y =
@@ -358,17 +356,17 @@ Collision Collision_CB_Under(const int chara_ID, const int y,
   int Block_Y = t_Block_Y / MAP_MAGNIFICATION;
 
   if (t_Block_Y < 0) {
-    throw "マップ外 : y座標 : 負\n";
+    throw "Collision_CB_Under : マップ外 : y座標 : 負\n";
   } else if (MAP_SIZE_H <= Block_Y) {
-    throw "マップ外 : y座標 : 正\n";
+    throw "Collision_CB_Under : マップ外 : y座標 : 正\n";
   }
 
   int Block_Z = point_Z[accuracy - 1] / MAP_MAGNIFICATION;
 
   if (point_Z[0] < 0) {
-    throw "マップ外 : z座標 :負\n";
+    throw "Collision_CB_Under : マップ外 : z座標 :負\n";
   } else if (MAP_SIZE_W <= Block_Z) {
-    throw "マップ外 : z座標 : 正\n";
+    throw "Collision_CB_Under : マップ外 : z座標 : 正\n";
   }
 
   int Count_Under =
@@ -468,35 +466,50 @@ bool Collision_BB() // ブロックを置けるかどうかの判定
   int Block_Z = PlData.pos.z / MAP_MAGNIFICATION;
 
   if (Block_X < 0) {
-    throw "マップ外 : x座標 : 負\n";
+    throw "Collision_BB : マップ外 : x座標 : 負\n";
   } else if (MAP_SIZE_H <= Block_X) {
-    throw "マップ外 : x座標 : 正\n";
+    throw "Collision_BB : マップ外 : x座標 : 正\n";
   }
 
   if (Block_Y < 0) {
-    throw "マップ外 : y座標 : 負\n";
+    throw "Collision_BB : マップ外 : y座標 : 負\n";
   } else if (MAP_SIZE_H <= Block_Y) {
-    throw "マップ外 : y座標 : 正\n";
+    throw "Collision_BB : マップ外 : y座標 : 正\n";
   }
 
   if (Block_Z < 0) {
-    throw "マップ外 : z座標 : 負\n";
+    throw "Collision_BB : マップ外 : z座標 : 負\n";
   } else if (MAP_SIZE_H <= Block_Z) {
-    throw "マップ外 : z座標 : 正\n";
+    throw "Collision_BB : マップ外 : z座標 : 正\n";
+  }
+
+  for (int i = 0; i < Num_Clients; ++i) {
+    // キャラの位置をブロックに直したものが入る
+    Vector3Int t_Chara_Pos_in_Map;
+    t_Chara_Pos_in_Map.x = PData[i].pos.x / MAP_MAGNIFICATION;
+    t_Chara_Pos_in_Map.y = PData[i].pos.y / MAP_MAGNIFICATION;
+    t_Chara_Pos_in_Map.z = PData[i].pos.z / MAP_MAGNIFICATION;
+
+    // if (t_Chara_Pos_in_Map.x == Block_X && t_Chara_Pos_in_Map.y == Block_Y &&
+    //     t_Chara_Pos_in_Map.z == Block_Z) {
+    //       fprintf(stderr, "client[%d] がキャラにブロックぶつけた笑\n", i);
+    //       return false;
+    // }
   }
 
   // 置く場所にブロックがないなら
   if (terrainData[Block_X][Block_Y][Block_Z] == NonBlock) {
     // 最下段なら
     if (Block_Y - 1 < 0) {
-      // 置けます
-      return true;
+      // 置けません
+      return false;
     }
+    // それ以外
     return true;
-  } else {
-    // 置けません
-    return false;
   }
+
+  // 置けません
+  return false;
 }
 
 void Goal(int chara_ID) {
