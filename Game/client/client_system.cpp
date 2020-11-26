@@ -21,6 +21,7 @@ static FloatCube Pos_Clients = {PLAYER_X, PLAYER_Y, PLAYER_Z, PLAYER_W, PLAYER_H
 ClientMap Map;			//マップ
 InputModuleBase *Input; // Input Module
 Timer *Time;			// FrameTimer
+GameStateController *StateController;	// GameStateController
 
 // ===== * ===== プロトタイプ宣言 ===== * ===== //
 const PlayerData *GetPlayerData();
@@ -36,6 +37,7 @@ extern PlaceData GetPlaceData();
 extern void SystemRun();
 extern void UpdateFlag(VelocityFlag *flags, int numClients);
 extern void UpdatePlaceData(PlaceData data);
+extern GameStateController GetGameStateController();
 bool IsPlayerOnGround();
 int clamp(const int __val, const int __lo, const int __hi);
 int BuryCheck_Under(const int id, const int y, const int accuracy,
@@ -103,6 +105,9 @@ bool InitSystem(InitData *data)
 
 	Time = new Timer();
 	data->timer = Time;
+
+	StateController = new GameStateController();
+	data->stateController = StateController;
 	return true;
 }
 
@@ -112,6 +117,7 @@ void ExitSystem(InitData *data)
 	delete[] PData;
 	delete data->input;
 	delete data->timer;
+	delete data->stateController;
 }
 
 void SetNumClients(int n) // クライアント人数セット
@@ -330,6 +336,8 @@ void UpdatePlaceData(PlaceData data)
 {
 	Map.SetObjectData(&data);
 }
+
+GameStateController GetGameStateController(){ return *StateController; }
 
 bool IsPlayerOnGround()
 {
