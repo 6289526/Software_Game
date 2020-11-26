@@ -20,8 +20,8 @@ PlaceData BuildPlaceData(PlayerData playerData, float handLength){
     result.object = BlockType::NomalBlock;
     result.pos.x = playerData.pos.x + sin(playerData.direction) * handLength;
     result.pos.z = playerData.pos.z + cos(playerData.direction) * handLength;
-    Vector2Int v2 = {result.pos.x / MAP_MAGNIFICATION, result.pos.z / MAP_MAGNIFICATION};
-    result.pos.y = GetPutableBlockHeightFromMap(v2);
+    // Vector2Int v2 = {result.pos.x / MAP_MAGNIFICATION, result.pos.z / MAP_MAGNIFICATION};
+    result.pos.y = playerData.pos.y;
 
     return result;
 }
@@ -35,13 +35,13 @@ PlaceData BuildPlaceData(PlayerData playerData, float handLength){
 */
 Vector3 GetMoveDirection(PlayerData player, float angle){
     Vector3 result;
-    result.z = cos(player.direction + DegreeToRadian(angle));    
+    result.z = cos(player.direction + DegreeToRadian(angle));
     result.x = sin(player.direction + DegreeToRadian(angle));
     result.y = 0;
     return result;
 }
 
-int GetPutableBlockHeightFromMap(Vector2Int pos){ 
+int GetPutableBlockHeightFromMap(Vector2Int pos){
     const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
 
     for (int height = 0; height < MAP_SIZE_H; height++)

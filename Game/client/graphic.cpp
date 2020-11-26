@@ -97,7 +97,7 @@ void SetBlockTexture(){
     #else
     char fileName[BLOCK_TYPE_NUM][20] = {"../../data/cat.bmp"};
     #endif
-    
+
     for(int i = 0; i < BLOCK_TYPE_NUM; i++){
         SDL_Surface *img = IMG_Load(fileName[i]);
         if(!img){
@@ -114,10 +114,10 @@ void SetBlockTexture(){
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-            
+
             glTexImage2D(GL_TEXTURE_2D, 0, img->format->BytesPerPixel, img->w, img->h, 0, Mode, GL_UNSIGNED_BYTE, img->pixels);
             SDL_FreeSurface(img);
-            
+
         }
     }
 }
@@ -210,13 +210,13 @@ void DrawMap(){
     //3次元配列データ使用時
     for(int width = 0; width < map_w; width++){
         for(int depth = 0; depth < map_d; depth++){
-            for(int hight = 0; (terrainData[width][hight][depth] >= 1 || terrainData[width][hight][depth] == -1); hight++){
+            for(int hight = 0; hight < MAP_SIZE_H; hight++){
                 mcube = {
                     width * MAP_MAGNIFICATION, hight * MAP_MAGNIFICATION, depth * MAP_MAGNIFICATION,
                     MAP_MAGNIFICATION, MAP_MAGNIFICATION, MAP_MAGNIFICATION
                 };
                 if(terrainData[width][hight][depth] >= 1) Cube(mcube,&mapColor);
-                else Cube(mcube,NULL);
+                else if(terrainData[width][hight][depth] == -1)Cube(mcube,NULL);
             }
         }
     }
@@ -350,7 +350,7 @@ void Cube(FloatCube cube, SDL_Color *color){
         glTexCoord2f(1.0, 0.0);glVertex3f(top[3].x,top[3].y,top[3].z);
         glTexCoord2f(1.0, 1.0);glVertex3f(base[3].x, base[3].y, base[3].z);
     glEnd();
-    
+
     glDisable(GL_TEXTURE_2D);
 }
 
