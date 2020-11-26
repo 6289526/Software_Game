@@ -1,6 +1,7 @@
 
 /*----------include 開始----------*/
 #include "server_common.h"
+#include <cmath>
 #include <iostream>
 
 /*----------include 終了----------*/
@@ -193,12 +194,9 @@ static int BuryCheck_Under(const int chara_ID, const int y, const int accuracy,
         if (std::max(t_Count, Bury_Count) == t_Count) {
           Bury_Count = t_Count;
         }
-      }
-      else if (terrainData[block_X][block_Y][block_Z] == GoalBlock) {
-        fprintf(stderr, "hoge\n");
+      } else if (terrainData[block_X][block_Y][block_Z] == GoalBlock) {
         if (PData[chara_ID].goal == false) {
           Goal(chara_ID);
-          fprintf(stderr, "hogehoge\n");
         }
       }
     }
@@ -240,27 +238,26 @@ Collision Collision_CB_Side(const int chara_ID, const int y,
   int Block_X = point_X[accuracy - 1] / MAP_MAGNIFICATION;
 
   if (point_X[0] < 0) {
-    throw "マップ外 : x座標 :負\n";
+    throw "Collision_CB_Side : マップ外 : x座標 :負\n";
   } else if (MAP_SIZE_W <= Block_X) {
-    throw "マップ外 : x座標 : 正\n";
+    throw "Collision_CB_Side : マップ外 : x座標 : 正\n";
   }
 
-  const float t_Block_Y =
-      (PData[chara_ID].pos.y + PData[chara_ID].velocity.y + y);
+  const float t_Block_Y = (PData[chara_ID].pos.y + y);
   int Block_Y = t_Block_Y / MAP_MAGNIFICATION;
 
   if (t_Block_Y < 0) {
-    throw "マップ外 : y座標 : 負\n";
+    throw "Collision_CB_Side : マップ外 : y座標 : 負\n";
   } else if (MAP_SIZE_H <= Block_Y) {
-    throw "マップ外 : y座標 : 正\n";
+    throw "Collision_CB_Side : マップ外 : y座標 : 正\n";
   }
 
   int Block_Z = point_Z[accuracy - 1] / MAP_MAGNIFICATION;
 
   if (point_Z[0] < 0) {
-    throw "マップ外 : z座標 :負\n";
+    throw "Collision_CB_Side : マップ外 : z座標 :負\n";
   } else if (MAP_SIZE_W <= Block_Z) {
-    throw "マップ外 : z座標 : 正\n";
+    throw "Collision_CB_Side : マップ外 : z座標 : 正\n";
   }
 
   int Count_Front =
@@ -349,9 +346,9 @@ Collision Collision_CB_Under(const int chara_ID, const int y,
   int Block_X = point_X[accuracy - 1] / MAP_MAGNIFICATION;
 
   if (point_X[0] < 0) {
-    throw "マップ外 : x座標 :負\n";
+    throw "Collision_CB_Under : マップ外 : x座標 :負\n";
   } else if (MAP_SIZE_W <= Block_X) {
-    throw "マップ外 : x座標 : 正\n";
+    throw "Collision_CB_Under : マップ外 : x座標 : 正\n";
   }
 
   const float t_Block_Y =
@@ -359,17 +356,17 @@ Collision Collision_CB_Under(const int chara_ID, const int y,
   int Block_Y = t_Block_Y / MAP_MAGNIFICATION;
 
   if (t_Block_Y < 0) {
-    throw "マップ外 : y座標 : 負\n";
+    throw "Collision_CB_Under : マップ外 : y座標 : 負\n";
   } else if (MAP_SIZE_H <= Block_Y) {
-    throw "マップ外 : y座標 : 正\n";
+    throw "Collision_CB_Under : マップ外 : y座標 : 正\n";
   }
 
   int Block_Z = point_Z[accuracy - 1] / MAP_MAGNIFICATION;
 
   if (point_Z[0] < 0) {
-    throw "マップ外 : z座標 :負\n";
+    throw "Collision_CB_Under : マップ外 : z座標 :負\n";
   } else if (MAP_SIZE_W <= Block_Z) {
-    throw "マップ外 : z座標 : 正\n";
+    throw "Collision_CB_Under : マップ外 : z座標 : 正\n";
   }
 
   int Count_Under =
@@ -391,6 +388,70 @@ Collision Collision_CB_Under(const int chara_ID, const int y,
   return ret;
 }
 
+// キャラとキャラの当たり判定
+static void Collision_CC_Side(FloatCube &player_1, FloatCube &player_2) {
+  // キャラの半径
+  const float radius_1 =
+      (player_1.w < player_1.d) ? player_1.d / 2 : player_1.w / 2;
+  const float radius_2 =
+      (player_2.w < player_2.d) ? player_2.d / 2 : player_2.w / 2;
+
+  // キャラの中心座標
+  Vector2 Center_1, Center_2;
+
+  Center_1.x = player_1.x + radius_1;
+  Center_2.x = player_2.x + radius_2;
+
+  // y じゃなくて z　だよ
+  Center_1.y = player_1.z + radius_1;
+  Center_2.y = player_2.z + radius_2;
+
+  // キャラ間距離
+  const float x_distance = fabs(Center_1.x - Center_2.x);
+  const float y_distance = fabs(Center_1.y - Center_2.y);
+  const float distance =
+      fabs(sqrt(x_distance * x_distance + y_distance * y_distance));
+
+  float overlap = 0; // キャラの重なり
+  float angle = 0;   // 2キャラの角度
+
+  if (distance < radius_1 + radius_2) {
+    overlap = (radius_1 + radius_2) - distance;
+    angle = atan(y_distance / x_distance);
+
+    if (Center_1.x < Center_2.x) {
+      player_1.x -= overlap * cos(angle) / 2;
+      player_2.x += overlap * cos(angle) / 2;
+    } else {
+      player_1.x += overlap * cos(angle) / 2;
+      player_2.x -= overlap * cos(angle) / 2;
+    }
+
+    if (Center_1.y < Center_2.y) {
+      player_1.z -= overlap * sin(angle) / 2;
+      player_2.z += overlap * sin(angle) / 2;
+    } else {
+      player_1.z += overlap * sin(angle) / 2;
+      player_2.z -= overlap * sin(angle) / 2;
+    }
+  }
+}
+
+// 横と縦を呼び出す
+static void Collision_CC(int chara_num) {
+  for (int i = 0; i < chara_num; ++i) {
+    for (int j = 0; j < chara_num; ++j) {
+      if (i < j) {
+        break;
+      }
+
+      if (i != j) {
+        Collision_CC_Side(PData[i].pos, PData[j].pos);
+      }
+    }
+  }
+}
+
 bool Collision_BB() // ブロックを置けるかどうかの判定
 {
   if (PlData.object == NonBlock) {
@@ -405,42 +466,50 @@ bool Collision_BB() // ブロックを置けるかどうかの判定
   int Block_Z = PlData.pos.z / MAP_MAGNIFICATION;
 
   if (Block_X < 0) {
-    throw "マップ外 : x座標 : 負\n";
+    throw "Collision_BB : マップ外 : x座標 : 負\n";
   } else if (MAP_SIZE_H <= Block_X) {
-    throw "マップ外 : x座標 : 正\n";
+    throw "Collision_BB : マップ外 : x座標 : 正\n";
   }
 
   if (Block_Y < 0) {
-    throw "マップ外 : y座標 : 負\n";
+    throw "Collision_BB : マップ外 : y座標 : 負\n";
   } else if (MAP_SIZE_H <= Block_Y) {
-    throw "マップ外 : y座標 : 正\n";
+    throw "Collision_BB : マップ外 : y座標 : 正\n";
   }
 
   if (Block_Z < 0) {
-    throw "マップ外 : z座標 : 負\n";
+    throw "Collision_BB : マップ外 : z座標 : 負\n";
   } else if (MAP_SIZE_H <= Block_Z) {
-    throw "マップ外 : z座標 : 正\n";
+    throw "Collision_BB : マップ外 : z座標 : 正\n";
+  }
+
+  for (int i = 0; i < Num_Clients; ++i) {
+    // キャラの位置をブロックに直したものが入る
+    Vector3Int t_Chara_Pos_in_Map;
+    t_Chara_Pos_in_Map.x = PData[i].pos.x / MAP_MAGNIFICATION;
+    t_Chara_Pos_in_Map.y = PData[i].pos.y / MAP_MAGNIFICATION;
+    t_Chara_Pos_in_Map.z = PData[i].pos.z / MAP_MAGNIFICATION;
+
+    // if (t_Chara_Pos_in_Map.x == Block_X && t_Chara_Pos_in_Map.y == Block_Y &&
+    //     t_Chara_Pos_in_Map.z == Block_Z) {
+    //       fprintf(stderr, "client[%d] がキャラにブロックぶつけた笑\n", i);
+    //       return false;
+    // }
   }
 
   // 置く場所にブロックがないなら
   if (terrainData[Block_X][Block_Y][Block_Z] == NonBlock) {
     // 最下段なら
     if (Block_Y - 1 < 0) {
-      // 置けます
-      return true;
+      // 置けません
+      return false;
     }
-    //　下の段にブロックがあるなら
-    if (terrainData[Block_X][Block_Y - 1][Block_Z] != NonBlock) {
-      // 置けます
-      return true;
-    }
-
-    // 置けません
-    return false;
-  } else {
-    // 置けません
-    return false;
+    // それ以外
+    return true;
   }
+
+  // 置けません
+  return false;
 }
 
 void Goal(int chara_ID) {
@@ -454,6 +523,9 @@ void Goal(int chara_ID) {
 }
 
 void MovePosition(int chara_ID) {
+
+  // キャラキャラの当たり判定
+  Collision_CC(Num_Clients);
 
   // 下の当たり判定
   Collision t_Collision_Under = Collision_CB_Under(chara_ID, 0);

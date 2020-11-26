@@ -22,6 +22,7 @@
 #include "client_WiiInput.h"
 #include "client_KeybordInput.h"
 #include "client_time.hpp"
+#include "client_gamestate.hpp"
 
 extern int Num_Clients; // クライアント人数
 extern char WiiAddress[18];
@@ -43,10 +44,12 @@ enum {
 typedef struct InitData{
 	InputModuleBase *input;
     Timer *timer;
+    GameStateController *stateController;
 
     InitData() :
         input(NULL),
-        timer(NULL)
+        timer(NULL),
+        stateController(NULL)
         { };
 } InitData;
 
@@ -70,7 +73,7 @@ extern void UpdateFlag(VelocityFlag* flag, int numClients);
 extern PlaceData GetPlaceData();
 extern void SystemRun();
 extern void UpdatePlaceData(PlaceData data);
-
+extern GameStateController GetGameStateController();
 
 /*control_setup*/
 extern int ControlSetUp();

@@ -17,6 +17,7 @@ set(CLIENT_CODE
     client_time
     control_setup
     client_name
+    client_gamestate
 )
 # CMakeの最低バージョンを記述
 cmake_minimum_required(VERSION 2.8)

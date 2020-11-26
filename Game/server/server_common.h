@@ -122,10 +122,12 @@ void InitPlayerData(); // プレイヤーデータ初期化処理
 
 void EndSys(); // システム終了処理
 
+// 埋まっているピクセル数を返す　横
 static int BuryCheck_Side(const int chara_ID, const int accuracy, int block_X,
                           const int block_Y, int block_Z, const float *point_X,
                           const float *point_Z, const Collision_Dire flag);
 
+// 埋まっているピクセル数を返す　縦
 static int BuryCheck_Under(const int chara_ID, const int y, const int accuracy,
                            int block_X, int block_Y, int block_Z,
                            const float *point_X, const float *point_Z,
@@ -139,6 +141,12 @@ static Collision Collision_CB_Side(const int chara_ID, const int y = 0,
 
 static Collision Collision_CB_Under(const int chara_ID, const int y,
                                     const int accuracy = PLAYER_W);
+
+// キャラとキャラの当たり判定
+static void Collision_CC_Side(FloatCube& player_1, FloatCube& player_2);
+
+// 横と縦を呼び出す
+static void Collision_CC(int chara_num);
 
 static bool Collision_BB(); // ブロックを置けるなら true
 

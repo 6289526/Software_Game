@@ -6,7 +6,7 @@
 #define PLAYER_MOVE_SPEED 40	// 移動速度
 #define PLAYER_ROTATE_SPEED 4	// 回転速度
 #define PLAYER_JUMP_POWER 2		// ジャンプ力
-#define PLAYER_HAND_LENGTH 40.0f	// 手の長さ(ブロックの設置先までの距離)
+#define PLAYER_HAND_LENGTH (MAP_MAGNIFICATION + 1)	// 手の長さ(ブロックの設置先までの距離)
 
 #define GRAVITY 9.8 * 0.5		// 重力
 #define TERMINAL_SPEED PLAYER_Y // 終端速度
@@ -21,6 +21,7 @@ static FloatCube Pos_Clients = {PLAYER_X, PLAYER_Y, PLAYER_Z, PLAYER_W, PLAYER_H
 ClientMap Map;			//マップ
 InputModuleBase *Input; // Input Module
 Timer *Time;			// FrameTimer
+GameStateController *StateController;	// GameStateController
 
 // ===== * ===== プロトタイプ宣言 ===== * ===== //
 const PlayerData *GetPlayerData();
@@ -36,9 +37,10 @@ extern PlaceData GetPlaceData();
 extern void SystemRun();
 extern void UpdateFlag(VelocityFlag *flags, int numClients);
 extern void UpdatePlaceData(PlaceData data);
+extern GameStateController GetGameStateController();
 bool IsPlayerOnGround();
 int clamp(const int __val, const int __lo, const int __hi);
-int BuryCheck_Under(const int id, const int y, const int accuracy,
+static int BuryCheck_Under(const int id, const int y, const int accuracy,
 					int block_X, int block_Y, int block_Z,
 					const float *point_X, const float *point_Z);
 // int GraphicThread(void *data); // This Function isn't used now.
@@ -103,6 +105,9 @@ bool InitSystem(InitData *data)
 
 	Time = new Timer();
 	data->timer = Time;
+
+	StateController = new GameStateController();
+	data->stateController = StateController;
 	return true;
 }
 
@@ -112,6 +117,7 @@ void ExitSystem(InitData *data)
 	delete[] PData;
 	delete data->input;
 	delete data->timer;
+	delete data->stateController;
 }
 
 void SetNumClients(int n) // クライアント人数セット
@@ -194,7 +200,6 @@ void SystemRun()
 		fprintf(stderr,"%s", e);
 	}
 	PData[MyId].velocity.x = 0;
-	
 	if (isOnGround)
 		PData[MyId].velocity.y = 0;
 
@@ -330,6 +335,8 @@ void UpdatePlaceData(PlaceData data)
 {
 	Map.SetObjectData(&data);
 }
+
+GameStateController GetGameStateController(){ return *StateController; }
 
 bool IsPlayerOnGround()
 {
