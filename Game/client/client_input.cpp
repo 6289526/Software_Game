@@ -29,8 +29,8 @@ InputType InputModuleBase::SystemGetInputType(){
     if(_Input.Jump){
         _jumpFlag = true;
     }
-    if(_Input.Jump || _Input.Put)
-    // fprintf(stderr, "%d %d %d %d\n", _Input.Jump, _jumpFlag,  _Input.Put, _putFlag);
+    // if(_Input.Jump || _Input.Put)
+    // // fprintf(stderr, "%d %d %d %d\n", _Input.Jump, _jumpFlag,  _Input.Put, _putFlag);
     return _Input;
 }
 

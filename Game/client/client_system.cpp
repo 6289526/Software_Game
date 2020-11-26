@@ -194,8 +194,7 @@ void SystemRun()
 		fprintf(stderr,"%s", e);
 	}
 	PData[MyId].velocity.x = 0;
-	if (data.Jump || data.Put)
-		// fprintf(stderr, "%d %d %d\n", data.Forward, data.Jump, data.Put);
+	
 	if (isOnGround)
 		PData[MyId].velocity.y = 0;
 

@@ -77,9 +77,9 @@ void SetupClient(char *server_name, u_short port)
     // fprintf(stderr, "Input your name: ");
     // 名前を格納する変数
     char user_name[MAX_LEN_NAME];
-    sprintf(user_name, "%s", NameSetUp());
-    // 名前の後ろをナル文字にする
-    user_name[strlen(user_name) - 1] = '\0';
+    NameSetUp();
+    sprintf(user_name, "%s", MyName);
+    
     // 名前を送信する
     SendData(user_name, MAX_LEN_NAME);
 

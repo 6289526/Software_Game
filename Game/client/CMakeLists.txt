@@ -16,6 +16,7 @@ set(CLIENT_CODE
     client_map
     client_time
     control_setup
+    client_name
 )
 # CMakeの最低バージョンを記述
 cmake_minimum_required(VERSION 2.8)
