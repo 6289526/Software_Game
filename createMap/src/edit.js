@@ -175,10 +175,8 @@ function onLoad() {
         const file = event.dataTransfer.files[0];
         readFile(file.path);
     });
+
     
-    document.querySelector('#btnLoad').addEventListener('click', () => {
-        readFile(currentPath);
-    });
 };
 
 
