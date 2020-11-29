@@ -5,12 +5,20 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="chrome" />
     <title>createMap</title>
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4"
+        crossorigin="anonymous">
     <link rel="stylesheet" href="main.css" />
 
 </head>
 
 <body style="margin:0">
     <canvas id="myCanvas"></canvas>
+    <div id="header_fixed">
+        <button type="button" class="btn-sm btn-primary" id="btnLoad">
+            <p class="import">変更の取り込み</p>
+        </button>
+    </div>
     <div id="editor-container"></div>
     <div id="footer_fixed"></div>
     <div id="input_area">
@@ -23,8 +31,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
     <script src="https://rawgithub.com/ajaxorg/ace-builds/master/src/ace.js" type="text/javascript"
         charset="utf-8"></script>
-    <!-- <script src="https://rawgithub.com/ajaxorg/ace-builds/master/src/ext-language_tools.js" type="text/javascript"
-        charset="utf-8"></script> -->
+    
     <script defer src="https://use.fontawesome.com/releases/v5.0.10/js/all.js"
         integrity="sha384-slN8GvtUJGnv6ca26v8EzVaR9DC58QEwsIk9q1QXdCU8Yu8ck/tL/5szYlBbqmS+"
         crossorigin="anonymous"></script>

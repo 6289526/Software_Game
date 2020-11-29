@@ -83,7 +83,7 @@ function tick() {
     controls.update();
     // レンダリング
     renderer.render(scene, camera);
-
+    
     // // レンダリング情報を画面に表示
     // document.getElementById('info').innerHTML = JSON.stringify(
     //     renderer.info.render,
