@@ -200,6 +200,7 @@ void SystemRun()
 		fprintf(stderr,"%s", e);
 	}
 	PData[MyId].velocity.x = 0;
+
 	if (isOnGround)
 		PData[MyId].velocity.y = 0;
 
@@ -210,7 +211,7 @@ void SystemRun()
 		if (data.U)
 		{
 			data.U = false;
-			PData[MyId].velocity.y -= 1;
+			PData[MyId].velocity.y = -1;
 		}
 		// 前
 		if (data.Forward)
