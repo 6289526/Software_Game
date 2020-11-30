@@ -490,11 +490,11 @@ bool Collision_BB() // ブロックを置けるかどうかの判定
     t_Chara_Pos_in_Map.y = PData[i].pos.y / MAP_MAGNIFICATION;
     t_Chara_Pos_in_Map.z = PData[i].pos.z / MAP_MAGNIFICATION;
 
-    // if (t_Chara_Pos_in_Map.x == Block_X && t_Chara_Pos_in_Map.y == Block_Y &&
-    //     t_Chara_Pos_in_Map.z == Block_Z) {
-    //       fprintf(stderr, "client[%d] がキャラにブロックぶつけた笑\n", i);
-    //       return false;
-    // }
+    if (t_Chara_Pos_in_Map.x == Block_X && t_Chara_Pos_in_Map.y == Block_Y &&
+        t_Chara_Pos_in_Map.z == Block_Z) {
+          fprintf(stderr, "client[%d] がキャラにブロックぶつけた笑\n", i);
+          return false;
+    }
   }
 
   // 置く場所にブロックがないなら
