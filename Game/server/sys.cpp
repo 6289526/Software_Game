@@ -609,15 +609,15 @@ int AllGoal() {
 // クライアントの速度ベクトルをセット
 // chara_ID:クライアントのID
 // pos:クライアントの座標
-void SetVec(int chara_ID, Vector3 &vec) {
+inline void SetVec(int chara_ID, Vector3 &vec) {
   PData[chara_ID].velocity.x = vec.x;
   PData[chara_ID].velocity.y = vec.y;
   PData[chara_ID].velocity.z = vec.z;
 }
 
-PlaceData GetPlaceData() { return PlData; }
+inline PlaceData GetPlaceData() { return PlData; }
 
-void SetPlaceData(PlaceData &data) { PlData = data; }
+inline void SetPlaceData(PlaceData &data) { PlData = data; }
 
 /*全員に座標を送る
  *
@@ -634,6 +634,11 @@ void SendAllPos(int client_num) {
 }
 
 // システムにクライアントの角度を渡す
-void SetDirection(int chara_ID, float direction) {
+inline void SetDirection(int chara_ID, float direction) {
   PData[chara_ID].direction = direction;
+}
+
+// ネットワークにクライアントの角度を渡す
+inline float GetDirection(int chara_ID) {
+  return PData[chara_ID].direction;
 }
