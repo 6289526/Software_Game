@@ -88,7 +88,7 @@ static int BuryCheck_Side(const int chara_ID, const int accuracy, Vector3Int blo
     PN_flag = positive;
     break;
   default:
-    throw "BuryCheck : 引数 flag が不正\n";
+    throw "BuryCheck_Side : 引数 flag が不正\n";
     break;
   }
 
@@ -153,7 +153,81 @@ static int BuryCheck_Under(const int chara_ID, const int y, const int accuracy,
     PN_flag = positive;
     break;
   default:
-    throw "BuryCheck : 引数 flag が不正\n";
+    throw "BuryCheck_Under : 引数 flag が不正\n";
+    break;
+  }
+
+  // マップデータ入手
+  const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
+
+  int Bury_Count = 0; // 返り値　埋まり具合
+  int Errer_Count = 0;
+
+  for (int i = 1; i < (accuracy - 1); ++i) {
+    block.x = point_X[i] / MAP_MAGNIFICATION;
+    for (int j = 1; j < (accuracy - 1); ++j) {
+      block.z = point_Z[i] / MAP_MAGNIFICATION;
+      if (terrainData[block.x][static_cast<int>(base_point / MAP_MAGNIFICATION)]
+                     [block.z] == NomalBlock) {
+        int t_Count = 0;
+        // どこまで埋まっているか調べる
+        for (int k = 0; k <= chara_size - y; ++k) {
+
+          block.y = (base_point + (k * PN_flag)) / MAP_MAGNIFICATION;
+
+          if (terrainData[block.x][block.y][block.z] == NomalBlock) {
+            // その点の埋まっている程度をカウント
+            ++t_Count;
+            // 埋まっている(かもしれない)
+            if (chara_size <= k) {
+              ++Errer_Count;
+              t_Count = 0;
+            }
+          }
+          // 埋まっていなければ抜ける
+          else {
+            break;
+          }
+        }
+        // 最も埋まっている部分の埋まっている程度にする
+        if (std::max(t_Count, Bury_Count) == t_Count) {
+          Bury_Count = t_Count;
+        }
+      } else if (terrainData[block.x][block.y][block.z] == GoalBlock) {
+        if (PData[chara_ID].goal == false) {
+          Goal(chara_ID);
+        }
+      }
+    }
+  }
+
+  // 全体が埋まっていたら
+  if (Errer_Count == ((accuracy - 2) * (accuracy - 2))) {
+    return -1;
+  }
+
+  return Bury_Count; // 埋まっているピクセルが返る
+}
+
+
+static int BuryCheck_Over(const int chara_ID, const int y, const int accuracy,
+                           Vector3Int block, const float *point_X,
+                           const float *point_Z, const Collision_Dire flag) {
+  int chara_size;   // キャラの大きさ
+  float base_point; // 計算に使う基準座標
+  enum PN_sign { positive = 1, negative = -1 } PN_flag; // 正負を扱う
+
+  // 当たり判定の向きごとの初期化
+  switch (flag) {
+  case Over:
+    chara_size = PData[chara_ID].pos.h;
+    // なぜかvelocityを足さないとグラフィクがぶれる
+    // 偉い人計算してください
+    base_point = PData[chara_ID].pos.y + PData[chara_ID].pos.h + PData[chara_ID].velocity.y + y;
+    PN_flag = negative;
+    break;
+  default:
+    throw "BuryCheck_Over : 引数 flag が不正\n";
     break;
   }
 
@@ -391,6 +465,78 @@ Collision Collision_CB_Under(const int chara_ID, const int y,
   return ret;
 }
 
+Collision Collision_CB_Over(const int chara_ID, const int y,
+                             const int accuracy) {
+  // 当たり判定の精度が正しいかどうか
+  if (accuracy < 3 || PLAYER_D < accuracy || PLAYER_W < accuracy) {
+    throw "Collision_CB_Under : 引数　エラー\n";
+  }
+
+  Pointer<float> point_X(accuracy); // 調べる座標ｘ
+  Pointer<float> point_Z(accuracy); // 調べる座標ｚ
+
+  const int wide = PData[chara_ID].pos.w /
+                   (accuracy - 1); // 当たり判定を知らべる座標間距離 x座標
+  const int depth = PData[chara_ID].pos.d /
+                    (accuracy - 1); // 当たり判定を知らべる座標間距離 z座標
+
+  // 当たり判定を調べる座標をすべて格納
+  for (int i = 0; i < accuracy; ++i) {
+    point_X[i] = PData[chara_ID].pos.x + PData[chara_ID].velocity.x + wide * i;
+    point_Z[i] = PData[chara_ID].pos.z + PData[chara_ID].velocity.z + depth * i;
+  }
+
+  // マップデータ入手
+  const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
+
+  // マップ配列用添字　の宣言　と　範囲のエラー処理
+  int Block_X = point_X[accuracy - 1] / MAP_MAGNIFICATION;
+
+  if (point_X[0] < 0) {
+    throw "Collision_CB_Under : マップ外 : x座標 :負\n";
+  } else if (MAP_SIZE_W <= Block_X) {
+    throw "Collision_CB_Under : マップ外 : x座標 : 正\n";
+  }
+
+  const float t_Block_Y =
+      (PData[chara_ID].pos.y + PData[chara_ID].velocity.y + y);
+  int Block_Y = t_Block_Y / MAP_MAGNIFICATION;
+
+  if (t_Block_Y < 0) {
+    throw "Collision_CB_Under : マップ外 : y座標 : 負\n";
+  } else if (MAP_SIZE_H <= Block_Y) {
+    throw "Collision_CB_Under : マップ外 : y座標 : 正\n";
+  }
+
+  int Block_Z = point_Z[accuracy - 1] / MAP_MAGNIFICATION;
+
+  if (point_Z[0] < 0) {
+    throw "Collision_CB_Under : マップ外 : z座標 :負\n";
+  } else if (MAP_SIZE_W <= Block_Z) {
+    throw "Collision_CB_Under : マップ外 : z座標 : 正\n";
+  }
+
+  Vector3Int block = {Block_X, Block_Y, Block_Z};
+
+  int Count_Over =
+      BuryCheck_Over(chara_ID, 0, accuracy, block,
+                      point_X.Get(), point_Z.Get(), Over);
+
+  if (Count_Over == -1) {
+    // throw "Collision_CB_Under : ブロックに埋まってる\n";
+    fprintf(stderr, "Collision_CB_Over : ブロックに埋まってる\n");
+  }
+
+  Collision ret = {Non, 0}; // 返り値
+
+  if (0 < Count_Over) {
+    ret.dire = Over;
+    ret.power = Count_Over;
+  }
+
+  return ret;
+}
+
 // キャラとキャラの当たり判定
 static void Collision_CC_Side(FloatCube &player_1, FloatCube &player_2) {
   // キャラの半径
@@ -405,7 +551,7 @@ static void Collision_CC_Side(FloatCube &player_1, FloatCube &player_2) {
   Center_1.x = player_1.x + radius_1;
   Center_2.x = player_2.x + radius_2;
 
-  // y じゃなくて z　だよ
+  // y じゃなくて z だよ
   Center_1.y = player_1.z + radius_1;
   Center_2.y = player_2.z + radius_2;
 
@@ -515,21 +661,8 @@ bool Collision_BB() // ブロックを置けるかどうかの判定
   return false;
 }
 
-void Goal(int chara_ID) {
-  static int rank = 1;
-
-  if (PData[chara_ID].goal == false) {
-    PData[chara_ID].goal = true;
-    PData[chara_ID].rank = rank++;
-    RunCommand(chara_ID, GOAL_COMMAND);
-  }
-}
-
-void MovePosition(int chara_ID) {
-
-  // キャラキャラの当たり判定
-  Collision_CC(Num_Clients);
-
+// キャラとブロックの当たり判定
+static void Collision_CB(int chara_ID) {
   // 下の当たり判定
   Collision t_Collision_Under = Collision_CB_Under(chara_ID, 0);
 
@@ -545,35 +678,75 @@ void MovePosition(int chara_ID) {
     break;
   }
 
-  // PData[chara_ID].velocity.y = 0;
-
   // 横の当たり判定
-  Collision t_Collision_Side = Collision_CB_Side(chara_ID, 1);
+  Collision t_Collision_Side_Max = {Non, 0};
+  Collision t_Collision_Side;
+  for (int i = 1; i < PData[chara_ID].pos.h; ++i) {
+    t_Collision_Side = Collision_CB_Side(chara_ID, i);
+    if (t_Collision_Side_Max.power < t_Collision_Side.power) {
+      t_Collision_Side_Max = t_Collision_Side;
+    }
+  }
 
   // 移動後の座標に書き換え
   PData[chara_ID].pos.x += PData[chara_ID].velocity.x;
   PData[chara_ID].pos.z += PData[chara_ID].velocity.z;
 
-  switch (t_Collision_Side.dire) {
+  switch (t_Collision_Side_Max.dire) {
   case Front:
     PData[chara_ID].pos.z =
-        static_cast<int>(PData[chara_ID].pos.z - t_Collision_Side.power);
+        static_cast<int>(PData[chara_ID].pos.z - t_Collision_Side_Max.power);
     break;
   case Right:
     PData[chara_ID].pos.x =
-        static_cast<int>(PData[chara_ID].pos.x + t_Collision_Side.power);
+        static_cast<int>(PData[chara_ID].pos.x + t_Collision_Side_Max.power);
     break;
   case Back:
     PData[chara_ID].pos.z =
-        static_cast<int>(PData[chara_ID].pos.z + t_Collision_Side.power);
+        static_cast<int>(PData[chara_ID].pos.z + t_Collision_Side_Max.power);
     break;
   case Left:
     PData[chara_ID].pos.x =
-        static_cast<int>(PData[chara_ID].pos.x - t_Collision_Side.power);
+        static_cast<int>(PData[chara_ID].pos.x - t_Collision_Side_Max.power);
     break;
   default:
     break;
   }
+
+  // 上の当たり判定
+  Collision t_Collision_Over = Collision_CB_Over(chara_ID, 0);
+
+  // 移動後の座標に書き換え
+  PData[chara_ID].pos.y += PData[chara_ID].velocity.y;
+
+  switch (t_Collision_Over.dire) {
+  case Over:
+    PData[chara_ID].pos.y =
+        static_cast<int>(PData[chara_ID].pos.y - t_Collision_Over.power);
+    break;
+  default:
+    break;
+  }
+}
+
+
+void Goal(int chara_ID) {
+  static int rank = 1;
+
+  if (PData[chara_ID].goal == false) {
+    PData[chara_ID].goal = true;
+    PData[chara_ID].rank = rank++;
+    RunCommand(chara_ID, GOAL_COMMAND);
+  }
+}
+
+void MovePosition(int chara_ID) {
+
+  // キャラキャラの当たり判定
+  Collision_CC(Num_Clients);
+
+  // キャラとブロックの当たり判定
+  Collision_CB(chara_ID);
 
   // 速度を０に戻す
   PData[chara_ID].velocity.x = 0;
@@ -612,15 +785,15 @@ int AllGoal() {
 // クライアントの速度ベクトルをセット
 // chara_ID:クライアントのID
 // pos:クライアントの座標
-inline void SetVec(int chara_ID, Vector3 &vec) {
+void SetVec(int chara_ID, Vector3 &vec) {
   PData[chara_ID].velocity.x = vec.x;
   PData[chara_ID].velocity.y = vec.y;
   PData[chara_ID].velocity.z = vec.z;
 }
 
-inline PlaceData GetPlaceData() { return PlData; }
+PlaceData GetPlaceData() { return PlData; }
 
-inline void SetPlaceData(PlaceData &data) { PlData = data; }
+void SetPlaceData(PlaceData &data) { PlData = data; }
 
 /*全員に座標を送る
  *
@@ -637,11 +810,11 @@ void SendAllPos(int client_num) {
 }
 
 // システムにクライアントの角度を渡す
-inline void SetDirection(int chara_ID, float direction) {
+void SetDirection(int chara_ID, float direction) {
   PData[chara_ID].direction = direction;
 }
 
 // ネットワークにクライアントの角度を渡す
-inline float GetDirection(int chara_ID) {
+float GetDirection(int chara_ID) {
   return PData[chara_ID].direction;
 }

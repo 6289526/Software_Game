@@ -200,7 +200,8 @@ void SystemRun()
 		fprintf(stderr,"%s", e);
 	}
 	PData[MyId].velocity.x = 0;
-	if (isOnGround)
+
+	//if (isOnGround)
 		PData[MyId].velocity.y = 0;
 
 	PData[MyId].velocity.z = 0;
@@ -210,7 +211,7 @@ void SystemRun()
 		if (data.U)
 		{
 			data.U = false;
-			PData[MyId].velocity.y -= 1;
+			PData[MyId].velocity.y = -1;
 		}
 		// 前
 		if (data.Forward)
@@ -262,7 +263,7 @@ void SystemRun()
 		}
 		else if (!isOnGround)
 		{
-			PData[MyId].velocity.y -= GRAVITY * Time->GetDeltaTime();
+			// PData[MyId].velocity.y -= GRAVITY * Time->GetDeltaTime();
 		}
 
 		if (data.R)
@@ -272,8 +273,10 @@ void SystemRun()
 		}
 		if (data.L)
 		{
-			PData[MyId].direction += PLAYER_ROTATE_SPEED * Time->GetDeltaTime();
+			// PData[MyId].direction += PLAYER_ROTATE_SPEED * Time->GetDeltaTime();
+			// data.L = false;
 			data.L = false;
+			PData[MyId].velocity.y = 1;
 		}
 
 		///////////////////////////////// デバッグ用 後ろに下がる
