@@ -342,6 +342,7 @@ void RunCommand(int id, char com)
     const PlayerData *pData = GetPlayerData();
     // 送るデータ
     FloatPosition posData;
+    float direction;
     VelocityFlag flag = {false, false, false};
     PlaceData placeData = GetPlaceData();
     bool goal = pData[id].goal;
@@ -360,6 +361,9 @@ void RunCommand(int id, char com)
             posData.y = pData[i].pos.y;
             posData.z = pData[i].pos.z;
 
+            //  方向の取得
+            direction = GetDirection(i);
+
             // フラッグ設定
             if (pData->velocity.x != 0)
             {
@@ -373,8 +377,9 @@ void RunCommand(int id, char com)
             {
                 flag.z = true;
             }
-            // 座標とフラッグを送信
+            // 座標と方向とフラッグを送信
             SendData(id, &posData, sizeof(FloatPosition));
+            sendData(id, &direction, sizeof(float));
             SendData(id, &flag, sizeof(VelocityFlag));
         }
         break;
