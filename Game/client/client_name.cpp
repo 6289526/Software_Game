@@ -20,12 +20,19 @@ typedef struct
     int a;
 } InputData;
 
+typedef struct
+{
+    bool left = false;
+    bool right = false;
+    bool up = false;
+    bool down = false;
+    bool two = false;
+    bool one = false;
+} WiiInputData;
 //　SDLのキーボード入力で必要
 const Uint8 *K;
 // フォント
 static TTF_Font *font;
-//読み取ったデータ
-static InputData Data;
 
 // メッセージ
 static char Text[MESSAGE_NUM][MAX_STRING] = {
@@ -52,6 +59,9 @@ static char ImagePath[2][MAX_STRING] = {
 #endif
 
 static InitData NinitData;
+//読み取った入力データ
+static InputData Data;
+static WiiInputData WIData;
 
 /*プロトタイプ*/
 static void InitInput();
@@ -216,40 +226,13 @@ void NameSetUp()
     }
     else
     {
-
-        while (NinitData.input->GetInputType().Forward != 1 && KeyboardNum != 27)
+        NinitData.input->_setname = true;
+        while (KeyboardNum != 26 || !NinitData.input->GetInputType().Forward)
         {
-            /*キーボード入力取得 kキーでwhileループ抜ける*/
+            //wii入力取得
             NinitData.input->UpdateInput();
 
-            if (NinitData.input->GetInputType().Left)
-            {
-                if (KeyboardNum != 0 && KeyboardNum != 9 && KeyboardNum != 18)
-                {
-                    KeyboardNum--;
-                }
-            }
-            if (NinitData.input->GetInputType().Right)
-            {
-                if (KeyboardNum != 8 && keynum != 17 && KeyboardNum != 27)
-                {
-                    KeyboardNum++;
-                }
-            }
-            if (NinitData.input->GetInputType().Up)
-            {
-                if (KeyboardNum > 8)
-                {
-                    KeyboardNum -= 9;
-                }
-            }
-            if (NinitData.input->GetInputType().Down)
-            {
-                if (KeyboardNum < 18)
-                {
-                    KeyboardNum += 9;
-                }
-            }
+            // 入力
             SetWiiString();
 
             SDL_RenderClear(renderer);
@@ -347,22 +330,21 @@ void NameSetUp()
             }
             // アルファベットの何番目か
             int keynum = 0;
-            /*くるくるするやつを描画*/
+            // キーボードの入力
             for (int i = 0; i < 3; i++)
             {
                 for (int j = 0; j < 9; j++)
                 {
-                    // 点滅するやつの表示
-                    //TTF_SetFontOutline(font, 1);//枠抜きで描写するとき
                     if (i == 2 && j == 8)
                     {
-                        if(keynum == KeyboardNum){
+                        if (keynum == KeyboardNum)
+                        {
                             surface = TTF_RenderUTF8_Blended(font, "Enter", (SDL_Color){255, 255, 0, 255});
                         }
-                        else{
+                        else
+                        {
                             surface = TTF_RenderUTF8_Blended(font, "Enter", (SDL_Color){255, 255, 255, 255});
                         }
-                        
                     }
                     else
                     {
@@ -387,7 +369,14 @@ void NameSetUp()
 
                     SDL_Rect txtRect = (SDL_Rect){0, 0, iw, ih};
                     SDL_Rect pasteRect;
-                    pasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - (iw * 4) + iw * 2 * j, SCREEN_HEIGHT * 2 / 3 + ih * i, iw, ih};
+                    if (i == 2 && j == 8)
+                    {
+                        pasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - (iw * 2) + iw / 2 * j, SCREEN_HEIGHT * 2 / 3 + ih * i, iw, ih};
+                    }
+                    else
+                    {
+                        pasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - (iw * 6) + iw * 2 * j, SCREEN_HEIGHT * 2 / 3 + ih * i, iw, ih};
+                    }
 
                     //Textureを描写する
                     //描写元の描写する部分,描写先の描写する部分)
@@ -410,6 +399,7 @@ void NameSetUp()
     SDL_DestroyWindow(window);
     TTF_CloseFont(font);
     TTF_Quit();
+    NinitData.input->_setname = false;
 }
 
 //入力システムの初期化
@@ -482,13 +472,81 @@ void SetString()
 }
 
 // Wiiリモコンによる文字の入力
-void SetWiiString(){ 
-    if(NinitData.input->GetInputType().Forward){
-        MyName[Index] = 'a' + KeyboardNum;
-        Index++;
+void SetWiiString()
+{
+    if (WIData.left == false && NinitData.input->GetInputType().Left)
+    {
+        if (KeyboardNum != 0 && KeyboardNum != 9 && KeyboardNum != 18)
+        {
+            KeyboardNum--;
+        }
+        WIData.left = true;
     }
-    if(NinitData.input->GetInputType().Jump){
+    else if (!NinitData.input->GetInputType().Left)
+    {
+        WIData.left = false;
+    }
+
+    if (WIData.right == false && NinitData.input->GetInputType().Right)
+    {
+        if (KeyboardNum != 8 && KeyboardNum != 17 && KeyboardNum != 26)
+        {
+            KeyboardNum++;
+        }
+        WIData.right = true;
+    }
+    else if (!NinitData.input->GetInputType().Right)
+    {
+        WIData.right = false;
+    }
+
+    if (WIData.up == false && NinitData.input->GetInputType().Up)
+    {
+        if (KeyboardNum > 8)
+        {
+            KeyboardNum -= 9;
+        }
+        WIData.up = true;
+    }
+    else if (!NinitData.input->GetInputType().Up)
+    {
+        WIData.up = false;
+    }
+    if (WIData.down == false && NinitData.input->GetInputType().Down)
+    {
+        if (KeyboardNum < 18)
+        {
+            KeyboardNum += 9;
+        }
+        WIData.down = true;
+    }
+    else if (!NinitData.input->GetInputType().Down)
+    {
+        WIData.down = false;
+    }
+
+    if (WIData.two == false && NinitData.input->GetInputType().Forward)
+    {
+        if (KeyboardNum != 26)
+        {
+            MyName[Index+1] = 'a' + KeyboardNum;
+            Index++;
+            WIData.two = true;
+        }
+    }
+    else if (!NinitData.input->GetInputType().Forward)
+    {
+        WIData.two = false;
+    }
+
+    if (WIData.one == false && NinitData.input->GetInputType().Jump)
+    {
         MyName[Index] = '\0';
         Index--;
+        WIData.one = true;
+    }
+    else if (!NinitData.input->GetInputType().Jump)
+    {
+        WIData.one = false;
     }
 }
