@@ -169,6 +169,7 @@ void PutBlock(int chara_ID); // ブロックを置けるなら置く
 
 int AllGoal(); // 全員ゴールしていれば１
 
+
 void SetVec(int chara_ID, Vector3 &vec); // キャラの速度ベクトルをセット
 
 void SetPlaceData(PlaceData &data); // 配置したいブロックの場所をセット

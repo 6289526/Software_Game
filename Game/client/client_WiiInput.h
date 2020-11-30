@@ -17,6 +17,7 @@ private:
     wiimote_t _wiimote;	// Wiiリモコンの状態格納用
     wiimote_report_t _report;	// レポートタイプ用
 public:
+    
     WiiInput(char Address[17]);
     ~WiiInput();
     virtual void UpdateInput();

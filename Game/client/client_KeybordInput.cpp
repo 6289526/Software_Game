@@ -14,6 +14,7 @@ void KeybordInput::UpdateInput()
 	{
 		InputType t = _Input;
 		_Input = t;
+		
 		if (_key[SDL_SCANCODE_ESCAPE])
 		{
 			_Input.End = true;

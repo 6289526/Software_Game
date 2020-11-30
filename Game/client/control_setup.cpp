@@ -10,8 +10,8 @@
 #endif
 #define MAX_STRING 128
 #define MESSAGE_NUM 5
-const int SCREEN_WIDTH = 1237;
-const int SCREEN_HEIGHT = 696;
+const int SCREEN_WIDTH = Wd_Width;
+const int SCREEN_HEIGHT = Wd_Height;
 
 typedef struct
 {
