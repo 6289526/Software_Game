@@ -666,9 +666,13 @@ static void Collision_CB(int chara_ID) {
   // 下の当たり判定
   Collision t_Collision_Under = Collision_CB_Under(chara_ID, 0);
 
+  // 上の当たり判定
+  Collision t_Collision_Over = Collision_CB_Over(chara_ID, 0);
+
   // 移動後の座標に書き換え
   PData[chara_ID].pos.y += PData[chara_ID].velocity.y;
 
+  // 下の補正
   switch (t_Collision_Under.dire) {
   case Under:
     PData[chara_ID].pos.y =
@@ -678,12 +682,25 @@ static void Collision_CB(int chara_ID) {
     break;
   }
 
+  // 上の補正
+  switch (t_Collision_Over.dire) {
+  case Over:
+    PData[chara_ID].pos.y =
+        static_cast<int>(PData[chara_ID].pos.y - t_Collision_Over.power);
+        PData[chara_ID].velocity.y = 0;
+    break;
+  default:
+    break;
+  }
+
   // 横の当たり判定
   Collision t_Collision_Side_Max = {Non, 0};
   Collision t_Collision_Side;
+
+
   for (int i = 1; i < PData[chara_ID].pos.h; ++i) {
     t_Collision_Side = Collision_CB_Side(chara_ID, i);
-    if (t_Collision_Side_Max.power < t_Collision_Side.power) {
+    if (t_Collision_Side_Max.power <= t_Collision_Side.power) {
       t_Collision_Side_Max = t_Collision_Side;
     }
   }
@@ -708,21 +725,6 @@ static void Collision_CB(int chara_ID) {
   case Left:
     PData[chara_ID].pos.x =
         static_cast<int>(PData[chara_ID].pos.x - t_Collision_Side_Max.power);
-    break;
-  default:
-    break;
-  }
-
-  // 上の当たり判定
-  Collision t_Collision_Over = Collision_CB_Over(chara_ID, 0);
-
-  // 移動後の座標に書き換え
-  PData[chara_ID].pos.y += PData[chara_ID].velocity.y;
-
-  switch (t_Collision_Over.dire) {
-  case Over:
-    PData[chara_ID].pos.y =
-        static_cast<int>(PData[chara_ID].pos.y - t_Collision_Over.power);
     break;
   default:
     break;
