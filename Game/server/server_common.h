@@ -103,7 +103,7 @@ template <class T> void Pointer<T>::Copy(const Pointer &p) {
 }
 
 // 当たり判定で跳ね返す方向
-enum Collision_Dire { Non, Right, Back, Left, Front, Under };
+enum Collision_Dire { Non, Right, Back, Left, Front, Under, Over };
 
 struct Collision {
   Collision_Dire dire; // キャラを跳ね返す方向
@@ -123,15 +123,14 @@ void InitPlayerData(); // プレイヤーデータ初期化処理
 void EndSys(); // システム終了処理
 
 // 埋まっているピクセル数を返す　横
-static int BuryCheck_Side(const int chara_ID, const int accuracy, int block_X,
-                          const int block_Y, int block_Z, const float *point_X,
+static int BuryCheck_Side(const int chara_ID, const int accuracy,
+                          Vector3Int block, const float *point_X,
                           const float *point_Z, const Collision_Dire flag);
 
 // 埋まっているピクセル数を返す　縦
 static int BuryCheck_Under(const int chara_ID, const int y, const int accuracy,
-                           int block_X, int block_Y, int block_Z,
-                           const float *point_X, const float *point_Z,
-                           const Collision_Dire flag);
+                           Vector3Int block, const float *point_X,
+                           const float *point_Z, const Collision_Dire flag);
 
 // キャラとブロックの当たり判定
 // ｙ ： 基準面の高さの補正
@@ -143,7 +142,7 @@ static Collision Collision_CB_Under(const int chara_ID, const int y,
                                     const int accuracy = PLAYER_W);
 
 // キャラとキャラの当たり判定
-static void Collision_CC_Side(FloatCube& player_1, FloatCube& player_2);
+static void Collision_CC_Side(FloatCube &player_1, FloatCube &player_2);
 
 // 横と縦を呼び出す
 static void Collision_CC(int chara_num);

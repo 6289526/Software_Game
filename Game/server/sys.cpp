@@ -58,9 +58,9 @@ void EndSys() // システム終了処理
   delete[] PData;
 }
 
-int BuryCheck_Side(const int chara_ID, const int accuracy, int block_X,
-                   const int block_Y, int block_Z, const float *point_X,
-                   const float *point_Z, const Collision_Dire flag) {
+static int BuryCheck_Side(const int chara_ID, const int accuracy, Vector3Int block,
+                   const float *point_X, const float *point_Z,
+                   const Collision_Dire flag) {
   int chara_size;   // キャラの大きさ
   float base_point; // 計算に使う基準座標
   enum PN_sign { positive = 1, negative = -1 } PN_flag; // 正負を扱う
@@ -100,9 +100,9 @@ int BuryCheck_Side(const int chara_ID, const int accuracy, int block_X,
   // 調べる点を順にスキャンしていく
   for (int i = 1; i < (accuracy - 1); ++i) {
     if (flag == Front || flag == Back) {
-      block_X = point_X[i] / MAP_MAGNIFICATION;
+      block.x = point_X[i] / MAP_MAGNIFICATION;
     } else if (flag == Right || flag == Left) {
-      block_Z = point_Z[i] / MAP_MAGNIFICATION;
+      block.z = point_Z[i] / MAP_MAGNIFICATION;
     }
 
     int t_Count = 0;
@@ -110,12 +110,12 @@ int BuryCheck_Side(const int chara_ID, const int accuracy, int block_X,
     // どこまで埋まっているか調べる
     for (int j = 0; j <= chara_size; ++j) {
       if (flag == Front || flag == Back) {
-        block_Z = (base_point + (j * PN_flag)) / MAP_MAGNIFICATION;
+        block.z = (base_point + (j * PN_flag)) / MAP_MAGNIFICATION;
       } else if (flag == Right || flag == Left) {
-        block_X = (base_point + (j * PN_flag)) / MAP_MAGNIFICATION;
+        block.x = (base_point + (j * PN_flag)) / MAP_MAGNIFICATION;
       }
 
-      if (terrainData[block_X][block_Y][block_Z] == NomalBlock) {
+      if (terrainData[block.x][block.y][block.z] == NomalBlock) {
         // 最も深くめり込んだ深さを計算
         if (Bury_Count < ++t_Count) {
           ++Bury_Count;
@@ -137,9 +137,8 @@ int BuryCheck_Side(const int chara_ID, const int accuracy, int block_X,
 }
 
 static int BuryCheck_Under(const int chara_ID, const int y, const int accuracy,
-                           int block_X, int block_Y, int block_Z,
-                           const float *point_X, const float *point_Z,
-                           const Collision_Dire flag) {
+                           Vector3Int block, const float *point_X,
+                           const float *point_Z, const Collision_Dire flag) {
   int chara_size;   // キャラの大きさ
   float base_point; // 計算に使う基準座標
   enum PN_sign { positive = 1, negative = -1 } PN_flag; // 正負を扱う
@@ -165,18 +164,18 @@ static int BuryCheck_Under(const int chara_ID, const int y, const int accuracy,
   int Errer_Count = 0;
 
   for (int i = 1; i < (accuracy - 1); ++i) {
-    block_X = point_X[i] / MAP_MAGNIFICATION;
+    block.x = point_X[i] / MAP_MAGNIFICATION;
     for (int j = 1; j < (accuracy - 1); ++j) {
-      block_Z = point_Z[i] / MAP_MAGNIFICATION;
-      if (terrainData[block_X][static_cast<int>(base_point / MAP_MAGNIFICATION)]
-                     [block_Z] == NomalBlock) {
+      block.z = point_Z[i] / MAP_MAGNIFICATION;
+      if (terrainData[block.x][static_cast<int>(base_point / MAP_MAGNIFICATION)]
+                     [block.z] == NomalBlock) {
         int t_Count = 0;
         // どこまで埋まっているか調べる
         for (int k = 0; k <= chara_size - y; ++k) {
 
-          block_Y = (base_point + (k * PN_flag)) / MAP_MAGNIFICATION;
+          block.y = (base_point + (k * PN_flag)) / MAP_MAGNIFICATION;
 
-          if (terrainData[block_X][block_Y][block_Z] == NomalBlock) {
+          if (terrainData[block.x][block.y][block.z] == NomalBlock) {
             // その点の埋まっている程度をカウント
             ++t_Count;
             // 埋まっている(かもしれない)
@@ -194,7 +193,7 @@ static int BuryCheck_Under(const int chara_ID, const int y, const int accuracy,
         if (std::max(t_Count, Bury_Count) == t_Count) {
           Bury_Count = t_Count;
         }
-      } else if (terrainData[block_X][block_Y][block_Z] == GoalBlock) {
+      } else if (terrainData[block.x][block.y][block.z] == GoalBlock) {
         if (PData[chara_ID].goal == false) {
           Goal(chara_ID);
         }
@@ -260,15 +259,17 @@ Collision Collision_CB_Side(const int chara_ID, const int y,
     throw "Collision_CB_Side : マップ外 : z座標 : 正\n";
   }
 
+  Vector3Int block = {Block_X, Block_Y, Block_Z};
+
   int Count_Front =
-      BuryCheck_Side(chara_ID, accuracy, Block_X, Block_Y, Block_Z,
+      BuryCheck_Side(chara_ID, accuracy, block,
                      point_X.Get(), point_Z.Get(), Front);
   int Count_Right =
-      BuryCheck_Side(chara_ID, accuracy, Block_X, Block_Y, Block_Z,
+      BuryCheck_Side(chara_ID, accuracy, block,
                      point_X.Get(), point_Z.Get(), Right);
-  int Count_Left = BuryCheck_Side(chara_ID, accuracy, Block_X, Block_Y, Block_Z,
+  int Count_Left = BuryCheck_Side(chara_ID, accuracy, block,
                                   point_X.Get(), point_Z.Get(), Left);
-  int Count_Back = BuryCheck_Side(chara_ID, accuracy, Block_X, Block_Y, Block_Z,
+  int Count_Back = BuryCheck_Side(chara_ID, accuracy, block,
                                   point_X.Get(), point_Z.Get(), Back);
 
   if (Count_Front + Count_Right + Count_Left + Count_Back == -4) {
@@ -369,8 +370,10 @@ Collision Collision_CB_Under(const int chara_ID, const int y,
     throw "Collision_CB_Under : マップ外 : z座標 : 正\n";
   }
 
+  Vector3Int block = {Block_X, Block_Y, Block_Z};
+
   int Count_Under =
-      BuryCheck_Under(chara_ID, 0, accuracy, Block_X, Block_Y, Block_Z,
+      BuryCheck_Under(chara_ID, 0, accuracy, block,
                       point_X.Get(), point_Z.Get(), Under);
 
   if (Count_Under == -1) {
@@ -492,8 +495,8 @@ bool Collision_BB() // ブロックを置けるかどうかの判定
 
     if (t_Chara_Pos_in_Map.x == Block_X && t_Chara_Pos_in_Map.y == Block_Y &&
         t_Chara_Pos_in_Map.z == Block_Z) {
-          fprintf(stderr, "client[%d] がキャラにブロックぶつけた笑\n", i);
-          return false;
+      fprintf(stderr, "client[%d] がキャラにブロックぶつけた笑\n", i);
+      return false;
     }
   }
 
