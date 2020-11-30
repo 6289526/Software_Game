@@ -20,7 +20,7 @@ function init() {
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(width, height);
 
-    
+
 
     // カメラを作成
     camera = new THREE.PerspectiveCamera(45, width / height);
@@ -52,7 +52,7 @@ function setMap() {
     // console.log("setMap");
     // Box
     // for (let i = 0; i < CELL_NUM; i++) {
-    for (let j = 1; j < CELL_NUM_X+1; j++) {
+    for (let j = 1; j < CELL_NUM_X + 1; j++) {
         for (let k = 0; k < CELL_NUM_Y; k++) {
             // 立方体個別の要素を作成
             const sampleGeometry = new THREE.BoxGeometry(10, 10 * (ArrayData[j][k] + 1), 10);
@@ -62,7 +62,7 @@ function setMap() {
             matrix.makeTranslation(
                 10 * (k),
                 5 * (ArrayData[j][k]),
-                10 * (j-1)
+                10 * (j - 1)
             );
 
             // ジオメトリをマージ（結合）
@@ -77,7 +77,7 @@ function setMap() {
     scene.add(mesh);
 
 }
-
+var count = 0;
 function tick() {
     // カメラコントローラーを更新
     controls.update();
@@ -94,6 +94,12 @@ function tick() {
     // フレームレートを表示
     stats.update();
 
+    // ファイルの読み込み
+    if (count % 15 === 0) {
+        count = 0;
+        readFile(currentPath);
+    }
+    count++;
     requestAnimationFrame(tick);
 }
 

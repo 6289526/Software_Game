@@ -26,6 +26,8 @@
 
 extern int Num_Clients; // クライアント人数
 extern char WiiAddress[18];
+// クライアントの名前
+extern char MyName[MAX_LEN_NAME];
 extern InputType _______Type;
 /* ウインドウサイズ */
 enum {
@@ -75,3 +77,7 @@ extern GameStateController GetGameStateController();
 
 /*control_setup*/
 extern int ControlSetUp();
+
+/*name_setup*/
+extern void GetInitData(InitData initData);
+extern void NameSetUp();

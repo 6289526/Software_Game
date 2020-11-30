@@ -5,7 +5,7 @@ let inputArea = null;
 let inputTxt = null;
 let footerArea = null;
 
-let currentPath = '';
+let currentPath = '../Game/data/mapdata.csv';
 let editor = null;
 
 
@@ -175,6 +175,8 @@ function onLoad() {
         const file = event.dataTransfer.files[0];
         readFile(file.path);
     });
+
+    
 };
 
 

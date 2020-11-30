@@ -27,14 +27,7 @@ int main(int argc, char *argv[])
 	/**サーバー関連 BEGIN**/
 	// 参加したいサーバーのポート番号
 	u_short port = DEFAULT_PORT;
-	// 参加したいサーバーの名前if (strcmp(WiiAddress, "") == 0)
-    // {
-    //     return -1;
-    // }
-    // else
-    // {
-    //     return 1;
-    // }
+	
 	char server_name[MAX_LEN_NAME];
 	InitData initData;
 	//multithread
@@ -70,6 +63,7 @@ int main(int argc, char *argv[])
 	/*クライアントの作成*/
 	InitControl(&initData);
 	// 指定されたサーバー名、ポート番号に参加するクライアントとして設定する。
+	GetInitData(initData);
 	SetupClient(server_name, port);
 	InitPlayerData(); // プレイヤーデータ初期化処理
 	/**サーバー関連 END**/

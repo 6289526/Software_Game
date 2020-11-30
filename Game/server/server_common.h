@@ -157,14 +157,16 @@ void PutBlock(int chara_ID); // ブロックを置けるなら置く
 
 int AllGoal(); // 全員ゴールしていれば１
 
-void SetVec(int chara_ID, Vector3 &vec); // キャラの速度ベクトルをセット
+inline void SetVec(int chara_ID, Vector3 &vec); // キャラの速度ベクトルをセット
 
-void SetPlaceData(PlaceData &data); // 配置したいブロックの場所をセット
+inline void SetPlaceData(PlaceData &data); // 配置したいブロックの場所をセット
 
 void SendAllPos(int client_num); // クライアント全員に全員の座標を送る
 
-void SetDirection(int chara_ID,
+inline void SetDirection(int chara_ID,
                   float direction); // システムにクライアントの角度を渡す
 
-PlaceData GetPlaceData();
+inline float GetDirection(int chara_ID); // ネットワークにクライアントの角度を渡す
+
+inline PlaceData GetPlaceData();
 /*-----------グローバル変数 終了----------*/
