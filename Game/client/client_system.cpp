@@ -514,6 +514,9 @@ int InputThread(void *data)
 	while (1)
 	{
 		SDL_LockMutex(mtx);
+		if (Input == NULL)
+			throw "system.cppに宣言されている Input がNULL";
+		
 		// 入力受け付け
 		Input->UpdateInput();
 		/*サーバーにリクエストを送る*/
