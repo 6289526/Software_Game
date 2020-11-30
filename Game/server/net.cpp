@@ -379,7 +379,7 @@ void RunCommand(int id, char com)
             }
             // 座標と方向とフラッグを送信
             SendData(id, &posData, sizeof(FloatPosition));
-            sendData(id, &direction, sizeof(float));
+            SendData(id, &direction, sizeof(float));
             SendData(id, &flag, sizeof(VelocityFlag));
         }
         break;
@@ -395,7 +395,7 @@ void RunCommand(int id, char com)
         //コマンド送信
         SendData(id, &com, sizeof(char));
         SendData(id, &placeData, sizeof(PlaceData));
-        
+
         break;
     case FINISH_COMMAND:
         fprintf(stderr, "All clients goaled.\n");
