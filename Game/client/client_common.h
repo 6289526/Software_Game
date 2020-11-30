@@ -74,7 +74,7 @@ extern PlaceData GetPlaceData();
 extern void SystemRun();
 extern void UpdatePlaceData(PlaceData data);
 extern GameStateController GetGameStateController();
-
+extern void SetDirection(float direction, int id);
 /*control_setup*/
 extern int ControlSetUp();
 
