@@ -31,8 +31,8 @@ extern char MyName[MAX_LEN_NAME];
 extern InputType _______Type;
 /* ウインドウサイズ */
 enum {
-    Wd_Width  = 640,
-    Wd_Height = 480
+    Wd_Width  = 928,
+    Wd_Height = 696
 };
 
 /* ゲームの状態 */
@@ -74,7 +74,7 @@ extern PlaceData GetPlaceData();
 extern void SystemRun();
 extern void UpdatePlaceData(PlaceData data);
 extern GameStateController GetGameStateController();
-
+extern void SetDirection(float direction, int id);
 /*control_setup*/
 extern int ControlSetUp();
 

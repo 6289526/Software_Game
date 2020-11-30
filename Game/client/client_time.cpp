@@ -3,6 +3,7 @@
 
 Timer::Timer()
 {
+    _Prev = _Now = clock();
     UpdateFrame();
 }
 

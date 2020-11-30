@@ -229,6 +229,7 @@ int ExeCommand()
     // ソケットから来るデータ
     FloatPosition data[MAX_NUMCLIENTS];
     PlaceData placeData;
+    float direction = 0;
     VelocityFlag flags[MAX_NUMCLIENTS];
     // 通信を継続するかを判定する変数
     int result = 1;
@@ -247,10 +248,13 @@ int ExeCommand()
         for (int i = 0; i < NumClients; i++)
         {
             ReceiveData(&data[i], sizeof(FloatPosition));
+            ReceiveData(&direction, sizeof(float));
+            SetDirection(direction, i);
             ReceiveData(&flags[i], sizeof(VelocityFlag));
         }
         // 受け取った座標とフラッグをシステムモジュールにわたす
         SetPlace(data, NumClients);
+        
         UpdateFlag(flags, NumClients);
 
         // 通信継続
