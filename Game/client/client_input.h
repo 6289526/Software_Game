@@ -35,6 +35,8 @@ typedef struct InputType{
     bool L;         // 左
     bool End;       // 終了
 
+    bool Up;        //wiiリモコンの十字キー上
+    bool Down;      //wiiリモコンの十字キー下
     InputType() : 
         Forward(false),
         Right(false),
@@ -45,7 +47,9 @@ typedef struct InputType{
         D(false),
         R(false),
         L(false),
-        End(false)
+        End(false),
+        Up(false),
+        Down(false),
         { };
 }InputType;
 
