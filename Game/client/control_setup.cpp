@@ -32,7 +32,7 @@ static char Text[MESSAGE_NUM][MAX_STRING] = {
     {"please push 1 and 2."},
     {"If you want to use Keyboard,"},
     {"please push K Key."},
-    {"*"}};
+    {"."}};
 
 #ifdef DEBUG
 static char ImagePath[2][MAX_STRING] = {
@@ -176,7 +176,7 @@ int ControlSetUp()
             SDL_QueryTexture(texture, NULL, NULL, &iw, &ih);
 
             SDL_Rect txtRect = (SDL_Rect){0, 0, iw, ih};
-            SDL_Rect pasteRect = (SDL_Rect){(int)(SCREEN_WIDTH / 2 + 100 * sin(angle[i] * M_PI / 180.0)), (int)(SCREEN_HEIGHT * 2 / 3 - 100 * cos(angle[i] * M_PI / 180.0))*0+SCREEN_HEIGHT * 2 / 3, iw, ih};
+            SDL_Rect pasteRect = (SDL_Rect){(int)(SCREEN_WIDTH*7/9 + 30 * sin(angle[i] * M_PI / 180.0)), (int)(SCREEN_HEIGHT * 2 / 3 - 30 * cos(angle[i] * M_PI / 180.0)-50), iw, ih};
 
             //Textureを描写する
             //描写元の描写する部分,描写先の描写する部分)

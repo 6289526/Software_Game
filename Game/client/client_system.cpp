@@ -3,13 +3,13 @@
 #include "client_move.h"
 #include <string.h>
 
-#define PLAYER_MOVE_SPEED 20					   // 移動速度
+#define PLAYER_MOVE_SPEED 30					   // 移動速度
 #define PLAYER_ROTATE_SPEED 4					   // 回転速度
 #define PLAYER_JUMP_POWER 2						   // ジャンプ力
 #define PLAYER_HAND_LENGTH (MAP_MAGNIFICATION + 1) // 手の長さ(ブロックの設置先までの距離)
 
 #define GRAVITY 9.8 * 0.1		// 重力
-#define TERMINAL_SPEED MAP_MAGNIFICATION // 終端速度
+#define TERMINAL_SPEED (MAP_MAGNIFICATION - 1) // 終端速度
 
 static int MyId;   // クライアントのID
 PlayerData *PData; // プレイヤーのデータ
