@@ -18,6 +18,7 @@ using namespace std;
 
 void Disp();
 void InitGraphic();
+SDL_Renderer* GetWindowRenderer();
 
 //デバッグ用
 void setlookat(int x, int y, int z, double dir);

@@ -92,8 +92,7 @@ bool InitSystem(InitData *data)
 	*/
 	/*入力方式の選択またwiiリモコンのアドレスを取得*/
 
-	InitGraphic(); // グラフィックの初期化
-
+	SDL_Thread *inputThread;
 
 	SDL_mutex *input_mtx = SDL_CreateMutex(); // 相互排除
 	InputThreadVar = SDL_CreateThread(InputThread, "InputThread", input_mtx);

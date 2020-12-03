@@ -77,8 +77,7 @@ void GetInitData(InitData initData)
 /*必要な情報を描画*/
 void NameSetUp()
 {
-    SDL_Window *window = NULL;
-    SDL_Renderer *renderer = NULL;
+    SDL_Renderer *renderer = GetWindowRenderer();
     // 入力モジュール初期化
     InputData data;
 
@@ -94,10 +93,6 @@ void NameSetUp()
 
         exit(1);
     }
-
-    /*ウィンドウ作ります*/
-    window = SDL_CreateWindow("Draw Text Test", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
     SDL_Surface *image[2];
     SDL_Surface *surface;
@@ -396,9 +391,6 @@ void NameSetUp()
             SDL_Delay(10);
         }
     }
-
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
     TTF_CloseFont(font);
     TTF_Quit();
     NinitData.input->_setname = false;
