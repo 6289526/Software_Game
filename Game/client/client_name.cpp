@@ -49,12 +49,12 @@ static int KeyboardNum = 0;
 #ifdef DEBUG
 static char ImagePath[2][MAX_STRING] = {
     {"Game.png"},
-    {"TITLE.png"},
+    {"UI.png"},
 };
 #else
 static char ImagePath[2][MAX_STRING] = {
     {"../Game.png"},
-    {"../TITLE.png"},
+    {"../UI.png"},
 };
 #endif
 
@@ -121,7 +121,8 @@ void NameSetUp()
             }
 
             SDL_RenderClear(renderer);
-            texture = SDL_CreateTextureFromSurface(renderer, image[1]);
+
+            texture = SDL_CreateTextureFromSurface(renderer, image[0]);
 
             SDL_SetRenderDrawColor(renderer, 0, 85, 150, 255);
 
@@ -129,6 +130,20 @@ void NameSetUp()
 
             SDL_Rect imgRect = (SDL_Rect){0, 0, iw, ih};
             SDL_Rect impasteRect = (SDL_Rect){0, 0, iw, ih};
+            //Textureを描写する
+            //描写元の描写する部分,描写先の描写する部分)
+            //サイズが違うと勝手にTextureを伸展してくれる
+            SDL_RenderCopy(renderer, texture, &imgRect, &impasteRect);
+            SDL_DestroyTexture(texture);
+
+            texture = SDL_CreateTextureFromSurface(renderer, image[1]);
+
+            SDL_SetRenderDrawColor(renderer, 0, 85, 150, 255);
+
+            SDL_QueryTexture(texture, NULL, NULL, &iw, &ih);
+
+            imgRect = (SDL_Rect){0, 0, iw, ih};
+            impasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - iw / 8, SCREEN_HEIGHT / 2 - ih / 8, iw / 4, ih / 4};
 
             //Textureを描写する
             //描写元の描写する部分,描写先の描写する部分)
@@ -148,7 +163,7 @@ void NameSetUp()
                 SDL_QueryTexture(texture, NULL, NULL, &iw, &ih);
 
                 SDL_Rect txtRect = (SDL_Rect){0, 0, iw, ih};
-                SDL_Rect pasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - iw / 2, SCREEN_HEIGHT / 10 + i * ih + i * ih / 2, iw, ih};
+                SDL_Rect pasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - iw / 2, SCREEN_HEIGHT / 5 + i * ih + i * ih / 2, iw, ih};
 
                 //Textureを描写する
                 //描写元の描写する部分,描写先の描写する部分)
@@ -170,7 +185,7 @@ void NameSetUp()
             // 名前のサイズ
             int nameSize = iw;
             SDL_Rect txtRect = (SDL_Rect){0, 0, iw, ih};
-            SDL_Rect pasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - iw / 2, SCREEN_HEIGHT / 2, iw, ih};
+            SDL_Rect pasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - iw / 2, SCREEN_HEIGHT / 2 , iw, ih};
 
             //Textureを描写する
             //描写元の描写する部分,描写先の描写する部分)
@@ -233,7 +248,7 @@ void NameSetUp()
             SetWiiString();
 
             SDL_RenderClear(renderer);
-            texture = SDL_CreateTextureFromSurface(renderer, image[1]);
+            texture = SDL_CreateTextureFromSurface(renderer, image[0]);
 
             SDL_SetRenderDrawColor(renderer, 0, 85, 150, 255);
 
@@ -241,6 +256,20 @@ void NameSetUp()
 
             SDL_Rect imgRect = (SDL_Rect){0, 0, iw, ih};
             SDL_Rect impasteRect = (SDL_Rect){0, 0, iw, ih};
+            //Textureを描写する
+            //描写元の描写する部分,描写先の描写する部分)
+            //サイズが違うと勝手にTextureを伸展してくれる
+            SDL_RenderCopy(renderer, texture, &imgRect, &impasteRect);
+            SDL_DestroyTexture(texture);
+            
+            texture = SDL_CreateTextureFromSurface(renderer, image[1]);
+
+            SDL_SetRenderDrawColor(renderer, 0, 85, 150, 255);
+
+            SDL_QueryTexture(texture, NULL, NULL, &iw, &ih);
+
+            imgRect = (SDL_Rect){0, 0, iw, ih};
+            impasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - iw / 8, SCREEN_HEIGHT / 2 - ih / 8, iw / 4, ih / 4};
 
             //Textureを描写する
             //描写元の描写する部分,描写先の描写する部分)
@@ -260,7 +289,7 @@ void NameSetUp()
                 SDL_QueryTexture(texture, NULL, NULL, &iw, &ih);
 
                 SDL_Rect txtRect = (SDL_Rect){0, 0, iw, ih};
-                SDL_Rect pasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - iw / 2, SCREEN_HEIGHT / 10 + i * ih + i * ih / 2, iw, ih};
+                SDL_Rect pasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - iw / 2, SCREEN_HEIGHT / 6 + i * ih + i * ih / 2, iw, ih};
 
                 //Textureを描写する
                 //描写元の描写する部分,描写先の描写する部分)
@@ -372,7 +401,7 @@ void NameSetUp()
                     }
                     else
                     {
-                        pasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - (iw * 6) + iw * 2 * j, SCREEN_HEIGHT * 2 / 3 + ih * i, iw, ih};
+                        pasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - (iw * 9) + iw * 2 * j, SCREEN_HEIGHT * 2 / 3 + ih * i, iw, ih};
                     }
 
                     //Textureを描写する

@@ -126,7 +126,8 @@ typedef struct
 typedef enum
 {
 	NonBlock = 0, // ブロックなし
-	NomalBlock = 1, // ノーマルブロック
+	NomalBlock = 1, // wブロック
+	MetalBlock = 2, // 設置用ブロック
 	GoalBlock = -1, // ゴールブロック
 
 } BlockType;

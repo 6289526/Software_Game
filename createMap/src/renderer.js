@@ -2,7 +2,7 @@
 window.addEventListener('load', init);
 // サイズを指定
 let width = 650;
-let height = 200;
+let height = 650;
 // 1辺あたりに配置するオブジェクトの個数
 let CELL_NUM_X = 20;
 let CELL_NUM_Y = 20;
@@ -45,8 +45,8 @@ function setMap() {
     // シーンを作成こうするとsceneを更新できる
     scene = new THREE.Scene();
     // 一応更新
-    CELL_NUM_X = ArrayData[0][0];
-    CELL_NUM_Y = ArrayData[0][1];
+    CELL_NUM_X = ArrayData[0][1];
+    CELL_NUM_Y = ArrayData[0][0];
     // 空のジオメトリを作成
     const geometry = new THREE.Geometry();
     // console.log("setMap");
@@ -95,11 +95,10 @@ function tick() {
     stats.update();
 
     // ファイルの読み込み
-    if (count % 15 === 0) {
+    if (count % 60 === 0) {
         count = 0;
         readFile(currentPath);
     }
     count++;
     requestAnimationFrame(tick);
 }
-

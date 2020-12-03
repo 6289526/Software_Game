@@ -32,16 +32,16 @@ static char Text[MESSAGE_NUM][MAX_STRING] = {
     {"please push 1 and 2."},
     {"If you want to use Keyboard,"},
     {"please push K Key."},
-    {"*"}};
+    {"."}};
 
 #ifdef DEBUG
 static char ImagePath[2][MAX_STRING] = {
-    {"Game.png"},
+    {"UI.png"},
     {"TITLE.png"},
 };
 #else
 static char ImagePath[2][MAX_STRING] = {
-    {"../Game.png"},
+    {"../UI.png"},
     {"../TITLE.png"},
 };
 #endif
@@ -111,21 +111,35 @@ int ControlSetUp()
         data = InputEvents(event);
 
         SDL_RenderClear(renderer);
-        //surfaceからTextureを作る
         texture = SDL_CreateTextureFromSurface(renderer, image[1]);
 
         SDL_SetRenderDrawColor(renderer, 0, 85, 150, 255);
 
         SDL_QueryTexture(texture, NULL, NULL, &iw, &ih);
 
-        SDL_Rect txtRect = (SDL_Rect){0, 0, iw, ih};
-        SDL_Rect pasteRect = (SDL_Rect){0, 0, iw, ih};
+        SDL_Rect imgRect = (SDL_Rect){0, 0, iw, ih};
+        SDL_Rect impasteRect = (SDL_Rect){0, 0, iw, ih};
+        //Textureを描写する
+        //描写元の描写する部分,描写先の描写する部分)
+        //サイズが違うと勝手にTextureを伸展してくれる
+        SDL_RenderCopy(renderer, texture, &imgRect, &impasteRect);
+        SDL_DestroyTexture(texture);
+
+        texture = SDL_CreateTextureFromSurface(renderer, image[0]);
+
+        SDL_SetRenderDrawColor(renderer, 0, 85, 150, 255);
+
+        SDL_QueryTexture(texture, NULL, NULL, &iw, &ih);
+
+        imgRect = (SDL_Rect){0, 0, iw, ih};
+        impasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - iw / 8, SCREEN_HEIGHT / 2 - ih / 8, iw / 4, ih / 4};
 
         //Textureを描写する
         //描写元の描写する部分,描写先の描写する部分)
         //サイズが違うと勝手にTextureを伸展してくれる
-        SDL_RenderCopy(renderer, texture, &txtRect, &pasteRect);
+        SDL_RenderCopy(renderer, texture, &imgRect, &impasteRect);
         SDL_DestroyTexture(texture);
+
         for (int i = 0; i < MESSAGE_NUM - 1; i++)
         {
             //TTF_SetFontOutline(font, 1);//枠抜きで描写するとき
@@ -138,7 +152,7 @@ int ControlSetUp()
             SDL_QueryTexture(texture, NULL, NULL, &iw, &ih);
 
             SDL_Rect txtRect = (SDL_Rect){0, 0, iw, ih};
-            SDL_Rect pasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - iw / 2, SCREEN_HEIGHT / 10 + i * ih + i * ih / 2, iw, ih};
+            SDL_Rect pasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - iw / 2, SCREEN_HEIGHT / 5 + i * ih + i * ih / 2, iw, ih};
 
             //Textureを描写する
             //描写元の描写する部分,描写先の描写する部分)
@@ -162,7 +176,7 @@ int ControlSetUp()
             SDL_QueryTexture(texture, NULL, NULL, &iw, &ih);
 
             SDL_Rect txtRect = (SDL_Rect){0, 0, iw, ih};
-            SDL_Rect pasteRect = (SDL_Rect){(int)(SCREEN_WIDTH / 2 + 100 * sin(angle[i] * M_PI / 180.0)), (int)(SCREEN_HEIGHT * 2 / 3 - 100 * cos(angle[i] * M_PI / 180.0)), iw, ih};
+            SDL_Rect pasteRect = (SDL_Rect){(int)(SCREEN_WIDTH*7/9 + 30 * sin(angle[i] * M_PI / 180.0)), (int)(SCREEN_HEIGHT * 2 / 3 - 30 * cos(angle[i] * M_PI / 180.0)-50), iw, ih};
 
             //Textureを描写する
             //描写元の描写する部分,描写先の描写する部分)
@@ -204,19 +218,33 @@ int ControlSetUp()
     SDL_RenderClear(renderer);
     SDL_RenderClear(renderer);
     //surfaceからTextureを作る
+    texture = SDL_CreateTextureFromSurface(renderer, image[1]);
+
+    SDL_SetRenderDrawColor(renderer, 0, 85, 150, 255);
+
+    SDL_QueryTexture(texture, NULL, NULL, &iw, &ih);
+
+    SDL_Rect imgRect = (SDL_Rect){0, 0, iw, ih};
+    SDL_Rect impasteRect = (SDL_Rect){0, 0, iw, ih};
+    //Textureを描写する
+    //描写元の描写する部分,描写先の描写する部分)
+    //サイズが違うと勝手にTextureを伸展してくれる
+    SDL_RenderCopy(renderer, texture, &imgRect, &impasteRect);
+    SDL_DestroyTexture(texture);
+
     texture = SDL_CreateTextureFromSurface(renderer, image[0]);
 
     SDL_SetRenderDrawColor(renderer, 0, 85, 150, 255);
 
     SDL_QueryTexture(texture, NULL, NULL, &iw, &ih);
 
-    SDL_Rect txtRect = (SDL_Rect){0, 0, iw, ih};
-    SDL_Rect pasteRect = (SDL_Rect){0, 0, iw, ih};
+    imgRect = (SDL_Rect){0, 0, iw, ih};
+    impasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - iw / 8, SCREEN_HEIGHT / 2 - ih / 8, iw / 4, ih / 4};
 
     //Textureを描写する
     //描写元の描写する部分,描写先の描写する部分)
     //サイズが違うと勝手にTextureを伸展してくれる
-    SDL_RenderCopy(renderer, texture, &txtRect, &pasteRect);
+    SDL_RenderCopy(renderer, texture, &imgRect, &impasteRect);
     SDL_DestroyTexture(texture);
     if (GetResult == 1)
     {

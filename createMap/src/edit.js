@@ -224,14 +224,14 @@ function readFile(path) {
         ArrayData[0][1] = Number(cutCutText[1]);
 
         // マップデータを転写
-        for (var i = 1; i < ArrayData[0][0]+1; i++) {
+        for (var i = 1; i < ArrayData[0][1]+1; i++) {
             // console.log('cutText' + i + ':' + cutText[i]);
             // つぎに空白で区切る
             cutCutText = cutText[i].split(/\s+/);
             
             if (ArrayData.length > i) {// 配列の要素数が足りている場合
                 // console.log('length:' + ArrayData[i].length);
-                for (let j = 0; j < ArrayData[0][1]; j++) {
+                for (let j = 0; j < ArrayData[0][0]; j++) {
                     // console.log('cutText:' + cutCutText[j]);
                     // 数値に変換して代入
                     if (Number.isNaN(cutCutText[j])) {

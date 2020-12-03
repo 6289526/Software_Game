@@ -115,7 +115,7 @@ static int BuryCheck_Side(const int chara_ID, const int accuracy, Vector3Int blo
         block.x = (base_point + (j * PN_flag)) / MAP_MAGNIFICATION;
       }
 
-      if (terrainData[block.x][block.y][block.z] == NomalBlock) {
+      if (terrainData[block.x][block.y][block.z] >= NomalBlock) {
         // 最も深くめり込んだ深さを計算
         if (Bury_Count < ++t_Count) {
           ++Bury_Count;
@@ -168,14 +168,14 @@ static int BuryCheck_Under(const int chara_ID, const int y, const int accuracy,
     for (int j = 1; j < (accuracy - 1); ++j) {
       block.z = point_Z[i] / MAP_MAGNIFICATION;
       if (terrainData[block.x][static_cast<int>(base_point / MAP_MAGNIFICATION)]
-                     [block.z] == NomalBlock) {
+                     [block.z] >= NomalBlock) {
         int t_Count = 0;
         // どこまで埋まっているか調べる
         for (int k = 0; k <= chara_size - y; ++k) {
 
           block.y = (base_point + (k * PN_flag)) / MAP_MAGNIFICATION;
 
-          if (terrainData[block.x][block.y][block.z] == NomalBlock) {
+          if (terrainData[block.x][block.y][block.z] >= NomalBlock) {
             // その点の埋まっている程度をカウント
             ++t_Count;
             // 埋まっている(かもしれない)
@@ -242,14 +242,14 @@ static int BuryCheck_Over(const int chara_ID, const int y, const int accuracy,
     for (int j = 1; j < (accuracy - 1); ++j) {
       block.z = point_Z[i] / MAP_MAGNIFICATION;
       if (terrainData[block.x][static_cast<int>(base_point / MAP_MAGNIFICATION)]
-                     [block.z] == NomalBlock) {
+                     [block.z] >= NomalBlock) {
         int t_Count = 0;
         // どこまで埋まっているか調べる
         for (int k = 0; k <= chara_size - y; ++k) {
 
           block.y = (base_point + (k * PN_flag)) / MAP_MAGNIFICATION;
 
-          if (terrainData[block.x][block.y][block.z] == NomalBlock) {
+          if (terrainData[block.x][block.y][block.z] >= NomalBlock) {
             // その点の埋まっている程度をカウント
             ++t_Count;
             // 埋まっている(かもしれない)
@@ -274,6 +274,7 @@ static int BuryCheck_Over(const int chara_ID, const int y, const int accuracy,
       }
     }
   }
+
 
   // 全体が埋まっていたら
   if (Errer_Count == ((accuracy - 2) * (accuracy - 2))) {
@@ -339,7 +340,7 @@ Collision Collision_CB_Side(const int chara_ID, const int y,
     // throw "Collision_CB_Side : マップ外 : z座標 :負\n";
     fprintf(stderr, "Collision_CB_Side : マップ外 : z座標 :負\n");
     throw error::OutSide_Map_z;
-  } else if (MAP_SIZE_W <= Block_Z) {
+  } else if (MAP_SIZE_D <= Block_Z) {
     // throw "Collision_CB_Side : マップ外 : z座標 : 正\n";
     fprintf(stderr, "Collision_CB_Side : マップ外 : z座標 :正\n");
     throw error::OutSide_Map_z;
@@ -465,7 +466,7 @@ Collision Collision_CB_Under(const int chara_ID, const int y,
     // throw "Collision_CB_Under : マップ外 : z座標 :負\n";
     fprintf(stderr, "Collision_CB_Under : マップ外 : z座標 :負\n");
     throw error::OutSide_Map_z;
-  } else if (MAP_SIZE_W <= Block_Z) {
+  } else if (MAP_SIZE_D <= Block_Z) {
     // throw "Collision_CB_Under : マップ外 : z座標 : 正\n";
     fprintf(stderr, "Collision_CB_Under : マップ外 : z座標 :正\n");
     throw error::OutSide_Map_z;
@@ -549,7 +550,7 @@ Collision Collision_CB_Over(const int chara_ID, const int y,
     // throw "Collision_CB_Under : マップ外 : z座標 :負\n";
     fprintf(stderr, "Collision_CB_Over : マップ外 : z座標 :負\n");
     throw error::OutSide_Map_z;
-  } else if (MAP_SIZE_W <= Block_Z) {
+  } else if (MAP_SIZE_D <= Block_Z) {
     // throw "Collision_CB_Under : マップ外 : z座標 : 正\n";
     fprintf(stderr, "Collision_CB_Over : マップ外 : z座標 :正\n");
     throw error::OutSide_Map_z;
@@ -655,7 +656,7 @@ bool Collision_BB() // ブロックを置けるかどうかの判定
 
   if (Block_X < 0) {
     throw "Collision_BB : マップ外 : x座標 : 負\n";
-  } else if (MAP_SIZE_H <= Block_X) {
+  } else if (MAP_SIZE_W <= Block_X) {
     throw "Collision_BB : マップ外 : x座標 : 正\n";
   }
 
@@ -667,7 +668,7 @@ bool Collision_BB() // ブロックを置けるかどうかの判定
 
   if (Block_Z < 0) {
     throw "Collision_BB : マップ外 : z座標 : 負\n";
-  } else if (MAP_SIZE_H <= Block_Z) {
+  } else if (MAP_SIZE_D <= Block_Z) {
     throw "Collision_BB : マップ外 : z座標 : 正\n";
   }
 
@@ -803,7 +804,7 @@ catch (error::error e) {
     PData[chara_ID].pos.y = PLAYER_Y;
     PData[chara_ID].pos.z = PLAYER_Z;
     PData[chara_ID].velocity.x = 0;
-    PData[chara_ID].velocity.y = 0;
+    // PData[chara_ID].velocity.y = 0;
     PData[chara_ID].velocity.z = 0;
   }
 }

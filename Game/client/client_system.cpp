@@ -3,13 +3,13 @@
 #include "client_move.h"
 #include <string.h>
 
-#define PLAYER_MOVE_SPEED 40					   // 移動速度
+#define PLAYER_MOVE_SPEED 25					   // 移動速度
 #define PLAYER_ROTATE_SPEED 4					   // 回転速度
-#define PLAYER_JUMP_POWER 2						   // ジャンプ力
+#define PLAYER_JUMP_POWER 1						   // ジャンプ力
 #define PLAYER_HAND_LENGTH (MAP_MAGNIFICATION + 1) // 手の長さ(ブロックの設置先までの距離)
 
-#define GRAVITY 9.8 * 0.5		// 重力
-#define TERMINAL_SPEED PLAYER_Y // 終端速度
+#define GRAVITY 9.8 * 0.25		// 重力
+#define TERMINAL_SPEED (MAP_MAGNIFICATION - 1) // 終端速度
 
 static int MyId;   // クライアントのID
 PlayerData *PData; // プレイヤーのデータ
@@ -224,8 +224,8 @@ void SystemRun()
 			data.Forward = false;
 			if (strcmp(WiiAddress, "") != 0)
 			{
-				PData[MyId].velocity.x += 5 * GetMoveDirection(PData[MyId], 0).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-				PData[MyId].velocity.z += 5 * GetMoveDirection(PData[MyId], 0).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+				PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 0).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+				PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 0).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 			}
 			else
 			{
@@ -237,33 +237,30 @@ void SystemRun()
 		if (data.Left)
 		{
 			data.Left = false;
-			if (strcmp(WiiAddress, "") != 0)
-			{
-				PData[MyId].velocity.x += 5 * GetMoveDirection(PData[MyId], 90).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-				PData[MyId].velocity.z += 5 * GetMoveDirection(PData[MyId], 90).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			// if(strcmp(WiiAddress, "") != 0){
+			// 	PData[MyId].velocity.x += 5*GetMoveDirection(PData[MyId], 90).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			// 	PData[MyId].velocity.z += 5*GetMoveDirection(PData[MyId], 90).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 				PData[MyId].direction += PLAYER_ROTATE_SPEED * Time->GetDeltaTime();
-			}
-			else
-			{
-				PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 90).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-				PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 90).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-			}
+			// }
+			// else
+			// {
+			// 	PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 90).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			// 	PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 90).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			// }
 		}
 
 		else if (data.Right)
 		{
 			data.Right = false;
-			if (strcmp(WiiAddress, "") != 0)
-			{
-				PData[MyId].velocity.x += 5 * GetMoveDirection(PData[MyId], 270).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-				PData[MyId].velocity.z += 5 * GetMoveDirection(PData[MyId], 270).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			// if(strcmp(WiiAddress, "") != 0){
+			// 	PData[MyId].velocity.x += 5*GetMoveDirection(PData[MyId], 270).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			// 	PData[MyId].velocity.z += 5*GetMoveDirection(PData[MyId], 270).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 				PData[MyId].direction -= PLAYER_ROTATE_SPEED * Time->GetDeltaTime();
-			}
-			else
-			{
-				PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 270).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-				PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 270).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-			}
+			// }
+			// else{
+			// PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 270).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			// PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 270).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			// }
 		}
 		// ジャンプ
 		if (data.Jump && isOnGround == 1)
@@ -525,7 +522,7 @@ void SetDirection(float direction, int id)
 }
 
 int GetDistanceFromGround(){
-	const int accuracy = 3; 
+	const int accuracy = 3;
 	float pointX[accuracy], pointZ[accuracy];
 	float pointY = PData[MyId].pos.y + PData[MyId].velocity.y;
 	const int width = PData[MyId].pos.w / (accuracy - 1); // X座標
@@ -542,7 +539,7 @@ int GetDistanceFromGround(){
 		pointX[i] = PData[MyId].pos.x + PData[MyId].velocity.x + width * i;
 		pointZ[i] = PData[MyId].pos.z + PData[MyId].velocity.z + depth * i;
 	}
-	
+
 #pragma region 範囲エラー処理
 	if (pointX[0] < 0)
 		throw "マップ外 : x座標 負\n";
@@ -553,7 +550,7 @@ int GetDistanceFromGround(){
 		throw "マップ外 : y座標 : 負\n";
 	else if (MAP_SIZE_H <= blockY)
 		throw "マップ外 : y座標 : 正\n";
-	
+
 	if (pointZ[0] < 0)
 		throw "マップ外 : z座標 :負\n";
 	else if (MAP_SIZE_D <= blockZ)
@@ -572,7 +569,7 @@ int GetDistanceFromGround(){
 			fprintf(stderr, "(i%d, j%d) : PlayerPos = (%.2f, %.2f), MapBlock[%d, %d, %d], dis: %f\n",i,j, pointX[i], pointZ[j], blockPosX, blockPosY, blockPosZ, distance);
 		}
 	}
-	
+
 	return result;
 }
 
