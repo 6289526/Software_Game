@@ -3,10 +3,10 @@
 #include "client_move.h"
 #include <string.h>
 
-#define PLAYER_MOVE_SPEED 40	// 移動速度
-#define PLAYER_ROTATE_SPEED 4	// 回転速度
-#define PLAYER_JUMP_POWER 2		// ジャンプ力
-#define PLAYER_HAND_LENGTH (MAP_MAGNIFICATION + 1)	// 手の長さ(ブロックの設置先までの距離)
+#define PLAYER_MOVE_SPEED 40					   // 移動速度
+#define PLAYER_ROTATE_SPEED 4					   // 回転速度
+#define PLAYER_JUMP_POWER 2						   // ジャンプ力
+#define PLAYER_HAND_LENGTH (MAP_MAGNIFICATION + 1) // 手の長さ(ブロックの設置先までの距離)
 
 #define GRAVITY 9.8 * 0.5		// 重力
 #define TERMINAL_SPEED PLAYER_Y // 終端速度
@@ -18,10 +18,10 @@ int Num_Clients;																			 // クライアント人数
 static char Name_Clients[MAX_NUMCLIENTS][MAX_LEN_NAME];										 // クライアントの名前
 static FloatCube Pos_Clients = {PLAYER_X, PLAYER_Y, PLAYER_Z, PLAYER_W, PLAYER_H, PLAYER_D}; // クライアント情報
 
-ClientMap Map;			//マップ
-InputModuleBase *Input; // Input Module
-Timer *Time;			// FrameTimer
-GameStateController *StateController;	// GameStateController
+ClientMap Map;						  //マップ
+InputModuleBase *Input;				  // Input Module
+Timer *Time;						  // FrameTimer
+GameStateController *StateController; // GameStateController
 
 SDL_Thread *InputThreadVar;
 
@@ -43,8 +43,8 @@ extern GameStateController GetGameStateController();
 bool IsPlayerOnGround();
 int clamp(const int __val, const int __lo, const int __hi);
 static int BuryCheck_Under(const int id, const int y, const int accuracy,
-					int block_X, int block_Y, int block_Z,
-					const float *point_X, const float *point_Z);
+						   int block_X, int block_Y, int block_Z,
+						   const float *point_X, const float *point_Z);
 // int GraphicThread(void *data); // This Function isn't used now.
 int InputThread(void *data);
 
@@ -62,7 +62,8 @@ int GetMyID() { return MyId; }
 void SetMyID(int id) { MyId = id; }
 
 // ----- * ----- //
-void InitControl(InitData *data){
+void InitControl(InitData *data)
+{
 	ControlSetUp();
 	if (strcmp(WiiAddress, "") == 0)
 	{
@@ -91,8 +92,8 @@ bool InitSystem(InitData *data)
 	*/
 	/*入力方式の選択またwiiリモコンのアドレスを取得*/
 
-
 	InitGraphic(); // グラフィックの初期化
+
 
 	SDL_mutex *input_mtx = SDL_CreateMutex(); // 相互排除
 	InputThreadVar = SDL_CreateThread(InputThread, "InputThread", input_mtx);
@@ -180,7 +181,6 @@ PlaceData GetPlaceData()
 	return data;
 }
 
-
 /*移動処理とか設置処理
 * 引数
 *   data: 入力データ
@@ -194,9 +194,9 @@ void SystemRun()
 	{
 		isOnGround = IsPlayerOnGround();
 	}
-	catch(char const* e) // エラー処理
+	catch (char const *e) // エラー処理
 	{
-		fprintf(stderr,"%s", e);
+		fprintf(stderr, "%s", e);
 	}
 	PData[MyId].velocity.x = 0;
 
@@ -216,11 +216,13 @@ void SystemRun()
 		if (data.Forward)
 		{
 			data.Forward = false;
-			if(strcmp(WiiAddress, "") != 0){
-				PData[MyId].velocity.x += 5*GetMoveDirection(PData[MyId], 0).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-				PData[MyId].velocity.z += 5*GetMoveDirection(PData[MyId], 0).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			if (strcmp(WiiAddress, "") != 0)
+			{
+				PData[MyId].velocity.x += 5 * GetMoveDirection(PData[MyId], 0).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+				PData[MyId].velocity.z += 5 * GetMoveDirection(PData[MyId], 0).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 			}
-			else{
+			else
+			{
 				PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 0).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 				PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 0).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 			}
@@ -229,9 +231,10 @@ void SystemRun()
 		if (data.Left)
 		{
 			data.Left = false;
-			if(strcmp(WiiAddress, "") != 0){
-				PData[MyId].velocity.x += 5*GetMoveDirection(PData[MyId], 90).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-				PData[MyId].velocity.z += 5*GetMoveDirection(PData[MyId], 90).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			if (strcmp(WiiAddress, "") != 0)
+			{
+				PData[MyId].velocity.x += 5 * GetMoveDirection(PData[MyId], 90).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+				PData[MyId].velocity.z += 5 * GetMoveDirection(PData[MyId], 90).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 				PData[MyId].direction += PLAYER_ROTATE_SPEED * Time->GetDeltaTime();
 			}
 			else
@@ -244,14 +247,16 @@ void SystemRun()
 		else if (data.Right)
 		{
 			data.Right = false;
-			if(strcmp(WiiAddress, "") != 0){
-				PData[MyId].velocity.x += 5*GetMoveDirection(PData[MyId], 270).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-				PData[MyId].velocity.z += 5*GetMoveDirection(PData[MyId], 270).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			if (strcmp(WiiAddress, "") != 0)
+			{
+				PData[MyId].velocity.x += 5 * GetMoveDirection(PData[MyId], 270).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+				PData[MyId].velocity.z += 5 * GetMoveDirection(PData[MyId], 270).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 				PData[MyId].direction -= PLAYER_ROTATE_SPEED * Time->GetDeltaTime();
 			}
-			else{
-			PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 270).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-			PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 270).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			else
+			{
+				PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 270).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+				PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 270).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 			}
 		}
 		// ジャンプ
@@ -336,7 +341,7 @@ void UpdatePlaceData(PlaceData data)
 	Map.SetObjectData(&data);
 }
 
-GameStateController GetGameStateController(){ return *StateController; }
+GameStateController GetGameStateController() { return *StateController; }
 
 bool IsPlayerOnGround()
 {
@@ -352,9 +357,9 @@ bool IsPlayerOnGround()
 	}
 
 	const int wide = PData[id].pos.w /
-					(accuracy - 1); // 当たり判定を知らべる座標間距離 x座標
+					 (accuracy - 1); // 当たり判定を知らべる座標間距離 x座標
 	const int depth = PData[id].pos.d /
-						(accuracy - 1); // 当たり判定を知らべる座標間距離 z座標
+					  (accuracy - 1); // 当たり判定を知らべる座標間距離 z座標
 
 	// 当たり判定を調べる座標をすべて格納
 	for (int i = 0; i < accuracy; ++i)
@@ -429,7 +434,7 @@ int BuryCheck_Under(const int id, const int y, const int accuracy,
 					int block_X, int block_Y, int block_Z,
 					const float *point_X, const float *point_Z)
 {
-	int chara_size;   // キャラの大きさ
+	int chara_size;	  // キャラの大きさ
 	float base_point; // 計算に使う基準座標
 	enum PN_sign
 	{
@@ -456,7 +461,7 @@ int BuryCheck_Under(const int id, const int y, const int accuracy,
 		{
 			block_Z = point_Z[i] / MAP_MAGNIFICATION;
 			if (terrainData[block_X][static_cast<int>(base_point / MAP_MAGNIFICATION)]
-							[block_Z] == NomalBlock)
+						   [block_Z] == NomalBlock)
 			{
 				int t_Count = 0;
 				// どこまで埋まっているか調べる
@@ -471,8 +476,8 @@ int BuryCheck_Under(const int id, const int y, const int accuracy,
 						// 埋まっている(かもしれない)
 						if (chara_size <= k)
 						{
-						++Error_Count;
-						t_Count = 0;
+							++Error_Count;
+							t_Count = 0;
 						}
 					}
 					// 埋まっていなければ抜ける
@@ -500,8 +505,12 @@ int BuryCheck_Under(const int id, const int y, const int accuracy,
 }
 
 // 方向の取得
-void SetDirection(float direction, int id){
-	PData[id].direction = direction;
+void SetDirection(float direction, int id)
+{
+	if (id != MyId)
+	{
+		PData[id].direction = direction;
+	}
 }
 
 // ===== * ===== マルチスレッド ===== * ===== //
