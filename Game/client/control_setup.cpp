@@ -10,8 +10,8 @@
 #endif
 #define MAX_STRING 128
 #define MESSAGE_NUM 5
-const int SCREEN_WIDTH = 1237;
-const int SCREEN_HEIGHT = 696;
+const int SCREEN_WIDTH = Wd_Width;
+const int SCREEN_HEIGHT = Wd_Height;
 
 typedef struct
 {
@@ -137,7 +137,7 @@ int ControlSetUp()
         SDL_QueryTexture(texture, NULL, NULL, &iw, &ih);
 
         imgRect = (SDL_Rect){0, 0, iw, ih};
-        impasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - iw / 6, SCREEN_HEIGHT / 2 - ih / 6, iw / 3, ih / 3};
+        impasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - iw / 8, SCREEN_HEIGHT / 2 - ih / 8, iw / 4, ih / 4};
 
         //Textureを描写する
         //描写元の描写する部分,描写先の描写する部分)
@@ -244,7 +244,7 @@ int ControlSetUp()
     SDL_QueryTexture(texture, NULL, NULL, &iw, &ih);
 
     imgRect = (SDL_Rect){0, 0, iw, ih};
-    impasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - iw / 6, SCREEN_HEIGHT / 2 - ih / 6, iw / 3, ih / 3};
+    impasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - iw / 8, SCREEN_HEIGHT / 2 - ih / 8, iw / 4, ih / 4};
 
     //Textureを描写する
     //描写元の描写する部分,描写先の描写する部分)

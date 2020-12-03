@@ -103,7 +103,7 @@ template <class T> void Pointer<T>::Copy(const Pointer &p) {
 }
 
 // 当たり判定で跳ね返す方向
-enum Collision_Dire { Non, Right, Back, Left, Front, Under };
+enum Collision_Dire { Non, Right, Back, Left, Front, Under, Over };
 
 struct Collision {
   Collision_Dire dire; // キャラを跳ね返す方向
@@ -123,32 +123,43 @@ void InitPlayerData(); // プレイヤーデータ初期化処理
 void EndSys(); // システム終了処理
 
 // 埋まっているピクセル数を返す　横
-static int BuryCheck_Side(const int chara_ID, const int accuracy, int block_X,
-                          const int block_Y, int block_Z, const float *point_X,
+static int BuryCheck_Side(const int chara_ID, const int accuracy,
+                          Vector3Int block, const float *point_X,
                           const float *point_Z, const Collision_Dire flag);
 
-// 埋まっているピクセル数を返す　縦
+// 埋まっているピクセル数を返す　下
 static int BuryCheck_Under(const int chara_ID, const int y, const int accuracy,
-                           int block_X, int block_Y, int block_Z,
-                           const float *point_X, const float *point_Z,
-                           const Collision_Dire flag);
+                           Vector3Int block, const float *point_X,
+                           const float *point_Z, const Collision_Dire flag);
+
+// 埋まっているピクセル数を返す　上
+static int BuryCheck_Over(const int chara_ID, const int y, const int accuracy,
+                          Vector3Int block, const float *point_X,
+                          const float *point_Z, const Collision_Dire flag);
 
 // キャラとブロックの当たり判定
 // ｙ ： 基準面の高さの補正
-// accuracy : 当たり判定の精度の調整　１以上 かつ キャラの幅・高さ以下の値
+// accuracy : 当たり判定の精度の調整　3以上 かつ キャラの幅・高さ以下の値
 static Collision Collision_CB_Side(const int chara_ID, const int y = 0,
                                    const int accuracy = PLAYER_W);
 
 static Collision Collision_CB_Under(const int chara_ID, const int y,
                                     const int accuracy = PLAYER_W);
 
-// キャラとキャラの当たり判定
-static void Collision_CC_Side(FloatCube& player_1, FloatCube& player_2);
+static Collision Collision_CB_Over(const int chara_ID, const int y,
+                                   const int accuracy = PLAYER_W);
 
-// 横と縦を呼び出す
+// キャラとキャラの当たり判定 横
+static void Collision_CC_Side(FloatCube &player_1, FloatCube &player_2);
+
+// キャラとキャラの当たり判定 横縦
 static void Collision_CC(int chara_num);
 
+// ブロックとブロックの当たり判定
 static bool Collision_BB(); // ブロックを置けるなら true
+
+// キャラとブロックの当たり判定
+static void Collision_CB(int chara_ID);
 
 static void Goal(int chara_ID); // ゴールの処理
 
@@ -158,6 +169,7 @@ void PutBlock(int chara_ID); // ブロックを置けるなら置く
 
 int AllGoal(); // 全員ゴールしていれば１
 
+
 void SetVec(int chara_ID, Vector3 &vec); // キャラの速度ベクトルをセット
 
 void SetPlaceData(PlaceData &data); // 配置したいブロックの場所をセット
@@ -166,6 +178,8 @@ void SendAllPos(int client_num); // クライアント全員に全員の座標�
 
 void SetDirection(int chara_ID,
                   float direction); // システムにクライアントの角度を渡す
+
+float GetDirection(int chara_ID); // ネットワークにクライアントの角度を渡す
 
 PlaceData GetPlaceData();
 /*-----------グローバル変数 終了----------*/

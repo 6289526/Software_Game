@@ -11,12 +11,16 @@ GLuint BlockTexture[BLOCK_TYPE_NUM];
 #ifdef DEBUG
 char TextureFileName[BLOCK_TYPE_NUM][128] ={
     "../data/cat.bmp",
+    "../data/FieldBlock.jpg",
     "../data/nbrock1.jpg"
 };
 #else
 char TextureFileName[BLOCK_TYPE_NUM][128] ={
     "../../data/cat.bmp",
+    "../../data/FieldBlock.jpg",
     "../../data/nbrock1.jpg"
+    
+
 };
 #endif
 //SDL2関連
@@ -159,7 +163,7 @@ void View3D() {
     glPopMatrix();// 射影変換行列を復元
     glPushMatrix();// 現在の射影変換行列を保存
     glLoadIdentity();// 単位行列を設定
-    gluPerspective(60.0, Wd_Width / Wd_Height, 20.0, 500.0);
+    gluPerspective(60.0, Wd_Width / Wd_Height, 20.0, 2000.0);
     glMatrixMode(GL_MODELVIEW);// モデルビュー変換行列設定
     glPopMatrix();// モデルビュー行列を復元
     glPushMatrix();// 現在のモデルビュー行列を保存

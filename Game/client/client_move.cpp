@@ -17,7 +17,7 @@ float RadianToDegree(float radian){ return radian * 180.0 / PI; }
 PlaceData BuildPlaceData(PlayerData playerData, float handLength){
     PlaceData result;
 
-    result.object = BlockType::NomalBlock;
+    result.object = BlockType::MetalBlock;
     result.pos.x = playerData.pos.x + sin(playerData.direction) * handLength;
     result.pos.z = playerData.pos.z + cos(playerData.direction) * handLength;
     // Vector2Int v2 = {result.pos.x / MAP_MAGNIFICATION, result.pos.z / MAP_MAGNIFICATION};

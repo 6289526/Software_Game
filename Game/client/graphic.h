@@ -14,7 +14,7 @@
 
 using namespace std;
 
-#define BLOCK_TYPE_NUM 2
+#define BLOCK_TYPE_NUM 3
 
 void Disp();
 void InitGraphic();

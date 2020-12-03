@@ -1,5 +1,5 @@
 #include "client_input.h"
-InputModuleBase::InputModuleBase() : _putFlag(false), _jumpFlag(false){
+InputModuleBase::InputModuleBase() : _putFlag(false), _jumpFlag(false), _setname(false){
 }
 
 InputModuleBase::~InputModuleBase(){
