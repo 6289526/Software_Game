@@ -60,15 +60,11 @@ Vector3Int GetTopOfHeightBlockIndex(Vector3 position){
     const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
 
     Vector3Int result = {(int)(position.x / MAP_MAGNIFICATION), (int)(position.y / MAP_MAGNIFICATION), (int)(position.z / MAP_MAGNIFICATION)};
-    bool isFill = false;
 
     for (; result.y >= 0; result.y--) // yを減らしていく = つけると...
     {
-        fprintf(stderr, "[%d, %d, %d], %d\n", result.x, result.y, result.z, terrainData[result.x][result.y][result.z]);
-        if (terrainData[result.x][result.y][result.z] != BlockType::NonBlock && isFill)
-            break;
-        else
-            isFill = false;
+        if (terrainData[result.x][result.y][result.z] != BlockType::NonBlock)
+            return result;
     }
     return result;
 }
@@ -77,12 +73,55 @@ bool IsPlayerOnGroundSimple(){
     const PlayerData *pData = GetPlayerData();
     const int myId = GetMyID();
 	float result = 0;
-    Vector3 playerPos = {pData[myId].pos.x, pData[myId].pos.y, pData[myId].pos.z};
-	Vector3Int blockIndex = GetTopOfHeightBlockIndex(playerPos);
-    Vector3 blockPos = {blockIndex.x * MAP_MAGNIFICATION, blockIndex.y * MAP_MAGNIFICATION, blockIndex.z * MAP_MAGNIFICATION};
 
-    result = pData[myId].pos.y - blockPos.y -40;
+	const int accuracy = 3; 
+	float pointX[accuracy], pointZ[accuracy];
+	float pointY = pData[myId].pos.y;
+	const int width = pData[myId].pos.w / (accuracy - 1); // X座標
+	const int depth = pData[myId].pos.d / (accuracy - 1);	// Z座標
+	const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
+	const int blockX = pointX[accuracy - 1] / MAP_MAGNIFICATION;
+	const int blockY = pointY / MAP_MAGNIFICATION;
+	const int blockZ = pointZ[accuracy - 1] / MAP_MAGNIFICATION;
 
-	fprintf(stderr, "(p, b): (%.2f, %.2f), distance: %.4f\n",pData[myId].pos.y, blockPos.y, result);
-	return result == 0;
+	for (int i = 0; i < accuracy; i++)
+	{
+		pointX[i] = pData[myId].pos.x + width * i;
+		pointZ[i] = pData[myId].pos.z + depth * i;
+	}
+
+#pragma region 範囲エラー処理
+	if (pointX[0] < 0)
+		throw "マップ外 : x座標 負\n";
+	else if (MAP_SIZE_W <= blockX)
+		throw "マップ外 : x座標 正\n";
+
+	if (pointY < 0)
+		throw "マップ外 : y座標 : 負\n";
+	else if (MAP_SIZE_H <= blockY)
+		throw "マップ外 : y座標 : 正\n";
+	
+	if (pointZ[0] < 0)
+		throw "マップ外 : z座標 :負\n";
+	else if (MAP_SIZE_D <= blockZ)
+		throw "マップ外 : z座標 :正\n";
+#pragma endregion
+
+    for (int i = 0; i < accuracy; i++)
+    {
+        for (int j = 0; j < accuracy; j++)
+        {
+            Vector3 playerPos = {pointX[i], pointY, pointZ[j]};
+            Vector3Int blockIndex = GetTopOfHeightBlockIndex(playerPos);
+            Vector3 blockPos = {blockIndex.x * MAP_MAGNIFICATION, blockIndex.y * MAP_MAGNIFICATION, blockIndex.z * MAP_MAGNIFICATION};
+
+            result = pData[myId].pos.y - blockPos.y - MAP_MAGNIFICATION;
+            if(result == 0 )
+                return true;
+        }
+    }
+    
+
+	// fprintf(stderr, "(p, b): (%.2f, %.2f), distance: %.4f\n",pData[myId].pos.y, blockPos.y, result);
+	return false;
 }
