@@ -10,3 +10,5 @@ PlaceData BuildPlaceData(PlayerData player, float handLength);
 Vector3 GetMoveDirection(PlayerData player, float angle);
 
 int GetPutableBlockHeightFromMap(Vector2Int pos);
+Vector3Int GetTopOfHeightBlockIndex(Vector3 position);
+bool IsPlayerOnGroundSimple();

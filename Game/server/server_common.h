@@ -110,6 +110,14 @@ struct Collision {
   int power;           // キャラを跳ね返す力
 };
 
+namespace error {
+  enum error {
+    OutSide_Map_x,
+    OutSide_Map_y,
+    OutSide_Map_z,
+  };
+}
+
 const PlayerData *GetPlayerData();
 
 void SetNumClients(int n); // クライアント人数セット
