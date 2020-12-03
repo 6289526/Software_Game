@@ -6,7 +6,7 @@
 #define PLAYER_MOVE_SPEED 25					   // 移動速度
 #define PLAYER_ROTATE_SPEED 4					   // 回転速度
 #define PLAYER_JUMP_POWER 1						   // ジャンプ力
-#define PLAYER_HAND_LENGTH (MAP_MAGNIFICATION + 1) // 手の長さ(ブロックの設置先までの距離)
+#define PLAYER_HAND_LENGTH (MAP_MAGNIFICATION + PLAYER_W) // 手の長さ(ブロックの設置先までの距離)
 
 #define GRAVITY 9.8 * 0.25		// 重力
 #define TERMINAL_SPEED (MAP_MAGNIFICATION - 1) // 終端速度
