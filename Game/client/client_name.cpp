@@ -115,8 +115,10 @@ void NameSetUp()
         {
             /*キーボード入力取得 kキーでwhileループ抜ける*/
             data = InputEvents(event);
-
-            SetString();
+            if (Index <= 8)
+            {
+                SetString();
+            }
 
             SDL_RenderClear(renderer);
             texture = SDL_CreateTextureFromSurface(renderer, image[1]);
@@ -519,9 +521,9 @@ void SetWiiString()
 
     if (WIData.two == false && NinitData.input->GetInputType().Forward)
     {
-        if (KeyboardNum != 26)
+        if (KeyboardNum != 26 && Index <= 8)
         {
-            MyName[Index+1] = 'a' + KeyboardNum;
+            MyName[Index + 1] = 'a' + KeyboardNum;
             Index++;
             WIData.two = true;
         }
