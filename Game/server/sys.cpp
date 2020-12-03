@@ -311,26 +311,38 @@ Collision Collision_CB_Side(const int chara_ID, const int y,
   int Block_X = point_X[accuracy - 1] / MAP_MAGNIFICATION;
 
   if (point_X[0] < 0) {
-    throw "Collision_CB_Side : マップ外 : x座標 :負\n";
+    // throw "Collision_CB_Side : マップ外 : x座標 :負\n";
+    fprintf(stderr, "Collision_CB_Side : マップ外 : x座標 :負\n");
+    throw error::OutSide_Map_x;
   } else if (MAP_SIZE_W <= Block_X) {
-    throw "Collision_CB_Side : マップ外 : x座標 : 正\n";
+    // throw "Collision_CB_Side : マップ外 : x座標 : 正\n";
+    fprintf(stderr, "Collision_CB_Side : マップ外 : x座標 :正\n");
+    throw error::OutSide_Map_x;
   }
 
   const float t_Block_Y = (PData[chara_ID].pos.y + y);
   int Block_Y = t_Block_Y / MAP_MAGNIFICATION;
 
   if (t_Block_Y < 0) {
-    throw "Collision_CB_Side : マップ外 : y座標 : 負\n";
+    // throw "Collision_CB_Side : マップ外 : y座標 : 負\n";
+    fprintf(stderr, "Collision_CB_Side : マップ外 : y座標 :負\n");
+    throw error::OutSide_Map_y;
   } else if (MAP_SIZE_H <= Block_Y) {
-    throw "Collision_CB_Side : マップ外 : y座標 : 正\n";
+    // throw "Collision_CB_Side : マップ外 : y座標 : 正\n";
+    fprintf(stderr, "Collision_CB_Side : マップ外 : y座標 :正\n");
+    throw error::OutSide_Map_y;
   }
 
   int Block_Z = point_Z[accuracy - 1] / MAP_MAGNIFICATION;
 
   if (point_Z[0] < 0) {
-    throw "Collision_CB_Side : マップ外 : z座標 :負\n";
+    // throw "Collision_CB_Side : マップ外 : z座標 :負\n";
+    fprintf(stderr, "Collision_CB_Side : マップ外 : z座標 :負\n");
+    throw error::OutSide_Map_z;
   } else if (MAP_SIZE_W <= Block_Z) {
-    throw "Collision_CB_Side : マップ外 : z座標 : 正\n";
+    // throw "Collision_CB_Side : マップ外 : z座標 : 正\n";
+    fprintf(stderr, "Collision_CB_Side : マップ外 : z座標 :正\n");
+    throw error::OutSide_Map_z;
   }
 
   Vector3Int block = {Block_X, Block_Y, Block_Z};
@@ -421,9 +433,15 @@ Collision Collision_CB_Under(const int chara_ID, const int y,
   int Block_X = point_X[accuracy - 1] / MAP_MAGNIFICATION;
 
   if (point_X[0] < 0) {
-    throw "Collision_CB_Under : マップ外 : x座標 :負\n";
+    // throw "Collision_CB_Under : マップ外 : x座標 :負\n";
+    fprintf(stderr, "Collision_CB_Under : マップ外 : x座標 :負\n");
+    throw error::OutSide_Map_x;
+
   } else if (MAP_SIZE_W <= Block_X) {
-    throw "Collision_CB_Under : マップ外 : x座標 : 正\n";
+    // throw "Collision_CB_Under : マップ外 : x座標 : 正\n";
+    fprintf(stderr, "Collision_CB_Under : マップ外 : x座標 :正\n");
+    throw error::OutSide_Map_x;
+
   }
 
   const float t_Block_Y =
@@ -431,17 +449,26 @@ Collision Collision_CB_Under(const int chara_ID, const int y,
   int Block_Y = t_Block_Y / MAP_MAGNIFICATION;
 
   if (t_Block_Y < 0) {
-    throw "Collision_CB_Under : マップ外 : y座標 : 負\n";
+    // throw "Collision_CB_Under : マップ外 : y座標 : 負\n";
+    fprintf(stderr, "Collision_CB_Under : マップ外 : y座標 :負\n");
+    throw error::OutSide_Map_y;
+
   } else if (MAP_SIZE_H <= Block_Y) {
-    throw "Collision_CB_Under : マップ外 : y座標 : 正\n";
+    // throw "Collision_CB_Under : マップ外 : y座標 : 正\n";
+    fprintf(stderr, "Collision_CB_Under : マップ外 : x座標 :正\n");
+    throw error::OutSide_Map_y;
   }
 
   int Block_Z = point_Z[accuracy - 1] / MAP_MAGNIFICATION;
 
   if (point_Z[0] < 0) {
-    throw "Collision_CB_Under : マップ外 : z座標 :負\n";
+    // throw "Collision_CB_Under : マップ外 : z座標 :負\n";
+    fprintf(stderr, "Collision_CB_Under : マップ外 : z座標 :負\n");
+    throw error::OutSide_Map_z;
   } else if (MAP_SIZE_W <= Block_Z) {
-    throw "Collision_CB_Under : マップ外 : z座標 : 正\n";
+    // throw "Collision_CB_Under : マップ外 : z座標 : 正\n";
+    fprintf(stderr, "Collision_CB_Under : マップ外 : z座標 :正\n");
+    throw error::OutSide_Map_z;
   }
 
   Vector3Int block = {Block_X, Block_Y, Block_Z};
@@ -469,7 +496,7 @@ Collision Collision_CB_Over(const int chara_ID, const int y,
                              const int accuracy) {
   // 当たり判定の精度が正しいかどうか
   if (accuracy < 3 || PLAYER_D < accuracy || PLAYER_W < accuracy) {
-    throw "Collision_CB_Under : 引数　エラー\n";
+    throw "Collision_CB_Over : 引数　エラー\n";
   }
 
   Pointer<float> point_X(accuracy); // 調べる座標ｘ
@@ -493,9 +520,13 @@ Collision Collision_CB_Over(const int chara_ID, const int y,
   int Block_X = point_X[accuracy - 1] / MAP_MAGNIFICATION;
 
   if (point_X[0] < 0) {
-    throw "Collision_CB_Under : マップ外 : x座標 :負\n";
+    // throw "Collision_CB_Over : マップ外 : x座標 :負\n";
+    fprintf(stderr, "Collision_CB_Over : マップ外 : x座標 :負\n");
+    throw error::OutSide_Map_x;
   } else if (MAP_SIZE_W <= Block_X) {
-    throw "Collision_CB_Under : マップ外 : x座標 : 正\n";
+    // throw "Collision_CB_Over : マップ外 : x座標 : 正\n";
+    fprintf(stderr, "Collision_CB_Over : マップ外 : x座標 :正\n");
+    throw error::OutSide_Map_x;
   }
 
   const float t_Block_Y =
@@ -503,17 +534,25 @@ Collision Collision_CB_Over(const int chara_ID, const int y,
   int Block_Y = t_Block_Y / MAP_MAGNIFICATION;
 
   if (t_Block_Y < 0) {
-    throw "Collision_CB_Under : マップ外 : y座標 : 負\n";
+    // throw "Collision_CB_Over : マップ外 : y座標 : 負\n";
+    fprintf(stderr, "Collision_CB_Over : マップ外 : y座標 :負\n");
+    throw error::OutSide_Map_y;
   } else if (MAP_SIZE_H <= Block_Y) {
-    throw "Collision_CB_Under : マップ外 : y座標 : 正\n";
+    // throw "Collision_CB_Over : マップ外 : y座標 : 正\n";
+    fprintf(stderr, "Collision_CB_Over : マップ外 : y座標 :正\n");
+    throw error::OutSide_Map_y;
   }
 
   int Block_Z = point_Z[accuracy - 1] / MAP_MAGNIFICATION;
 
   if (point_Z[0] < 0) {
-    throw "Collision_CB_Under : マップ外 : z座標 :負\n";
+    // throw "Collision_CB_Under : マップ外 : z座標 :負\n";
+    fprintf(stderr, "Collision_CB_Over : マップ外 : z座標 :負\n");
+    throw error::OutSide_Map_z;
   } else if (MAP_SIZE_W <= Block_Z) {
-    throw "Collision_CB_Under : マップ外 : z座標 : 正\n";
+    // throw "Collision_CB_Under : マップ外 : z座標 : 正\n";
+    fprintf(stderr, "Collision_CB_Over : マップ外 : z座標 :正\n");
+    throw error::OutSide_Map_z;
   }
 
   Vector3Int block = {Block_X, Block_Y, Block_Z};
@@ -742,7 +781,10 @@ void Goal(int chara_ID) {
   }
 }
 
-void MovePosition(int chara_ID) {
+void MovePosition(int chara_ID) try {
+
+  // キャラとブロックの当たり判定
+  Collision_CB(chara_ID);
 
   // キャラキャラの当たり判定
   Collision_CC(Num_Clients);
@@ -753,6 +795,20 @@ void MovePosition(int chara_ID) {
   // 速度を０に戻す
   PData[chara_ID].velocity.x = 0;
   PData[chara_ID].velocity.z = 0;
+}
+catch (error::error e) {
+  if (e == error::OutSide_Map_y) {
+    fprintf(stderr, "hoge");
+    PData[chara_ID].pos.x = PLAYER_X + chara_ID * PLAYER_W;
+    PData[chara_ID].pos.y = PLAYER_Y;
+    PData[chara_ID].pos.z = PLAYER_Z;
+    PData[chara_ID].velocity.x = 0;
+    PData[chara_ID].velocity.y = 0;
+    PData[chara_ID].velocity.z = 0;
+  }
+}
+catch (const char *const e) {
+  fprintf(stderr, "%s", e);
 }
 
 void PutBlock(int chara_ID) // ブロックを置けるなら置く

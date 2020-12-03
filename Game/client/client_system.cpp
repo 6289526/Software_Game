@@ -139,7 +139,7 @@ void InitPlayerData() // プレイヤーデータ初期化処理
 	{
 		strcpy(PData[i].name, Name_Clients[i]);
 		PData[i].pos = Pos_Clients;
-		PData[i].pos.x = Pos_Clients.x + i * 20;
+		PData[i].pos.x = Pos_Clients.x + i * PLAYER_W;
 		PData[i].velocity = {0, 0, 0};
 		PData[i].direction = 0;
 		PData[i].rank = 0;
