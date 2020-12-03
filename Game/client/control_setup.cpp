@@ -67,8 +67,7 @@ int GetAddress(void *args)
 /*必要な情報を描画*/
 int ControlSetUp()
 {
-    SDL_Window *window = NULL;
-    SDL_Renderer *renderer = NULL;
+    SDL_Renderer *renderer = GetWindowRenderer();
     // 入力モジュール初期化
     InputData data;
 
@@ -84,10 +83,6 @@ int ControlSetUp()
 
         exit(1);
     }
-
-    /*ウィンドウ作ります*/
-    window = SDL_CreateWindow("Draw Text Test", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
     /*プログラムが止まってしまうのでマルチスレッドにします*/
     SDL_Thread *GetAddressThread;
@@ -300,8 +295,6 @@ int ControlSetUp()
     /*一秒待つ*/
     SDL_Delay(1000);
 
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
     TTF_CloseFont(font);
     TTF_Quit();
 

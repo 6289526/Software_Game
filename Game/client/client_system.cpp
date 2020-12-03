@@ -23,6 +23,8 @@ InputModuleBase *Input;				  // Input Module
 Timer *Time;						  // FrameTimer
 GameStateController *StateController; // GameStateController
 
+SDL_Thread *InputThreadVar;
+
 // ===== * ===== プロトタイプ宣言 ===== * ===== //
 const PlayerData *GetPlayerData();
 extern int GetMyID();
@@ -90,12 +92,11 @@ bool InitSystem(InitData *data)
 	*/
 	/*入力方式の選択またwiiリモコンのアドレスを取得*/
 
-	InitGraphic(); // グラフィックの初期化
-
 	SDL_Thread *inputThread;
+
 	SDL_mutex *input_mtx = SDL_CreateMutex(); // 相互排除
-	inputThread = SDL_CreateThread(InputThread, "inputThread", input_mtx);
-	if (inputThread == NULL)
+	InputThreadVar = SDL_CreateThread(InputThread, "InputThread", input_mtx);
+	if (InputThreadVar == NULL)
 	{
 		fprintf(stderr, "Failed to create a input thread.\n");
 		return false;
@@ -523,6 +524,12 @@ int InputThread(void *data)
 	while (1)
 	{
 		SDL_LockMutex(mtx);
+		if (Input == NULL)
+		{
+			throw "system.cppに宣言されている Input がNULL";
+			return -1;
+		}
+
 		// 入力受け付け
 		Input->UpdateInput();
 		/*サーバーにリクエストを送る*/
