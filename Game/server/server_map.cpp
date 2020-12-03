@@ -14,6 +14,7 @@ void ServerMap::LoadMapData(char* fileName){
         for(int width = 0; width < _MapW; width++){
             _TerrainData[width][0][depth] = 1;
             fscanf(fp,"%d ",&baceTerrainData);
+            if(baceTerrainData < 0) _TerrainData[width][0][depth] = 0;
             for(int hight = 1; hight <= baceTerrainData; hight++){
                 _TerrainData[width][hight][depth] = NomalBlock;
                 //fprintf(stderr,"(%d,%d,%d) = 1\n",width,hight,depth);
