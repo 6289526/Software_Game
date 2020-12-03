@@ -40,12 +40,12 @@ static int Start = 4;
 #ifdef DEBUG
 static char ImagePath[2][MAX_STRING] = {
     {"Game.png"},
-    {"TITLE.png"},
+    {"UI.png"},
 };
 #else
 static char ImagePath[2][MAX_STRING] = {
     {"../Game.png"},
-    {"../TITLE.png"},
+    {"../UI.png"},
 };
 #endif
 
@@ -56,8 +56,8 @@ static void InitInput();
 static InputData InputEvents(SDL_Event event);
 static void SetString();
 
-
-void GetInitData(InitData initData){
+void GetInitData(InitData initData)
+{
     NinitData = initData;
 }
 
@@ -111,7 +111,8 @@ void NameSetUp()
             SetString();
 
             SDL_RenderClear(renderer);
-            texture = SDL_CreateTextureFromSurface(renderer, image[1]);
+
+            texture = SDL_CreateTextureFromSurface(renderer, image[0]);
 
             SDL_SetRenderDrawColor(renderer, 0, 85, 150, 255);
 
@@ -119,6 +120,20 @@ void NameSetUp()
 
             SDL_Rect imgRect = (SDL_Rect){0, 0, iw, ih};
             SDL_Rect impasteRect = (SDL_Rect){0, 0, iw, ih};
+            //Textureを描写する
+            //描写元の描写する部分,描写先の描写する部分)
+            //サイズが違うと勝手にTextureを伸展してくれる
+            SDL_RenderCopy(renderer, texture, &imgRect, &impasteRect);
+            SDL_DestroyTexture(texture);
+
+            texture = SDL_CreateTextureFromSurface(renderer, image[1]);
+
+            SDL_SetRenderDrawColor(renderer, 0, 85, 150, 255);
+
+            SDL_QueryTexture(texture, NULL, NULL, &iw, &ih);
+
+            imgRect = (SDL_Rect){0, 0, iw, ih};
+            impasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - iw / 6, SCREEN_HEIGHT / 2 - ih / 6, iw / 3, ih / 3};
 
             //Textureを描写する
             //描写元の描写する部分,描写先の描写する部分)
@@ -138,7 +153,7 @@ void NameSetUp()
                 SDL_QueryTexture(texture, NULL, NULL, &iw, &ih);
 
                 SDL_Rect txtRect = (SDL_Rect){0, 0, iw, ih};
-                SDL_Rect pasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - iw / 2, SCREEN_HEIGHT / 10 + i * ih + i * ih / 2, iw, ih};
+                SDL_Rect pasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - iw / 2, SCREEN_HEIGHT / 5 + i * ih + i * ih / 2, iw, ih};
 
                 //Textureを描写する
                 //描写元の描写する部分,描写先の描写する部分)
@@ -160,7 +175,7 @@ void NameSetUp()
             // 名前のサイズ
             int nameSize = iw;
             SDL_Rect txtRect = (SDL_Rect){0, 0, iw, ih};
-            SDL_Rect pasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - iw / 2, SCREEN_HEIGHT / 2, iw, ih};
+            SDL_Rect pasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - iw / 2, SCREEN_HEIGHT / 2 , iw, ih};
 
             //Textureを描写する
             //描写元の描写する部分,描写先の描写する部分)
@@ -203,7 +218,6 @@ void NameSetUp()
             {
                 showCresol = 0;
             }
-            
 
             //windowにレンダリングする
             SDL_RenderPresent(renderer);
@@ -220,7 +234,7 @@ void NameSetUp()
             /*キーボード入力取得 kキーでwhileループ抜ける*/
             NinitData.input->UpdateInput();
             SDL_RenderClear(renderer);
-            texture = SDL_CreateTextureFromSurface(renderer, image[1]);
+            texture = SDL_CreateTextureFromSurface(renderer, image[0]);
 
             SDL_SetRenderDrawColor(renderer, 0, 85, 150, 255);
 
@@ -228,6 +242,20 @@ void NameSetUp()
 
             SDL_Rect imgRect = (SDL_Rect){0, 0, iw, ih};
             SDL_Rect impasteRect = (SDL_Rect){0, 0, iw, ih};
+            //Textureを描写する
+            //描写元の描写する部分,描写先の描写する部分)
+            //サイズが違うと勝手にTextureを伸展してくれる
+            SDL_RenderCopy(renderer, texture, &imgRect, &impasteRect);
+            SDL_DestroyTexture(texture);
+            
+            texture = SDL_CreateTextureFromSurface(renderer, image[1]);
+
+            SDL_SetRenderDrawColor(renderer, 0, 85, 150, 255);
+
+            SDL_QueryTexture(texture, NULL, NULL, &iw, &ih);
+
+            imgRect = (SDL_Rect){0, 0, iw, ih};
+            impasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - iw / 6, SCREEN_HEIGHT / 2 - ih / 6, iw / 3, ih / 3};
 
             //Textureを描写する
             //描写元の描写する部分,描写先の描写する部分)
@@ -247,7 +275,7 @@ void NameSetUp()
                 SDL_QueryTexture(texture, NULL, NULL, &iw, &ih);
 
                 SDL_Rect txtRect = (SDL_Rect){0, 0, iw, ih};
-                SDL_Rect pasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - iw / 2, SCREEN_HEIGHT / 10 + i * ih + i * ih / 2, iw, ih};
+                SDL_Rect pasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - iw / 2, SCREEN_HEIGHT / 5 + i * ih + i * ih / 2, iw, ih};
 
                 //Textureを描写する
                 //描写元の描写する部分,描写先の描写する部分)
@@ -315,17 +343,21 @@ void NameSetUp()
             // アルファベットの何番目か
             int keynum = 0;
             /*くるくるするやつを描画*/
-            for(int i = 0; i < 3; i++){
-                for(int j = 0; j < 9; j++){
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 9; j++)
+                {
                     // 点滅するやつの表示
                     //TTF_SetFontOutline(font, 1);//枠抜きで描写するとき
-                    if(i == 2 && j == 8){
+                    if (i == 2 && j == 8)
+                    {
                         surface = TTF_RenderUTF8_Blended(font, "Enter", (SDL_Color){255, 255, 255, 255});
                     }
-                    else{
+                    else
+                    {
                         char text[1];
                         // text += (i*j+1);
-                        sprintf(text,"%c", 'a' + keynum);
+                        sprintf(text, "%c", 'a' + keynum);
                         surface = TTF_RenderUTF8_Blended(font, text, (SDL_Color){255, 255, 255, 255});
                     }
                     //surfaceからTextureを作る
@@ -337,8 +369,8 @@ void NameSetUp()
 
                     SDL_Rect txtRect = (SDL_Rect){0, 0, iw, ih};
                     SDL_Rect pasteRect;
-                    pasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - (iw*4) + iw*2*j, SCREEN_HEIGHT *2/3 + ih*i , iw, ih};
-                    
+                    pasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - (iw * 4) + iw * 2 * j, SCREEN_HEIGHT * 2 / 3 + ih * i, iw, ih};
+
                     //Textureを描写する
                     //描写元の描写する部分,描写先の描写する部分)
                     //サイズが違うと勝手にTextureを伸展してくれる
@@ -355,7 +387,7 @@ void NameSetUp()
             SDL_Delay(10);
         }
     }
-    
+
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     TTF_CloseFont(font);

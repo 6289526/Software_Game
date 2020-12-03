@@ -256,7 +256,7 @@ Collision Collision_CB_Side(const int chara_ID, const int y,
 
   if (point_Z[0] < 0) {
     throw "Collision_CB_Side : マップ外 : z座標 :負\n";
-  } else if (MAP_SIZE_W <= Block_Z) {
+  } else if (MAP_SIZE_D <= Block_Z) {
     throw "Collision_CB_Side : マップ外 : z座標 : 正\n";
   }
 
@@ -356,7 +356,8 @@ Collision Collision_CB_Under(const int chara_ID, const int y,
   int Block_Y = t_Block_Y / MAP_MAGNIFICATION;
 
   if (t_Block_Y < 0) {
-    throw "Collision_CB_Under : マップ外 : y座標 : 負\n";
+    fprintf(stderr, "%f", PData[chara_ID].velocity.y);
+    throw "Collision_CB_Under : マップ外 : y座標 : 負 \n";
   } else if (MAP_SIZE_H <= Block_Y) {
     throw "Collision_CB_Under : マップ外 : y座標 : 正\n";
   }
@@ -365,7 +366,7 @@ Collision Collision_CB_Under(const int chara_ID, const int y,
 
   if (point_Z[0] < 0) {
     throw "Collision_CB_Under : マップ外 : z座標 :負\n";
-  } else if (MAP_SIZE_W <= Block_Z) {
+  } else if (MAP_SIZE_D <= Block_Z) {
     throw "Collision_CB_Under : マップ外 : z座標 : 正\n";
   }
 
@@ -467,7 +468,7 @@ bool Collision_BB() // ブロックを置けるかどうかの判定
 
   if (Block_X < 0) {
     throw "Collision_BB : マップ外 : x座標 : 負\n";
-  } else if (MAP_SIZE_H <= Block_X) {
+  } else if (MAP_SIZE_W <= Block_X) {
     throw "Collision_BB : マップ外 : x座標 : 正\n";
   }
 
@@ -479,7 +480,7 @@ bool Collision_BB() // ブロックを置けるかどうかの判定
 
   if (Block_Z < 0) {
     throw "Collision_BB : マップ外 : z座標 : 負\n";
-  } else if (MAP_SIZE_H <= Block_Z) {
+  } else if (MAP_SIZE_D <= Block_Z) {
     throw "Collision_BB : マップ外 : z座標 : 正\n";
   }
 

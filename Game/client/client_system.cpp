@@ -229,30 +229,30 @@ void SystemRun()
 		if (data.Left)
 		{
 			data.Left = false;
-			if(strcmp(WiiAddress, "") != 0){
-				PData[MyId].velocity.x += 5*GetMoveDirection(PData[MyId], 90).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-				PData[MyId].velocity.z += 5*GetMoveDirection(PData[MyId], 90).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			// if(strcmp(WiiAddress, "") != 0){
+			// 	PData[MyId].velocity.x += 5*GetMoveDirection(PData[MyId], 90).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			// 	PData[MyId].velocity.z += 5*GetMoveDirection(PData[MyId], 90).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 				PData[MyId].direction += PLAYER_ROTATE_SPEED * Time->GetDeltaTime();
-			}
-			else
-			{
-				PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 90).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-				PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 90).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-			}
+			// }
+			// else
+			// {
+			// 	PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 90).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			// 	PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 90).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			// }
 		}
 
 		else if (data.Right)
 		{
 			data.Right = false;
-			if(strcmp(WiiAddress, "") != 0){
-				PData[MyId].velocity.x += 5*GetMoveDirection(PData[MyId], 270).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-				PData[MyId].velocity.z += 5*GetMoveDirection(PData[MyId], 270).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			// if(strcmp(WiiAddress, "") != 0){
+			// 	PData[MyId].velocity.x += 5*GetMoveDirection(PData[MyId], 270).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			// 	PData[MyId].velocity.z += 5*GetMoveDirection(PData[MyId], 270).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
 				PData[MyId].direction -= PLAYER_ROTATE_SPEED * Time->GetDeltaTime();
-			}
-			else{
-			PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 270).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-			PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 270).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-			}
+			// }
+			// else{
+			// PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 270).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			// PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 270).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
+			// }
 		}
 		// ジャンプ
 		if (data.Jump && isOnGround == 1)
