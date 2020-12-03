@@ -242,14 +242,14 @@ static int BuryCheck_Over(const int chara_ID, const int y, const int accuracy,
     for (int j = 1; j < (accuracy - 1); ++j) {
       block.z = point_Z[i] / MAP_MAGNIFICATION;
       if (terrainData[block.x][static_cast<int>(base_point / MAP_MAGNIFICATION)]
-                     [block.z] == NomalBlock) {
+                     [block.z] >= NomalBlock) {
         int t_Count = 0;
         // どこまで埋まっているか調べる
         for (int k = 0; k <= chara_size - y; ++k) {
 
           block.y = (base_point + (k * PN_flag)) / MAP_MAGNIFICATION;
 
-          if (terrainData[block.x][block.y][block.z] == NomalBlock) {
+          if (terrainData[block.x][block.y][block.z] >= NomalBlock) {
             // その点の埋まっている程度をカウント
             ++t_Count;
             // 埋まっている(かもしれない)
@@ -274,6 +274,7 @@ static int BuryCheck_Over(const int chara_ID, const int y, const int accuracy,
       }
     }
   }
+  
 
   // 全体が埋まっていたら
   if (Errer_Count == ((accuracy - 2) * (accuracy - 2))) {
