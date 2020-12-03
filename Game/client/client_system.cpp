@@ -5,10 +5,10 @@
 
 #define PLAYER_MOVE_SPEED 25					   // 移動速度
 #define PLAYER_ROTATE_SPEED 4					   // 回転速度
-#define PLAYER_JUMP_POWER 2						   // ジャンプ力
+#define PLAYER_JUMP_POWER 1						   // ジャンプ力
 #define PLAYER_HAND_LENGTH (MAP_MAGNIFICATION + 1) // 手の長さ(ブロックの設置先までの距離)
 
-#define GRAVITY 9.8 * 0.1		// 重力
+#define GRAVITY 9.8 * 0.25		// 重力
 #define TERMINAL_SPEED (MAP_MAGNIFICATION - 1) // 終端速度
 
 static int MyId;   // クライアントのID
@@ -522,7 +522,7 @@ void SetDirection(float direction, int id)
 }
 
 int GetDistanceFromGround(){
-	const int accuracy = 3; 
+	const int accuracy = 3;
 	float pointX[accuracy], pointZ[accuracy];
 	float pointY = PData[MyId].pos.y + PData[MyId].velocity.y;
 	const int width = PData[MyId].pos.w / (accuracy - 1); // X座標
@@ -539,7 +539,7 @@ int GetDistanceFromGround(){
 		pointX[i] = PData[MyId].pos.x + PData[MyId].velocity.x + width * i;
 		pointZ[i] = PData[MyId].pos.z + PData[MyId].velocity.z + depth * i;
 	}
-	
+
 #pragma region 範囲エラー処理
 	if (pointX[0] < 0)
 		throw "マップ外 : x座標 負\n";
@@ -550,7 +550,7 @@ int GetDistanceFromGround(){
 		throw "マップ外 : y座標 : 負\n";
 	else if (MAP_SIZE_H <= blockY)
 		throw "マップ外 : y座標 : 正\n";
-	
+
 	if (pointZ[0] < 0)
 		throw "マップ外 : z座標 :負\n";
 	else if (MAP_SIZE_D <= blockZ)
@@ -569,7 +569,7 @@ int GetDistanceFromGround(){
 			fprintf(stderr, "(i%d, j%d) : PlayerPos = (%.2f, %.2f), MapBlock[%d, %d, %d], dis: %f\n",i,j, pointX[i], pointZ[j], blockPosX, blockPosY, blockPosZ, distance);
 		}
 	}
-	
+
 	return result;
 }
 
