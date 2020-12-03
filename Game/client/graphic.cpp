@@ -23,6 +23,7 @@ char TextureFileName[BLOCK_TYPE_NUM][128] ={
 
 SDL_Window *window = NULL;
 SDL_GLContext context = NULL;
+SDL_Renderer *renderer = NULL;
 
 //内部関数
 bool InitOpenGL();
@@ -57,6 +58,7 @@ void InitGraphic(){
     IMG_Init(IMG_INIT_JPG);
     window = SDL_CreateWindow("OpenGL Test", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, Wd_Width, Wd_Height, SDL_WINDOW_OPENGL);
 	context = SDL_GL_CreateContext(window);
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
     InitOpenGL();
     SetBlockTexture();
@@ -64,6 +66,7 @@ void InitGraphic(){
 
 //画面描画
 void Disp(){
+	glClearColor(1.0, 1.0, 1.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     glFlush();
     View3D();
@@ -73,6 +76,10 @@ void Disp(){
     Disp2D();
     glFlush();
     SDL_GL_SwapWindow(window);
+}
+
+SDL_Renderer* GetWindowRenderer(){
+    return renderer;
 }
 
 /*private*/

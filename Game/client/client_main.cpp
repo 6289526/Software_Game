@@ -4,7 +4,6 @@
  */
 
 #include "client_common.h"
-#include "graphic.h"
 
 
 // ループするかを判定
@@ -60,6 +59,8 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "Usage: %s [server name] [port number]\n", argv[0]);
 		return 1;
 	}
+	// グラフィックの初期化
+	InitGraphic();
 	/*クライアントの作成*/
 	InitControl(&initData);
 	// 指定されたサーバー名、ポート番号に参加するクライアントとして設定する。

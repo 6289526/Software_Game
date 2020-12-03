@@ -23,6 +23,7 @@
 #include "client_KeybordInput.h"
 #include "client_time.hpp"
 #include "client_gamestate.hpp"
+#include "graphic.h"
 
 extern int Num_Clients; // クライアント人数
 extern char WiiAddress[18];
