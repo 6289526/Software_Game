@@ -274,7 +274,7 @@ static int BuryCheck_Over(const int chara_ID, const int y, const int accuracy,
       }
     }
   }
-  
+
 
   // 全体が埋まっていたら
   if (Errer_Count == ((accuracy - 2) * (accuracy - 2))) {
@@ -804,7 +804,7 @@ catch (error::error e) {
     PData[chara_ID].pos.y = PLAYER_Y;
     PData[chara_ID].pos.z = PLAYER_Z;
     PData[chara_ID].velocity.x = 0;
-    PData[chara_ID].velocity.y = 0;
+    // PData[chara_ID].velocity.y = 0;
     PData[chara_ID].velocity.z = 0;
   }
 }
