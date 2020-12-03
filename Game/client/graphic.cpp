@@ -11,12 +11,12 @@ GLuint BlockTexture[BLOCK_TYPE_NUM];
 #ifdef DEBUG
 char TextureFileName[BLOCK_TYPE_NUM][128] ={
     "../data/cat.bmp",
-    "../data/FieldBlock.jpg"
+    "../data/nbrock1.jpg"
 };
 #else
 char TextureFileName[BLOCK_TYPE_NUM][128] ={
     "../../data/cat.bmp",
-    "../../data/FieldBlock.jpg"
+    "../../data/nbrock1.jpg"
 };
 #endif
 //SDL2関連
