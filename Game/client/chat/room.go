@@ -46,13 +46,16 @@ func (r *room) run() {
 		case client := <-r.join:
 			// joining
 			r.clients[client] = true
+			// ここでコマンドを送りつける
 			r.tracer.Trace("J")
 		case client := <-r.leave:
 			// leaving
 			delete(r.clients, client)
 			close(client.send)
+			// ここでコマンドを送りつける
 			r.tracer.Trace("E")
 		case msg := <-r.forward:
+			// ここでコマンドを送りつける
 			r.tracer.Trace(string(msg))
 			// forward message to all clients
 			// for client := range r.clients {

@@ -63,12 +63,14 @@ void Smart::UpdateInput()
 		if (GoSInput.P)
 		{
 			_Input.Put = true;
+			// 名前入力でいるだけ
 			_Input.Down = true;
 		}
 		else
 		{
 			_putFlag = false;
 			_Input.Put = false;
+			// 名前入力でいるだけ
 			_Input.Down = false;
 		}
 
