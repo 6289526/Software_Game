@@ -1,38 +1,50 @@
 #include "client_input.h"
-InputModuleBase::InputModuleBase() : _putFlag(false), _jumpFlag(false), _setname(false){
+InputModuleBase::InputModuleBase() : _putFlag(false), _jumpFlag(false), _setname(false)
+{
 }
 
-InputModuleBase::~InputModuleBase(){
+InputModuleBase::~InputModuleBase()
+{
     // printf("siieeeeeeee");
 }
 
 // 現在の入力情報を返す
-InputType InputModuleBase::GetInputType(){
+InputType InputModuleBase::GetInputType()
+{
     return _Input;
 }
 
 // SystemRun内で呼ばれる。専用の処理を行い、入力情報を返す。
 // SystemRun以外で呼び出さないこと!!
-InputType InputModuleBase::SystemGetInputType(){
+InputType InputModuleBase::SystemGetInputType()
+{
     // すでに置いたなら置かせない
-    if(_putFlag){
+    if (_putFlag)
+    {
         _Input.Put = false;
     }
-    if(_Input.Put){
+    if (_Input.Put)
+    {
         _putFlag = true;
     }
 
     // すでにジャンプ済みならジャンプさせない
-    if(_jumpFlag){
+    if (_jumpFlag)
+    {
         _Input.Jump = false;
     }
-    if(_Input.Jump){
+    if (_Input.Jump)
+    {
         _jumpFlag = true;
     }
+
+    
+
     return _Input;
 }
 
-bool InputModuleBase::IsMoveButtonDown(){
+bool InputModuleBase::IsMoveButtonDown()
+{
     bool result = false;
     result = result | _Input.Forward; //
     result = result | _Input.Right;

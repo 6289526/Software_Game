@@ -22,7 +22,7 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 #include "../header/constants.h"
-
+#include "go.h"
 typedef struct InputType{
     bool Forward;   // 前進
     bool Right;     // 右
