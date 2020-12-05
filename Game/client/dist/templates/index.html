@@ -42,18 +42,18 @@
           }
         });
 
-        this.draw();
+        // this.draw();
 
 
         return isExist;
       }
 
-      draw() {
-        noFill();
-        stroke(abs(this.id * 73) % 360, 70, 10);
-        strokeWeight(this.count / 2);
-        ellipse(this.touch.x, this.touch.y, this.count * this.count / 20, this.count * this.count / 20);
-      }
+      // draw() {
+      //   noFill();
+      //   stroke(abs(this.id * 73) % 360, 70, 10);
+      //   strokeWeight(this.count / 2);
+      //   ellipse(this.touch.x, this.touch.y, this.count * this.count / 20, this.count * this.count / 20);
+      // }
     }
 
     let touchObjectList = [];
@@ -72,7 +72,7 @@
       createCanvas(windowWidth, windowHeight);
 
       background(0);
-      colorMode(HSB, 360, 100, 100, 100);
+      // colorMode(HSB, 360, 100, 100, 100);
 
       touchObjectList = new Array();
 
@@ -95,15 +95,15 @@
     var clickFlag = 0;
     function draw() {
 
-      blendMode(BLEND);
-      background(0, 2);
-      blendMode(ADD);
-      stroke(255);
+      // blendMode(BLEND);
+      // background(0, 2);
+      // blendMode(ADD);
+      // stroke(255);
       if (touches.length != 0) {
 
         // 初出現のIDを探す
         touches.forEach(element => {
-          console.log(element);
+          // console.log(element);
           let isExist = false;
           touchObjectList.forEach(object => {
             if (element.id === object.id) {
@@ -129,47 +129,66 @@
       var Left = "f";
       var Jump = "f";
       var Put = "f";
-      if (mouseIsPressed) {
-        // すべてのタッチした場所で判定
-        touchObjectList.forEach(element => {
-          /* キーマップ
-          F F L R
-          P P J J
-          */
-          if (element.touch.y <= windowHeight / 2) {
-            if (element.touch.x >= windowWidth / 2) {
-              Forward = "t";
+      // if (mouseIsPressed) {
+      // すべてのタッチした場所で判定
+      var touchCount = 0;
+      touchObjectList.forEach(element => {
+        /* キーマップ
+        F F L R
+        P P J J
+        */
+        if (element.touch.y <= windowHeight / 2) {
+          if (element.touch.x >= windowWidth / 2) {
+            Forward = "t";
+          }
+          if (element.touch.x < windowWidth / 2) {
+            Put = "t";
+          }
+        }
+        else {
+          if (element.touch.x >= windowWidth / 2) {
+            if (element.touch.y < windowHeight * 3 / 4) {
+              Left = "t";
             }
-            if (element.touch.x < windowWidth / 2) {
-              Put = "t";
+            else {
+              Right = "t";
             }
           }
           else {
-            if (element.touch.x >= windowWidth / 2) {
-              if (element.touch.y < windowHeight * 3 / 4) {
-                Left = "t";
-              }
-              else {
-                Right = "t";
-              }
-            }
-            else {
 
-              Jump = "t";
+            Jump = "t";
 
-            }
           }
-        })
-
+        }
+        touchCount++;
+      })
+      if (touchCount != 0) {
         socket.send(Forward + " " + Right + " " + Left + " " + Jump + " " + Put + " " + "f");
         clickFlag = 1;
       }
       else {
-        if (clickFlag) {
+        if (clickFlag = 1) {
           clickFlag = 0;
-          socket.send(Forward + " " + Right + " " + Left + " " + Jump + " " + Left + " " + "f");
+          socket.send("f f f f f f f");
         }
       }
+      // clickFlag = 1;
+      // }
+      // if (mouseIsPressed) {
+      //   socket.send(Forward + " " + Right + " " + Left + " " + Jump + " " + Put + " " + "f");
+      //   clickFlag = 0;
+      // }
+      // else {
+      //   // 何も押さなくても7回は送信する
+      //   if (clickFlag < 7) {
+      //     clickFlag++;
+      //     socket.send(Forward + " " + Right + " " + Left + " " + Jump + " " + Left + " " + "f");
+      //   }
+      //   else if (clickFlag == 7){
+      //     clickFlag++;
+      //     socket.send("f f f f f f f");
+      //   }
+      // }
 
     }
   </script>

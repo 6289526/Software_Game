@@ -91,29 +91,29 @@ void Goroutine()
             // U は Jump
             // F R L U P Q
             sscanf(output, "%s %s %s %s %s %s", F, R, L, U, P, E);
-            fprintf(stderr, "F:%s\n", F);
+            fprintf(stderr, "F:%s %s %s %s %s %s\n", F, R, L, U, P, E);
 
-            if (strcmp(F, "t") >= 0) //Forward
+            if (strcmp(F, "tfffff") >= 0) //Forward
             {
                 GoSInput.F = true;
             }
-            if (strcmp(R, "ft") >= 0) //Right
+            if (strcmp(R, "tffff") >= 0) //Right
             {
                 GoSInput.R = true;
             }
-            if (strcmp(L, "fft") >= 0) //Left
+            if (strcmp(L, "tfff") >= 0) //Left
             {
                 GoSInput.L = true;
             }
-            if (strcmp(U, "ffft") >= 0) //Up
+            if (strcmp(U, "tff") >= 0) //Up
             {
                 GoSInput.U = true;
             }
-            if (strcmp(P, "fffft") >= 0) //Put
+            if (strcmp(P, "tf") >= 0) //Put
             {
                 GoSInput.P = true;
             }
-            if (strcmp(E, "ffffft") >= 0) //Exit <<--これはスマホがサイトから離れたら
+            if (strcmp(E, "t") >= 0) //Exit <<--これはスマホがサイトから離れたら
             {
                 GoSInput.E = true;
             }
