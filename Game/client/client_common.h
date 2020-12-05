@@ -87,4 +87,5 @@ extern void GetInitData(InitData initData);
 extern void NameSetUp();
 
 
+extern void KillGoServer();
 extern void Goroutine();

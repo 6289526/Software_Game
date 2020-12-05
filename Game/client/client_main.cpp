@@ -88,6 +88,7 @@ int main(int argc, char *argv[])
 	TerminateClient();
 	SDL_Quit();
 	ExitSystem(&initData);
+	KillGoServer();
 	return 0;
 }
 
@@ -119,5 +120,3 @@ int Go(void *args)
 
 	return 0;
 }
-
-
