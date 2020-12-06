@@ -15,11 +15,12 @@
 
 <body style="margin:0">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.0.0/p5.min.js"></script>
-  <!-- <script src="http://p5play.molleindustria.org/lib/p5.play.js"></script> -->
-  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/addons/p5.sound.js"></script> -->
+  <script src="http://p5play.molleindustria.org/lib/p5.play.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/addons/p5.sound.js"></script>
   <script>
     let pDeviceOrientation;
     var socket = null;
+
 
     // タッチした情報を格納するクラス
     class touchObject {
@@ -58,17 +59,23 @@
 
     let touchObjectList = [];
 
-    // var scdSound;
-    // var eynSound;
-    // function preload() {
-    //   soundFormats('mp3', 'ogg');
-    //   scdSound = loadSound('sccesscond.mp3')
-    //   eynSound = loadSound('entername');
-    // }
+    var scdSound;
+    var eynSound;
+    function preload() {
+      soundFormats('mp3', 'ogg');
+      scdSound = loadSound('assets/sccesscond.mp3')
+      eynSound = loadSound('assets/entername');
+    }
 
+
+
+    var context = new AudioContext();
+    var buttons = [];
     function setup() {
+
       window.addEventListener("touchstart", function (event) { event.preventDefault(); }, { passive: false });
       window.addEventListener("touchmove", function (event) { event.preventDefault(); }, { passive: false });
+
       createCanvas(windowWidth, windowHeight);
 
       background(0);
@@ -89,138 +96,190 @@
           // messages.append($("<li>").text(e.data));
         }
       }
-      // scdSound.play();
-      // eynSound.play();
+
+      context.resume().then(() => {
+        console.log('Playback resumed successfully');
+      });
+      // 文字の設定
+      fill(250);
+      textFont('Paytone One');
+      textStyle(BOLD);
+
+      var button;
+      button = createSprite(width * 3 / 4, height / 4, width / 2, height / 2);//前
+      button.onMousePressed = clicked;
+      button.id = 0;
+      buttons[0] = button;
+      button = createSprite(width * 3 / 4, height * 5 / 8, width / 2, height / 4);//左
+      button.onMousePressed = clicked;
+      button.id = 1;
+      buttons[1] = button;
+      button = createSprite(width * 3 / 4, height * 7 / 8, width / 2, height / 4);//右
+      button.onMousePressed = clicked;
+      button.id = 2;
+      buttons[2] = button;
+      button = createSprite(width / 4, height * 5 / 8, width / 2, height / 4);//置く
+      button.onMousePressed = clicked;
+      button.id = 3;
+      buttons[3] = button;
+      button = createSprite(width / 4, height * 7 / 8, width / 2, height / 4);//ジャンプ
+      button.onMousePressed = clicked;
+      button.id = 4;
+      buttons[4] = button;
+      button = createSprite(width / 4, height / 4, width / 2, height / 2);//下
+      button.onMousePressed = clicked;
+      button.id = 5;
+      buttons[5] = button;
+
+      console.log(buttons);
+
     }
+
+
+
     var clickFlag = 0;
+    var load = 0;
+    var deviceMode = "launch"
+    var index = 0;
+
     function draw() {
 
-      blendMode(BLEND);
-      background(0, 2);
-      blendMode(ADD);
-      stroke(255);
-      if (touches.length != 0) {
+      switch (deviceMode) {
+        case "launch":
+          background(0, 2);
+          textSize(45);
+          textAlign(CENTER);
+          text('Click here.', width / 2, height / 2);
 
-        // 初出現のIDを探す
-        touches.forEach(element => {
-          // console.log(element);
-          let isExist = false;
-          touchObjectList.forEach(object => {
-            if (element.id === object.id) {
-              isExist = true;
+          if (mouseIsPressed && load == 0) {
+            socket.send("J");
+
+            load = 1;
+          }
+
+          if (load >= 1 && load <= 30) {
+            scdSound.play();
+            load++;
+          }
+          else if (load > 30) {
+            deviceMode = "enterName";
+          }
+
+          break;
+        case "enterName":
+          deviceMode = "gameControl";
+          break;
+        case "gameControl":
+          blendMode(BLEND);
+          background(0, 2);
+          // スプライトを表示する
+          drawSprites();
+          blendMode(ADD);
+          stroke(255);
+
+
+          var Forward = "f";
+          var Right = "f";
+          var Left = "f";
+          var Jump = "f";
+          var Put = "f";
+
+          if (touches.length != 0) {
+
+            // 初出現のIDを探す
+            touches.forEach(element => {
+              // console.log(element);
+              let isExist = false;
+              touchObjectList.forEach(object => {
+                if (element.id === object.id) {
+                  isExist = true;
+                }
+              });
+              if (isExist === false) {
+                // 要素の追加
+                touchObjectList.push(new touchObject(element));
+              }
+            });
+          }
+
+
+          touchObjectList.forEach(element => {
+            if (element.update() === false) {
+              touchObjectList.pop(element);
             }
           });
-          if (isExist === false) {
-            // 要素の追加
-            touchObjectList.push(new touchObject(element));
-          }
-        });
-      }
 
-
-      touchObjectList.forEach(element => {
-        if (element.update() === false) {
-          touchObjectList.pop(element);
-        }
-      });
-
-      var Forward = "f";
-      var Right = "f";
-      var Left = "f";
-      var Jump = "f";
-      var Put = "f";
-      // if (mouseIsPressed) {
-      // すべてのタッチした場所で判定
-      var touchCount = 0;
-      touchObjectList.forEach(element => {
-        /* キーマップ
-        F F L R
-        P P J J
-        */
-        if (element.touch.y <= windowHeight / 2) {
-          if (element.touch.x >= windowWidth / 2) {
-            Forward = "t";
-          }
-          if (element.touch.x < windowWidth / 2) {
-            Put = "t";
-          }
-        }
-        else {
-          if (element.touch.x >= windowWidth / 2) {
-            if (element.touch.y < windowHeight * 3 / 4) {
-              Left = "t";
+          // if (mouseIsPressed) {
+          // すべてのタッチした場所で判定
+          var touchCount = 0;
+          touchObjectList.forEach(element => {
+            /* キーマップ
+            F F L R
+            F F p J
+            */
+            if (element.touch.y <= windowHeight / 2) {
+              if (element.touch.x >= windowWidth / 2) {
+                Forward = "t";
+              }
+              if (element.touch.x < windowWidth / 2) {
+                Forward = "t";
+              }
             }
             else {
-              Right = "t";
+              if (element.touch.x >= windowWidth / 2) {
+                if (element.touch.y < windowHeight * 3 / 4) {
+                  Left = "t";
+                }
+                else {
+                  Right = "t";
+                }
+              }
+              else {
+                if (element.touch.y < windowHeight * 3 / 4) {
+                  Put = "t";
+                }
+                else {
+                  Jump = "t";
+                }
+
+              }
             }
+            touchCount++;
+          })
+          if (touchObjectList.length != 0) {
+            socket.send(Forward + " " + Right + " " + Left + " " + Jump + " " + Put + " " + "f");
+            clickFlag = 1;
           }
           else {
-
-            Jump = "t";
-
+            if (clickFlag = 1) {
+              clickFlag = 0;
+              socket.send("f f f f f f");
+            }
           }
-        }
-        touchCount++;
-      })
-      if (touchCount != 0) {
-        // if (touchCount == 1 && mouseX != touchObjectList[0].touch.x) {
-        //   Forward = "f";
-        //   Right = "f";
-        //   Left = "f";
-        //   Jump = "f";
-        //   Put = "f";
-        //   if (mouseY <= windowHeight / 2) {
-        //     if (mouseX >= windowWidth / 2) {
-        //       Forward = "t";
-        //     }
-        //     if (mouseX < windowWidth / 2) {
-        //       Put = "t";
-        //     }
-        //   }
-        //   else {
-        //     if (mouseX >= windowWidth / 2) {
-        //       if (mouseY < windowHeight * 3 / 4) {
-        //         Left = "t";
-        //       }
-        //       else {
-        //         Right = "t";
-        //       }
-        //     }
-        //     else {
-
-        //       Jump = "t";
-
-        //     }
-        //     socket.send(Forward + " " + Right + " " + Left + " " + Jump + " " + Put + " " + "f");
-        //   }
-        // }
-        // else {
-          socket.send(Forward + " " + Right + " " + Left + " " + Jump + " " + Put + " " + "f");
-        // }
-        clickFlag = 1;
+          break;
       }
-      else {
-        if (clickFlag = 1) {
-          clickFlag = 0;
-          socket.send("f f f f f f");
-        }
-      }
-      // clickFlag = 1;
+    }
+
+
+    function clicked(button) {
+      console.log(button.position.x, button.position.y, button.id);
+
+      // if (button.id == 0) {
+      //   Forward = "t";
       // }
-      // if (mouseIsPressed) {
-      //   socket.send(Forward + " " + Right + " " + Left + " " + Jump + " " + Put + " " + "f");
-      //   clickFlag = 0;
+      // else if (button.id == 1) {
+      //   Left = "t";
+      //   Right = "f";
       // }
-      // else {
-      //   // 何も押さなくても7回は送信する
-      //   if (clickFlag < 7) {
-      //     clickFlag++;
-      //     socket.send(Forward + " " + Right + " " + Left + " " + Jump + " " + Left + " " + "f");
-      //   }
-      //   else if (clickFlag == 7){
-      //     clickFlag++;
-      //     socket.send("f f f f f f f");
-      //   }
+      // else if (button.id == 2) {
+      //   Right = "t";
+      //   Left = "f";
+      // }
+      // else if (button.id == 3) {
+      //   Put = "t";
+      // }
+      // else if (button.id == 4) {
+      //   Jump = "t";
       // }
 
     }
