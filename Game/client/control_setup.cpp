@@ -105,7 +105,7 @@ int ControlSetUp()
     /*描画*/
     image[0] = IMG_Load(ImagePath[0]);
     image[1] = IMG_Load(ImagePath[1]);
-    while (data.finish != 1 && GoSInput.J == false)
+    while (data.finish != 1 && GoSInput.J == false && !(strcmp(WiiAddress, "")))
     {
         /*キーボード入力取得 kキーでwhileループ抜ける*/
         data = InputEvents(event);
@@ -271,7 +271,7 @@ int ControlSetUp()
     else if(GoSInput.J){
         //TTF_SetFontOutline(font, 1);//枠抜きで描写するとき
         surface = TTF_RenderUTF8_Blended(font, "Select Phone", (SDL_Color){255, 255, 255, 255});
-        fprintf(stderr, "Select Keyboard!\n");
+        fprintf(stderr, "Select Browser!\n");
         //surfaceからTextureを作る
         texture = SDL_CreateTextureFromSurface(renderer, surface);
 

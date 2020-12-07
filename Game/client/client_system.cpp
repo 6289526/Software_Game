@@ -70,17 +70,17 @@ void SetMyID(int id) { MyId = id; }
 void InitControl(InitData *data)
 {
 	ControlSetUp();
-	// if(GoSInput.J){
+	if(GoSInput.J){
 		Input = new Smart();
-	// }
-	// else if (strcmp(WiiAddress, "") == 0)
-	// {
-	// 	Input = new KeybordInput();
-	// }
-	// else
-	// {
-	// 	Input = new WiiInput(WiiAddress);
-	// }
+	}
+	else if (strcmp(WiiAddress, "") == 0)
+	{
+		Input = new KeybordInput();
+	}
+	else
+	{
+		Input = new WiiInput(WiiAddress);
+	}
 
 	data->input = Input;
 }
