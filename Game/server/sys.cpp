@@ -435,7 +435,7 @@ Collision Collision_CB_Vertical(const int chara_ID, const int y,
 }
 
 // キャラとキャラの当たり判定
-static void Collision_CC_Horizontal(FloatCube &player_1, FloatCube &player_2) {
+static float Collision_CC_Horizontal(FloatCube &player_1, FloatCube &player_2) {
   // キャラの半径
   const float radius_1 =
       (player_1.w < player_1.d) ? player_1.d / 2 : player_1.w / 2;
@@ -482,10 +482,14 @@ static void Collision_CC_Horizontal(FloatCube &player_1, FloatCube &player_2) {
       player_1.z += overlap * sin(angle) / 2;
       player_2.z -= overlap * sin(angle) / 2;
     }
+
+    return overlap / 2;
   }
+
+  return 0;
 }
 
-static void Collision_CC_Vertical(FloatCube &player_1, FloatCube &player_2) {
+static float Collision_CC_Vertical(FloatCube &player_1, FloatCube &player_2) {
   // キャラの半径
   const float radius_1_y = player_1.h / 2;
   const float radius_2_y = player_2.h / 2;
@@ -525,13 +529,14 @@ static void Collision_CC_Vertical(FloatCube &player_1, FloatCube &player_2) {
   // ２次元平面上で重なっていれば
   if (xz_distance < radius_1_xz + radius_2_xz && 0 < overlap) {
     if (Center_1.y < Center_2.y) {
-      player_1.y -= overlap / 2;
-      player_2.y += overlap / 2;
+      player_2.y += overlap;
     } else {
-      player_1.y += overlap / 2;
-      player_2.y -= overlap / 2;
+      player_1.y += overlap;
     }
+    return overlap / 2;
   }
+
+  return 0;
 }
 
 // 横と縦を呼び出す
