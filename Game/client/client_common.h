@@ -24,6 +24,7 @@
 #include "client_time.hpp"
 #include "client_gamestate.hpp"
 #include "graphic.h"
+#include "client_smart.h"
 
 extern int Num_Clients; // クライアント人数
 extern char WiiAddress[18];
@@ -54,6 +55,8 @@ typedef struct InitData{
         { };
 } InitData;
 
+
+
 /* net.c */
 extern void SetupClient(char *, u_short);
 extern void TerminateClient();
@@ -82,3 +85,7 @@ extern int ControlSetUp();
 /*name_setup*/
 extern void GetInitData(InitData initData);
 extern void NameSetUp();
+
+
+extern void KillGoServer();
+extern void Goroutine();
