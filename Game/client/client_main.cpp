@@ -89,6 +89,7 @@ int main(int argc, char *argv[])
 	SDL_Quit();
 	ExitSystem(&initData);
 	KillGoServer();
+	TerminateGraphic();
 	return 0;
 }
 
