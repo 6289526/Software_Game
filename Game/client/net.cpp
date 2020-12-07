@@ -231,6 +231,7 @@ int ExeCommand()
     PlaceData placeData;
     float direction = 0;
     VelocityFlag flags[MAX_NUMCLIENTS];
+    int id = 0;
     // 通信を継続するかを判定する変数
     int result = 1;
     // dataの初期化
@@ -274,10 +275,15 @@ int ExeCommand()
         result = 1;
         break;
     case QUIT_COMMAND: // 通信終了
+        ReceiveData(&id, sizeof(int));
         // 通信を終了したことを表示
-        fprintf(stderr, "other client sent quit command.\n");
+        fprintf(stderr, "client %d sent quit command.\n", id);
         // 通信継続
         result = 0;
+        break;
+    case GOAL_COMMAND:
+        fprintf(stderr, "you goaled.");
+        result = 1;
         break;
     case FINISH_COMMAND:
         fprintf(stderr, "All clients goaled.\n");

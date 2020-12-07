@@ -1,4 +1,5 @@
 #include "graphic.h"
+#include "graphic_objmesh.hpp"
 #include <math.h>
 
 /*private*/
@@ -7,6 +8,8 @@ FloatPosition lookatCenter = {5.0f, 0.0f, 5.0f};
 FloatPosition lookatUp = {0.0f, 1.0f, 0.0f};
 const double PI = 3.141592;
 
+OBJMESH characterMesh;
+
 GLuint BlockTexture[BLOCK_TYPE_NUM];
 #ifdef DEBUG
 char TextureFileName[BLOCK_TYPE_NUM][128] ={
@@ -14,6 +17,7 @@ char TextureFileName[BLOCK_TYPE_NUM][128] ={
     "../data/FieldBlock.jpg",
     "../data/nbrock1.jpg"
 };
+char Meshfile[256] ={"../data/SegModel.obj"};
 #else
 char TextureFileName[BLOCK_TYPE_NUM][128] ={
     "../../data/cat.bmp",
@@ -22,6 +26,7 @@ char TextureFileName[BLOCK_TYPE_NUM][128] ={
     
 
 };
+char Meshfile[256] ={"../../data/SegModel.obj"};
 #endif
 //SDL2関連
 
@@ -44,20 +49,6 @@ void RotateCube(FloatCube cube, double dir, SDL_Color *color);
 
 /*public*/
 
-/////////////////////////////////////////////////////////////
-void setlookat(int x, int y, int z, double dir){
-
-    if(dir >= 2* PI)dir -= 2*PI;
-
-    lookatPlace.x += x;
-    lookatPlace.y += y;
-    lookatPlace.z += z;
-    lookatCenter.x = lookatPlace.x + 30*sin(dir);
-    lookatCenter.z = lookatPlace.z + 30*cos(dir);
-    lookatCenter.y = lookatPlace.y - 10;
-    printf("(%f, %f, %f, %f)\n", lookatPlace.x, lookatPlace.y, lookatPlace.z, dir);
-}
-/////////////////////////////////////////////////////////////
 void InitGraphic(){
     IMG_Init(IMG_INIT_JPG);
     window = SDL_CreateWindow("OpenGL Test", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, Wd_Width, Wd_Height, SDL_WINDOW_OPENGL);
@@ -66,6 +57,7 @@ void InitGraphic(){
 
     InitOpenGL();
     SetBlockTexture();
+    characterMesh.LoadFile(Meshfile);
 }
 
 //画面描画
@@ -84,6 +76,13 @@ void Disp(){
 
 SDL_Renderer* GetWindowRenderer(){
     return renderer;
+}
+
+void TerminateGraphic(){
+    characterMesh.Release();
+    SDL_DestroyRenderer(renderer);
+    SDL_GL_DeleteContext(context);
+    SDL_DestroyWindow(window);
 }
 
 /*private*/
@@ -283,6 +282,16 @@ void DrawCharacter(){
         else {
             fprintf(stderr, "色足らん\n");
         }
+        GLfloat diffuse[] = {playercolor.r / 255.0f, playercolor.g / 255.0f, playercolor.b / 255.0f, playercolor.a / 255.0f};
+        GLfloat ambient  [] = { 0.1f, 0.1f, 0.1f, 1.0f};
+        GLfloat specular [] = { 1.0f, 1.0f, 1.0f, 1.0f};
+        GLfloat shininess[] = { 0.0f};
+        glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse);
+        glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient);
+        glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
+        glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
+        glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+        characterMesh.Draw(&(playerData[i].pos),playerData[i].direction);
         RotateCube(ccube,playerData[i].direction, &playercolor);
     }
 }
@@ -379,7 +388,7 @@ void RotateCube(FloatCube cube, double dir, SDL_Color *color){
     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient);
     glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
     glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
-    glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+    glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
 
     //座標変換
     FloatPosition defbase[4] = {

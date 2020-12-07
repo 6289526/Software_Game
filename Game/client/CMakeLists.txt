@@ -11,6 +11,7 @@ set(CLIENT_CODE
     client_WiiInput
     net
     graphic
+    graphic_objmesh
     client_system
     client_move
     client_map

@@ -374,7 +374,7 @@ void NameSetUp()
                     }
                     else
                     {
-                        char text[1];
+                        char text[2];
                         // text += (i*j+1);
                         sprintf(text, "%c", 'a' + keynum);
                         if (keynum == KeyboardNum)
