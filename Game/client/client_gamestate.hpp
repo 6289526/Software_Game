@@ -1,4 +1,6 @@
 #pragma once
+#include <stdio.h>
+#include <list>
 #include <event.h>
 
 enum GameState{ 
@@ -9,40 +11,30 @@ enum GameState{
     EnterPlayerName,
 };
 
-// Eventの発行物を定義するクラス
-class GameStateEventSource{
-public:
-    // ゲームステート変更時に発行するイベント
-    event void OnChangeGameState(GameState state);
+class Observer;
 
-    GameStateEventSource();
-    ~GameStateEventSource();
+class Subject{
+public:
+    virtual ~Subject();
+    virtual void OnNest();
+    virtual void Subscribe(Observer *pObserver);
+protected:
+    std::list<Observer *> _Subscribers;
 };
 
-// Eventの購読を行うクラス
-class GameStateEventHandler{
-private:
-    GameStateEventSource *_Source;
-
+class Observer{
 public:
-    GameStateEventHandler(GameStateEventSource *source);
-    ~GameStateEventHandler();
-    void BindEvent(GameStateEventSource *source);
-    void RemoveEvent(GameStateEventSource *source);
+    virtual ~Observer();
+    virtual void Update() = 0;
+    void SetSubject(Subject *pSubject){ _Subject = pSubject; }
+protected:
+    Subject *_Subject;
 };
 
-// Eventの発行を行うクラス
-class GameStateController
-{
-private:
-    GameState _State = GameState::Init;
-    GameStateEventSource *_Source;
-    GameStateEventHandler *_Hander;
-
+class GameStateController : public Subject{
 public:
-    GameStateController();
-    ~GameStateController();
-
-    GameState GetGameState();
-    void SetGameState(GameState state);
+    void SetGameState(GameState state){ _State = state; }
+    GameState GetState(){ return _State; }
+protected:
+    GameState _State;
 };

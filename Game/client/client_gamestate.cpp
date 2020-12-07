@@ -1,41 +1,29 @@
 #include "client_common.h"
 
-
 // ===== * ===== EventHandler ===== * ===== //
 void TestFunc(GameState state) {
     fprintf(stderr, "state type: %d\n", state);
 }
 
-void GameStateEventHandler::BindEvent(GameStateEventSource *source){
-    __hook(&GameStateEventSource::OnChangeGameState, source, TestFunc);
-}
 
-void GameStateEventHandler::RemoveEvent(GameStateEventSource *source){
-    __unhook(&GameStateEventSource::OnChangeGameState, source, TestFunc);
-}
 
-GameStateEventHandler::GameStateEventHandler(GameStateEventSource *source){
-    BindEvent(source);
+// ===== * ===== Subjects ===== * ===== //
+Subject::~Subject(){
+    std::list<Observer*>::iterator it;
+    for (it = _Subscribers.begin(); it != _Subscribers.end(); it++)
+    {
+        (*it)->SetSubject(NULL);
+    }
 }
-
-GameStateEventHandler::~GameStateEventHandler(){
-    RemoveEvent(_Source);
+void Subject::OnNest(){
+    std::list<Observer *>::iterator it;
+    for (it = _Subscribers.begin(); it != _Subscribers.end(); it++)
+    {
+        (*it)->Update();
+    }
 }
-// ===== * ===== EventController ===== * ===== //
-GameStateController::GameStateController(){
-    _Source = new GameStateEventSource();
-    _Handler = new GameStateEventHandler(_Source);
+void Subject::Subscribe(Observer *observer){
+    _Subscribers.push_back(observer);
+    observer->SetSubject(this);
 }
-
-GameStateController::~GameStateController(){
-    delete _Handler;
-    delete _Source;
-}
-
-GameState GameStateController::GetGameState(){
-    return _State;
-}
-
-void GameStateController::SetGameState(GameState state){
-    _State = state;
-}
+// ===== * ===== Subjects ===== * ===== //
