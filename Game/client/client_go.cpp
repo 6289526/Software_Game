@@ -7,7 +7,7 @@ SmartInput GoSInput;
 void KillGoServer()
 {
     FILE *fp;
-    char output[60];
+    char output[64];
     char tmp[64] = "";
     char tmp2[32] = "";
     // 残ってしまったサーバーを消す
@@ -40,9 +40,9 @@ void Goroutine()
 {
 // コマンド
 #ifdef DEBUG
-    char command[30] = "cd dist && ./build/scontrol";
+    char command[64] = "cd dist && ./build/scontrol";
 #else
-    char command[30] = "cd ../chat && ./build/scontrol";
+    char command[64] = "cd ../dist && ./build/scontrol";
 #endif
 
     // 残ってしまったサーバーを消す
@@ -50,7 +50,7 @@ void Goroutine()
 
     FILE *fp;
     char output[60];
-    
+
 
     // サーバーを実行
     if ((fp = popen(command, "r")) == NULL)

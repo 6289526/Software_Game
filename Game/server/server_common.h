@@ -130,35 +130,28 @@ void InitPlayerData(); // プレイヤーデータ初期化処理
 
 void EndSys(); // システム終了処理
 
-// 埋まっているピクセル数を返す　横
-static int BuryCheck_Side(const int chara_ID, const int accuracy,
-                          Vector3Int block, const float *point_X,
-                          const float *point_Z, const Collision_Dire flag);
+// 埋まっているピクセル数を返す 横
+static int BuryCheck_Horizontal(const int chara_ID, const int accuracy,
+                                Vector3Int block, const float *point_X,
+                                const float *point_Z,
+                                const Collision_Dire flag);
 
-// 埋まっているピクセル数を返す　下
-static int BuryCheck_Under(const int chara_ID, const int y, const int accuracy,
+// 埋まっているピクセル数を返す 縦
+static int BuryCheck_Vertical(const int chara_ID, const int y, const int accuracy,
                            Vector3Int block, const float *point_X,
                            const float *point_Z, const Collision_Dire flag);
 
-// 埋まっているピクセル数を返す　上
-static int BuryCheck_Over(const int chara_ID, const int y, const int accuracy,
-                          Vector3Int block, const float *point_X,
-                          const float *point_Z, const Collision_Dire flag);
-
 // キャラとブロックの当たり判定
 // ｙ ： 基準面の高さの補正
-// accuracy : 当たり判定の精度の調整　3以上 かつ キャラの幅・高さ以下の値
-static Collision Collision_CB_Side(const int chara_ID, const int y = 0,
+// accuracy : 当たり判定の精度の調整 3以上 かつ キャラの幅・高さ以下の値
+static Collision Collision_CB_Horizontal(const int chara_ID, const int y = 0,
                                    const int accuracy = PLAYER_W);
 
-static Collision Collision_CB_Under(const int chara_ID, const int y,
+static Collision Collision_CB_Vertical(const int chara_ID, const int y,
                                     const int accuracy = PLAYER_W);
 
-static Collision Collision_CB_Over(const int chara_ID, const int y,
-                                   const int accuracy = PLAYER_W);
-
 // キャラとキャラの当たり判定 横
-static void Collision_CC_Side(FloatCube &player_1, FloatCube &player_2);
+static void Collision_CC_Horizontal(FloatCube &player_1, FloatCube &player_2);
 
 // キャラとキャラの当たり判定 横縦
 static void Collision_CC(int chara_num);
