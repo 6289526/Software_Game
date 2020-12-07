@@ -12,7 +12,6 @@ enum GameState{
 };
 
 class Observer;
-
 class Subject{
 public:
     virtual ~Subject();
@@ -38,3 +37,10 @@ public:
 protected:
     GameState _State;
 };
+
+class StateOutputer : public Observer{
+private:
+    GameState _State, PreState;
+public:
+    
+}
