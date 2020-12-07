@@ -7,26 +7,26 @@ SmartInput GoSInput;
 void KillGoServer()
 {
     FILE *fp;
-    char output[60];
-    char tmp[64] = "";
+    char output[128];
+    char tmp[128] = "";
     char tmp2[32] = "";
     // 残ってしまったサーバーを消す
-    fp = popen("ps -ax | grep build/scontrol", "r");
+    fp = popen("ps -ax | grep scontrol", "r");
     int index = 0;
     int pId = 0;
-    while (fgets(output, 64, fp) != NULL)
+    while (fgets(output, 128, fp) != NULL)
     {
         //  標準出力を読み取る
         fprintf(stderr, "out:%s\n", output);
-        // if (index = 1)
-        // {
+        if (index == 1)
+        {
             sscanf(output, "%s %s", tmp2, tmp);
 
             char kCom[64] = "";
             sprintf(kCom, "kill -9 %s", tmp2);
             fp = popen(kCom, "r");
-        // }
-        // index++;
+        }
+        index++;
     }
 }
 
@@ -40,16 +40,16 @@ void Goroutine()
 {
 // コマンド
 #ifdef DEBUG
-    char command[30] = "cd dist && ./build/scontrol";
+    char command[64] = "cd dist && ./build/scontrol";
 #else
-    char command[30] = "cd ../chat && ./build/scontrol";
+    char command[64] = "cd ../dist && ./build/scontrol";
 #endif
 
     // 残ってしまったサーバーを消す
     KillGoServer();
 
     FILE *fp;
-    char output[60];
+    char output[128];
     
 
     // サーバーを実行
@@ -67,7 +67,7 @@ void Goroutine()
     char P[1] = "";
     char E[1] = "";
     // スマホからの入力を受け取る
-    while (fgets(output, 60, fp) != NULL)
+    while (fgets(output, 128, fp) != NULL)
     {
         //  標準出力を読み取る
         fprintf(stderr, "out:%s\n", output);
@@ -77,7 +77,7 @@ void Goroutine()
             // 毎回もとに戻す
             GoSInput = (SmartInput){false, false, false, false, false, false, false};
             sscanf(output, "%s", com);
-            fprintf(stderr, "com:%s\n", com);
+            // fprintf(stderr, "com:%s\n", com);
             if (strcmp(com, "J") == 0) // Join　<<--これはスマホがサイトに入ったら
             {
                 GoSInput.J = true;
@@ -91,7 +91,7 @@ void Goroutine()
             // U は Jump
             // F R L U P Q
             sscanf(output, "%s %s %s %s %s %s", F, R, L, U, P, E);
-            fprintf(stderr, "F:%s %s %s %s %s %s\n", F, R, L, U, P, E);
+            // fprintf(stderr, "F:%s %s %s %s %s %s\n", F, R, L, U, P, E);
 
             if (strcmp(F, "tfffff") >= 0) //Forward
             {
