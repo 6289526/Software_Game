@@ -455,6 +455,8 @@ static void Collision_CC_Horizontal(FloatCube &player_1, FloatCube &player_2) {
   // キャラ間距離
   const float x_distance = fabs(Center_1.x - Center_2.x);
   const float y_distance = fabs(Center_1.y - Center_2.y);
+
+  // キャラ中心間距離
   const float distance =
       fabs(sqrt(x_distance * x_distance + y_distance * y_distance));
 
@@ -483,6 +485,55 @@ static void Collision_CC_Horizontal(FloatCube &player_1, FloatCube &player_2) {
   }
 }
 
+static void Collision_CC_Vertical(FloatCube &player_1, FloatCube &player_2) {
+  // キャラの半径
+  const float radius_1_y = player_1.h / 2;
+  const float radius_2_y = player_2.h / 2;
+  const float radius_1_xz =
+      (player_1.w < player_1.d) ? player_1.d / 2 : player_1.w / 2;
+  const float radius_2_xz =
+      (player_2.w < player_2.d) ? player_2.d / 2 : player_2.w / 2;
+
+  // キャラの中心座標
+  Vector3 Center_1, Center_2;
+
+  Center_1.x = player_1.x + radius_1_xz;
+  Center_2.x = player_2.x + radius_2_xz;
+
+  Center_1.y = player_1.y + radius_1_y;
+  Center_2.y = player_2.y + radius_2_y;
+
+  Center_1.z = player_1.z + radius_1_xz;
+  Center_2.z = player_2.z + radius_2_xz;
+
+  // キャラ間距離
+  const float x_distance = fabs(Center_1.x - Center_2.x);
+  const float y_distance = fabs(Center_1.y - Center_2.y);
+  const float z_distance = fabs(Center_1.z - Center_2.z);
+
+  // キャラ間距離 ２次元平面
+  const float xz_distance =
+      fabs(sqrt(x_distance * x_distance + z_distance * z_distance));
+
+  // キャラ中心間距離
+  const float distance =
+      fabs(sqrt(xz_distance * xz_distance + y_distance * y_distance));
+
+  float angle = atan(y_distance / xz_distance); // 2キャラの角度 縦
+  float overlap = (radius_1_y + radius_2_y) - (distance * sin(angle)); // キャラの重なり
+
+  // ２次元平面上で重なっていれば
+  if (xz_distance < radius_1_xz + radius_2_xz && 0 < overlap) {
+    if (Center_1.y < Center_2.y) {
+      player_1.y -= overlap / 2;
+      player_2.y += overlap / 2;
+    } else {
+      player_1.y += overlap / 2;
+      player_2.y -= overlap / 2;
+    }
+  }
+}
+
 // 横と縦を呼び出す
 static void Collision_CC(int chara_num) {
   for (int i = 0; i < chara_num; ++i) {
@@ -493,6 +544,7 @@ static void Collision_CC(int chara_num) {
 
       if (i != j) {
         Collision_CC_Horizontal(PData[i].pos, PData[j].pos);
+        Collision_CC_Vertical(PData[i].pos, PData[j].pos);
       }
     }
   }

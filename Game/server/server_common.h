@@ -153,6 +153,9 @@ static Collision Collision_CB_Vertical(const int chara_ID, const int y,
 // キャラとキャラの当たり判定 横
 static void Collision_CC_Horizontal(FloatCube &player_1, FloatCube &player_2);
 
+// キャラとキャラの当たり判定 縦
+static void Collision_CC_Vertical(FloatCube &player_1, FloatCube &player_2);
+
 // キャラとキャラの当たり判定 横縦
 static void Collision_CC(int chara_num);
 
