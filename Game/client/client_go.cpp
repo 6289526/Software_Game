@@ -18,15 +18,15 @@ void KillGoServer()
     {
         //  標準出力を読み取る
         fprintf(stderr, "out:%s\n", output);
-        if (index >= 1)
-        {
+        // if (index = 1)
+        // {
             sscanf(output, "%s %s", tmp2, tmp);
 
-            char kCom[32] = "";
+            char kCom[64] = "";
             sprintf(kCom, "kill -9 %s", tmp2);
             fp = popen(kCom, "r");
-        }
-        index++;
+        // }
+        // index++;
     }
 }
 
