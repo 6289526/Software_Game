@@ -108,7 +108,7 @@ void NameSetUp()
     char st = 'a';
     fprintf(stderr, "st:%c\n", st + 1);
     // キーボード
-    if (strcmp(WiiAddress, "") == 0)
+    if (strcmp(WiiAddress, "") == 0 && !GoSInput.J)
     {
         SDL_StartTextInput();
         while (data.finish != 1)

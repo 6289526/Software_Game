@@ -18,6 +18,8 @@ set(CLIENT_CODE
     control_setup
     client_name
     client_gamestate
+    client_smart
+    client_go
 )
 # CMakeの最低バージョンを記述
 cmake_minimum_required(VERSION 2.8)

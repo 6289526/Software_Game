@@ -105,7 +105,7 @@ int ControlSetUp()
     /*描画*/
     image[0] = IMG_Load(ImagePath[0]);
     image[1] = IMG_Load(ImagePath[1]);
-    while (data.finish != 1 && GetResult == 0)
+    while (data.finish != 1 && GoSInput.J == false && !(strcmp(WiiAddress, "")))
     {
         /*キーボード入力取得 kキーでwhileループ抜ける*/
         data = InputEvents(event);
@@ -251,6 +251,27 @@ int ControlSetUp()
         //TTF_SetFontOutline(font, 1);//枠抜きで描写するとき
         surface = TTF_RenderUTF8_Blended(font, "Find your Wiilimocon!", (SDL_Color){255, 255, 255, 255});
         fprintf(stderr, "Find your Wiilimocon!\n");
+        //surfaceからTextureを作る
+        texture = SDL_CreateTextureFromSurface(renderer, surface);
+
+        SDL_SetRenderDrawColor(renderer, 0, 85, 150, 255);
+
+        SDL_QueryTexture(texture, NULL, NULL, &iw, &ih);
+
+        SDL_Rect txtRect = (SDL_Rect){0, 0, iw, ih};
+        SDL_Rect pasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - iw / 2, SCREEN_HEIGHT / 2 - ih / 2, iw, ih};
+
+        //Textureを描写する
+        //描写元の描写する部分,描写先の描写する部分)
+        //サイズが違うと勝手にTextureを伸展してくれる
+        SDL_RenderCopy(renderer, texture, &txtRect, &pasteRect);
+        SDL_FreeSurface(surface);
+        SDL_DestroyTexture(texture);
+    }
+    else if(GoSInput.J){
+        //TTF_SetFontOutline(font, 1);//枠抜きで描写するとき
+        surface = TTF_RenderUTF8_Blended(font, "Select Phone", (SDL_Color){255, 255, 255, 255});
+        fprintf(stderr, "Select Browser!\n");
         //surfaceからTextureを作る
         texture = SDL_CreateTextureFromSurface(renderer, surface);
 

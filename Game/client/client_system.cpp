@@ -2,6 +2,7 @@
 #include "graphic.h"
 #include "client_move.h"
 #include <string.h>
+#include "go.h"
 
 #define PLAYER_MOVE_SPEED 15					   // 移動速度
 #define PLAYER_ROTATE_SPEED 2					   // 回転速度
@@ -69,7 +70,10 @@ void SetMyID(int id) { MyId = id; }
 void InitControl(InitData *data)
 {
 	ControlSetUp();
-	if (strcmp(WiiAddress, "") == 0)
+	if(GoSInput.J){
+		Input = new Smart();
+	}
+	else if (strcmp(WiiAddress, "") == 0)
 	{
 		Input = new KeybordInput();
 	}
@@ -311,7 +315,7 @@ void SystemRun()
 		InCommand(MOVE_COMMAND);
 	}
 
-	fprintf(stderr,"dir: (%.3f, %.3f, %.3f), pos: (%.2f, %.2f, %.2f), JPG: (%d, %d, %d)\n", PData[MyId].velocity.x, PData[MyId].velocity.y, PData[MyId].velocity.z, PData[MyId].pos.x, PData[MyId].pos.y, PData[MyId].pos.z, isJumped, isPreGround, isOnGround);
+	// fprintf(stderr,"dir: (%.3f, %.3f, %.3f), pos: (%.2f, %.2f, %.2f), JPG: (%d, %d, %d)\n", PData[MyId].velocity.x, PData[MyId].velocity.y, PData[MyId].velocity.z, PData[MyId].pos.x, PData[MyId].pos.y, PData[MyId].pos.z, isJumped, isPreGround, isOnGround);
 	// 設置処理
 	if (data.Put)
 	{
