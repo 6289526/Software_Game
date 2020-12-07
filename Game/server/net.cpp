@@ -317,6 +317,10 @@ int ControlRequests()
                         // ゲームの継続
                         result = 1;
                     }
+                    com = QUIT_COMMAND;
+                    SendData(BROADCAST, &com, sizeof(char));
+                    SendData(BROADCAST, &i, sizeof(int));
+                    
                     break;
                 default:
                     // コマンドは上記の2種類しか無いので、それ以外の場合はエラーが生じている　
@@ -397,6 +401,7 @@ void RunCommand(int id, char com)
         SendData(id, &placeData, sizeof(PlaceData));
 
         break;
+
     case FINISH_COMMAND:
         fprintf(stderr, "All clients goaled.\n");
         SendData(id, &com, sizeof(com));

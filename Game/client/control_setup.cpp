@@ -105,7 +105,7 @@ int ControlSetUp()
     /*描画*/
     image[0] = IMG_Load(ImagePath[0]);
     image[1] = IMG_Load(ImagePath[1]);
-    while (data.finish != 1 && GoSInput.J == false && !(strcmp(WiiAddress, "")))
+    while (data.finish != 1 && !GoSInput.J && !(strcmp(WiiAddress, "")))
     {
         /*キーボード入力取得 kキーでwhileループ抜ける*/
         data = InputEvents(event);
@@ -359,9 +359,9 @@ int GetWiiAddress()
         return -1;
     }
     int index = 0;
-    char address[18];
-    char trash1[50];
-    char trash2[50];
+    char address[32];
+    char trash1[MAX_STRING];
+    char trash2[MAX_STRING];
     while (fgets(output, MAX_STRING, fp) != NULL)
     {
         if (index >= 1)
