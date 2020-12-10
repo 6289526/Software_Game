@@ -15,7 +15,7 @@ class Observer;
 class Subject{
 public:
     virtual ~Subject();
-    virtual void OnNest();
+    virtual void OnNest(GameState state);
     virtual void Subscribe(Observer *pObserver);
 protected:
     std::list<Observer *> _Subscribers;
@@ -24,7 +24,7 @@ protected:
 class Observer{
 public:
     virtual ~Observer();
-    virtual void Update() = 0;
+    virtual void Update(GameState state) = 0;
     void SetSubject(Subject *pSubject){ _Subject = pSubject; }
 protected:
     Subject *_Subject;
@@ -32,7 +32,7 @@ protected:
 
 class GameStateController : public Subject{
 public:
-    void SetGameState(GameState state){ _State = state; }
+    void SetGameState(GameState state);
     GameState GetState(){ return _State; }
 protected:
     GameState _State;
@@ -40,7 +40,8 @@ protected:
 
 class StateOutputer : public Observer{
 private:
-    GameState _State, PreState;
+    GameState _State, _PreState;
 public:
-    
-}
+    StateOutputer(GameState initState);
+    virtual void Update(GameState state);
+};
