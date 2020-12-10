@@ -339,6 +339,7 @@ void UpdatePlaceData(PlaceData data)
 
 GameStateController GetGameStateController(){ return *StateController; }
 
+<<<<<<< Updated upstream
 bool IsPlayerOnGround()
 {
 	int id = GetMyID();
@@ -421,10 +422,14 @@ bool IsPlayerOnGround()
 }
 
 int clamp(const int __val, const int __lo, const int __hi)
+=======
+int clamp(const int value, const int low, const int hight)
+>>>>>>> Stashed changes
 {
 	return (__val < __lo) ? __lo : (__hi < __val) ? __hi : __val;
 }
 
+<<<<<<< Updated upstream
 // 埋まっているピクセルが返る
 int BuryCheck_Under(const int id, const int y, const int accuracy,
 					int block_X, int block_Y, int block_Z,
@@ -498,6 +503,67 @@ int BuryCheck_Under(const int id, const int y, const int accuracy,
 	}
 
 	return Bury_Count; // 埋まっているピクセルが返る
+=======
+// 方向の取得
+void SetDirection(float direction, int id)
+{
+	if (id != MyId)
+	{
+		PData[id].direction = direction;
+	}
+}
+
+int GetDistanceFromGround(){
+	const int accuracy = 3; 
+	float pointX[accuracy], pointZ[accuracy];
+	float pointY = PData[MyId].pos.y + PData[MyId].velocity.y;
+	const int width = PData[MyId].pos.w / (accuracy - 1); // X座標
+	const int depth = PData[MyId].pos.d / (accuracy - 1);	// Z座標
+	const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
+	const int blockX = pointX[accuracy - 1] / MAP_MAGNIFICATION;
+	const int blockY = pointY / MAP_MAGNIFICATION;
+	const int blockZ = pointZ[accuracy - 1] / MAP_MAGNIFICATION;
+
+	int result = 0;
+
+	for (int i = 0; i < accuracy; i++)
+	{
+		pointX[i] = PData[MyId].pos.x + PData[MyId].velocity.x + width * i;
+		pointZ[i] = PData[MyId].pos.z + PData[MyId].velocity.z + depth * i;
+	}
+	
+#pragma region 範囲エラー処理
+	if (pointX[0] < 0)
+		throw "マップ外 : x座標 負\n";
+	else if (MAP_SIZE_W <= blockX)
+		throw "マップ外 : x座標 正\n";
+
+	if (pointY < 0)
+		throw "マップ外 : y座標 : 負\n";
+	else if (MAP_SIZE_H <= blockY)
+		throw "マップ外 : y座標 : 正\n";
+	
+	if (pointZ[0] < 0)
+		throw "マップ外 : z座標 :負\n";
+	else if (MAP_SIZE_D <= blockZ)
+		throw "マップ外 : z座標 :正\n";
+#pragma endregion
+
+	for (int i = 0; i < accuracy; i++)
+	{
+		int blockPosX = pointX[i] / MAP_MAGNIFICATION;
+		for (int j = 0; j < accuracy; j++)
+		{
+			int blockPosZ = pointZ[j] / MAP_MAGNIFICATION;
+			int blockPosY = (PData[MyId].pos.y + PData[MyId].velocity.y) / MAP_MAGNIFICATION;
+
+			float distance = PData[MyId].pos.y - ((int)PData[MyId].pos.y);
+			fprintf(stderr, "(i%d, j%d) : PlayerPos = (%.2f, %.2f), MapBlock[%d, %d, %d], dis: %f\n",i,j, pointX[i], pointZ[j], blockPosX, blockPosY, blockPosZ, distance);
+		}
+	}
+	
+	return result;
+>>>>>>> Stashed changes
 }
 
 // ===== * ===== マルチスレッド ===== * ===== //
