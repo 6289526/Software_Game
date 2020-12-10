@@ -100,9 +100,9 @@ static int BuryCheck_Side(const int chara_ID, const int accuracy, Vector3Int blo
   // 調べる点を順にスキャンしていく
   for (int i = 1; i < (accuracy - 1); ++i) {
     if (flag == Front || flag == Back) {
-      block.x = point_X[i] / MAP_MAGNIFICATION;
+      block.x = point_X[i] / BLOCK_MAGNIFICATION;
     } else if (flag == Right || flag == Left) {
-      block.z = point_Z[i] / MAP_MAGNIFICATION;
+      block.z = point_Z[i] / BLOCK_MAGNIFICATION;
     }
 
     int t_Count = 0;
@@ -110,9 +110,9 @@ static int BuryCheck_Side(const int chara_ID, const int accuracy, Vector3Int blo
     // どこまで埋まっているか調べる
     for (int j = 0; j <= chara_size; ++j) {
       if (flag == Front || flag == Back) {
-        block.z = (base_point + (j * PN_flag)) / MAP_MAGNIFICATION;
+        block.z = (base_point + (j * PN_flag)) / BLOCK_MAGNIFICATION;
       } else if (flag == Right || flag == Left) {
-        block.x = (base_point + (j * PN_flag)) / MAP_MAGNIFICATION;
+        block.x = (base_point + (j * PN_flag)) / BLOCK_MAGNIFICATION;
       }
 
       if (terrainData[block.x][block.y][block.z] >= NomalBlock) {
@@ -164,16 +164,16 @@ static int BuryCheck_Under(const int chara_ID, const int y, const int accuracy,
   int Errer_Count = 0;
 
   for (int i = 1; i < (accuracy - 1); ++i) {
-    block.x = point_X[i] / MAP_MAGNIFICATION;
+    block.x = point_X[i] / BLOCK_MAGNIFICATION;
     for (int j = 1; j < (accuracy - 1); ++j) {
-      block.z = point_Z[i] / MAP_MAGNIFICATION;
-      if (terrainData[block.x][static_cast<int>(base_point / MAP_MAGNIFICATION)]
+      block.z = point_Z[i] / BLOCK_MAGNIFICATION;
+      if (terrainData[block.x][static_cast<int>(base_point / BLOCK_MAGNIFICATION)]
                      [block.z] >= NomalBlock) {
         int t_Count = 0;
         // どこまで埋まっているか調べる
         for (int k = 0; k <= chara_size - y; ++k) {
 
-          block.y = (base_point + (k * PN_flag)) / MAP_MAGNIFICATION;
+          block.y = (base_point + (k * PN_flag)) / BLOCK_MAGNIFICATION;
 
           if (terrainData[block.x][block.y][block.z] >= NomalBlock) {
             // その点の埋まっている程度をカウント
@@ -238,16 +238,16 @@ static int BuryCheck_Over(const int chara_ID, const int y, const int accuracy,
   int Errer_Count = 0;
 
   for (int i = 1; i < (accuracy - 1); ++i) {
-    block.x = point_X[i] / MAP_MAGNIFICATION;
+    block.x = point_X[i] / BLOCK_MAGNIFICATION;
     for (int j = 1; j < (accuracy - 1); ++j) {
-      block.z = point_Z[i] / MAP_MAGNIFICATION;
-      if (terrainData[block.x][static_cast<int>(base_point / MAP_MAGNIFICATION)]
+      block.z = point_Z[i] / BLOCK_MAGNIFICATION;
+      if (terrainData[block.x][static_cast<int>(base_point / BLOCK_MAGNIFICATION)]
                      [block.z] >= NomalBlock) {
         int t_Count = 0;
         // どこまで埋まっているか調べる
         for (int k = 0; k <= chara_size - y; ++k) {
 
-          block.y = (base_point + (k * PN_flag)) / MAP_MAGNIFICATION;
+          block.y = (base_point + (k * PN_flag)) / BLOCK_MAGNIFICATION;
 
           if (terrainData[block.x][block.y][block.z] >= NomalBlock) {
             // その点の埋まっている程度をカウント
@@ -309,7 +309,7 @@ Collision Collision_CB_Side(const int chara_ID, const int y,
   const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
 
   // マップ配列用添字　の宣言　と　範囲のエラー処理
-  int Block_X = point_X[accuracy - 1] / MAP_MAGNIFICATION;
+  int Block_X = point_X[accuracy - 1] / BLOCK_MAGNIFICATION;
 
   if (point_X[0] < 0) {
     // throw "Collision_CB_Side : マップ外 : x座標 :負\n";
@@ -322,7 +322,7 @@ Collision Collision_CB_Side(const int chara_ID, const int y,
   }
 
   const float t_Block_Y = (PData[chara_ID].pos.y + y);
-  int Block_Y = t_Block_Y / MAP_MAGNIFICATION;
+  int Block_Y = t_Block_Y / BLOCK_MAGNIFICATION;
 
   if (t_Block_Y < 0) {
     // throw "Collision_CB_Side : マップ外 : y座標 : 負\n";
@@ -334,7 +334,7 @@ Collision Collision_CB_Side(const int chara_ID, const int y,
     throw error::OutSide_Map_y;
   }
 
-  int Block_Z = point_Z[accuracy - 1] / MAP_MAGNIFICATION;
+  int Block_Z = point_Z[accuracy - 1] / BLOCK_MAGNIFICATION;
 
   if (point_Z[0] < 0) {
     // throw "Collision_CB_Side : マップ外 : z座標 :負\n";
@@ -431,7 +431,7 @@ Collision Collision_CB_Under(const int chara_ID, const int y,
   const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
 
   // マップ配列用添字　の宣言　と　範囲のエラー処理
-  int Block_X = point_X[accuracy - 1] / MAP_MAGNIFICATION;
+  int Block_X = point_X[accuracy - 1] / BLOCK_MAGNIFICATION;
 
   if (point_X[0] < 0) {
     // throw "Collision_CB_Under : マップ外 : x座標 :負\n";
@@ -447,7 +447,7 @@ Collision Collision_CB_Under(const int chara_ID, const int y,
 
   const float t_Block_Y =
       (PData[chara_ID].pos.y + PData[chara_ID].velocity.y + y);
-  int Block_Y = t_Block_Y / MAP_MAGNIFICATION;
+  int Block_Y = t_Block_Y / BLOCK_MAGNIFICATION;
 
   if (t_Block_Y < 0) {
     // throw "Collision_CB_Under : マップ外 : y座標 : 負\n";
@@ -460,7 +460,7 @@ Collision Collision_CB_Under(const int chara_ID, const int y,
     throw error::OutSide_Map_y;
   }
 
-  int Block_Z = point_Z[accuracy - 1] / MAP_MAGNIFICATION;
+  int Block_Z = point_Z[accuracy - 1] / BLOCK_MAGNIFICATION;
 
   if (point_Z[0] < 0) {
     // throw "Collision_CB_Under : マップ外 : z座標 :負\n";
@@ -518,7 +518,7 @@ Collision Collision_CB_Over(const int chara_ID, const int y,
   const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
 
   // マップ配列用添字　の宣言　と　範囲のエラー処理
-  int Block_X = point_X[accuracy - 1] / MAP_MAGNIFICATION;
+  int Block_X = point_X[accuracy - 1] / BLOCK_MAGNIFICATION;
 
   if (point_X[0] < 0) {
     // throw "Collision_CB_Over : マップ外 : x座標 :負\n";
@@ -532,7 +532,7 @@ Collision Collision_CB_Over(const int chara_ID, const int y,
 
   const float t_Block_Y =
       (PData[chara_ID].pos.y + PData[chara_ID].velocity.y + y);
-  int Block_Y = t_Block_Y / MAP_MAGNIFICATION;
+  int Block_Y = t_Block_Y / BLOCK_MAGNIFICATION;
 
   if (t_Block_Y < 0) {
     // throw "Collision_CB_Over : マップ外 : y座標 : 負\n";
@@ -544,7 +544,7 @@ Collision Collision_CB_Over(const int chara_ID, const int y,
     throw error::OutSide_Map_y;
   }
 
-  int Block_Z = point_Z[accuracy - 1] / MAP_MAGNIFICATION;
+  int Block_Z = point_Z[accuracy - 1] / BLOCK_MAGNIFICATION;
 
   if (point_Z[0] < 0) {
     // throw "Collision_CB_Under : マップ外 : z座標 :負\n";
@@ -650,9 +650,9 @@ bool Collision_BB() // ブロックを置けるかどうかの判定
   // マップデータ入手
   const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
 
-  int Block_X = PlData.pos.x / MAP_MAGNIFICATION;
-  int Block_Y = PlData.pos.y / MAP_MAGNIFICATION;
-  int Block_Z = PlData.pos.z / MAP_MAGNIFICATION;
+  int Block_X = PlData.pos.x / BLOCK_MAGNIFICATION;
+  int Block_Y = PlData.pos.y / BLOCK_MAGNIFICATION;
+  int Block_Z = PlData.pos.z / BLOCK_MAGNIFICATION;
 
   if (Block_X < 0) {
     throw "Collision_BB : マップ外 : x座標 : 負\n";
@@ -675,9 +675,9 @@ bool Collision_BB() // ブロックを置けるかどうかの判定
   for (int i = 0; i < Num_Clients; ++i) {
     // キャラの位置をブロックに直したものが入る
     Vector3Int t_Chara_Pos_in_Map;
-    t_Chara_Pos_in_Map.x = PData[i].pos.x / MAP_MAGNIFICATION;
-    t_Chara_Pos_in_Map.y = PData[i].pos.y / MAP_MAGNIFICATION;
-    t_Chara_Pos_in_Map.z = PData[i].pos.z / MAP_MAGNIFICATION;
+    t_Chara_Pos_in_Map.x = PData[i].pos.x / BLOCK_MAGNIFICATION;
+    t_Chara_Pos_in_Map.y = PData[i].pos.y / BLOCK_MAGNIFICATION;
+    t_Chara_Pos_in_Map.z = PData[i].pos.z / BLOCK_MAGNIFICATION;
 
     if (t_Chara_Pos_in_Map.x == Block_X && t_Chara_Pos_in_Map.y == Block_Y &&
         t_Chara_Pos_in_Map.z == Block_Z) {

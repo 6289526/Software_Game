@@ -11,7 +11,7 @@ using namespace std;
 #define MAP_SIZE_D 100
 
 //マップブロックのサイズ
-#define MAP_MAGNIFICATION 20.0f
+#define BLOCK_MAGNIFICATION 20.0f
 //設置オブジェクトのサイズ
 // #define OBJECT_MAGNIFICATION 15.0f
 
@@ -45,6 +45,6 @@ class MapData{
         //     _ObjectDatas.push_back(*objectData);
         // }
         void SetObjectData(PlaceData *objectData){
-            _TerrainData[(int)(objectData->pos.x / MAP_MAGNIFICATION)][(int)(objectData->pos.y / MAP_MAGNIFICATION)][(int)(objectData->pos.z / MAP_MAGNIFICATION)] = objectData->object;
+            _TerrainData[(int)(objectData->pos.x / BLOCK_MAGNIFICATION)][(int)(objectData->pos.y / BLOCK_MAGNIFICATION)][(int)(objectData->pos.z / BLOCK_MAGNIFICATION)] = objectData->object;
         }
 };

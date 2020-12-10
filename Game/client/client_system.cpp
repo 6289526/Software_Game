@@ -250,9 +250,9 @@ int GetDistanceFromGround(){
 	const int width = PData[MyId].pos.w / (accuracy - 1); // X座標
 	const int depth = PData[MyId].pos.d / (accuracy - 1);	// Z座標
 	const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
-	const int blockX = pointX[accuracy - 1] / MAP_MAGNIFICATION;
-	const int blockY = pointY / MAP_MAGNIFICATION;
-	const int blockZ = pointZ[accuracy - 1] / MAP_MAGNIFICATION;
+	const int blockX = pointX[accuracy - 1] / BLOCK_MAGNIFICATION;
+	const int blockY = pointY / BLOCK_MAGNIFICATION;
+	const int blockZ = pointZ[accuracy - 1] / BLOCK_MAGNIFICATION;
 
 	int result = 0;
 
@@ -281,11 +281,11 @@ int GetDistanceFromGround(){
 
 	for (int i = 0; i < accuracy; i++)
 	{
-		int blockPosX = pointX[i] / MAP_MAGNIFICATION;
+		int blockPosX = pointX[i] / BLOCK_MAGNIFICATION;
 		for (int j = 0; j < accuracy; j++)
 		{
-			int blockPosZ = pointZ[j] / MAP_MAGNIFICATION;
-			int blockPosY = (PData[MyId].pos.y + PData[MyId].velocity.y) / MAP_MAGNIFICATION;
+			int blockPosZ = pointZ[j] / BLOCK_MAGNIFICATION;
+			int blockPosY = (PData[MyId].pos.y + PData[MyId].velocity.y) / BLOCK_MAGNIFICATION;
 
 			float distance = PData[MyId].pos.y - ((int)PData[MyId].pos.y);
 			fprintf(stderr, "(i%d, j%d) : PlayerPos = (%.2f, %.2f), MapBlock[%d, %d, %d], dis: %f\n",i,j, pointX[i], pointZ[j], blockPosX, blockPosY, blockPosZ, distance);
