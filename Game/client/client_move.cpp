@@ -51,7 +51,7 @@ int GetPutableBlockHeightFromMap(Vector2Int pos){
     {
         if (terrainData[pos.x][height][pos.y] == BlockType::NonBlock)
         {
-            return height * MAP_MAGNIFICATION + MAP_MAGNIFICATION / 2;
+            return height * BLOCK_MAGNIFICATION + BLOCK_MAGNIFICATION / 2;
         }
     }
 
@@ -62,7 +62,7 @@ int GetPutableBlockHeightFromMap(Vector2Int pos){
 Vector3Int GetTopOfHeightBlockIndex(Vector3 position){ 
     const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
 
-    Vector3Int result = {(int)(position.x / MAP_MAGNIFICATION), (int)(position.y / MAP_MAGNIFICATION), (int)(position.z / MAP_MAGNIFICATION)};
+    Vector3Int result = {(int)(position.x / BLOCK_MAGNIFICATION), (int)(position.y / BLOCK_MAGNIFICATION), (int)(position.z / BLOCK_MAGNIFICATION)};
 
     for (; result.y >= 0; result.y--) // yを減らしていく = つけると...
     {
@@ -83,9 +83,9 @@ bool IsPlayerOnGroundSimple(){
 	const int width = pData[myId].pos.w / (accuracy - 1); // X座標
 	const int depth = pData[myId].pos.d / (accuracy - 1);	// Z座標
 	const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
-	const int blockX = pointX[accuracy - 1] / MAP_MAGNIFICATION;
-	const int blockY = pointY / MAP_MAGNIFICATION;
-	const int blockZ = pointZ[accuracy - 1] / MAP_MAGNIFICATION;
+	const int blockX = pointX[accuracy - 1] / BLOCK_MAGNIFICATION;
+	const int blockY = pointY / BLOCK_MAGNIFICATION;
+	const int blockZ = pointZ[accuracy - 1] / BLOCK_MAGNIFICATION;
 
 	for (int i = 0; i < accuracy; i++)
 	{
@@ -116,9 +116,9 @@ bool IsPlayerOnGroundSimple(){
         {
             Vector3 playerPos = {pointX[i], pointY, pointZ[j]};
             Vector3Int blockIndex = GetTopOfHeightBlockIndex(playerPos);
-            Vector3 blockPos = {blockIndex.x * MAP_MAGNIFICATION, blockIndex.y * MAP_MAGNIFICATION, blockIndex.z * MAP_MAGNIFICATION};
+            Vector3 blockPos = {blockIndex.x * BLOCK_MAGNIFICATION, blockIndex.y * BLOCK_MAGNIFICATION, blockIndex.z * BLOCK_MAGNIFICATION};
 
-            result = pData[myId].pos.y - blockPos.y - MAP_MAGNIFICATION;
+            result = pData[myId].pos.y - blockPos.y - BLOCK_MAGNIFICATION;
             if(result == 0 )
                 return true;
         }
