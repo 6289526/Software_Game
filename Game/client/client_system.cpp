@@ -4,14 +4,6 @@
 #include <string.h>
 #include "go.h"
 
-#define PLAYER_MOVE_SPEED 15					   // 移動速度
-#define PLAYER_ROTATE_SPEED 2					   // 回転速度
-#define PLAYER_JUMP_POWER 1						   // ジャンプ力
-#define PLAYER_HAND_LENGTH (MAP_MAGNIFICATION + PLAYER_W) // 手の長さ(ブロックの設置先までの距離)
-
-#define GRAVITY 9.8 * 0.25		// 重力
-#define TERMINAL_SPEED (MAP_MAGNIFICATION - 1) // 終端速度
-
 static int MyId;   // クライアントのID
 PlayerData *PData; // プレイヤーのデータ
 
@@ -23,9 +15,9 @@ ClientMap Map;						  //マップ
 InputModuleBase *Input;				  // Input Module
 Timer *Time;						  // FrameTimer
 GameStateController *StateController; // GameStateController
-bool isOnGround = true, isJumped = false, isPreGround;
 
 SDL_Thread *InputThreadVar;
+static bool isJumped = false;
 
 // ===== * ===== プロトタイプ宣言 ===== * ===== //
 const PlayerData *GetPlayerData();
@@ -42,7 +34,6 @@ extern void SystemRun();
 extern void UpdateFlag(VelocityFlag *flags, int numClients);
 extern void UpdatePlaceData(PlaceData data);
 extern GameStateController GetGameStateController();
-bool IsPlayerOnGround();
 int clamp(const int value, const int low, const int hight);
 template <class T>
 T Abs(T value){ return value  < 0 ? -value : value; }
@@ -195,131 +186,17 @@ PlaceData GetPlaceData()
 */
 void SystemRun()
 {
-	InputType data = Input->SystemGetInputType();
-	try
-	{
-		isPreGround = isOnGround;
-		isOnGround = IsPlayerOnGroundSimple();
-	}
-	catch (char const *e) // エラー処理
-	{
-		fprintf(stderr, "%s", e);
-	}
-	PData[MyId].velocity.x = 0;
-
-	if (isOnGround && !isJumped){
-		PData[MyId].velocity.y = 0;}
-
-	if (!isPreGround && isOnGround)
-		isJumped = false;
-
-	PData[MyId].velocity.z = 0;
+	pair<bool, bool> t = SetPlayerVelocity(Input, &PData[MyId], Time);
+	isJumped = t.second;
 	// 移動処理
-	if (Input->IsMoveButtonDown() || !isOnGround)
-	{
-		if (data.U)
-		{
-			data.U = false;
-			PData[MyId].velocity.y = -1;
-		}
-		// 前
-		if (data.Forward)
-		{
-			data.Forward = false;
-			if (strcmp(WiiAddress, "") != 0)
-			{
-				PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 0).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-				PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 0).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-			}
-			else
-			{
-				PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 0).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-				PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 0).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-			}
-		}
-		// 左右
-		if (data.Left)
-		{
-			data.Left = false;
-			// if(strcmp(WiiAddress, "") != 0){
-			// 	PData[MyId].velocity.x += 5*GetMoveDirection(PData[MyId], 90).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-			// 	PData[MyId].velocity.z += 5*GetMoveDirection(PData[MyId], 90).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-				PData[MyId].direction += PLAYER_ROTATE_SPEED * Time->GetDeltaTime();
-			// }
-			// else
-			// {
-			// 	PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 90).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-			// 	PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 90).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-			// }
-		}
-
-		else if (data.Right)
-		{
-			data.Right = false;
-			// if(strcmp(WiiAddress, "") != 0){
-			// 	PData[MyId].velocity.x += 5*GetMoveDirection(PData[MyId], 270).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-			// 	PData[MyId].velocity.z += 5*GetMoveDirection(PData[MyId], 270).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-				PData[MyId].direction -= PLAYER_ROTATE_SPEED * Time->GetDeltaTime();
-			// }
-			// else{
-			// PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 270).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-			// PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 270).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-			// }
-		}
-		// ジャンプ
-		if (data.Jump && isOnGround == 1)
-		{
-			data.Jump = false;
-			PData[MyId].velocity.y += PLAYER_JUMP_POWER;
-			isJumped = true;
-		}
-		else if (!isOnGround)
-		{
-			PData[MyId].velocity.y -= GRAVITY * Time->GetDeltaTime();
-		}
-
-		if (data.R)
-		{
-			PData[MyId].direction -= PLAYER_ROTATE_SPEED * Time->GetDeltaTime();
-			data.R = false;
-		}
-		if (data.L)
-		{
-			PData[MyId].direction += PLAYER_ROTATE_SPEED * Time->GetDeltaTime();
-			data.L = false;
-		}
-
-		///////////////////////////////// デバッグ用 後ろに下がる
-		if (data.D)
-		{
-			data.D = false;
-			PData[MyId].velocity.x += GetMoveDirection(PData[MyId], 180).x * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-			PData[MyId].velocity.z += GetMoveDirection(PData[MyId], 180).z * PLAYER_MOVE_SPEED * Time->GetDeltaTime();
-		}
-		/////////////////////////////////
-
-		if (TERMINAL_SPEED < PData[MyId].velocity.x)
-		{
-			PData[MyId].velocity.x = TERMINAL_SPEED;
-		}
-		if (TERMINAL_SPEED < PData[MyId].velocity.y)
-		{
-			PData[MyId].velocity.y = TERMINAL_SPEED;
-		}
-		if (TERMINAL_SPEED < PData[MyId].velocity.z)
-		{
-			PData[MyId].velocity.z = TERMINAL_SPEED;
-		}
-
+	if (t.first){
 		// 移動コマンド実行
 		InCommand(MOVE_COMMAND);
 	}
 
-	// fprintf(stderr,"dir: (%.3f, %.3f, %.3f), pos: (%.2f, %.2f, %.2f), JPG: (%d, %d, %d)\n", PData[MyId].velocity.x, PData[MyId].velocity.y, PData[MyId].velocity.z, PData[MyId].pos.x, PData[MyId].pos.y, PData[MyId].pos.z, isJumped, isPreGround, isOnGround);
 	// 設置処理
-	if (data.Put)
+	if (Input->GetInputType().Put)
 	{
-		data.Put = false;
 		InCommand(PUT_COMMAND);
 	}
 
@@ -352,168 +229,9 @@ void UpdatePlaceData(PlaceData data)
 
 GameStateController GetGameStateController() { return *StateController; }
 
-bool IsPlayerOnGround()
-{
-	int id = GetMyID();
-	int accuracy = 3;
-	float point_X[accuracy], point_Z[accuracy]; // 調べる座標
-	int y = 0;
-
-	// 当たり判定の精度が正しいかどうか
-	if (accuracy < 3 || PLAYER_D < accuracy || PLAYER_W < accuracy)
-	{
-		throw "Collision_CB_Under : 引数　エラー\n";
-	}
-
-	const int wide = PData[id].pos.w /
-					 (accuracy - 1); // 当たり判定を知らべる座標間距離 x座標
-	const int depth = PData[id].pos.d /
-					  (accuracy - 1); // 当たり判定を知らべる座標間距離 z座標
-
-	// 当たり判定を調べる座標をすべて格納
-	for (int i = 0; i < accuracy; ++i)
-	{
-		point_X[i] = PData[id].pos.x + PData[id].velocity.x + wide * i;
-		point_Z[i] = PData[id].pos.z + PData[id].velocity.z + depth * i;
-	}
-
-	// マップデータ入手
-	const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
-
-	// マップ配列用添字　の宣言　と　範囲のエラー処理
-	int Block_X = point_X[accuracy - 1] / MAP_MAGNIFICATION;
-
-	if (point_X[0] < 0)
-	{
-		throw "マップ外 : x座標 :負\n";
-	}
-	else if (MAP_SIZE_W <= Block_X)
-	{
-		throw "マップ外 : x座標 : 正\n";
-	}
-
-	const float t_Block_Y =
-		(PData[id].pos.y + PData[id].velocity.y + y);
-	int Block_Y = t_Block_Y / MAP_MAGNIFICATION;
-
-	if (t_Block_Y < 0)
-	{
-		throw "マップ外 : y座標 : 負\n";
-	}
-	else if (MAP_SIZE_H <= Block_Y)
-	{
-		throw "マップ外 : y座標 : 正\n";
-	}
-
-	int Block_Z = point_Z[accuracy - 1] / MAP_MAGNIFICATION;
-
-	if (point_Z[0] < 0)
-	{
-		throw "マップ外 : z座標 :負\n";
-	}
-	else if (MAP_SIZE_W <= Block_Z)
-	{
-		throw "マップ外 : z座標 : 正\n";
-	}
-
-	int Count_Under =
-		BuryCheck_Under(id, 0, accuracy, Block_X, Block_Y, Block_Z, point_X, point_Z);
-
-	if (Count_Under == -1)
-	{
-		throw "Collision_CB_Under : ブロックに埋まってる\n";
-		// fprintf(stderr, "Collision_CB_Under : ブロックに埋まってる\n");
-	}
-	// fprintf(stderr, "埋まり度: %d\n", Count_Under);
-
-	GetDistanceFromGround();
-
-	if (0 < Count_Under)
-	{
-		return true; // やや埋まっている or ピッタリ
-	}
-
-	return false;
-}
-
 int clamp(const int value, const int low, const int hight)
 {
 	return (value < low) ? low : (hight < value) ? hight : value;
-}
-
-// 埋まっているピクセルが返る
-int BuryCheck_Under(const int id, const int y, const int accuracy,
-					int block_X, int block_Y, int block_Z,
-					const float *point_X, const float *point_Z)
-{
-	int chara_size;	  // キャラの大きさ
-	float base_point; // 計算に使う基準座標
-	enum PN_sign
-	{
-		positive = 1,
-		negative = -1
-	} PN_flag; // 正負を扱う
-
-	chara_size = PData[id].pos.h;
-	// なぜかvelocityを足さないとグラフィクがぶれる
-	// 偉い人計算してください
-	base_point = PData[id].pos.y + PData[id].velocity.y + y;
-	PN_flag = positive;
-
-	// マップデータ入手
-	const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
-
-	int Bury_Count = 0; // 返り値　埋まり具合
-	int Error_Count = 0;
-
-	for (int i = 1; i < (accuracy - 1); ++i)
-	{
-		block_X = point_X[i] / MAP_MAGNIFICATION;
-		for (int j = 1; j < (accuracy - 1); ++j)
-		{
-			block_Z = point_Z[i] / MAP_MAGNIFICATION;
-			if (terrainData[block_X][static_cast<int>(base_point / MAP_MAGNIFICATION)]
-						   [block_Z] == NomalBlock)
-			{
-				int t_Count = 0;
-				// どこまで埋まっているか調べる
-				for (int k = 0; k <= chara_size - y; ++k)
-				{
-					block_Y = (base_point + (k * PN_flag)) / MAP_MAGNIFICATION;
-
-					if (terrainData[block_X][block_Y][block_Z] == NomalBlock)
-					{
-						// その点の埋まっている程度をカウント
-						++t_Count;
-						// 埋まっている(かもしれない)
-						if (chara_size <= k)
-						{
-							++Error_Count;
-							t_Count = 0;
-						}
-					}
-					// 埋まっていなければ抜ける
-					else
-					{
-						break;
-					}
-				}
-				// 最も埋まっている部分の埋まっている程度にする
-				if (std::max(t_Count, Bury_Count) == t_Count)
-				{
-					Bury_Count = t_Count;
-				}
-			}
-		}
-	}
-
-	// 全体が埋まっていたら
-	if (Error_Count == ((accuracy - 2) * (accuracy - 2)))
-	{
-		return -1;
-	}
-
-	return Bury_Count; // 埋まっているピクセルが返る
 }
 
 // 方向の取得
