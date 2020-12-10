@@ -35,11 +35,6 @@ extern void SystemRun();
 extern void UpdateFlag(VelocityFlag *flags, int numClients);
 extern void UpdatePlaceData(PlaceData data);
 extern GameStateController GetGameStateController();
-<<<<<<< HEAD
-extern void SetRemoveClient(int id);
-int clamp(const int value, const int low, const int hight);
-=======
->>>>>>> 6df52397033cad521b5bdd2c77ee44e9f884afd8
 template <class T>
 T Abs(T value){ return value  < 0 ? -value : value; }
 // int GraphicThread(void *data); // This Function isn't used now.
@@ -244,57 +239,6 @@ void SetDirection(float direction, int id)
 	}
 }
 
-<<<<<<< HEAD
-void SetRemoveClient(int id){
-	PData[id].onGame = false;
-	fprintf(stderr, "%sはゲームから退出しました。\n", PData[id].name);
-}
-
-int GetDistanceFromGround(){
-	const int accuracy = 3;
-	float pointX[accuracy], pointZ[accuracy];
-	float pointY = PData[MyId].pos.y + PData[MyId].velocity.y;
-	const int width = PData[MyId].pos.w / (accuracy - 1); // X座標
-	const int depth = PData[MyId].pos.d / (accuracy - 1);	// Z座標
-	const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
-	const int blockX = pointX[accuracy - 1] / MAP_MAGNIFICATION;
-	const int blockY = pointY / MAP_MAGNIFICATION;
-	const int blockZ = pointZ[accuracy - 1] / MAP_MAGNIFICATION;
-
-	int result = 0;
-
-	for (int i = 0; i < accuracy; i++)
-	{
-		pointX[i] = PData[MyId].pos.x + PData[MyId].velocity.x + width * i;
-		pointZ[i] = PData[MyId].pos.z + PData[MyId].velocity.z + depth * i;
-	}
-
-#pragma region 範囲エラー処理
-	if (pointX[0] < 0)
-		throw "マップ外 : x座標 負\n";
-	else if (MAP_SIZE_W <= blockX)
-		throw "マップ外 : x座標 正\n";
-
-	if (pointY < 0)
-		throw "マップ外 : y座標 : 負\n";
-	else if (MAP_SIZE_H <= blockY)
-		throw "マップ外 : y座標 : 正\n";
-
-	if (pointZ[0] < 0)
-		throw "マップ外 : z座標 :負\n";
-	else if (MAP_SIZE_D <= blockZ)
-		throw "マップ外 : z座標 :正\n";
-#pragma endregion
-
-	for (int i = 0; i < accuracy; i++)
-	{
-		int blockPosX = pointX[i] / MAP_MAGNIFICATION;
-		for (int j = 0; j < accuracy; j++)
-		{
-			int blockPosZ = pointZ[j] / MAP_MAGNIFICATION;
-			int blockPosY = (PData[MyId].pos.y + PData[MyId].velocity.y) / MAP_MAGNIFICATION;
-=======
->>>>>>> 6df52397033cad521b5bdd2c77ee44e9f884afd8
 
 GameStateController GetGameStateController() { return *StateController; }
 
