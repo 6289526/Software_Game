@@ -215,9 +215,9 @@ void DrawMap(){
     glBegin(GL_QUADS);
         glNormal3f(0.0,1.0,0.0);
         glVertex3f(0.0,0.0,0.0);
-        glVertex3f(map_w * MAP_MAGNIFICATION, 0.0, 0.0);
-        glVertex3f(map_w * MAP_MAGNIFICATION, 0.0, map_d * MAP_MAGNIFICATION);
-        glVertex3f(0.0, 0.0, map_d * MAP_MAGNIFICATION);
+        glVertex3f(map_w * BLOCK_MAGNIFICATION, 0.0, 0.0);
+        glVertex3f(map_w * BLOCK_MAGNIFICATION, 0.0, map_d * BLOCK_MAGNIFICATION);
+        glVertex3f(0.0, 0.0, map_d * BLOCK_MAGNIFICATION);
     glEnd();
 
     SDL_Color mapColor = {255,255,0,255};
@@ -227,8 +227,8 @@ void DrawMap(){
         for(int depth = 0; depth < map_d; depth++){
             for(int hight = 0; hight < MAP_SIZE_H; hight++){
                 mcube = {
-                    width * MAP_MAGNIFICATION, hight * MAP_MAGNIFICATION, depth * MAP_MAGNIFICATION,
-                    MAP_MAGNIFICATION, MAP_MAGNIFICATION, MAP_MAGNIFICATION
+                    width * BLOCK_MAGNIFICATION, hight * BLOCK_MAGNIFICATION, depth * BLOCK_MAGNIFICATION,
+                    BLOCK_MAGNIFICATION, BLOCK_MAGNIFICATION, BLOCK_MAGNIFICATION
                 };
                 if(terrainData[width][hight][depth] != 0) DrowMapBlock(mcube,(BlockType)(terrainData[width][hight][depth]));
             }

@@ -233,6 +233,7 @@ void SetDirection(float direction, int id)
 	}
 }
 
+
 GameStateController GetGameStateController() { return *StateController; }
 
 // ===== * ===== マルチスレッド ===== * ===== //
