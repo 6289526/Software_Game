@@ -11,10 +11,11 @@ int Num_Clients;																			 // クライアント人数
 static char Name_Clients[MAX_NUMCLIENTS][MAX_LEN_NAME];										 // クライアントの名前
 static FloatCube Pos_Clients = {PLAYER_X, PLAYER_Y, PLAYER_Z, PLAYER_W, PLAYER_H, PLAYER_D}; // クライアント情報
 
-ClientMap Map;						  //マップ
-InputModuleBase *Input;				  // Input Module
-Timer *Time;						  // FrameTimer
-GameStateController *StateController; // GameStateController
+ClientMap Map;						  	// マップ
+InputModuleBase *Input;				  	// Input Module
+Timer *Time;						  	// FrameTimer
+GameStateController *StateController; 	// GameStateController
+GameStateOutputer StateOutputer;	  	// StateOutputer
 
 SDL_Thread *InputThreadVar;
 static bool isJumped = false;
@@ -34,13 +35,8 @@ extern void SystemRun();
 extern void UpdateFlag(VelocityFlag *flags, int numClients);
 extern void UpdatePlaceData(PlaceData data);
 extern GameStateController GetGameStateController();
-int clamp(const int value, const int low, const int hight);
 template <class T>
 T Abs(T value){ return value  < 0 ? -value : value; }
-static int BuryCheck_Under(const int id, const int y, const int accuracy,
-						   int block_X, int block_Y, int block_Z,
-						   const float *point_X, const float *point_Z);
-int GetDistanceFromGround();
 // int GraphicThread(void *data); // This Function isn't used now.
 int InputThread(void *data);
 
@@ -106,6 +102,7 @@ bool InitSystem(InitData *data)
 
 	StateController = new GameStateController();
 	data->stateController = StateController;
+	StateController->Subscribe(&StateOutputer);
 	return true;
 }
 
@@ -227,13 +224,6 @@ void UpdatePlaceData(PlaceData data)
 	Map.SetObjectData(&data);
 }
 
-GameStateController GetGameStateController() { return *StateController; }
-
-int clamp(const int value, const int low, const int hight)
-{
-	return (value < low) ? low : (hight < value) ? hight : value;
-}
-
 // 方向の取得
 void SetDirection(float direction, int id)
 {
@@ -243,57 +233,8 @@ void SetDirection(float direction, int id)
 	}
 }
 
-int GetDistanceFromGround(){
-	const int accuracy = 3;
-	float pointX[accuracy], pointZ[accuracy];
-	float pointY = PData[MyId].pos.y + PData[MyId].velocity.y;
-	const int width = PData[MyId].pos.w / (accuracy - 1); // X座標
-	const int depth = PData[MyId].pos.d / (accuracy - 1);	// Z座標
-	const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
-	const int blockX = pointX[accuracy - 1] / BLOCK_MAGNIFICATION;
-	const int blockY = pointY / BLOCK_MAGNIFICATION;
-	const int blockZ = pointZ[accuracy - 1] / BLOCK_MAGNIFICATION;
 
-	int result = 0;
-
-	for (int i = 0; i < accuracy; i++)
-	{
-		pointX[i] = PData[MyId].pos.x + PData[MyId].velocity.x + width * i;
-		pointZ[i] = PData[MyId].pos.z + PData[MyId].velocity.z + depth * i;
-	}
-
-#pragma region 範囲エラー処理
-	if (pointX[0] < 0)
-		throw "マップ外 : x座標 負\n";
-	else if (MAP_SIZE_W <= blockX)
-		throw "マップ外 : x座標 正\n";
-
-	if (pointY < 0)
-		throw "マップ外 : y座標 : 負\n";
-	else if (MAP_SIZE_H <= blockY)
-		throw "マップ外 : y座標 : 正\n";
-
-	if (pointZ[0] < 0)
-		throw "マップ外 : z座標 :負\n";
-	else if (MAP_SIZE_D <= blockZ)
-		throw "マップ外 : z座標 :正\n";
-#pragma endregion
-
-	for (int i = 0; i < accuracy; i++)
-	{
-		int blockPosX = pointX[i] / BLOCK_MAGNIFICATION;
-		for (int j = 0; j < accuracy; j++)
-		{
-			int blockPosZ = pointZ[j] / BLOCK_MAGNIFICATION;
-			int blockPosY = (PData[MyId].pos.y + PData[MyId].velocity.y) / BLOCK_MAGNIFICATION;
-
-			float distance = PData[MyId].pos.y - ((int)PData[MyId].pos.y);
-			fprintf(stderr, "(i%d, j%d) : PlayerPos = (%.2f, %.2f), MapBlock[%d, %d, %d], dis: %f\n",i,j, pointX[i], pointZ[j], blockPosX, blockPosY, blockPosZ, distance);
-		}
-	}
-
-	return result;
-}
+GameStateController GetGameStateController() { return *StateController; }
 
 // ===== * ===== マルチスレッド ===== * ===== //
 
