@@ -34,6 +34,7 @@ extern void SystemRun();
 extern void UpdateFlag(VelocityFlag *flags, int numClients);
 extern void UpdatePlaceData(PlaceData data);
 extern GameStateController GetGameStateController();
+extern void SetRemoveClient(int id);
 int clamp(const int value, const int low, const int hight);
 template <class T>
 T Abs(T value){ return value  < 0 ? -value : value; }
@@ -242,6 +243,11 @@ void SetDirection(float direction, int id)
 	{
 		PData[id].direction = direction;
 	}
+}
+
+void SetRemoveClient(int id){
+	PData[id].onGame = false;
+	fprintf(stderr, "%sはゲームから退出しました。\n", PData[id].name);
 }
 
 int GetDistanceFromGround(){
