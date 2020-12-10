@@ -25,12 +25,12 @@ void Subject::Subscribe(Observer *observer){
     observer->SetSubject(this);
 }
 // ===== * ===== Observer ===== * ===== //
-StateOutputer::StateOutputer(GameState initState){
+GameStateOutputer::GameStateOutputer(GameState initState){
     _PreState = initState;
     _State = initState;
 }
-void StateOutputer::Update(GameState state){
+void GameStateOutputer::Update(GameState state){
     _PreState = _State;
     _State = state;
-    fprintf(stderr, "GameState: %d -> %d", _PreState, _State);
+    fprintf(stderr, "GameState: %d -> %d\n", _PreState, _State);
 } 

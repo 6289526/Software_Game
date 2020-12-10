@@ -11,10 +11,11 @@ int Num_Clients;																			 // クライアント人数
 static char Name_Clients[MAX_NUMCLIENTS][MAX_LEN_NAME];										 // クライアントの名前
 static FloatCube Pos_Clients = {PLAYER_X, PLAYER_Y, PLAYER_Z, PLAYER_W, PLAYER_H, PLAYER_D}; // クライアント情報
 
-ClientMap Map;						  //マップ
-InputModuleBase *Input;				  // Input Module
-Timer *Time;						  // FrameTimer
-GameStateController *StateController; // GameStateController
+ClientMap Map;						  	// マップ
+InputModuleBase *Input;				  	// Input Module
+Timer *Time;						  	// FrameTimer
+GameStateController *StateController; 	// GameStateController
+GameStateOutputer StateOutputer(GameState::Init);	  	// StateOutputer
 
 SDL_Thread *InputThreadVar;
 static bool isJumped = false;
@@ -102,6 +103,7 @@ bool InitSystem(InitData *data)
 
 	StateController = new GameStateController();
 	data->stateController = StateController;
+	StateController->Subscribe(&StateOutputer);
 	return true;
 }
 
