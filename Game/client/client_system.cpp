@@ -164,6 +164,11 @@ void SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients)
 	}
 }
 
+extern void SetRank(int id, int rank) {
+	PData[id].rank = rank;
+	fprintf(stderr, "Client [%d] is rank is %d\n", id, PData[id].rank);
+}
+
 /*現在の設置データを返す
 *	返り値: MyIDのキャラの設置データ
 */

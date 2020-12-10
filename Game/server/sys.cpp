@@ -710,7 +710,6 @@ void MovePosition(int chara_ID) try {
   PData[chara_ID].velocity.z = 0;
 } catch (error::error e) {
   if (e == error::OutSide_Map_y) {
-    fprintf(stderr, "hoge");
     PData[chara_ID].pos.x = PLAYER_X + chara_ID * PLAYER_W;
     PData[chara_ID].pos.y = PLAYER_Y;
     PData[chara_ID].pos.z = PLAYER_Z;
@@ -747,6 +746,8 @@ int AllGoal() {
       return 0;
     }
   }
+
+  RunCommand(BROADCAST, FINISH_COMMAND);
 
   return 1;
 }

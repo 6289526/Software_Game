@@ -43,65 +43,6 @@ using namespace std;
 
 /* sys.cpp */
 
-template <typename T> class Pointer {
-
-public:
-  Pointer(int size);
-  Pointer(const Pointer<T> &p);
-  ~Pointer();
-  const T operator[](int n) const;
-  T &operator[](int n);
-  Pointer &operator=(const Pointer &p);
-  int Size();
-  const T *Get() const;
-
-private:
-  void Copy(const Pointer &p);
-
-private:
-  T *m_point;
-  int m_size;
-};
-
-template <class T> inline Pointer<T>::Pointer(int size) : m_point(new T[size]) {
-  m_size = size;
-}
-
-template <class T> Pointer<T>::Pointer(const Pointer<T> &p) { Copy(p); }
-
-template <class T> inline Pointer<T>::~Pointer() { delete[] m_point; }
-
-template <class T> inline const T Pointer<T>::operator[](int n) const {
-  if (n < 0 || m_size <= n) {
-    throw "Pointer [] : 範囲外\n";
-  }
-  return m_point[n];
-}
-
-template <class T> inline T &Pointer<T>::operator[](int n) {
-  if (n < 0 || m_size <= n) {
-    throw "Pointer [] : 範囲外\n";
-  }
-  return m_point[n];
-}
-
-template <class T> Pointer<T> &Pointer<T>::operator=(const Pointer &p) {
-  delete[] m_point;
-  Copy(p);
-}
-
-template <class T> inline int Pointer<T>::Size() { return m_size; }
-
-template <class T> const T *Pointer<T>::Get() const { return m_point; }
-
-template <class T> void Pointer<T>::Copy(const Pointer &p) {
-  m_size = p.m_size;
-  m_point = new T[m_size];
-  for (int i = 0; i < m_size; ++i) {
-    m_point[i] = p[i];
-  }
-}
-
 // 当たり判定で跳ね返す方向
 enum Collision_Dire { Non, Right, Back, Left, Front, Under, Over };
 

@@ -320,7 +320,7 @@ int ControlRequests()
                     com = QUIT_COMMAND;
                     SendData(BROADCAST, &com, sizeof(char));
                     SendData(BROADCAST, &i, sizeof(int));
-                    
+
                     break;
                 default:
                     // コマンドは上記の2種類しか無いので、それ以外の場合はエラーが生じている　
@@ -349,7 +349,7 @@ void RunCommand(int id, char com)
     float direction;
     VelocityFlag flag = {false, false, false};
     PlaceData placeData = GetPlaceData();
-    bool goal = pData[id].goal;
+
     // コマンドに応じた処理
     switch (com)
     {
@@ -405,14 +405,17 @@ void RunCommand(int id, char com)
     case FINISH_COMMAND:
         fprintf(stderr, "All clients goaled.\n");
         SendData(id, &com, sizeof(com));
+        for (int i = 0; i < NumClient; ++i) {
+          SendData(id, &pData[i].rank, sizeof(int));
+        }
         break;
     case GOAL_COMMAND:
-        SendData(id, &com, sizeof(&com));
-        fprintf(stderr, "clinet%d goaled!", id);
-        // SendData(id, &goal, sizeof(bool));
+        SendData(id, &com, sizeof(com));
+        fprintf(stderr, "clinet%d goaled!\n", id);
+        SendData(id, &pData[id].rank, sizeof(int));
         break;
     case TERMINATE_COMMAND:
-        fprintf(stderr, "Terminate!");
+        fprintf(stderr, "Terminate!\n");
         TerminateFlag = 1;
         // コマンド送信 この時全員
         SendData(id, &com, sizeof(com));

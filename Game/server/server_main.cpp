@@ -5,6 +5,7 @@
 
 #include "server_common.h"
 #include <iostream>
+#include <string>
 //
 // ./server_main PlayerNum PortNum
 
@@ -137,6 +138,9 @@ int main(int argc, char *argv[]) {
 
     SDL_Delay(10);
   }
+
+  char str[32];
+  fgets(str, 32, stdin);
 
   TerminateServer(); // サーバー終了処理
   EndSys();          // システム終了処理
