@@ -11,12 +11,16 @@ set(CLIENT_CODE
     client_WiiInput
     net
     graphic
+    graphic_objmesh
     client_system
     client_move
     client_map
     client_time
     control_setup
+    client_name
     client_gamestate
+    client_smart
+    client_go
 )
 # CMakeの最低バージョンを記述
 cmake_minimum_required(VERSION 2.8)

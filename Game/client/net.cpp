@@ -74,16 +74,12 @@ void SetupClient(char *server_name, u_short port)
     }
 
     /*名前の入力*/
-    fprintf(stderr, "Input your name: ");
+    // fprintf(stderr, "Input your name: ");
     // 名前を格納する変数
     char user_name[MAX_LEN_NAME];
-    if (fgets(user_name, sizeof(user_name), stdin) == NULL)
-    {
-        char m[] = "fgets()";
-        HandleError(m);
-    }
-    // 名前の後ろをナル文字にする
-    user_name[strlen(user_name) - 1] = '\0';
+    NameSetUp();
+    sprintf(user_name, "%s", MyName);
+    
     // 名前を送信する
     SendData(user_name, MAX_LEN_NAME);
 
@@ -233,7 +229,9 @@ int ExeCommand()
     // ソケットから来るデータ
     FloatPosition data[MAX_NUMCLIENTS];
     PlaceData placeData;
+    float direction = 0;
     VelocityFlag flags[MAX_NUMCLIENTS];
+    int id = 0;
     // 通信を継続するかを判定する変数
     int result = 1;
     // dataの初期化
@@ -251,10 +249,13 @@ int ExeCommand()
         for (int i = 0; i < NumClients; i++)
         {
             ReceiveData(&data[i], sizeof(FloatPosition));
+            ReceiveData(&direction, sizeof(float));
+            SetDirection(direction, i);
             ReceiveData(&flags[i], sizeof(VelocityFlag));
         }
         // 受け取った座標とフラッグをシステムモジュールにわたす
         SetPlace(data, NumClients);
+        
         UpdateFlag(flags, NumClients);
 
         // 通信継続
@@ -274,10 +275,15 @@ int ExeCommand()
         result = 1;
         break;
     case QUIT_COMMAND: // 通信終了
+        ReceiveData(&id, sizeof(int));
         // 通信を終了したことを表示
-        fprintf(stderr, "other client sent quit command.\n");
+        fprintf(stderr, "client %d sent quit command.\n", id);
         // 通信継続
-        result = 0;
+        result = 1;
+        break;
+    case GOAL_COMMAND:
+        fprintf(stderr, "you goaled.");
+        result = 1;
         break;
     case FINISH_COMMAND:
         fprintf(stderr, "All clients goaled.\n");
@@ -341,7 +347,7 @@ int ReceiveData(void *data, int size)
     {
         //メッセージを表示して終了
         fprintf(stderr, "ReceiveData(): data is illegal.\n");
-        exit(1);
+        return -1;
     }
     // ソケットに送られてきたデータをdataに読み込む
     return (read(sock, data, size));

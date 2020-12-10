@@ -7,12 +7,12 @@ WiiInput::WiiInput(char Address[17]) : _wiimote(WIIMOTE_INIT), _report(WIIMOTE_R
     if (wiimote_connect(&_wiimote, Address) < 0)
     { // コマンド引数に指定したWiiリモコン識別情報を渡して接続
         printf("unable to open wiimote: %s\n", wiimote_get_error());
-    }
-    _wiimote.led.one = 1; // WiiリモコンのLEDの一番左を点灯させる（接続を知らせるために）
-    // センサからのデータを受け付けるモードに変更
-    _wiimote.mode.acc = 1;
-}
 
+        _wiimote.led.one = 1; // WiiリモコンのLEDの一番左を点灯させる（接続を知らせるために）
+        // センサからのデータを受け付けるモードに変更
+        _wiimote.mode.acc = 1;
+    }
+}
 WiiInput::~WiiInput()
 {
 }
@@ -37,60 +37,122 @@ void WiiInput::UpdateInput()
             wiimote_disconnect(&_wiimote); // Wiiリモコンとの接続を解除
             _Input.End = true;
         }
-
-        // Bボタンが押された時
-        if (_wiimote.keys.b)
+        if (_setname)
         {
-            if (_Input.Put)
+
+            // 移動関連
+            // 1ボタンが押された時
+            if (_wiimote.keys.one)
             {
-                fprintf(stderr, "B\n");
+                _Input.Jump = true;
+            }
+            else
+            {
+                _Input.Jump = false;
             }
 
-            _Input.Put = true;
+            // 2ボタンが押された時
+            if (_wiimote.keys.two)
+            {
+                _Input.Forward = true;
+            }
+            else
+            {
+                _Input.Forward = false;
+            }
+
+            if (_wiimote.keys.up)
+            { // 上
+                _Input.Left = true;
+            }
+            else
+            {
+                _Input.Left = false;
+            }
+
+            if (_wiimote.keys.down)
+            { // 下
+                _Input.Right = true;
+            }
+            else
+            {
+                _Input.Right = false;
+            }
+
+            if (_wiimote.keys.right)
+            {
+                _Input.Up = true;
+            }
+            else
+            {
+                _Input.Up = false;
+            }
+
+            if (_wiimote.keys.left)
+            {
+                _Input.Down = true;
+            }
+            else
+            {
+                _Input.Down = false;
+            }
         }
         else
         {
+            // Bボタンが押された時
+            if (_wiimote.keys.b)
+            {
+                if (_Input.Put)
+                {
+                    fprintf(stderr, "B\n");
+                }
 
-            _putFlag = false;
-        }
+                _Input.Put = true;
+            }
+            else
+            {
 
-        // 移動関連
-        // 1ボタンが押された時
-        if (_wiimote.keys.one)
-        {
-            _Input.Jump = true;
-        }
-        else
-        {
-            _jumpFlag = false;
-        }
+                _putFlag = false;
+            }
 
-        // 2ボタンが押された時
-        if (_wiimote.keys.two)
-        {
-            _Input.Forward = true;
-        }
-        else
-        {
-            _Input.Forward = false;
-        }
+            // 移動関連
+            // 1ボタンが押された時
+            if (_wiimote.keys.one)
+            {
+                _Input.Jump = true;
+            }
+            else
+            {
+                _jumpFlag = false;
+            }
 
-        if (_wiimote.keys.up)
-        { // 上
-            _Input.Left = true;
-        }
-        else
-        {
-            _Input.Left = false;
-        }
+            // 2ボタンが押された時
+            if (_wiimote.keys.two)
+            {
+                _Input.Forward = true;
+            }
+            else
+            {
+                _Input.Forward = false;
+            }
 
-        if (_wiimote.keys.down)
-        { // 下
-            _Input.Right = true;
-        }
-        else
-        {
-            _Input.Right = false;
+            if (_wiimote.keys.up)
+            { // 上
+                _Input.Left = true;
+            }
+            else
+            {
+                _Input.Left = false;
+            }
+
+            if (_wiimote.keys.down)
+            { // 下
+                _Input.Right = true;
+            }
+            else
+            {
+                _Input.Right = false;
+            }
         }
     }
 }

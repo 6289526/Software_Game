@@ -2,7 +2,7 @@
 window.addEventListener('load', init);
 // サイズを指定
 let width = 650;
-let height = 200;
+let height = 650;
 // 1辺あたりに配置するオブジェクトの個数
 let CELL_NUM_X = 20;
 let CELL_NUM_Y = 20;
@@ -20,7 +20,7 @@ function init() {
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(width, height);
 
-    
+
 
     // カメラを作成
     camera = new THREE.PerspectiveCamera(45, width / height);
@@ -45,14 +45,14 @@ function setMap() {
     // シーンを作成こうするとsceneを更新できる
     scene = new THREE.Scene();
     // 一応更新
-    CELL_NUM_X = ArrayData[0][0];
-    CELL_NUM_Y = ArrayData[0][1];
+    CELL_NUM_X = ArrayData[0][1];
+    CELL_NUM_Y = ArrayData[0][0];
     // 空のジオメトリを作成
     const geometry = new THREE.Geometry();
     // console.log("setMap");
     // Box
     // for (let i = 0; i < CELL_NUM; i++) {
-    for (let j = 1; j < CELL_NUM_X+1; j++) {
+    for (let j = 1; j < CELL_NUM_X + 1; j++) {
         for (let k = 0; k < CELL_NUM_Y; k++) {
             // 立方体個別の要素を作成
             const sampleGeometry = new THREE.BoxGeometry(10, 10 * (ArrayData[j][k] + 1), 10);
@@ -62,7 +62,7 @@ function setMap() {
             matrix.makeTranslation(
                 10 * (k),
                 5 * (ArrayData[j][k]),
-                10 * (j-1)
+                10 * (j - 1)
             );
 
             // ジオメトリをマージ（結合）
@@ -77,7 +77,7 @@ function setMap() {
     scene.add(mesh);
 
 }
-
+var count = 0;
 function tick() {
     // カメラコントローラーを更新
     controls.update();
@@ -94,6 +94,11 @@ function tick() {
     // フレームレートを表示
     stats.update();
 
+    // ファイルの読み込み
+    if (count % 60 === 0) {
+        count = 0;
+        readFile(currentPath);
+    }
+    count++;
     requestAnimationFrame(tick);
 }
-

@@ -16,6 +16,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#include <tuple>
 #include "../header/constants.h"
 #include "client_map.hpp"
 #include "client_system.h"
@@ -23,14 +24,26 @@
 #include "client_KeybordInput.h"
 #include "client_time.hpp"
 #include "client_gamestate.hpp"
+#include "graphic.h"
+#include "client_smart.h"
+
+#define PLAYER_MOVE_SPEED 15					   // 移動速度
+#define PLAYER_ROTATE_SPEED 2					   // 回転速度
+#define PLAYER_JUMP_POWER 1						   // ジャンプ力
+#define PLAYER_HAND_LENGTH (MAP_MAGNIFICATION + PLAYER_W) // 手の長さ(ブロックの設置先までの距離)
+
+#define GRAVITY 9.8 * 0.25		// 重力
+#define TERMINAL_SPEED (MAP_MAGNIFICATION - 1) // 終端速度
 
 extern int Num_Clients; // クライアント人数
 extern char WiiAddress[18];
+// クライアントの名前
+extern char MyName[MAX_LEN_NAME];
 extern InputType _______Type;
 /* ウインドウサイズ */
 enum {
-    Wd_Width  = 640,
-    Wd_Height = 480
+    Wd_Width  = 928,
+    Wd_Height = 696
 };
 
 /* ゲームの状態 */
@@ -50,6 +63,8 @@ typedef struct InitData{
         stateController(NULL)
         { };
 } InitData;
+
+
 
 /* net.c */
 extern void SetupClient(char *, u_short);
@@ -72,6 +87,14 @@ extern PlaceData GetPlaceData();
 extern void SystemRun();
 extern void UpdatePlaceData(PlaceData data);
 extern GameStateController GetGameStateController();
-
+extern void SetDirection(float direction, int id);
 /*control_setup*/
 extern int ControlSetUp();
+
+/*name_setup*/
+extern void GetInitData(InitData initData);
+extern void NameSetUp();
+
+
+extern void KillGoServer();
+extern void Goroutine();

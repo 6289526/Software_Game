@@ -4,18 +4,16 @@
  */
 
 #include "client_common.h"
-#include "graphic.h"
-
 
 // ループするかを判定
 int cond = 1;
 
 static int PrintError(const char *str);
 int Select(void *args);
+int Go(void *args);
 
 char WiiAddress[18];
 InputType _______Type;
-
 
 // client用のmain関数
 int main(int argc, char *argv[])
@@ -27,14 +25,7 @@ int main(int argc, char *argv[])
 	/**サーバー関連 BEGIN**/
 	// 参加したいサーバーのポート番号
 	u_short port = DEFAULT_PORT;
-	// 参加したいサーバーの名前if (strcmp(WiiAddress, "") == 0)
-    // {
-    //     return -1;
-    // }
-    // else
-    // {
-    //     return 1;
-    // }
+
 	char server_name[MAX_LEN_NAME];
 	InitData initData;
 	//multithread
@@ -42,6 +33,9 @@ int main(int argc, char *argv[])
 	SDL_mutex *mtx1 = SDL_CreateMutex();
 	SelectThread = SDL_CreateThread(Select, "getCommand", mtx1);
 
+	SDL_Thread *goThread;
+	SDL_mutex *gMtx = SDL_CreateMutex();
+	goThread = SDL_CreateThread(Go, "Go!", gMtx);
 	/*初期設定*/
 	sprintf(server_name, "localhost");
 
@@ -67,9 +61,12 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "Usage: %s [server name] [port number]\n", argv[0]);
 		return 1;
 	}
+	// グラフィックの初期化
+	InitGraphic();
 	/*クライアントの作成*/
 	InitControl(&initData);
 	// 指定されたサーバー名、ポート番号に参加するクライアントとして設定する。
+	GetInitData(initData);
 	SetupClient(server_name, port);
 	InitPlayerData(); // プレイヤーデータ初期化処理
 	/**サーバー関連 END**/
@@ -91,6 +88,8 @@ int main(int argc, char *argv[])
 	TerminateClient();
 	SDL_Quit();
 	ExitSystem(&initData);
+	KillGoServer();
+	TerminateGraphic();
 	return 0;
 }
 
@@ -111,29 +110,14 @@ int Select(void *args)
 	return 0;
 }
 
-// /*
-// wiiリモコンのMACアドレスの取得
-// */
-// void GetWiiAddress(){
 
-// 	FILE *fp;
-// 	char command[MAX_STRING];
-// 	char output[MAX_STRING];
-// 	sprintf(command, "hcitool scan");
+// スマホからの入力を受け取る
+int Go(void *args)
+{
+	SDL_mutex *mtx = (SDL_mutex *)args;
+	SDL_LockMutex(mtx);
+	Goroutine();
+	SDL_UnlockMutex(mtx);
 
-// 	if ((fp = popen(command, "r")) == NULL) {
-// 	/*Failure*/
-// 	}
-// 	int index = 0;
-// 	char trash[50];
-// 	while (fgets(output, MAX_STRING, fp) != NULL) {
-// 		if(index == 1){
-// 			sscanf(output, "%s %s", WiiAddress, trash);
-// 			fprintf(stderr, "%s\n", WiiAddress);
-// 		}
-// 		index++;
-// 	}
-// 	if (pclose(fp) == -1) {
-// 	/*Failure*/
-// 	}
-// }
+	return 0;
+}

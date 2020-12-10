@@ -8,10 +8,10 @@ using namespace std;
 //マップサイズ
 #define MAP_SIZE_W 40
 #define MAP_SIZE_H 40
-#define MAP_SIZE_D 40
+#define MAP_SIZE_D 100
 
 //マップブロックのサイズ
-#define MAP_MAGNIFICATION 30.0f
+#define MAP_MAGNIFICATION 20.0f
 //設置オブジェクトのサイズ
 // #define OBJECT_MAGNIFICATION 15.0f
 

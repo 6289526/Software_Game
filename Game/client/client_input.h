@@ -22,7 +22,7 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 #include "../header/constants.h"
-
+#include "go.h"
 typedef struct InputType{
     bool Forward;   // 前進
     bool Right;     // 右
@@ -35,6 +35,8 @@ typedef struct InputType{
     bool L;         // 左
     bool End;       // 終了
 
+    bool Up;        //wiiリモコンの十字キー上
+    bool Down;      //wiiリモコンの下
     InputType() : 
         Forward(false),
         Right(false),
@@ -45,7 +47,9 @@ typedef struct InputType{
         D(false),
         R(false),
         L(false),
-        End(false)
+        End(false),
+        Up(false),
+        Down(false)
         { };
 }InputType;
 
@@ -57,6 +61,7 @@ protected:
     bool _putFlag;
     bool _jumpFlag;
 public:
+    bool _setname;  //名前入力中か
     InputModuleBase();
     virtual ~InputModuleBase();
     virtual void UpdateInput() = 0;
