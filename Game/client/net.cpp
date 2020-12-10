@@ -279,7 +279,7 @@ int ExeCommand()
         // 通信を終了したことを表示
         fprintf(stderr, "client %d sent quit command.\n", id);
         // 通信継続
-        result = 0;
+        result = 1;
         break;
     case GOAL_COMMAND:
         fprintf(stderr, "you goaled.");
