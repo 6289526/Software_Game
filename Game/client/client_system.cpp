@@ -37,7 +37,6 @@ extern void UpdatePlaceData(PlaceData data);
 extern GameStateController GetGameStateController();
 template <class T>
 T Abs(T value){ return value  < 0 ? -value : value; }
-int GetDistanceFromGround();
 // int GraphicThread(void *data); // This Function isn't used now.
 int InputThread(void *data);
 
