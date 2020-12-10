@@ -2,6 +2,7 @@
 
 // ===== * ===== GameStateController ===== * ===== //
 void GameStateController::SetGameState(GameState state){
+    _PreState = _State;
     _State = state;
     OnNest(state);
 }
@@ -25,12 +26,10 @@ void Subject::Subscribe(Observer *observer){
     observer->SetSubject(this);
 }
 // ===== * ===== Observer ===== * ===== //
-GameStateOutputer::GameStateOutputer(GameState initState){
-    _PreState = initState;
-    _State = initState;
-}
+Observer::~Observer() { }
+// ===== * ===== GameStateOutputer ===== * ===== //
+GameStateOutputer::GameStateOutputer() { }
+GameStateOutputer::~GameStateOutputer() { }
 void GameStateOutputer::Update(GameState state){
-    _PreState = _State;
-    _State = state;
-    fprintf(stderr, "GameState: %d -> %d\n", _PreState, _State);
+    fprintf(stderr, "GameState: %d -> %d\n", ((GameStateController *)_Subject)->GetPreState(), ((GameStateController *)_Subject)->GetState());
 } 

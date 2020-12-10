@@ -15,7 +15,7 @@ ClientMap Map;						  	// マップ
 InputModuleBase *Input;				  	// Input Module
 Timer *Time;						  	// FrameTimer
 GameStateController *StateController; 	// GameStateController
-GameStateOutputer StateOutputer(GameState::Init);	  	// StateOutputer
+GameStateOutputer StateOutputer;	  	// StateOutputer
 
 SDL_Thread *InputThreadVar;
 static bool isJumped = false;

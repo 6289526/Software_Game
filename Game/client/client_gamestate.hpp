@@ -23,7 +23,7 @@ protected:
 
 class Observer{
 public:
-    // virtual ~Observer();
+    virtual ~Observer();
     virtual void Update(GameState state) = 0;
     void SetSubject(Subject *pSubject){ _Subject = pSubject; }
 protected:
@@ -34,14 +34,16 @@ class GameStateController : public Subject{
 public:
     void SetGameState(GameState state);
     GameState GetState(){ return _State; }
+    GameState GetPreState(){ return _PreState; }
 protected:
-    GameState _State;
+    GameState _State, _PreState;
 };
 
 class GameStateOutputer : public Observer{
 private:
     GameState _State, _PreState;
 public:
-    GameStateOutputer(GameState initState);
+    GameStateOutputer();
+    ~GameStateOutputer();
     virtual void Update(GameState state);
 };
