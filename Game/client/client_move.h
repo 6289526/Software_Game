@@ -6,6 +6,9 @@
 #pragma once
 #include "client_common.h"
 
+#define USE_GRAVITY false
+#define PI 3.14159265358979323846
+
 PlaceData BuildPlaceData(PlayerData player, float handLength);
 Vector3 GetMoveDirection(PlayerData player, float angle);
 

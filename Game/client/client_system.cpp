@@ -212,9 +212,14 @@ void UpdateFlag(VelocityFlag *flags, int numClients)
 	{
 		if (flags[i].x == false)
 			PData[i].velocity.x = 0;
-
+#if USE_GRAVITY
 		if (flags[i].y == false && !isJumped){
 			PData[i].velocity.y = 0;}
+#else
+		/*if (flags[i].y == false){
+			PData[i].velocity.y = 0;
+		}*/
+#endif
 
 		if (flags[i].z == false)
 			PData[i].velocity.z = 0;
