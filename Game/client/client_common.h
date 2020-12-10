@@ -82,6 +82,7 @@ extern ClientMap Map;
 extern int GetMyID();
 extern void SetMyID(int);
 extern void SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients);
+extern void SetRank(int id, int rank);
 extern void UpdateFlag(VelocityFlag* flag, int numClients);
 extern PlaceData GetPlaceData();
 extern void SystemRun();

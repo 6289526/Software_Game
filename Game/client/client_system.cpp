@@ -11,10 +11,11 @@ int Num_Clients;																			 // クライアント人数
 static char Name_Clients[MAX_NUMCLIENTS][MAX_LEN_NAME];										 // クライアントの名前
 static FloatCube Pos_Clients = {PLAYER_X, PLAYER_Y, PLAYER_Z, PLAYER_W, PLAYER_H, PLAYER_D}; // クライアント情報
 
-ClientMap Map;						  //マップ
-InputModuleBase *Input;				  // Input Module
-Timer *Time;						  // FrameTimer
-GameStateController *StateController; // GameStateController
+ClientMap Map;						  	// マップ
+InputModuleBase *Input;				  	// Input Module
+Timer *Time;						  	// FrameTimer
+GameStateController *StateController; 	// GameStateController
+GameStateOutputer StateOutputer;	  	// StateOutputer
 
 SDL_Thread *InputThreadVar;
 static bool isJumped = false;
@@ -34,14 +35,13 @@ extern void SystemRun();
 extern void UpdateFlag(VelocityFlag *flags, int numClients);
 extern void UpdatePlaceData(PlaceData data);
 extern GameStateController GetGameStateController();
+<<<<<<< HEAD
 extern void SetRemoveClient(int id);
 int clamp(const int value, const int low, const int hight);
+=======
+>>>>>>> 6df52397033cad521b5bdd2c77ee44e9f884afd8
 template <class T>
 T Abs(T value){ return value  < 0 ? -value : value; }
-static int BuryCheck_Under(const int id, const int y, const int accuracy,
-						   int block_X, int block_Y, int block_Z,
-						   const float *point_X, const float *point_Z);
-int GetDistanceFromGround();
 // int GraphicThread(void *data); // This Function isn't used now.
 int InputThread(void *data);
 
@@ -107,6 +107,7 @@ bool InitSystem(InitData *data)
 
 	StateController = new GameStateController();
 	data->stateController = StateController;
+	StateController->Subscribe(&StateOutputer);
 	return true;
 }
 
@@ -164,6 +165,11 @@ void SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients)
 		PData[i].pos.z = moveData[i].z;
 		//fprintf(stderr, "[%d] %10s　は %f %f %f にいます。\n", i, PData[i].name, PData[i].pos.x, PData[i].pos.y, PData[i].pos.z);
 	}
+}
+
+extern void SetRank(int id, int rank) {
+	PData[id].rank = rank;
+	fprintf(stderr, "Client [%d] is rank is %d\n", id, PData[id].rank);
 }
 
 /*現在の設置データを返す
@@ -229,13 +235,6 @@ void UpdatePlaceData(PlaceData data)
 	Map.SetObjectData(&data);
 }
 
-GameStateController GetGameStateController() { return *StateController; }
-
-int clamp(const int value, const int low, const int hight)
-{
-	return (value < low) ? low : (hight < value) ? hight : value;
-}
-
 // 方向の取得
 void SetDirection(float direction, int id)
 {
@@ -245,6 +244,7 @@ void SetDirection(float direction, int id)
 	}
 }
 
+<<<<<<< HEAD
 void SetRemoveClient(int id){
 	PData[id].onGame = false;
 	fprintf(stderr, "%sはゲームから退出しました。\n", PData[id].name);
@@ -293,14 +293,10 @@ int GetDistanceFromGround(){
 		{
 			int blockPosZ = pointZ[j] / MAP_MAGNIFICATION;
 			int blockPosY = (PData[MyId].pos.y + PData[MyId].velocity.y) / MAP_MAGNIFICATION;
+=======
+>>>>>>> 6df52397033cad521b5bdd2c77ee44e9f884afd8
 
-			float distance = PData[MyId].pos.y - ((int)PData[MyId].pos.y);
-			fprintf(stderr, "(i%d, j%d) : PlayerPos = (%.2f, %.2f), MapBlock[%d, %d, %d], dis: %f\n",i,j, pointX[i], pointZ[j], blockPosX, blockPosY, blockPosZ, distance);
-		}
-	}
-
-	return result;
-}
+GameStateController GetGameStateController() { return *StateController; }
 
 // ===== * ===== マルチスレッド ===== * ===== //
 

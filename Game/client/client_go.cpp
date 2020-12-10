@@ -50,7 +50,7 @@ void Goroutine()
 
     FILE *fp;
     char output[128];
-    
+
 
     // サーバーを実行
     if ((fp = popen(command, "r")) == NULL)
