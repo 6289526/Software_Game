@@ -269,6 +269,8 @@ pair<bool, bool> SetPlayerVelocity(InputModuleBase *inputModule, PlayerData *pDa
 }
 
 bool DisUseGravity(InputModuleBase *inputModule, PlayerData *pData, Timer *timer){
+	pData->velocity = {0, 0, 0};
+
 	InputType data = inputModule->SystemGetInputType();
 
 	if (inputModule->IsMoveButtonDown())
