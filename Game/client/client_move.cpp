@@ -59,7 +59,7 @@ int GetPutableBlockHeightFromMap(Vector2Int pos){
     return MAP_SIZE_H;
 }
 
-Vector3Int GetTopOfHeightBlockIndex(Vector3 position){ 
+Vector3Int GetTopOfHeightBlockIndex(Vector3 position){
     const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
 
     Vector3Int result = {(int)(position.x / BLOCK_MAGNIFICATION), (int)(position.y / BLOCK_MAGNIFICATION), (int)(position.z / BLOCK_MAGNIFICATION)};
@@ -77,7 +77,7 @@ bool IsPlayerOnGroundSimple(){
     const int myId = GetMyID();
 	float result = 0;
 
-	const int accuracy = 3; 
+	const int accuracy = 3;
 	float pointX[accuracy], pointZ[accuracy];
 	float pointY = pData[myId].pos.y;
 	const int width = pData[myId].pos.w / (accuracy - 1); // X座標
@@ -103,7 +103,7 @@ bool IsPlayerOnGroundSimple(){
 		throw "マップ外 : y座標 : 負\n";
 	else if (MAP_SIZE_H <= blockY)
 		throw "マップ外 : y座標 : 正\n";
-	
+
 	if (pointZ[0] < 0)
 		throw "マップ外 : z座標 :負\n";
 	else if (MAP_SIZE_D <= blockZ)
@@ -123,7 +123,7 @@ bool IsPlayerOnGroundSimple(){
                 return true;
         }
     }
-    
+
 
 	// fprintf(stderr, "(p, b): (%.2f, %.2f), distance: %.4f\n",pData[myId].pos.y, blockPos.y, result);
 	return false;
@@ -136,15 +136,15 @@ pair<bool, bool> SetPlayerVelocity(InputModuleBase *inputModule, PlayerData *pDa
 		return make_pair(false, false);
 	}
 
-	fprintf(stderr,"dir: (%.3f, %.3f, %.3f), pos: (%.2f, %.2f, %.2f), JPG: (%d, %d, %d)\n", pData->velocity.x, pData->velocity.y, pData->velocity.z, pData->pos.x, pData->pos.y, pData->pos.z, isJumped, isPreGround, isOnGround);
+	// fprintf(stderr,"dir: (%.3f, %.3f, %.3f), pos: (%.2f, %.2f, %.2f), JPG: (%d, %d, %d)\n", pData->velocity.x, pData->velocity.y, pData->velocity.z, pData->pos.x, pData->pos.y, pData->pos.z, isJumped, isPreGround, isOnGround);
 
 	if (!USE_GRAVITY){
 		return make_pair(DisUseGravity(inputModule, pData, timer), false);
 	}
-	else 
+	else
 	{
 		InputType data = inputModule->SystemGetInputType();
-		
+
 		try
 		{
 			isPreGround = isOnGround;

@@ -79,7 +79,7 @@ void SetupClient(char *server_name, u_short port)
     char user_name[MAX_LEN_NAME];
     NameSetUp();
     sprintf(user_name, "%s", MyName);
-    
+
     // 名前を送信する
     SendData(user_name, MAX_LEN_NAME);
 
@@ -232,6 +232,7 @@ int ExeCommand()
     float direction = 0;
     VelocityFlag flags[MAX_NUMCLIENTS];
     int id = 0;
+    int rank = 0;
     // 通信を継続するかを判定する変数
     int result = 1;
     // dataの初期化
@@ -255,7 +256,7 @@ int ExeCommand()
         }
         // 受け取った座標とフラッグをシステムモジュールにわたす
         SetPlace(data, NumClients);
-        
+
         UpdateFlag(flags, NumClients);
 
         // 通信継続
@@ -267,11 +268,11 @@ int ExeCommand()
         if(placeData.object != NonBlock){
             fprintf(stderr, "ブロック置けた！\n");
             UpdatePlaceData(placeData);
-            
+
         }else{
             fprintf(stderr, "ブロックがおけなかった\n");
         }
-        
+
         result = 1;
         break;
     case QUIT_COMMAND: // 通信終了
@@ -282,12 +283,19 @@ int ExeCommand()
         result = 1;
         break;
     case GOAL_COMMAND:
-        fprintf(stderr, "you goaled.");
+        ReceiveData(&rank, sizeof(int));
+        fprintf(stderr, "you goaled.\n");
+        SetRank(MyId, rank);
         result = 1;
         break;
     case FINISH_COMMAND:
         fprintf(stderr, "All clients goaled.\n");
-        result = 0;
+        for (int i = 0; i < NumClients; ++i)  {
+          ReceiveData(&rank, sizeof(int));
+          SetRank(i, rank);
+        }
+        result = 1;
+        break;
     // case GOAL_COMMAND:
     //     fprintf(stderr, "GOALLLL!!!");
     //     // 通信継続
@@ -301,7 +309,7 @@ int ExeCommand()
         break;
     default:
         // 上記以外のコマンドは存在しないので、エラーを表示して終了
-        fprintf(stderr, "ExeCommand(): %c is not a valid command.\n", com);
+        fprintf(stderr, "ExeCommand(): %c, %d is not a valid command.\n", com, com);
         // 通信継続
         result = 1;
     }
