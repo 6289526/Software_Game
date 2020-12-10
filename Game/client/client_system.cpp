@@ -223,6 +223,15 @@ void UpdatePlaceData(PlaceData data)
 	Map.SetObjectData(&data);
 }
 
+// 方向の取得
+void SetDirection(float direction, int id)
+{
+	if (id != MyId)
+	{
+		PData[id].direction = direction;
+	}
+}
+
 GameStateController GetGameStateController() { return *StateController; }
 
 // ===== * ===== マルチスレッド ===== * ===== //
