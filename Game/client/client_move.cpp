@@ -1,12 +1,15 @@
-#include "client_common.h"
 #include "math.h"
 #include "client_move.h"
 
+#define USE_GRAVITY true
 #define PI 3.14159265358979323846
+
+static bool isOnGround = true, isJumped = false, isPreGround;
 
 // ===== * ===== プロトタイプ宣言 ===== * ===== //
 float DegreeToRadian(float degree){ return degree * PI / 180.0; }
 float RadianToDegree(float radian){ return radian * 180.0 / PI; }
+bool DisUseGravity(InputModuleBase *inputModule, PlayerData *pData, Timer *timer);
 
 /*ブロックの設置場所を計算する
 * 引数
@@ -63,7 +66,7 @@ Vector3Int GetTopOfHeightBlockIndex(Vector3 position){
 
     for (; result.y >= 0; result.y--) // yを減らしていく = つけると...
     {
-        if (terrainData[result.x][result.y][result.z] != BlockType::NonBlock)
+        if (terrainData[result.x][result.y][result.z] > BlockType::NonBlock)
             return result;
     }
     return result;
@@ -123,5 +126,233 @@ bool IsPlayerOnGroundSimple(){
     
 
 	// fprintf(stderr, "(p, b): (%.2f, %.2f), distance: %.4f\n",pData[myId].pos.y, blockPos.y, result);
+	return false;
+}
+
+pair<bool, bool> SetPlayerVelocity(InputModuleBase *inputModule, PlayerData *pData, Timer *timer){
+
+	if (inputModule == NULL || pData == NULL || timer == NULL) {
+		fprintf(stderr,"Error: input, pData, timerのいずれかがNULLです\n");
+		return make_pair(false, false);
+	}
+
+	fprintf(stderr,"dir: (%.3f, %.3f, %.3f), pos: (%.2f, %.2f, %.2f), JPG: (%d, %d, %d)\n", pData->velocity.x, pData->velocity.y, pData->velocity.z, pData->pos.x, pData->pos.y, pData->pos.z, isJumped, isPreGround, isOnGround);
+
+	if (!USE_GRAVITY){
+		return make_pair(DisUseGravity(inputModule, pData, timer), false);
+	}
+	else 
+	{
+		InputType data = inputModule->SystemGetInputType();
+		
+		try
+		{
+			isPreGround = isOnGround;
+			isOnGround = IsPlayerOnGroundSimple();
+		}
+		catch (char const *e) // エラー処理
+		{
+			fprintf(stderr, "%s", e);
+		}
+
+		pData->velocity.x = 0;
+
+		if (isOnGround && !isJumped){
+			pData->velocity.y = 0;}
+
+		if (!isPreGround && isOnGround)
+			isJumped = false;
+
+		pData->velocity.z = 0;
+
+		if (inputModule->IsMoveButtonDown() || !isOnGround)
+		{
+			if (data.U)
+			{
+				data.U = false;
+				pData->velocity.y = -1;
+			}
+			// 前
+			if (data.Forward)
+			{
+				data.Forward = false;
+				if (strcmp(WiiAddress, "") != 0)
+				{
+					pData->velocity.x += GetMoveDirection(*pData, 0).x * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
+					pData->velocity.z += GetMoveDirection(*pData, 0).z * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
+				}
+				else
+				{
+					pData->velocity.x += GetMoveDirection(*pData, 0).x * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
+					pData->velocity.z += GetMoveDirection(*pData, 0).z * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
+				}
+			}
+			// 左右
+			if (data.Left)
+			{
+				data.Left = false;
+				// if(strcmp(WiiAddress, "") != 0){
+				// 	pData->velocity.x += 5*GetMoveDirection(*pData, 90).x * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
+				// 	pData->velocity.z += 5*GetMoveDirection(*pData, 90).z * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
+					pData->direction += PLAYER_ROTATE_SPEED * timer->GetDeltaTime();
+				// }
+				// else
+				// {
+				// 	pData->velocity.x += GetMoveDirection(*pData, 90).x * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
+				// 	pData->velocity.z += GetMoveDirection(*pData, 90).z * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
+				// }
+			}
+
+			else if (data.Right)
+			{
+				data.Right = false;
+				// if(strcmp(WiiAddress, "") != 0){
+				// 	pData->velocity.x += 5*GetMoveDirection(*pData, 270).x * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
+				// 	pData->velocity.z += 5*GetMoveDirection(*pData, 270).z * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
+					pData->direction -= PLAYER_ROTATE_SPEED * timer->GetDeltaTime();
+				// }
+				// else{
+				// pData->velocity.x += GetMoveDirection(*pData, 270).x * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
+				// pData->velocity.z += GetMoveDirection(*pData, 270).z * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
+				// }
+			}
+			// ジャンプ
+			if (data.Jump && isOnGround == 1)
+			{
+				data.Jump = false;
+				pData->velocity.y += PLAYER_JUMP_POWER;
+				isJumped = true;
+			}
+			else if (!isOnGround)
+			{
+				pData->velocity.y -= GRAVITY * timer->GetDeltaTime();
+			}
+
+			if (data.R)
+			{
+				pData->direction -= PLAYER_ROTATE_SPEED * timer->GetDeltaTime();
+				data.R = false;
+			}
+			if (data.L)
+			{
+				pData->direction += PLAYER_ROTATE_SPEED * timer->GetDeltaTime();
+				data.L = false;
+			}
+
+			///////////////////////////////// デバッグ用 後ろに下がる
+			if (data.D)
+			{
+				data.D = false;
+				pData->velocity.x += GetMoveDirection(*pData, 180).x * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
+				pData->velocity.z += GetMoveDirection(*pData, 180).z * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
+			}
+			/////////////////////////////////
+
+			if (TERMINAL_SPEED < pData->velocity.x)
+			{
+				pData->velocity.x = TERMINAL_SPEED;
+			}
+			if (TERMINAL_SPEED < pData->velocity.y)
+			{
+				pData->velocity.y = TERMINAL_SPEED;
+			}
+			if (TERMINAL_SPEED < pData->velocity.z)
+			{
+				pData->velocity.z = TERMINAL_SPEED;
+			}
+
+			return make_pair(true, isJumped);
+		}
+	}
+
+	return make_pair(false, isJumped);
+}
+
+bool DisUseGravity(InputModuleBase *inputModule, PlayerData *pData, Timer *timer){
+	InputType data = inputModule->SystemGetInputType();
+
+	if (inputModule->IsMoveButtonDown())
+	{
+		if (data.U)
+		{
+			pData->velocity.y -= 1;
+		}
+		// 前
+		if (data.Forward)
+		{
+			if (strcmp(WiiAddress, "") != 0)
+			{
+				pData->velocity.x += GetMoveDirection(*pData, 0).x * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
+				pData->velocity.z += GetMoveDirection(*pData, 0).z * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
+			}
+			else
+			{
+				pData->velocity.x += GetMoveDirection(*pData, 0).x * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
+				pData->velocity.z += GetMoveDirection(*pData, 0).z * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
+			}
+		}
+		// 左右
+		if (data.Left)
+		{
+			// if(strcmp(WiiAddress, "") != 0){
+			// 	pData->velocity.x += 5*GetMoveDirection(*pData, 90).x * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
+			// 	pData->velocity.z += 5*GetMoveDirection(*pData, 90).z * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
+				pData->direction += PLAYER_ROTATE_SPEED * timer->GetDeltaTime();
+			// }
+			// else
+			// {
+			// 	pData->velocity.x += GetMoveDirection(*pData, 90).x * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
+			// 	pData->velocity.z += GetMoveDirection(*pData, 90).z * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
+			// }
+		}
+
+		else if (data.Right)
+		{
+			// if(strcmp(WiiAddress, "") != 0){
+			// 	pData->velocity.x += 5*GetMoveDirection(*pData, 270).x * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
+			// 	pData->velocity.z += 5*GetMoveDirection(*pData, 270).z * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
+				pData->direction -= PLAYER_ROTATE_SPEED * timer->GetDeltaTime();
+			// }
+			// else{
+			// pData->velocity.x += GetMoveDirection(*pData, 270).x * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
+			// pData->velocity.z += GetMoveDirection(*pData, 270).z * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
+			// }
+		}
+
+		if (data.Jump){
+			pData->velocity.y += 1;
+		}
+
+		if (data.R)
+		{
+			pData->direction -= PLAYER_ROTATE_SPEED * timer->GetDeltaTime();
+		}
+		if (data.L)
+		{
+			pData->direction += PLAYER_ROTATE_SPEED * timer->GetDeltaTime();
+		}
+
+		///////////////////////////////// デバッグ用 後ろに下がる
+		if (data.D)
+		{
+			pData->velocity.x += GetMoveDirection(*pData, 180).x * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
+			pData->velocity.z += GetMoveDirection(*pData, 180).z * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
+		}
+		/////////////////////////////////
+
+		if (TERMINAL_SPEED < pData->velocity.x)
+		{
+			pData->velocity.x = TERMINAL_SPEED;
+		}
+		if (TERMINAL_SPEED < pData->velocity.y)
+		{
+			pData->velocity.y = TERMINAL_SPEED;
+		}
+		if (TERMINAL_SPEED < pData->velocity.z)
+		{
+			pData->velocity.z = TERMINAL_SPEED;
+		}
+		return true;
+	}
 	return false;
 }
