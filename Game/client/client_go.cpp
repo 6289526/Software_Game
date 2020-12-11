@@ -51,6 +51,7 @@ void Goroutine()
     FILE *fp;
     char output[128];
 
+
     // サーバーを実行
     if ((fp = popen(command, "r")) == NULL)
     {
@@ -70,7 +71,7 @@ void Goroutine()
     while (fgets(output, 128, fp) != NULL)
     {
         //  標準出力を読み取る
-        fprintf(stderr, "out:%s\n", output);
+        // fprintf(stderr, "out:%s\n", output);
 
         if (!GoSInput.J)
         {

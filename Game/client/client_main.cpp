@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
 		SDL_Delay(10);
 		initData.timer->UpdateFrame(); // Update the game frame.
 	}
-
+	fprintf(stderr, "hoge\n");
 	// ウィンドウシステムの終了
 	// TerminateWindowSys();
 

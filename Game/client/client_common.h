@@ -16,6 +16,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#include <tuple>
 #include "../header/constants.h"
 #include "client_map.hpp"
 #include "client_system.h"
@@ -25,6 +26,14 @@
 #include "client_gamestate.hpp"
 #include "graphic.h"
 #include "client_smart.h"
+
+#define PLAYER_MOVE_SPEED 15					   // 移動速度
+#define PLAYER_ROTATE_SPEED 2					   // 回転速度
+#define PLAYER_JUMP_POWER 1						   // ジャンプ力
+#define PLAYER_HAND_LENGTH (BLOCK_MAGNIFICATION + PLAYER_W) // 手の長さ(ブロックの設置先までの距離)
+
+#define GRAVITY 9.8 * 0.25		// 重力
+#define TERMINAL_SPEED (BLOCK_MAGNIFICATION - 1) // 終端速度
 
 extern int Num_Clients; // クライアント人数
 extern char WiiAddress[18];
@@ -73,6 +82,7 @@ extern ClientMap Map;
 extern int GetMyID();
 extern void SetMyID(int);
 extern void SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients);
+extern void SetRank(int id, int rank);
 extern void UpdateFlag(VelocityFlag* flag, int numClients);
 extern PlaceData GetPlaceData();
 extern void SystemRun();
