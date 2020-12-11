@@ -50,7 +50,6 @@ void Goroutine()
 
     FILE *fp;
     char output[128];
-    
 
     // サーバーを実行
     if ((fp = popen(command, "r")) == NULL)
@@ -66,6 +65,8 @@ void Goroutine()
     char U[1] = "";
     char P[1] = "";
     char E[1] = "";
+    char Up[1] = "";
+    char Down[1] = "";
     // スマホからの入力を受け取る
     while (fgets(output, 128, fp) != NULL)
     {
@@ -86,36 +87,44 @@ void Goroutine()
         else
         {
             // 毎回もとに戻す
-            GoSInput = (SmartInput){true, false, false, false, false, false, false};
+            GoSInput = (SmartInput){true, false, false, false, false, false, false, false, false};
             // output[12] = '\0';
             // U は Jump
             // F R L U P Q
-            sscanf(output, "%s %s %s %s %s %s", F, R, L, U, P, E);
+            sscanf(output, "%s %s %s %s %s %s %s %s", F, R, L, U, P, E, Up, Down);
             // fprintf(stderr, "F:%s %s %s %s %s %s\n", F, R, L, U, P, E);
 
-            if (strcmp(F, "tfffff") >= 0) //Forward
+            if (strcmp(F, "tfffffff") >= 0) //Forward
             {
                 GoSInput.F = true;
             }
-            if (strcmp(R, "tffff") >= 0) //Right
+            if (strcmp(R, "tffffff") >= 0) //Right
             {
                 GoSInput.R = true;
             }
-            if (strcmp(L, "tfff") >= 0) //Left
+            if (strcmp(L, "tfffff") >= 0) //Left
             {
                 GoSInput.L = true;
             }
-            if (strcmp(U, "tff") >= 0) //Up
+            if (strcmp(U, "tffff") >= 0) //Up
             {
                 GoSInput.U = true;
             }
-            if (strcmp(P, "tf") >= 0) //Put
+            if (strcmp(P, "tfff") >= 0) //Put
             {
                 GoSInput.P = true;
             }
-            if (strcmp(E, "t") >= 0) //Exit <<--これはスマホがサイトから離れたら
+            if (strcmp(E, "tff") >= 0) //Exit <<--これはスマホがサイトから離れたら
             {
                 GoSInput.E = true;
+            }
+            if (strcmp(Up, "tf") >= 0)
+            {
+                GoSInput.Up = true;
+            }
+            if (strcmp(Down, "t") >= 0)
+            {
+                GoSInput.Down = true;
             }
         }
     }

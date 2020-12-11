@@ -9,6 +9,8 @@ typedef struct SmartInput{
     bool P;
     bool U;
     bool E;
+    bool Up;
+    bool Down;
 } SmartInput;
 
 extern SmartInput GoSInput;
