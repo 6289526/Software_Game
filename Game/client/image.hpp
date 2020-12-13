@@ -9,7 +9,7 @@
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_opengl.h>
 #include <GL/glu.h>
-#include "../header/client_common.h"
+#include "client_common.h"
 
 typedef struct{
     float x;
