@@ -1,29 +1,49 @@
-let pDeviceOrientation;
+<!-- index.html -->
+
+
+<!doctype html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1，viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="stylesheet" href="./css/style.css">
+  <title>Part 1</title>
+
+</head>
+
+<body style="margin:0">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.0.0/p5.min.js"></script>
+  <script src="http://p5play.molleindustria.org/lib/p5.play.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/addons/p5.sound.js"></script>
+  <script>
+    let pDeviceOrientation;
     var socket = null;
     var direction_circleL_Image;
     var direction_circleS_Image;
-    // var angle = 0;
+    var angle = 0;
 
     // タッチした情報を格納するクラス
-    // let circleL = [];
-    // let circleS = [];
-    // タッチした情報を格納するクラス
+    let circleL = [];
+    let circleS = [];
     class touchObject {
       constructor(_touch) {
-        this.angle = 0;
         this.touch = _touch;
         this.id = _touch.id;
         this.count = 0;
-        this.direction_circleL;
-        this.direction_circleL = createSprite(this.touch.x, this.touch.y);
-        this.direction_circleL.addAnimation('bace', direction_circleL_Image);
-        this.direction_circleL.scale = 0.15;
-        
-        this.direction_circleS;
-        this.direction_circleS = createSprite(this.touch.x, this.touch.y);
-        this.direction_circleS.addAnimation('bace', direction_circleS_Image);
-        this.direction_circleS.scale = 0.15;
-        
+
+        var direction_circleL;
+        direction_circleL = createSprite(this.touch.x, this.touch.y);
+        direction_circleL.addAnimation('bace', direction_circleL_Image);
+        direction_circleL.scale = 0.15;
+        circleL.push(direction_circleL);
+        var direction_circleS;
+        direction_circleS = createSprite(this.touch.x, this.touch.y);
+        direction_circleS.addAnimation('bace', direction_circleS_Image);
+        direction_circleS.scale = 0.15;
+        circleS.push(direction_circleS);
       }
 
       update() {
@@ -32,11 +52,11 @@ let pDeviceOrientation;
         // 削除判定
         // 同じIDのtouchが存在しなければ削除
         let isExist = false;
+
         touches.forEach(element => {
           if (element.id === this.id) {
             this.touch = element;
             isExist = true;
-
           }
         });
 
@@ -48,42 +68,40 @@ let pDeviceOrientation;
 
       draw() {
         noFill();
-        // drawSprites();
+        
         // 回す
-        // for (var i = 0; i < circleS.length; i++) {
-          this.direction_circleS.life = 10;
-          this.direction_circleS.position.x = this.touch.x;
-          this.direction_circleS.position.y = this.touch.y;
-          this.direction_circleS._rotation = this.angle;
-          this.direction_circleS.scale = 0.15 + 0.05*sin(this.angle*PI/180);
-        // }
-        // for (var i = 0; i < circleL.length; i++) {
-          this.direction_circleL.life = 10;
-          this.direction_circleL.position.x = this.touch.x;
-          this.direction_circleL.position.y = this.touch.y;
-          this.direction_circleL._rotation = -this.angle;
-          this.direction_circleL.scale = 0.15 + 0.05*sin(this.angle*PI/180);
-        // }
-        // direction_circleS.scale = 0.1 + 0.025*sin(angle/180*PI);
-
-        this.angle += 4;
-        if (this.angle === 360) {
-          this.angle = 0;
+        for(var i = 0; i < circleS.length; i++){
+          circleS[i].position.x = this.touch.x;
+          circleS[i].position.y = this.touch.y;
+          circleS[i]._rotation = angle;
         }
+        for(var i = 0; i < circleL.length; i++){
+          circleL[i].position.x = this.touch.x;
+          circleL[i].position.y = this.touch.y;
+          circleL[i]._rotation = -angle;
+        }
+        // direction_circleS.scale = 0.1 + 0.025*sin(angle/180*PI);
+        
+        angle += 2;
+        if (angle === 360) {
+          angle = 0;
+        }
+
       }
     }
 
     let touchObjectList = [];
+    
 
     var scdSound;
     var eynSound;
     function preload() {
       soundFormats('mp3', 'ogg');
-      scdSound = loadSound('assets/sccesscond.mp3')
-      // eynSound = loadSound('assets/entername');
+      scdSound = loadSound('assets/sccesscond.mp3');
+      eynSound = loadSound('assets/entername');
       // 方向
-      direction_circleL_Image = loadImage('assets/direction_circleS.png');
-      direction_circleS_Image = loadImage('assets/direction_circleL.png');
+      direction_circleL_Image = loadImage('direction_circleL.png');
+      direction_circleS_Image = loadImage('direction_circleS.png');
     }
 
 
@@ -160,7 +178,7 @@ let pDeviceOrientation;
 
       switch (deviceMode) {
         case "launch":
-          background(0);
+          background(0, 2);
           textSize(45);
           textAlign(CENTER);
           text('Click here.', width / 2, height / 2);
@@ -220,20 +238,18 @@ let pDeviceOrientation;
               if (isExist === false) {
                 // 要素の追加
                 touchObjectList.push(new touchObject(element));
-                // console.log(element);
 
               }
             });
           }
 
-
           var circle_index = 0;
           touchObjectList.forEach(element => {
             circle_index++;
             if (element.update() === false) {
-              element.direction_circleS.remove();
-              element.direction_circleL.remove();
               touchObjectList.pop(element);
+              circleL.pop(circleL[circle_index]);
+              circleS.pop(circleS[circle_index]);
             }
           });
 
@@ -301,12 +317,12 @@ let pDeviceOrientation;
         case "gameControl":
           alert(deviceMode);
           console.log(deviceMode);
-          // blendMode(BLEND);
-          background(0);
+          blendMode(BLEND);
+          background(0, 2);
           // スプライトを表示する
           drawSprites();
-          // blendMode(ADD);
-          // stroke(255);
+          blendMode(ADD);
+          stroke(255);
 
 
           var Forward = "f";
@@ -461,3 +477,13 @@ let pDeviceOrientation;
       // }
 
     }
+
+  </script>
+  <!-- <form id="namebox">
+    <textarea></textarea>
+    <input type="submit" value="Send" />
+  </form>
+  <script src="./js/name.js"></script> -->
+</body>
+
+</html>

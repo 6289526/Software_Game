@@ -21,14 +21,20 @@
   <script>
     let pDeviceOrientation;
     var socket = null;
-
+    var direction_circleL_Image;
+    var direction_circleS_Image;
+    var angle = 0;
 
     // タッチした情報を格納するクラス
+    let circleL = [];
+    let circleS = [];
     class touchObject {
       constructor(_touch) {
         this.touch = _touch;
         this.id = _touch.id;
         this.count = 0;
+
+
       }
 
       update() {
@@ -37,6 +43,7 @@
         // 削除判定
         // 同じIDのtouchが存在しなければ削除
         let isExist = false;
+
         touches.forEach(element => {
           if (element.id === this.id) {
             this.touch = element;
@@ -52,20 +59,42 @@
 
       draw() {
         noFill();
-        stroke(abs(this.id * 73) % 360, 70, 10);
-        strokeWeight(this.count / 2);
-        ellipse(this.touch.x, this.touch.y, this.count * this.count / 20, this.count * this.count / 20);
+
+        // // 回す
+        // for (var i = 0; i < circleS.length; i++) {
+        //   circleS[i].position.x = this.touch.x;
+        //   circleS[i].position.y = this.touch.y;
+        //   circleS[i].life = 10;
+        //   circleS[i]._rotation = angle;
+        // }
+        // for (var i = 0; i < circleL.length; i++) {
+        //   circleL[i].position.x = this.touch.x;
+        //   circleL[i].position.y = this.touch.y;
+        //   circleL[i].life = 10;
+        //   circleL[i]._rotation = -angle;
+        // }
+        // // direction_circleS.scale = 0.1 + 0.025*sin(angle/180*PI);
+
+        // angle += 2;
+        // if (angle === 360) {
+        //   angle = 0;
+        // }
+
       }
     }
 
     let touchObjectList = [];
 
+
     var scdSound;
     var eynSound;
     function preload() {
       soundFormats('mp3', 'ogg');
-      scdSound = loadSound('assets/sccesscond.mp3')
+      scdSound = loadSound('assets/sccesscond.mp3');
       eynSound = loadSound('assets/entername');
+      // 方向
+      direction_circleL_Image = loadImage('assets/direction_circleL.png');
+      direction_circleS_Image = loadImage('assets/direction_circleS.png');
     }
 
 
@@ -130,6 +159,20 @@
 
       console.log(buttons);
 
+      for (var i = 0; i < 5; i++) {
+        var direction_circleL;
+        direction_circleL = createSprite(-500, -500);
+        direction_circleL.addAnimation('bace', direction_circleL_Image);
+        direction_circleL.scale = 0.15;
+        // direction_circleL.life = 10;
+        circleL.push(direction_circleL);
+        var direction_circleS;
+        direction_circleS = createSprite(-500, -500);
+        direction_circleS.addAnimation('bace', direction_circleS_Image);
+        direction_circleS.scale = 0.15;
+        // direction_circleS.life = 10;
+        circleS.push(direction_circleS);
+      }
     }
 
 
@@ -170,12 +213,36 @@
           break;
         case "enterName":
           console.log(deviceMode);
-          blendMode(BLEND);
-          background(0, 2);
+          // blendMode(BLEND);
+          background(0);
           // スプライトを表示する
           drawSprites();
-          blendMode(ADD);
-          stroke(255);
+          text(touches.length, width / 2, height / 2);
+          console.log(touches.length);
+          for (var i = 0; i < 5; i++) {
+            // circleS[i].position.x = windowWidth/2;
+            // circleS[i].position.y = windowHeight/2;
+            // circleS[i]._rotation = angle;
+            // circleL[i].position.x = windowWidth/2;
+            // circleL[i].position.y = windowHeight/2;
+            // circleL[i]._rotation = angle;
+            circleS[i].position.x = -500;
+            circleS[i].position.y = -500;
+            circleS[i]._rotation = angle;
+            circleS[i].scale = 0.15 + 0.05*sin(angle*PI/90);
+            circleL[i].position.x = -500;
+            circleL[i].position.y = -500;
+            circleL[i]._rotation = -angle;
+            circleL[i].scale = 0.15 + 0.05*sin(angle*PI/90);
+          }
+          angle += 2;
+          if (angle === 360) {
+            angle = 0;
+          }
+          // text(touches.length, width / 2, height / 2);
+          // console.log(touches);
+          // blendMode(ADD);
+          // stroke(255);
           // textSize(45);
           // textAlign(CENTER);
           // text(index, width / 2, height / 2);
@@ -186,81 +253,100 @@
           var R2 = "f";
           var R3 = "f";
           var R4 = "f";
-          
+
 
           if (touches.length != 0) {
-
+            let tid = 0;
             // 初出現のIDを探す
             touches.forEach(element => {
-              // console.log(element);
-              let isExist = false;
-              touchObjectList.forEach(object => {
-                if (element.id === object.id) {
-                  isExist = true;
-                }
-              });
-              if (isExist === false) {
-                // 要素の追加
-                touchObjectList.push(new touchObject(element));
-              }
+
+
+              tid++;
+              //   // console.log(element);
+              //   let isExist = false;
+              //   touchObjectList.forEach(object => {
+              //     if (element.id === object.id) {
+              //       isExist = true;
+              //     }
+              //   });
+              //   if (isExist === false) {
+              //     // 要素の追加
+              //     touchObjectList.push(new touchObject(element));
+
+              //   }
             });
           }
 
+          // var circle_index = 0;
+          // touchObjectList.forEach(element => {
+          //   circle_index++;
+          //   if (element.update() === false) {
+          //     touchObjectList.pop(element);
 
-          touchObjectList.forEach(element => {
-            if (element.update() === false) {
-              touchObjectList.pop(element);
-            }
-          });
+          //   }
+          // });
 
           // if (mouseIsPressed) {
           // すべてのタッチした場所で判定
           var touchCount = 0;
-          touchObjectList.forEach(element => {
-            /* キーマップ
-            L1 L1 R1 R2
-            L2 L2 R3 R4
-            */
-            if (element.touch.y <= windowHeight / 2) {
-              if (element.touch.x >= windowWidth / 2) {
-                L1 = "t";
-                
-              }
-              if (element.touch.x < windowWidth / 2) {
-                L2 = "t";
-                if (index < 18) {
-                  index += 9;
+          if (touches.length != 0) {
+            let tid = 0;
+            touches.forEach(element => {
+              if (tid <= 5) {
+                if(tid === 5){
+                  tid = 0;
                 }
-              }
-            }
-            else {
-              if (element.touch.x >= windowWidth / 2) {
-                if (element.touch.y < windowHeight * 3 / 4) {
-                  R1 = "t";
-                  if (index != 0 && index != 9 && index != 18) {
-                    index--;
-                  }
-                }
-                else {
-                  R2 = "t";
-                  if (index != 8 && index != 17 && index != 26) {
-                    index++;
-                  }
-                }
-              }
-              else {
-                if (element.touch.y < windowHeight * 3 / 4) {
-                  R3 = "t";
-                }
-                else {
-                  R4 = "t";
-                }
+                circleS[tid].position.x = element.x;
+                circleS[tid].position.y = element.y;
+                circleL[tid].position.x = element.x;
+                circleL[tid].position.y = element.y;
+                /* キーマップ
+                L1 L1 R1 R2
+                L2 L2 R3 R4
+                */
+                if (element.y <= windowHeight / 2) {
+                  if (element.x >= windowWidth / 2) {
+                    L1 = "t";
 
+                  }
+                  if (element.x < windowWidth / 2) {
+                    L2 = "t";
+                    if (index < 18) {
+                      index += 9;
+                    }
+                  }
+                }
+                else {
+                  if (element.x >= windowWidth / 2) {
+                    if (element.y < windowHeight * 3 / 4) {
+                      R1 = "t";
+                      if (index != 0 && index != 9 && index != 18) {
+                        index--;
+                      }
+                    }
+                    else {
+                      R2 = "t";
+                      if (index != 8 && index != 17 && index != 26) {
+                        index++;
+                      }
+                    }
+                  }
+                  else {
+                    if (element.y < windowHeight * 3 / 4) {
+                      R3 = "t";
+                    }
+                    else {
+                      R4 = "t";
+                    }
+
+                  }
+                }
+                touchCount++;
+                tid++;
               }
-            }
-            touchCount++;
-          })
-          if (touchObjectList.length != 0) {
+            });
+          }
+          if (touches.length != 0) {
             socket.send(L1 + " " + L2 + " " + R1 + " " + R2 + " " + R3 + " " + R4 + " " + "f");
             clickFlag = 1;
             // if (index == 26) {
@@ -273,100 +359,11 @@
               socket.send("f f f f f f f ");
             }
           }
-          break;
-        case "gameControl":
-          alert(deviceMode);
-          console.log(deviceMode);
-          blendMode(BLEND);
-          background(0, 2);
-          // スプライトを表示する
-          drawSprites();
-          blendMode(ADD);
-          stroke(255);
 
 
-          var Forward = "f";
-          var Right = "f";
-          var Left = "f";
-          var Jump = "f";
-          var Put = "f";
-
-          if (touches.length != 0) {
-
-            // 初出現のIDを探す
-            touches.forEach(element => {
-              // console.log(element);
-              let isExist = false;
-              touchObjectList.forEach(object => {
-                if (element.id === object.id) {
-                  isExist = true;
-                }
-              });
-              if (isExist === false) {
-                // 要素の追加
-                touchObjectList.push(new touchObject(element));
-              }
-            });
-          }
-
-
-          touchObjectList.forEach(element => {
-            if (element.update() === false) {
-              touchObjectList.pop(element);
-            }
-          });
-
-          // if (mouseIsPressed) {
-          // すべてのタッチした場所で判定
-          var touchCount = 0;
-          touchObjectList.forEach(element => {
-            /* キーマップ
-            F F L R
-            F F p J
-            */
-            if (element.touch.y <= windowHeight / 2) {
-              if (element.touch.x >= windowWidth / 2) {
-                Forward = "t";
-              }
-              if (element.touch.x < windowWidth / 2) {
-                Forward = "t";
-              }
-            }
-            else {
-              if (element.touch.x >= windowWidth / 2) {
-                if (element.touch.y < windowHeight * 3 / 4) {
-                  Left = "t";
-                }
-                else {
-                  Right = "t";
-                }
-              }
-              else {
-                if (element.touch.y < windowHeight * 3 / 4) {
-                  Put = "t";
-                }
-                else {
-                  Jump = "t";
-                }
-
-              }
-            }
-            touchCount++;
-          })
-          if (touchObjectList.length != 0) {
-            socket.send(Forward + " " + Right + " " + Left + " " + Jump + " " + Put + " " + "f f f");
-            clickFlag = 1;
-          }
-          else {
-            if (clickFlag = 1) {
-              clickFlag = 0;
-              socket.send("f f f f f f f f");
-            }
-          }
           break;
       }
     }
-
 
     function createSock() {
       // webソケット
