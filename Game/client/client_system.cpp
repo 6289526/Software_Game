@@ -1,7 +1,6 @@
 #include "client_common.h"
 #include "graphic.h"
 #include "client_move.h"
-#include <string.h>
 #include "go.h"
 
 static int MyId;   // クライアントのID
@@ -16,6 +15,7 @@ InputModuleBase *Input;				  	// Input Module
 Timer *Time;						  	// FrameTimer
 GameStateController *StateController; 	// GameStateController
 GameStateOutputer StateOutputer;	  	// StateOutputer
+BGMController BgmController;			// BGM Controller
 
 SDL_Thread *InputThreadVar;
 static bool isJumped = false;
@@ -103,6 +103,9 @@ bool InitSystem(InitData *data)
 	StateController = new GameStateController();
 	data->stateController = StateController;
 	StateController->Subscribe(&StateOutputer);
+	StateController->Subscribe(&BgmController);
+	
+	StateController->OnNest(GameState::Init);
 	return true;
 }
 

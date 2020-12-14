@@ -6,7 +6,7 @@
 #pragma once
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <string>
 #include <unistd.h>
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -16,6 +16,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 #include <tuple>
 #include "../header/constants.h"
 #include "client_map.hpp"
@@ -26,6 +27,7 @@
 #include "client_gamestate.hpp"
 #include "graphic.h"
 #include "client_smart.h"
+#include "client_music.hpp"
 
 #define PLAYER_MOVE_SPEED 15					   // 移動速度
 #define PLAYER_ROTATE_SPEED 2					   // 回転速度
