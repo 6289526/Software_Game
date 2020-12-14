@@ -19,12 +19,10 @@
 #include <tuple>
 #include "../header/constants.h"
 #include "client_map.hpp"
-#include "client_system.h"
 #include "client_WiiInput.h"
 #include "client_KeybordInput.h"
 #include "client_time.hpp"
 #include "client_gamestate.hpp"
-#include "graphic.h"
 #include "client_smart.h"
 
 #define PLAYER_MOVE_SPEED 15					   // 移動速度
