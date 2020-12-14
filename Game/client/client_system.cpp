@@ -140,6 +140,7 @@ void InitPlayerData() // プレイヤーデータ初期化処理
 		PData[i].direction = 0;
 		PData[i].rank = 0;
 		PData[i].goal = false;
+		PData[i].onGame = true;
 	}
 }
 

@@ -89,6 +89,8 @@ extern void SystemRun();
 extern void UpdatePlaceData(PlaceData data);
 extern GameStateController GetGameStateController();
 extern void SetDirection(float direction, int id);
+extern void SetRemoveClient(int id);
+
 /*control_setup*/
 extern int ControlSetUp();
 
