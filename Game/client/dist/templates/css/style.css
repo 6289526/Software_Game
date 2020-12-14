@@ -1,0 +1,23 @@
+*{
+    padding: 0;
+    margin: 0;
+    /* background: black; */
+  }
+  
+  canvas{
+    display:block;
+  }
+  #defaultCanvas0{
+    z-index: 1;
+    position: fixed; /*canvasを固定*/
+    top: 0; /*canvasを上に固定*/
+  }
+  
+  #nameBox{
+    z-index: 2;
+    position: absolute;
+    top: 50%;
+    left: 45%;
+    width: 10%;
+    /* display: none; */
+  }

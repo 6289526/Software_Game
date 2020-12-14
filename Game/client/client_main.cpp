@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
 
 	SDL_Thread *goThread;
 	SDL_mutex *gMtx = SDL_CreateMutex();
-	//goThread = SDL_CreateThread(Go, "Go!", gMtx);
+	goThread = SDL_CreateThread(Go, "Go!", gMtx);
 	/*初期設定*/
 	sprintf(server_name, "localhost");
 

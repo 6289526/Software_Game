@@ -1,9 +1,6 @@
 #include "math.h"
 #include "client_move.h"
 
-#define USE_GRAVITY true
-#define PI 3.14159265358979323846
-
 static bool isOnGround = true, isJumped = false, isPreGround;
 
 // ===== * ===== プロトタイプ宣言 ===== * ===== //
@@ -321,13 +318,8 @@ bool DisUseGravity(InputModuleBase *inputModule, PlayerData *pData, Timer *timer
 			// }
 		}
 
-		if (data.Jump){
+		if (data.R){
 			pData->velocity.y += 1;
-		}
-
-		if (data.R)
-		{
-			pData->direction -= PLAYER_ROTATE_SPEED * timer->GetDeltaTime();
 		}
 		if (data.L)
 		{
@@ -354,7 +346,6 @@ bool DisUseGravity(InputModuleBase *inputModule, PlayerData *pData, Timer *timer
 		{
 			pData->velocity.z = TERMINAL_SPEED;
 		}
-		return true;
 	}
-	return false;
+	return true;
 }
