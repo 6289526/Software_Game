@@ -18,6 +18,7 @@ using namespace std;
 
 void Disp();
 void InitGraphic();
+void Init2dGraphic();
 SDL_Renderer* GetWindowRenderer();
 
 void TerminateGraphic();
