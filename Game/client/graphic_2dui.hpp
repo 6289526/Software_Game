@@ -30,7 +30,7 @@ class TimerUI{
         FloatRect timeDst = {0,0,0,0};
 
         char basefile[MAX_FILE_NAME] = "../../data/ui/timer_bace.png";
-        char rotatefile[MAX_FILE_NAME] = "../../data/ui/timer_cercle.png";
+        char rotatefile[MAX_FILE_NAME] = "../../data/ui/timer_circle.png";
 
     public:
         void Set(TTF_Font *font);
@@ -63,8 +63,8 @@ class DirectionUI{
 
 
         char basefile[MAX_FILE_NAME] = "../../data/ui/direction_bace.png";
-        char rotatefile[MAX_FILE_NAME] = "../../data/ui/direction_cercleL.png";
-        char dirfile[MAX_FILE_NAME] = "../../data/ui/direction_cercleS.png";
+        char rotatefile[MAX_FILE_NAME] = "../../data/ui/direction_circleL.png";
+        char dirfile[MAX_FILE_NAME] = "../../data/ui/direction_circleS.png";
         char meterfile[MAX_FILE_NAME] = "../../data/ui/direction_meter.png";
 
     public:
