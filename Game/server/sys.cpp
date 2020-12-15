@@ -434,38 +434,51 @@ Collision Collision_CB_Vertical(const int chara_ID, const int y,
   return ret;
 }
 
-// キャラとキャラの当たり判定
-static float Collision_CC_Horizontal(FloatCube &player_1, FloatCube &player_2) {
+// 中心座標を入れます
+static void Get_Chara_Center(const FloatCube player_1, const FloatCube player_2, FloatCube &pos_1, FloatCube &pos_2) {
   // キャラの半径
-  const float radius_1 =
-      (player_1.w < player_1.d) ? player_1.d / 2 : player_1.w / 2;
-  const float radius_2 =
-      (player_2.w < player_2.d) ? player_2.d / 2 : player_2.w / 2;
+  pos_1.w = player_1.w / 2;
+  pos_2.w = player_2.w / 2;
+  pos_1.h = player_1.h / 2;
+  pos_2.h = player_2.h / 2;
+  pos_1.d = player_1.d / 2;
+  pos_2.d = player_2.d / 2;
 
   // キャラの中心座標
-  Vector2 Center_1, Center_2;
+  pos_1.x = player_1.x + pos_1.w;
+  pos_2.x = player_2.x + pos_2.w;
+  pos_1.y = player_1.y + pos_1.h;
+  pos_2.y = player_2.y + pos_2.h;
+  pos_1.z = player_1.z + pos_1.d;
+  pos_2.z = player_2.z + pos_2.d;
+}
 
-  Center_1.x = player_1.x + radius_1;
-  Center_2.x = player_2.x + radius_2;
 
-  // y じゃなくて z だよ
-  Center_1.y = player_1.z + radius_1;
-  Center_2.y = player_2.z + radius_2;
+// キャラとキャラの当たり判定
+static float Collision_CC_Horizontal(FloatCube &player_1, FloatCube &player_2) {
+  // キャラの中心座標
+  FloatCube Center_1, Center_2;
+
+  // 中心座標 と 半径
+  Get_Chara_Center(player_1, player_2, Center_1, Center_2);
 
   // キャラ間距離
   const float x_distance = fabs(Center_1.x - Center_2.x);
-  const float y_distance = fabs(Center_1.y - Center_2.y);
+  const float z_distance = fabs(Center_1.z - Center_2.z);
 
   // キャラ中心間距離
   const float distance =
-      fabs(sqrt(x_distance * x_distance + y_distance * y_distance));
+      fabs(sqrt(x_distance * x_distance + z_distance * z_distance));
+
+  const float radius_1 = (Center_1.w < Center_1.d) ? Center_1.d : Center_2.w;
+  const float radius_2 = (Center_2.w < Center_2.d) ? Center_2.d : Center_2.w;
 
   float overlap = 0; // キャラの重なり
   float angle = 0;   // 2キャラの角度
 
   if (distance < radius_1 + radius_2) {
     overlap = (radius_1 + radius_2) - distance;
-    angle = atan(y_distance / x_distance);
+    angle = atan(z_distance / x_distance);
 
     if (Center_1.x < Center_2.x) {
       player_1.x -= overlap * cos(angle) / 2;
@@ -490,25 +503,11 @@ static float Collision_CC_Horizontal(FloatCube &player_1, FloatCube &player_2) {
 }
 
 static float Collision_CC_Vertical(FloatCube &player_1, FloatCube &player_2) {
-  // キャラの半径
-  const float radius_1_y = player_1.h / 2;
-  const float radius_2_y = player_2.h / 2;
-  const float radius_1_xz =
-      (player_1.w < player_1.d) ? player_1.d / 2 : player_1.w / 2;
-  const float radius_2_xz =
-      (player_2.w < player_2.d) ? player_2.d / 2 : player_2.w / 2;
-
   // キャラの中心座標
-  Vector3 Center_1, Center_2;
+  FloatCube Center_1, Center_2;
 
-  Center_1.x = player_1.x + radius_1_xz;
-  Center_2.x = player_2.x + radius_2_xz;
-
-  Center_1.y = player_1.y + radius_1_y;
-  Center_2.y = player_2.y + radius_2_y;
-
-  Center_1.z = player_1.z + radius_1_xz;
-  Center_2.z = player_2.z + radius_2_xz;
+  // 中心座標 と 半径
+  Get_Chara_Center(player_1, player_2, Center_1, Center_2);
 
   // キャラ間距離
   const float x_distance = fabs(Center_1.x - Center_2.x);
@@ -523,15 +522,20 @@ static float Collision_CC_Vertical(FloatCube &player_1, FloatCube &player_2) {
   const float distance =
       fabs(sqrt(xz_distance * xz_distance + y_distance * y_distance));
 
+  const float radius_1_xz = (Center_1.w < Center_1.d) ? Center_1.d : Center_2.w;
+  const float radius_2_xz = (Center_2.w < Center_2.d) ? Center_2.d : Center_2.w;
+
   float angle = atan(y_distance / xz_distance); // 2キャラの角度 縦
-  float overlap = (radius_1_y + radius_2_y) - (distance * sin(angle)); // キャラの重なり
+  float overlap = (Center_1.h + Center_2.h) - (distance * sin(angle)); // キャラの重なり
 
   // ２次元平面上で重なっていれば
   if (xz_distance < radius_1_xz + radius_2_xz && 0 < overlap) {
     if (Center_1.y < Center_2.y) {
-      player_2.y += overlap;
+      player_2.y += overlap / 2;
+      player_1.y -= overlap / 2;
     } else {
-      player_1.y += overlap;
+      player_1.y += overlap / 2;
+      player_2.y -= overlap / 2;
     }
     return overlap / 2;
   }
@@ -548,8 +552,10 @@ static void Collision_CC(int chara_num) {
       }
 
       if (i != j) {
-        Collision_CC_Horizontal(PData[i].pos, PData[j].pos);
-        Collision_CC_Vertical(PData[i].pos, PData[j].pos);
+        float t = Collision_CC_Horizontal(PData[i].pos, PData[j].pos);
+        if (t <= 0) {
+          Collision_CC_Vertical(PData[i].pos, PData[j].pos);
+        }
       }
     }
   }

@@ -3,12 +3,13 @@
 
 typedef struct SmartInput{
     bool J;
-    bool F;
-    bool L;
-    bool R;
-    bool P;
-    bool U;
-    bool E;
+    bool L1;
+    bool L2;
+    bool R1;
+    bool R2;
+    bool R3;
+    bool R4;
+    bool Q;
 } SmartInput;
 
 extern SmartInput GoSInput;

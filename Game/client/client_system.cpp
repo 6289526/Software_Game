@@ -140,6 +140,7 @@ void InitPlayerData() // プレイヤーデータ初期化処理
 		PData[i].direction = 0;
 		PData[i].rank = 0;
 		PData[i].goal = false;
+		PData[i].onGame = true;
 	}
 }
 
@@ -214,9 +215,14 @@ void UpdateFlag(VelocityFlag *flags, int numClients)
 	{
 		if (flags[i].x == false)
 			PData[i].velocity.x = 0;
-
+#if USE_GRAVITY
 		if (flags[i].y == false && !isJumped){
 			PData[i].velocity.y = 0;}
+#else
+		/*if (flags[i].y == false){
+			PData[i].velocity.y = 0;
+		}*/
+#endif
 
 		if (flags[i].z == false)
 			PData[i].velocity.z = 0;

@@ -30,10 +30,10 @@
 #define PLAYER_MOVE_SPEED 15					   // 移動速度
 #define PLAYER_ROTATE_SPEED 2					   // 回転速度
 #define PLAYER_JUMP_POWER 1						   // ジャンプ力
-#define PLAYER_HAND_LENGTH (MAP_MAGNIFICATION + PLAYER_W) // 手の長さ(ブロックの設置先までの距離)
+#define PLAYER_HAND_LENGTH (BLOCK_MAGNIFICATION + PLAYER_W) // 手の長さ(ブロックの設置先までの距離)
 
 #define GRAVITY 9.8 * 0.25		// 重力
-#define TERMINAL_SPEED (MAP_MAGNIFICATION - 1) // 終端速度
+#define TERMINAL_SPEED (BLOCK_MAGNIFICATION - 1) // 終端速度
 
 extern int Num_Clients; // クライアント人数
 extern char WiiAddress[18];
@@ -89,6 +89,8 @@ extern void SystemRun();
 extern void UpdatePlaceData(PlaceData data);
 extern GameStateController GetGameStateController();
 extern void SetDirection(float direction, int id);
+extern void SetRemoveClient(int id);
+
 /*control_setup*/
 extern int ControlSetUp();
 

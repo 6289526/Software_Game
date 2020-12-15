@@ -52,11 +52,11 @@ struct Collision {
 };
 
 namespace error {
-  enum error {
-    OutSide_Map_x,
-    OutSide_Map_y,
-    OutSide_Map_z,
-  };
+enum error {
+  OutSide_Map_x,
+  OutSide_Map_y,
+  OutSide_Map_z,
+};
 }
 
 const PlayerData *GetPlayerData();
@@ -78,18 +78,22 @@ static int BuryCheck_Horizontal(const int chara_ID, const int accuracy,
                                 const Collision_Dire flag);
 
 // 埋まっているピクセル数を返す 縦
-static int BuryCheck_Vertical(const int chara_ID, const int y, const int accuracy,
-                           Vector3Int block, const float *point_X,
-                           const float *point_Z, const Collision_Dire flag);
+static int BuryCheck_Vertical(const int chara_ID, const int y,
+                              const int accuracy, Vector3Int block,
+                              const float *point_X, const float *point_Z,
+                              const Collision_Dire flag);
 
 // キャラとブロックの当たり判定
 // ｙ ： 基準面の高さの補正
 // accuracy : 当たり判定の精度の調整 3以上 かつ キャラの幅・高さ以下の値
 static Collision Collision_CB_Horizontal(const int chara_ID, const int y = 0,
-                                   const int accuracy = PLAYER_W);
+                                         const int accuracy = PLAYER_W);
 
 static Collision Collision_CB_Vertical(const int chara_ID, const int y,
-                                    const int accuracy = PLAYER_W);
+                                       const int accuracy = PLAYER_W);
+
+// キャラの中心座標を入れる
+static void Get_Chara_Center(const FloatCube player_1, const FloatCube player_2, FloatCube &pos_1, FloatCube &pos_2);
 
 // キャラとキャラの当たり判定 横
 static float Collision_CC_Horizontal(FloatCube &player_1, FloatCube &player_2);
@@ -113,7 +117,6 @@ void MovePosition(int chara_ID); // キャラを移動させる
 void PutBlock(int chara_ID); // ブロックを置けるなら置く
 
 int AllGoal(); // 全員ゴールしていれば１
-
 
 void SetVec(int chara_ID, Vector3 &vec); // キャラの速度ベクトルをセット
 

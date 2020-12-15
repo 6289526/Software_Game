@@ -7,3 +7,6 @@
   canvas{
     display:block;
   }
+  #nameBox{
+    display: none;
+  }
