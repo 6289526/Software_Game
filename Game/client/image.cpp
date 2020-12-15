@@ -7,7 +7,7 @@ void Image::LoadImg(const char *filename){
     img = IMG_Load(filename);
     if(!img){
         //エラー処理
-        printf("image file \"%s\" cannot loaded",filename);
+        fprintf(stderr,"image file \"%s\" cannot loaded\n",filename);
     }else{
         imgRect.x = 0;
         imgRect.y = 0;
@@ -28,7 +28,7 @@ void Image::LoadImg(const char *filename){
 
         glTexImage2D(GL_TEXTURE_2D, 0, img->format->BytesPerPixel, img->w, img->h, 0, Mode, GL_UNSIGNED_BYTE, img->pixels);
 		SDL_FreeSurface(img);
-        fprintf(stderr,"TextureNo.%d:finish to load imgfile:%s\n",Texture,filename);
+        //fprintf(stderr,"TextureNo.%d:finish to load imgfile:%s\n",Texture,filename);
     }
 }
 
@@ -36,13 +36,13 @@ void Image::LoadText(TTF_Font *font, const char *text, SDL_Color color){
     SDL_Surface *img = NULL;
     img = TTF_RenderText_Blended(font, text, color);
     if(!img){
-        printf("ttf font cannot loaded");
+        fprintf(stderr,"text image \"%s\" cannot loaded\n",text);
     }else{
         imgRect.x = 0;
         imgRect.y = 0;
         imgRect.w = img->w;
         imgRect.h = img->h;
-        src = imgRect;
+        src = {0,0,1,1};
         //テクスチャの生成
         glGenTextures(1,&Texture);
         glBindTexture(GL_TEXTURE_2D,Texture);
@@ -55,9 +55,9 @@ void Image::LoadText(TTF_Font *font, const char *text, SDL_Color color){
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
-        glTexImage2D(GL_TEXTURE_2D, 0, img->format->BytesPerPixel, src.w, src.h, 0, Mode, GL_UNSIGNED_BYTE, img->pixels);
+        glTexImage2D(GL_TEXTURE_2D, 0, img->format->BytesPerPixel, img->w, img->h, 0, Mode, GL_UNSIGNED_BYTE, img->pixels);
 		SDL_FreeSurface(img);
-        fprintf(stderr,"TextureNo.%d:finish to load txtimg:%s\n",Texture,text);
+        //fprintf(stderr,"TextureNo.%d:finish to load txtimg:%s\n",Texture,text);
     }
 }
 

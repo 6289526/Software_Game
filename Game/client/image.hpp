@@ -33,4 +33,7 @@ class Image{
         void SetSrcRect(float x = -1, float y = -1, float w = 0, float h = 0);
         //srcRectの範囲0~1
         void Draw(FloatRect *argDst = NULL, FloatRect *argSrc = NULL, float dir = 0); //描画
+        FloatRect GetImgRect(){
+            return imgRect;
+        };
 };
