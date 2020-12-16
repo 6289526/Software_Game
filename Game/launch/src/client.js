@@ -1,8 +1,6 @@
-const fs = remote.require('fs');
-const { BrowserWindow, dialog } = remote;
 const childProcess = require('child_process');
-const { exec } = require('child_process')
-const { spawn } = require('child_process')
+const { exec } = require('child_process');
+
 /**
  * Execute simple Shell command (async wrapper).
  * @param {String} cmd
@@ -29,16 +27,16 @@ async function main(command) {
     // let { stdout } = await sh(command);
     li.textContent = command;
     messages.insertBefore(li, messages.firstElementChild);
-    const spawn = childProcess.spawn(command , { shell: true });
+    const spawn = childProcess.spawn(command, { shell: true });
     spawn.stdout.on('data', (data) => {
         console.log('STDOUT', data.toString());
         // messages.append($("<li>").text(command));
-    for (let line of data.toString().split('\n')) {
-        const li2 = document.createElement('li');
-        li2.textContent = line;
-        messages.insertBefore(li2, messages.firstElementChild);
-        console.log(`${line}`);
-    }
+        for (let line of data.toString().split('\n')) {
+            const li2 = document.createElement('li');
+            li2.textContent = line;
+            messages.insertBefore(li2, messages.firstElementChild);
+            console.log(`${line}`);
+        }
     });
     spawn.stderr.on('data', (data) => {
         console.log('STDERR', data.toString());
@@ -72,26 +70,32 @@ async function kill() {
     }
     console.log(pros[i]);
     main('kill -9' + ' ' + pros[i]);
-    // var messages = document.querySelector('ul');
-    // const li = document.createElement('li');
-    // li.textContent = pros[i];
-    // messages.appendChild(li);
+    
+}
+
+function clean() {
+    const messages = document.querySelector('ul');
+    while (messages.firstChild) {
+        messages.removeChild(messages.firstChild);
+    }
 }
 
 
 window.addEventListener('DOMContentLoaded', onLoad);
 
 function onLoad() {
-    // main('ls');
     document.querySelector('#btnLoad').addEventListener('click', () => {
-        main('cd ../client/build && cmake -DCMAKE_BUILD_TYPE=Release .. && make');
-        // build();
+        main('cd ../client/build && cmake -DCMAKE_BUILD_TYPE=Release .. && make -j8');
     });
     document.querySelector('#btnSave').addEventListener('click', () => {
         main('cd ../client/build && ./client');
     });
     document.querySelector('#btnKill').addEventListener('click', () => {
         kill();
-        // main('cd server/build && cmake -DCMAKE_BUILD_TYPE=Release .. && make');
+        
+    });
+    document.querySelector('#btnClean').addEventListener('click', () => {
+        clean();
+        
     });
 };

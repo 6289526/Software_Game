@@ -1,8 +1,5 @@
-const fs = remote.require('fs');
-const { BrowserWindow, dialog } = remote;
 const childProcess = require('child_process');
-const { exec } = require('child_process')
-const { spawn } = require('child_process')
+const { exec } = require('child_process');
 /**
  * Execute simple Shell command (async wrapper).
  * @param {String} cmd
@@ -72,18 +69,22 @@ async function kill() {
     }
     console.log(pros[i]);
     main('kill -9' + ' ' + pros[i]);
-    // var messages = document.querySelector('ul');
-    // const li = document.createElement('li');
-    // li.textContent = pros[i];
-    // messages.appendChild(li);
+    
 }
 
+function clean() {
+    const messages = document.querySelector('ul');
+    while (messages.firstChild) {
+        messages.removeChild(messages.firstChild);
+    }
+}
 
 window.addEventListener('DOMContentLoaded', onLoad);
+
 var client_num = 1;
 function onLoad() {
     document.querySelector('#btnLoad').addEventListener('click', () => {
-        main('cd ../server/build && cmake -DCMAKE_BUILD_TYPE=Release .. && make');
+        main('cd ../server/build && cmake -DCMAKE_BUILD_TYPE=Release .. && make -j8');
     });
     document.querySelector('#btnSave').addEventListener('click', () => {
         main('cd ../server/build && ./server' + ' ' + client_num);
@@ -96,7 +97,7 @@ function onLoad() {
         // let { stdout } = await sh(command);
         li.textContent = 'Now NumClient:' + client_num;
         messages.insertBefore(li, messages.firstElementChild);
-        // main('cd server/build && cmake -DCMAKE_BUILD_TYPE=Release .. && make');
+        
     });
     document.querySelector('#btnReduce').addEventListener('click', () => {
         client_num--;
@@ -105,10 +106,15 @@ function onLoad() {
         // let { stdout } = await sh(command);
         li.textContent = 'Now NumClient:' + client_num;
         messages.insertBefore(li, messages.firstElementChild);
-        // main('cd server/build && cmake -DCMAKE_BUILD_TYPE=Release .. && make');
+        
     });
     document.querySelector('#btnKill').addEventListener('click', () => {
         kill();
-        // main('cd server/build && cmake -DCMAKE_BUILD_TYPE=Release .. && make');
+        
+    });
+
+    document.querySelector('#btnClean').addEventListener('click', () => {
+        clean();
+        
     });
 };
