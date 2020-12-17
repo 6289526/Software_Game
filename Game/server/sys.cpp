@@ -47,7 +47,7 @@ void InitPlayerData() // プレイヤーデータ初期化処理
     PData[i].pos.x = Pos_Clients.x + i * 20;
     Vector3 t_v = {0, 0, 0};
     PData[i].velocity = t_v;
-    PData[i].direction = 0;
+    PData[i].direction.horizontal = 0;
     PData[i].rank = 0;
     PData[i].goal = false;
   }
@@ -787,8 +787,8 @@ void SendAllPos(int client_num) {
 
 // システムにクライアントの角度を渡す
 void SetDirection(int chara_ID, float direction) {
-  PData[chara_ID].direction = direction;
+  PData[chara_ID].direction.horizontal = direction;
 }
 
 // ネットワークにクライアントの角度を渡す
-float GetDirection(int chara_ID) { return PData[chara_ID].direction; }
+float GetDirection(int chara_ID) { return PData[chara_ID].direction.horizontal; }
