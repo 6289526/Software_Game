@@ -12,6 +12,8 @@ set(CLIENT_CODE
     net
     graphic
     graphic_objmesh
+    image
+    graphic_2dui
     client_system
     client_move
     client_map
