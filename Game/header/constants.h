@@ -106,13 +106,19 @@ typedef struct
 	struct sockaddr_in addr; /*ソケットの設定*/
 } NetworkData;
 
+//プレイヤーの向き
+typedef struct{
+	float horizontal;
+	float vertical;
+}Direction;
+
 /*クライアントの情報*/
 typedef struct
 {
 	char name[MAX_LEN_NAME]; // 名前
 	FloatCube pos;           // 場所
 	Vector3 velocity;        // 速度ベクトル
-	float direction;         // 向き
+	Direction direction;         // 向き
 	int rank;                // 順位
 	bool goal;               // ゴールしているか
 	bool onGame; 			 // ゲームプレイ中かどうか
