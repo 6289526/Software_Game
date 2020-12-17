@@ -33,9 +33,11 @@ find_package(PkgConfig)
 pkg_check_modules(SDL2ttf REQUIRED SDL2_ttf)
 find_package(PkgConfig)
 pkg_check_modules(SDL2image REQUIRED SDL2_image)
+find_package(PkgConfig)
+pkg_check_modules(SDL2mixer REQUIRED SDL2_mixer)
 
 #ヘッダファイルのパスを指定
-include_directories(${SDL2_INCLUDE_DIRS} ${SDL2ttf_INCLUDE_DIRS} ${SDL2image_INCLUDE_DIRS} ${WIIMOTE_HEADER})
+include_directories(${SDL2_INCLUDE_DIRS} ${SDL2ttf_INCLUDE_DIRS} ${SDL2image_INCLUDE_DIRS} ${SDL2mixer_INCLUDE_DIRS} ${WIIMOTE_HEADER})
 
 # 実行ファイル名とソース指定
 add_executable( ${SORYUTION_NAME} ${CLIENT_CODE})

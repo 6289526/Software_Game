@@ -1,7 +1,6 @@
 #include "client_common.h"
 #include "graphic.h"
 #include "client_move.h"
-#include <string.h>
 #include "go.h"
 
 static int MyId;   // クライアントのID
@@ -14,8 +13,9 @@ static FloatCube Pos_Clients = {PLAYER_X, PLAYER_Y, PLAYER_Z, PLAYER_W, PLAYER_H
 ClientMap Map;						  	// マップ
 InputModuleBase *Input;				  	// Input Module
 Timer *Time;						  	// FrameTimer
-GameStateController *StateController; 	// GameStateController
-GameStateOutputer StateOutputer;	  	// StateOutputer
+GameState::GameStateController *StateController; 	// GameStateController
+GameState::GameStateOutputer StateOutputer;	  	// StateOutputer
+Sound::BGMController BgmController;			// BGM Controller
 
 SDL_Thread *InputThreadVar;
 static bool isJumped = false;
@@ -34,7 +34,7 @@ extern PlaceData GetPlaceData();
 extern void SystemRun();
 extern void UpdateFlag(VelocityFlag *flags, int numClients);
 extern void UpdatePlaceData(PlaceData data);
-extern GameStateController GetGameStateController();
+extern GameState::GameStateController GetGameStateController();
 template <class T>
 T Abs(T value){ return value  < 0 ? -value : value; }
 // int GraphicThread(void *data); // This Function isn't used now.
@@ -100,9 +100,12 @@ bool InitSystem(InitData *data)
 	Time = new Timer();
 	data->timer = Time;
 
-	StateController = new GameStateController();
+	StateController = new GameState::GameStateController();
 	data->stateController = StateController;
 	StateController->Subscribe(&StateOutputer);
+	StateController->Subscribe(&BgmController);
+	
+	StateController->OnNest(GameState::Init);
 	return true;
 }
 
@@ -233,6 +236,7 @@ void UpdateFlag(VelocityFlag *flags, int numClients)
 void UpdatePlaceData(PlaceData data)
 {
 	Map.SetObjectData(&data);
+	
 }
 
 // 方向の取得
@@ -245,7 +249,7 @@ void SetDirection(float direction, int id)
 }
 
 
-GameStateController GetGameStateController() { return *StateController; }
+GameState::GameStateController GetGameStateController() { return *StateController; }
 
 // ===== * ===== マルチスレッド ===== * ===== //
 
