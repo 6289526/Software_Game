@@ -236,8 +236,8 @@ Collision Collision_CB_Horizontal(const int chara_ID, const int y,
 
   // 当たり判定を調べる座標をすべて格納
   for (int i = 0; i < accuracy; ++i) {
-    point_X[i] = PData[chara_ID].pos.x + PData[chara_ID].velocity.x + wide * i;
-    point_Z[i] = PData[chara_ID].pos.z + PData[chara_ID].velocity.z + depth * i;
+    point_X[i] = PData[chara_ID].pos.x + static_cast<int>(PData[chara_ID].velocity.x) + wide * i;
+    point_Z[i] = PData[chara_ID].pos.z + static_cast<int>(PData[chara_ID].velocity.z) + depth * i;
   }
 
   // マップデータ入手
@@ -356,8 +356,8 @@ Collision Collision_CB_Vertical(const int chara_ID, const int y,
 
   // 当たり判定を調べる座標をすべて格納
   for (int i = 0; i < accuracy; ++i) {
-    point_X[i] = PData[chara_ID].pos.x + PData[chara_ID].velocity.x + wide * i;
-    point_Z[i] = PData[chara_ID].pos.z + PData[chara_ID].velocity.z + depth * i;
+    point_X[i] = PData[chara_ID].pos.x + static_cast<int>(PData[chara_ID].velocity.x) + wide * i;
+    point_Z[i] = PData[chara_ID].pos.z + static_cast<int>(PData[chara_ID].velocity.z) + depth * i;
   }
 
   // マップデータ入手
@@ -626,8 +626,6 @@ static void Collision_CB(int chara_ID) {
   MoveVertical(chara_ID);
   MoveHorizontal(chara_ID);
   fprintf(stderr, "v %f, %f, %f\n", PData[chara_ID].velocity.x, PData[chara_ID].velocity.y, PData[chara_ID].velocity.z);
-  fprintf(stderr, "p %f, %f, %f\n", PData[chara_ID].pos.x, PData[chara_ID].pos.y, PData[chara_ID].pos.z);
-
 }
 
 void Goal(int chara_ID) {
@@ -649,7 +647,7 @@ void MoveVertical(int chara_ID) {
   Collision t_Collision_Over = Collision_CB_Vertical(chara_ID, 0);
 
   // 移動後の座標に書き換え
-  PData[chara_ID].pos.y += static_cast<int>(PData[chara_ID].velocity.y);
+  PData[chara_ID].pos.y += PData[chara_ID].velocity.y;
 
   // 下の補正
   switch (t_Collision_Under.dire) {
@@ -723,8 +721,8 @@ void MovePosition(int chara_ID) try {
   Collision_CC(Num_Clients);
 
   // 速度を０に戻す
-  PData[chara_ID].velocity.x = 0;
-  PData[chara_ID].velocity.z = 0;
+  // PData[chara_ID].velocity.x = 0;
+  // PData[chara_ID].velocity.z = 0;
 } catch (error::error e) {
   if (e == error::OutSide_Map_y) {
     PData[chara_ID].pos.x = PLAYER_X + chara_ID * PLAYER_W;
