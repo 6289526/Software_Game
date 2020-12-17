@@ -245,9 +245,9 @@ void DrawCharacter(){
     int myid = GetMyID();
 
     //視点変更
-    lookatPlace.x = playerData[myid].pos.x + playerData[myid].pos.w / 2 + 60 * -sin(playerData[myid].direction);
+    lookatPlace.x = playerData[myid].pos.x + playerData[myid].pos.w / 2 + 60 * -sin(playerData[myid].direction.horizontal);
     lookatPlace.y = playerData[myid].pos.y + 50;
-    lookatPlace.z = playerData[myid].pos.z + playerData[myid].pos.d / 2 + 60 * -cos(playerData[myid].direction);
+    lookatPlace.z = playerData[myid].pos.z + playerData[myid].pos.d / 2 + 60 * -cos(playerData[myid].direction.horizontal);
 
     lookatCenter.x = playerData[myid].pos.x + playerData[myid].pos.w / 2;
     lookatCenter.y = playerData[myid].pos.y + playerData[myid].pos.h / 2;
@@ -291,8 +291,8 @@ void DrawCharacter(){
         glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
         glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
         glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-        characterMesh.Draw(&(playerData[i].pos),playerData[i].direction);
-        RotateCube(ccube,playerData[i].direction, &playercolor);
+        characterMesh.Draw(&(playerData[i].pos),playerData[i].direction.horizontal);
+        RotateCube(ccube,playerData[i].direction.horizontal, &playercolor);
     }
 }
 

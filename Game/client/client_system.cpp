@@ -140,7 +140,7 @@ void InitPlayerData() // プレイヤーデータ初期化処理
 		PData[i].pos = Pos_Clients;
 		PData[i].pos.x = Pos_Clients.x + i * PLAYER_W;
 		PData[i].velocity = {0, 0, 0};
-		PData[i].direction = 0;
+		PData[i].direction.horizontal = 0;
 		PData[i].rank = 0;
 		PData[i].goal = false;
 		PData[i].onGame = true;
@@ -244,7 +244,7 @@ void SetDirection(float direction, int id)
 {
 	if (id != MyId)
 	{
-		PData[id].direction = direction;
+		PData[id].direction.horizontal = direction;
 	}
 }
 
