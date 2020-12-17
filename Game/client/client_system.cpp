@@ -236,6 +236,7 @@ void UpdateFlag(VelocityFlag *flags, int numClients)
 void UpdatePlaceData(PlaceData data)
 {
 	Map.SetObjectData(&data);
+	
 }
 
 // 方向の取得

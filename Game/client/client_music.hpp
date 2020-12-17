@@ -4,6 +4,16 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
 #include "client_gamestate.hpp"
+#include <map>
+
+enum SoundEffectType{
+    Jump,   // ジャンプ
+    Landing,// 着地
+    Puts,   // ブロック設置
+    Result, // リザルト画面
+    Goal,   // 自身ゴール
+    Finish, // 全員ゴール
+}
 
 class BGMController : public Observer{
     private:
@@ -18,3 +28,12 @@ class BGMController : public Observer{
         ~BGMController();
         virtual void Update(GameState state);
 };
+
+class SoundEffectPlayer{
+    private:
+        std::map<SoundEffectType, Mix_Music*> _SEDictionary; // SEDictionary
+
+        void Initialize();
+    public:
+        const std::map<SoundEffectType, Mix_Music*> SEDictionary { return _SEDictionary; }
+}

@@ -9,6 +9,9 @@ enum GameState{
     Exiting,
     InputSetup,
     EnterPlayerName,
+    Goaled,
+    AllGoaled,
+    Result,
 };
 
 class Observer;
