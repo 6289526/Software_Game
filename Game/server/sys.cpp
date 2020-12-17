@@ -625,7 +625,6 @@ bool Collision_BB() // ブロックを置けるかどうかの判定
 static void Collision_CB(int chara_ID) {
   MoveVertical(chara_ID);
   MoveHorizontal(chara_ID);
-  fprintf(stderr, "v %f, %f, %f\n", PData[chara_ID].velocity.x, PData[chara_ID].velocity.y, PData[chara_ID].velocity.z);
 }
 
 void Goal(int chara_ID) {
@@ -708,8 +707,6 @@ void MoveHorizontal(int chara_ID) {
   default:
     break;
   }
-
-  fprintf(stderr, "%d, %d\n", t_Collision_Side_Max.dire, t_Collision_Side_Max.power);
 }
 
 void MovePosition(int chara_ID) try {
