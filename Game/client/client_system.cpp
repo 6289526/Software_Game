@@ -1,60 +1,13 @@
 #include "client_common.h"
+#include "client_system.hpp"
 #include "graphic.h"
 #include "client_move.h"
 #include "go.h"
 
-static int MyId;   // クライアントのID
-PlayerData *PData; // プレイヤーのデータ
-
-int Num_Clients;																			 // クライアント人数
-static char Name_Clients[MAX_NUMCLIENTS][MAX_LEN_NAME];										 // クライアントの名前
-static FloatCube Pos_Clients = {PLAYER_X, PLAYER_Y, PLAYER_Z, PLAYER_W, PLAYER_H, PLAYER_D}; // クライアント情報
-
-ClientMap Map;						  	// マップ
-InputModuleBase *Input;				  	// Input Module
-Timer *Time;						  	// FrameTimer
-GameState::GameStateController *StateController; 	// GameStateController
-GameState::GameStateOutputer StateOutputer;	  	// StateOutputer
-Sound::BGMController BgmController;			// BGM Controller
-
-SDL_Thread *InputThreadVar;
-static bool isJumped = false;
-
-// ===== * ===== プロトタイプ宣言 ===== * ===== //
-const PlayerData *GetPlayerData();
-extern int GetMyID();
-extern void SetMyID(int id);
-extern bool InitSystem(InitData *data);
-extern void ExitSystem(InitData *data);
-void SetNumClients(int n);
-void SetClientName(int id, char *name);
-void InitPlayerData();
-extern void SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients);
-extern PlaceData GetPlaceData();
-extern void SystemRun();
-extern void UpdateFlag(VelocityFlag *flags, int numClients);
-extern void UpdatePlaceData(PlaceData data);
-extern GameState::GameStateController GetGameStateController();
-template <class T>
-T Abs(T value){ return value  < 0 ? -value : value; }
-// int GraphicThread(void *data); // This Function isn't used now.
-int InputThread(void *data);
-
-// ===== * ===== プロパティ ===== * ===== //
-// クライアント配列の先頭ポインタを返す
-const PlayerData *GetPlayerData() { return PData; }
-
-// このクライアントのIDを返す
-int GetMyID() { return MyId; }
-
-/*クライアントのID取得
-* 引数
-*   id: クライアントのID
-*/
-void SetMyID(int id) { MyId = id; }
+using namespace System;
 
 // ----- * ----- //
-void InitControl(InitData *data)
+void ClientSystem::InitControl(InitData *data)
 {
 	ControlSetUp();
 	if(GoSInput.J){
@@ -72,7 +25,7 @@ void InitControl(InitData *data)
 	data->input = Input;
 }
 
-bool InitSystem(InitData *data)
+bool ClientSystem::InitSystem(InitData *data)
 {
 	// SDL_Thread *thread;
 	/*
@@ -110,7 +63,7 @@ bool InitSystem(InitData *data)
 }
 
 // システム終了処理
-void ExitSystem(InitData *data)
+void ClientSystem::ExitSystem(InitData *data)
 {
 	delete[] PData;
 	delete data->input;
@@ -118,7 +71,7 @@ void ExitSystem(InitData *data)
 	delete data->stateController;
 }
 
-void SetNumClients(int n) // クライアント人数セット
+void ClientSystem::SetNumClients(int n) // クライアント人数セット
 {
 	Num_Clients = n;
 }
@@ -126,12 +79,12 @@ void SetNumClients(int n) // クライアント人数セット
 // 名前のセット
 // id: クライアントのID
 // clientName:クライアントの名前
-void SetClientName(int id, char *name)
+void ClientSystem::SetClientName(int id, char *name)
 {
 	strcpy(Name_Clients[id], name);
 }
 
-void InitPlayerData() // プレイヤーデータ初期化処理
+void ClientSystem::InitPlayerData() // プレイヤーデータ初期化処理
 {
 	PData = new PlayerData[Num_Clients];
 	for (int i = 0; i < Num_Clients; ++i)
@@ -152,7 +105,7 @@ void InitPlayerData() // プレイヤーデータ初期化処理
 *   moveData[MAX_NUMCLIENTS]: 移動位置
 *   numCLients : 接続しているクライアントの数
 */
-void SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients)
+void ClientSystem::SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients)
 {
 	int count = 0;
 	for (int i = 0; i < numClients; i++)
@@ -165,7 +118,7 @@ void SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients)
 	}
 }
 
-extern void SetRank(int id, int rank) {
+void ClientSystem::SetRank(int id, int rank) {
 	PData[id].rank = rank;
 	fprintf(stderr, "Client [%d] is rank is %d\n", id, PData[id].rank);
 }
@@ -173,7 +126,7 @@ extern void SetRank(int id, int rank) {
 /*現在の設置データを返す
 *	返り値: MyIDのキャラの設置データ
 */
-PlaceData GetPlaceData()
+PlaceData ClientSystem::GetPlaceData()
 {
 
 	PlaceData data = BuildPlaceData(PData[GetMyID()], PLAYER_HAND_LENGTH);
@@ -190,7 +143,7 @@ PlaceData GetPlaceData()
 *   data: 入力データ
 *
 */
-void SystemRun()
+void ClientSystem::SystemRun()
 {
 	pair<bool, bool> t = SetPlayerVelocity(Input, &PData[MyId], Time);
 	isJumped = t.second;
@@ -212,7 +165,7 @@ void SystemRun()
 /*各プレイヤーのvelocityを変更する
 * 引数
 */
-void UpdateFlag(VelocityFlag *flags, int numClients)
+void ClientSystem::UpdateFlag(VelocityFlag *flags, int numClients)
 {
 	for (int i = 0; i < numClients; i++)
 	{
@@ -233,14 +186,14 @@ void UpdateFlag(VelocityFlag *flags, int numClients)
 }
 
 // Updated place data from server
-void UpdatePlaceData(PlaceData data)
+void ClientSystem::UpdatePlaceData(PlaceData data)
 {
 	Map.SetObjectData(&data);
 	
 }
 
 // 方向の取得
-void SetDirection(float direction, int id)
+void ClientSystem::SetDirection(float direction, int id)
 {
 	if (id != MyId)
 	{
@@ -249,7 +202,7 @@ void SetDirection(float direction, int id)
 }
 
 
-GameState::GameStateController GetGameStateController() { return *StateController; }
+GameState::GameStateController System::ClientSystem::GetGameStateController() { return *StateController; }
 
 // ===== * ===== マルチスレッド ===== * ===== //
 
@@ -259,7 +212,7 @@ GameState::GameStateController GetGameStateController() { return *StateControlle
 	return 0;
 }*/
 
-int InputThread(void *data)
+int ClientSystem::InputThread(void *data)
 {
 	SDL_mutex *mtx = (SDL_mutex *)data;
 

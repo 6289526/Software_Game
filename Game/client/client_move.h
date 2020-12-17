@@ -4,16 +4,34 @@
  */
 
 #pragma once
-#include "client_common.h"
+#include <cmath>
+#include "client_system.hpp"
 
 #define USE_GRAVITY true
 #define PI 3.14159265358979323846
 
-PlaceData BuildPlaceData(PlayerData player, float handLength);
-Vector3 GetMoveDirection(PlayerData player, float angle);
+namespace Mover{
+    class MoveCalculator {
+        private:
+        System::ClientSystem *_System = NULL;
+        bool isOnGround = true;
+        bool isJumped = false;
+        bool isPreGround;
 
-int GetPutableBlockHeightFromMap(Vector2Int pos);
-Vector3Int GetTopOfHeightBlockIndex(Vector3 position);
-bool IsPlayerOnGroundSimple();
+        float DegreeToRadian(float degree){ return degree * PI / 180.0; }
+        float RadianToDegree(float radian){ return radian * 180.0 / PI; }
+        bool DisUseGravity(InputModuleBase *inputModule, PlayerData *pData, Timer *timer);
 
-std::pair<bool, bool> SetPlayerVelocity(InputModuleBase *inputModule, PlayerData *pData, Timer *timer);
+        public:
+        MoveCalculator(const System::ClientSystem *system);
+
+        PlaceData BuildPlaceData(PlayerData player, float handLength);
+        Vector3 GetMoveDirection(PlayerData player, float angle);
+
+        int GetPutableBlockHeightFromMap(Vector2Int pos);
+        Vector3Int GetTopOfHeightBlockIndex(Vector3 position);
+        bool IsPlayerOnGroundSimple();
+
+        std::pair<bool, bool> SetPlayerVelocity(InputModuleBase *inputModule, PlayerData *pData, Timer *timer);
+    };
+}

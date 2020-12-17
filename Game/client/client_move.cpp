@@ -1,12 +1,9 @@
-#include "math.h"
 #include "client_move.h"
+using namespace Mover;
 
-static bool isOnGround = true, isJumped = false, isPreGround;
-
-// ===== * ===== プロトタイプ宣言 ===== * ===== //
-float DegreeToRadian(float degree){ return degree * PI / 180.0; }
-float RadianToDegree(float radian){ return radian * 180.0 / PI; }
-bool DisUseGravity(InputModuleBase *inputModule, PlayerData *pData, Timer *timer);
+MoveCalculator::MoveCalculator(const System::ClientSystem *system){
+	_System = const_cast<System::ClientSystem*>(system);
+}
 
 /*ブロックの設置場所を計算する
 * 引数
@@ -14,7 +11,7 @@ bool DisUseGravity(InputModuleBase *inputModule, PlayerData *pData, Timer *timer
 * 返り値
 *   PlaceData: 設置するブロックのデータ
 */
-PlaceData BuildPlaceData(PlayerData playerData, float handLength){
+PlaceData MoveCalculator::BuildPlaceData(PlayerData playerData, float handLength){
     PlaceData result;
 
     result.object = BlockType::MetalBlock;
@@ -33,7 +30,7 @@ PlaceData BuildPlaceData(PlayerData playerData, float handLength){
 *   Vector3: 向きベクトル
 *   float:   Additional Angle (base value is 0)
 */
-Vector3 GetMoveDirection(PlayerData player, float angle){
+Vector3 MoveCalculator::GetMoveDirection(PlayerData player, float angle){
     Vector3 result;
     result.z = cos(player.direction + DegreeToRadian(angle));
     result.x = sin(player.direction + DegreeToRadian(angle));
@@ -41,8 +38,8 @@ Vector3 GetMoveDirection(PlayerData player, float angle){
     return result;
 }
 
-int GetPutableBlockHeightFromMap(Vector2Int pos){
-    const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
+int MoveCalculator::GetPutableBlockHeightFromMap(Vector2Int pos){
+    const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = _System->GetClientMap().GetTerrainData();
 
     for (int height = 0; height < MAP_SIZE_H; height++)
     {
@@ -56,8 +53,8 @@ int GetPutableBlockHeightFromMap(Vector2Int pos){
     return MAP_SIZE_H;
 }
 
-Vector3Int GetTopOfHeightBlockIndex(Vector3 position){
-    const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
+Vector3Int MoveCalculator::GetTopOfHeightBlockIndex(Vector3 position){
+    const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = _System->GetClientMap().GetTerrainData();
 
     Vector3Int result = {(int)(position.x / BLOCK_MAGNIFICATION), (int)(position.y / BLOCK_MAGNIFICATION), (int)(position.z / BLOCK_MAGNIFICATION)};
 
@@ -69,9 +66,9 @@ Vector3Int GetTopOfHeightBlockIndex(Vector3 position){
     return result;
 }
 
-bool IsPlayerOnGroundSimple(){
-    const PlayerData *pData = GetPlayerData();
-    const int myId = GetMyID();
+bool MoveCalculator::IsPlayerOnGroundSimple(){
+    const PlayerData *pData = _System->GetPlayerData();
+    const int myId = _System->GetMyID();
 	float result = 0;
 
 	const int accuracy = 3;
@@ -79,7 +76,7 @@ bool IsPlayerOnGroundSimple(){
 	float pointY = pData[myId].pos.y;
 	const int width = pData[myId].pos.w / (accuracy - 1); // X座標
 	const int depth = pData[myId].pos.d / (accuracy - 1);	// Z座標
-	const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
+	const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = _System->GetClientMap().GetTerrainData();
 	const int blockX = pointX[accuracy - 1] / BLOCK_MAGNIFICATION;
 	const int blockY = pointY / BLOCK_MAGNIFICATION;
 	const int blockZ = pointZ[accuracy - 1] / BLOCK_MAGNIFICATION;
@@ -126,7 +123,7 @@ bool IsPlayerOnGroundSimple(){
 	return false;
 }
 
-pair<bool, bool> SetPlayerVelocity(InputModuleBase *inputModule, PlayerData *pData, Timer *timer){
+pair<bool, bool> MoveCalculator::SetPlayerVelocity(InputModuleBase *inputModule, PlayerData *pData, Timer *timer){
 
 	if (inputModule == NULL || pData == NULL || timer == NULL) {
 		fprintf(stderr,"Error: input, pData, timerのいずれかがNULLです\n");
@@ -265,7 +262,7 @@ pair<bool, bool> SetPlayerVelocity(InputModuleBase *inputModule, PlayerData *pDa
 	return make_pair(false, isJumped);
 }
 
-bool DisUseGravity(InputModuleBase *inputModule, PlayerData *pData, Timer *timer){
+bool MoveCalculator::DisUseGravity(InputModuleBase *inputModule, PlayerData *pData, Timer *timer){
 	pData->velocity = {0, 0, 0};
 
 	InputType data = inputModule->SystemGetInputType();
