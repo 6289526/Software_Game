@@ -65,13 +65,12 @@ function createWindow() {
             enableRemoteModule: true,
             nodeIntegration: true,
             webviewTag: true,
-            preload: path.join(`${__dirname}/preload.js`), // <- 追加
         },
-        icon: `${__dirname}/editor/my2.ico`
+        icon: `./assets/my2.ico`
     });
 
     mainWindow.loadURL(url.format({
-        pathname: path.join(__dirname, 'index.html'),
+        pathname: path.join(__dirname, './dist/bace/index.html'),
         protocol: 'file:',
         slashes: true
     }));
