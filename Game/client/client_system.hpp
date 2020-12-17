@@ -12,6 +12,7 @@
 #include "client_time.hpp"
 #include "client_input.h"
 #include "client_gamestate.hpp"
+#include "client_music.hpp"
 
 namespace System{
     typedef struct InitData{
@@ -39,14 +40,13 @@ namespace System{
         InputModuleBase *Input;				  	// Input Module
         Timer *Time;						  	// FrameTimer
         GameState::GameStateController *StateController; 	// GameStateController
-        GameState::GameStateOutputer StateOutputer;	  	// StateOutputer
-        Sound::BGMController BgmController;			// BGM Controller
+        GameState::GameStateOutputer _StateOutputer;	  	// _StateOutputer
+        Sound::BGMController _BgmController;			// BGM Controller
+        Mover::MoveCalculator _MoveCalculator;	// MoveCalculator
 
         SDL_Thread *InputThreadVar;
         bool isJumped = false;
 
-        void Initialize();
-        void Terminate();
         void SetNumClients(int n); // クライアント人数セット
 
         // 名前のセット
@@ -55,9 +55,10 @@ namespace System{
         void SetClientName(int id, char* name);
 
         void InitPlayerData(); // プレイヤーデータ初期化処理
-
-        void EndSys(); // システム終了処理
     public:
+        ClientSystem();
+        ~ClientSystem();
+
         const PlayerData *GetPlayerData() { return PData; }
         int GetMyID() { return MyId; }
         void SetMyID(int id) { MyId = id; }
@@ -74,11 +75,13 @@ namespace System{
         void SystemRun();
         void UpdateFlag(VelocityFlag *flags, int numClients);
         void UpdatePlaceData(PlaceData data);
+        void ClientSystem::SetRank(int id, int rank);
+        void ClientSystem::SetDirection(float direction, int id);
         GameState::GameStateController GetGameStateController();
         template <class T>
         T Abs(T value){ return value  < 0 ? -value : value; }
         // int GraphicThread(void *data); // This Function isn't used now.
-        int InputThread(void *data);
+        int (*InputThread)(void *data);
 
         ClientSystem &operator =(const ClientSystem &p);
     };

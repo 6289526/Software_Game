@@ -43,7 +43,8 @@ bool ClientSystem::InitSystem(InitData *data)
 	SDL_Thread *inputThread;
 
 	SDL_mutex *input_mtx = SDL_CreateMutex(); // 相互排除
-	InputThreadVar = SDL_CreateThread(InputThread, "InputThread", input_mtx);
+	InputThreadVar = SDL_CreateThread(reinterpret_cast<SDL_ThreadFunction>(InputThread), "InputThread", input_mtx);
+	// InputThreadVar = SDL_CreateThread(InputThread, "InputThread", input_mtx);
 	if (InputThreadVar == NULL)
 	{
 		fprintf(stderr, "Failed to create a input thread.\n");
@@ -55,8 +56,8 @@ bool ClientSystem::InitSystem(InitData *data)
 
 	StateController = new GameState::GameStateController();
 	data->stateController = StateController;
-	StateController->Subscribe(&StateOutputer);
-	StateController->Subscribe(&BgmController);
+	StateController->Subscribe(&_StateOutputer);
+	StateController->Subscribe(&_BgmController);
 	
 	StateController->OnNest(GameState::Init);
 	return true;
@@ -129,7 +130,7 @@ void ClientSystem::SetRank(int id, int rank) {
 PlaceData ClientSystem::GetPlaceData()
 {
 
-	PlaceData data = BuildPlaceData(PData[GetMyID()], PLAYER_HAND_LENGTH);
+	PlaceData data = _MoveCalculator.BuildPlaceData(PData[GetMyID()], PLAYER_HAND_LENGTH);
 	// data.object = NomalBlock;
 	// data.pos = {(int)PData[GetMyID()].pos.x, (int)PData[GetMyID()].pos.y, (int)PData[GetMyID()].pos.z};
 
@@ -145,7 +146,7 @@ PlaceData ClientSystem::GetPlaceData()
 */
 void ClientSystem::SystemRun()
 {
-	pair<bool, bool> t = SetPlayerVelocity(Input, &PData[MyId], Time);
+	pair<bool, bool> t = _MoveCalculator.SetPlayerVelocity(Input, &PData[MyId], Time);
 	isJumped = t.second;
 	// 移動処理
 	if (t.first){
@@ -212,7 +213,7 @@ GameState::GameStateController System::ClientSystem::GetGameStateController() { 
 	return 0;
 }*/
 
-int ClientSystem::InputThread(void *data)
+int ClientSystem::*InputThread(void *data)
 {
 	SDL_mutex *mtx = (SDL_mutex *)data;
 

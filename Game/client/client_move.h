@@ -12,7 +12,7 @@
 
 namespace Mover{
     class MoveCalculator {
-        private:
+    private:
         System::ClientSystem *_System = NULL;
         bool isOnGround = true;
         bool isJumped = false;
@@ -22,7 +22,7 @@ namespace Mover{
         float RadianToDegree(float radian){ return radian * 180.0 / PI; }
         bool DisUseGravity(InputModuleBase *inputModule, PlayerData *pData, Timer *timer);
 
-        public:
+    public:
         MoveCalculator(const System::ClientSystem *system);
 
         PlaceData BuildPlaceData(PlayerData player, float handLength);
