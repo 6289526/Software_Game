@@ -58,7 +58,7 @@ enum {
 typedef struct InitData{
 	InputModuleBase *input;
     Timer *timer;
-    GameStateController *stateController;
+    GameState::GameStateController *stateController;
 
     InitData() :
         input(NULL),
@@ -90,7 +90,7 @@ extern void UpdateFlag(VelocityFlag* flag, int numClients);
 extern PlaceData GetPlaceData();
 extern void SystemRun();
 extern void UpdatePlaceData(PlaceData data);
-extern GameStateController GetGameStateController();
+extern GameState::GameStateController GetGameStateController();
 extern void SetDirection(float direction, int id);
 extern void SetRemoveClient(int id);
 
