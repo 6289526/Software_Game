@@ -17,24 +17,24 @@ void ServerMap::LoadMapData(char *fileName)
         for (int width = 0; width < _MapW; width++)
         {
             _TerrainData[width][0][depth] = 1;
+            if(depth == (_MapD - 1)){
+                _TerrainData[width][0][depth] = GoalBlock;
+            }
             fscanf(fp, "%d ", &baceTerrainData);
-            if (baceTerrainData < 0)
-                _TerrainData[width][0][depth] = 0;
+            if (baceTerrainData < 0){
+                _TerrainData[width][0][depth] = NonBlock;
+            }
             for (int hight = 1; hight <= baceTerrainData; hight++)
             {
                 _TerrainData[width][hight][depth] = NomalBlock;
                 //fprintf(stderr,"(%d,%d,%d) = 1\n",width,hight,depth);
+                if(depth == (_MapD - 1) && hight == baceTerrainData){
+                    _TerrainData[width][hight][depth] = GoalBlock;
+                }
             }
             if (_MapH < baceTerrainData)
                 _MapH = baceTerrainData;
         }
     }
     fclose(fp);
-    //仮
-    for (int i = 0; i < 20; i++)
-    {
-        _TerrainData[i][0][80] = GoalBlock;
-        _TerrainData[3][0][3] = GoalBlock;
-        _TerrainData[4][0][4] = GoalBlock;
-    }
 }
