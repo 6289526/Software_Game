@@ -34,7 +34,5 @@ void ServerMap::LoadMapData(char *fileName)
     for (int i = 0; i < 20; i++)
     {
         _TerrainData[i][0][80] = GoalBlock;
-        _TerrainData[3][0][3] = GoalBlock;
-        _TerrainData[4][0][4] = GoalBlock;
     }
 }

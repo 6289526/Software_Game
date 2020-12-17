@@ -27,9 +27,9 @@
 #include "graphic.h"
 #include "client_smart.h"
 
-#define PLAYER_MOVE_SPEED 15					   // 移動速度
+#define PLAYER_MOVE_SPEED 20					   // 移動速度
 #define PLAYER_ROTATE_SPEED 2					   // 回転速度
-#define PLAYER_JUMP_POWER 1						   // ジャンプ力
+#define PLAYER_JUMP_POWER 2						   // ジャンプ力
 #define PLAYER_HAND_LENGTH (BLOCK_MAGNIFICATION + PLAYER_W) // 手の長さ(ブロックの設置先までの距離)
 
 #define GRAVITY 9.8 * 0.25		// 重力

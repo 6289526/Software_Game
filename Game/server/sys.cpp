@@ -623,6 +623,25 @@ bool Collision_BB() // ブロックを置けるかどうかの判定
 
 // キャラとブロックの当たり判定
 static void Collision_CB(int chara_ID) {
+  MoveVertical(chara_ID);
+  MoveHorizontal(chara_ID);
+  fprintf(stderr, "v %f, %f, %f\n", PData[chara_ID].velocity.x, PData[chara_ID].velocity.y, PData[chara_ID].velocity.z);
+  fprintf(stderr, "p %f, %f, %f\n", PData[chara_ID].pos.x, PData[chara_ID].pos.y, PData[chara_ID].pos.z);
+
+}
+
+void Goal(int chara_ID) {
+  static int rank = 1;
+
+  if (PData[chara_ID].goal == false) {
+    PData[chara_ID].goal = true;
+    PData[chara_ID].rank = rank++;
+    RunCommand(chara_ID, GOAL_COMMAND);
+  }
+}
+
+// キャラの縦方向移動
+void MoveVertical(int chara_ID) {
   // 下の当たり判定
   Collision t_Collision_Under = Collision_CB_Vertical(chara_ID, 0);
 
@@ -630,7 +649,7 @@ static void Collision_CB(int chara_ID) {
   Collision t_Collision_Over = Collision_CB_Vertical(chara_ID, 0);
 
   // 移動後の座標に書き換え
-  PData[chara_ID].pos.y += PData[chara_ID].velocity.y;
+  PData[chara_ID].pos.y += static_cast<int>(PData[chara_ID].velocity.y);
 
   // 下の補正
   switch (t_Collision_Under.dire) {
@@ -652,7 +671,10 @@ static void Collision_CB(int chara_ID) {
   default:
     break;
   }
+}
 
+// キャラの横方向移動
+void MoveHorizontal(int chara_ID) {
   // 横の当たり判定
   Collision t_Collision_Side_Max = {Non, 0};
   Collision t_Collision_Side;
@@ -665,8 +687,8 @@ static void Collision_CB(int chara_ID) {
   }
 
   // 移動後の座標に書き換え
-  PData[chara_ID].pos.x += PData[chara_ID].velocity.x;
-  PData[chara_ID].pos.z += PData[chara_ID].velocity.z;
+  PData[chara_ID].pos.x += static_cast<int>(PData[chara_ID].velocity.x);
+  PData[chara_ID].pos.z += static_cast<int>(PData[chara_ID].velocity.z);
 
   switch (t_Collision_Side_Max.dire) {
   case Front:
@@ -688,16 +710,8 @@ static void Collision_CB(int chara_ID) {
   default:
     break;
   }
-}
 
-void Goal(int chara_ID) {
-  static int rank = 1;
-
-  if (PData[chara_ID].goal == false) {
-    PData[chara_ID].goal = true;
-    PData[chara_ID].rank = rank++;
-    RunCommand(chara_ID, GOAL_COMMAND);
-  }
+  fprintf(stderr, "%d, %d\n", t_Collision_Side_Max.dire, t_Collision_Side_Max.power);
 }
 
 void MovePosition(int chara_ID) try {
