@@ -6,7 +6,7 @@
 #pragma once
 #include "client_common.h"
 
-#define USE_GRAVITY false
+#define USE_GRAVITY true
 #define PI 3.14159265358979323846
 
 PlaceData BuildPlaceData(PlayerData player, float handLength);
