@@ -5,17 +5,17 @@
     "repository": "https://github.com/6289526/Software_Game",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "electron ./src/main.js"
+        "start": "electron ./main.js",
+        "build:main": "tsc",
+        "build:client": "cd client && yarn webpack && cp -f -r ./dist/client -t ../dist && rm -r ./dist",
+        "build:server": "cd server && yarn webpack && cp -f -r ./dist/server -t ../dist && rm -r ./dist",
+        "build:bace": "cd bace && yarn webpack && cp -f -r ./dist/bace -t ../dist && rm -r ./dist"
     },
     "keywords": [],
     "author": "qriquri",
     "license": "MIT",
     "main": "./src/main.js",
     "devDependencies": {
-        "@types/react": "^16.9.55",
-        "@types/react-dom": "^16.9.9",
-        "@types/react-redux": "^7.1.10",
-        "@types/redux": "^3.6.0",
         "electron": "^10.1.5",
         "electron-builder": "^22.9.1",
         "electron-packager": "^15.1.0",
@@ -35,10 +35,11 @@
             "output": "/mnt/c/Users/qripu/myfolder/prog/lcode"
         },
         "files": [
-            "**/*"
+            "dist/**/*",
+            "main.js"
         ],
         "win": {
-            "icon": "resources/assets/my2.ico",
+            "icon": "./assets/my2.ico",
             "target": "nsis"
         },
         "nsis": {
