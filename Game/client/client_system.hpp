@@ -14,6 +14,10 @@
 #include "client_gamestate.hpp"
 #include "client_music.hpp"
 
+namespace Mover{
+    class MoveCalculator;
+}
+
 namespace System{
     typedef struct InitData{
         InputModuleBase *input;
@@ -42,19 +46,12 @@ namespace System{
         GameState::GameStateController *StateController; 	// GameStateController
         GameState::GameStateOutputer _StateOutputer;	  	// _StateOutputer
         Sound::BGMController _BgmController;			// BGM Controller
-        Mover::MoveCalculator _MoveCalculator;	// MoveCalculator
+        Mover::MoveCalculator* _MoveCalculator;	// MoveCalculator
 
         SDL_Thread *InputThreadVar;
         bool isJumped = false;
 
-        void SetNumClients(int n); // クライアント人数セット
-
-        // 名前のセット
-        // id: クライアントのID
-        // clientName:クライアントの名前
-        void SetClientName(int id, char* name);
-
-        void InitPlayerData(); // プレイヤーデータ初期化処理
+        InitData _InitData;
     public:
         ClientSystem();
         ~ClientSystem();
@@ -62,26 +59,31 @@ namespace System{
         const PlayerData *GetPlayerData() { return PData; }
         int GetMyID() { return MyId; }
         void SetMyID(int id) { MyId = id; }
-        const MapData* GetClientMap() { return &Map; }
+        ClientMap& GetClientMap() { return Map; }
+        const InputModuleBase* GetInput() { return Input; }
+        InitData* GetInitData() { return &_InitData; }
 
         bool InitSystem(InitData *data);
         void ExitSystem(InitData *data);
         void InitControl(InitData *data);
-        void SetNumClients(int n);
-        void SetClientName(int id, char *name);
+        void SetNumClients(int n); // クライアント人数セット
+        // 名前のセット
+        // id: クライアントのID
+        // clientName:クライアントの名前
+        void SetClientName(int id, char* name);
         void InitPlayerData();
         void SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients);
         PlaceData GetPlaceData();
         void SystemRun();
         void UpdateFlag(VelocityFlag *flags, int numClients);
         void UpdatePlaceData(PlaceData data);
-        void ClientSystem::SetRank(int id, int rank);
-        void ClientSystem::SetDirection(float direction, int id);
+        void SetRank(int id, int rank);
+        void SetDirection(float direction, int id);
         GameState::GameStateController GetGameStateController();
         template <class T>
         T Abs(T value){ return value  < 0 ? -value : value; }
         // int GraphicThread(void *data); // This Function isn't used now.
-        int (*InputThread)(void *data);
+        int InputThread(void *data);
 
         ClientSystem &operator =(const ClientSystem &p);
     };

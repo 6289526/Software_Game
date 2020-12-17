@@ -194,10 +194,10 @@ void Disp2D(){
 
 //マップ描画
 void DrawMap(){
-    const int (*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
+    const int (*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = GetSystem().GetClientMap().GetTerrainData();
     FloatCube mcube;
     //仮宣言
-    int map_w = Map.GetMapW(), map_d = Map.GetMapD();
+    int map_w = GetSystem().GetClientMap().GetMapW(), map_d = GetSystem().GetClientMap().GetMapD();
 
     //床
     // マテリアルを設定する
@@ -239,10 +239,10 @@ void DrawMap(){
 
 //キャラクター描画
 void DrawCharacter(){
-    const PlayerData* playerData = GetPlayerData();
+    const PlayerData* playerData = GetSystem().GetPlayerData();
     SDL_Color playercolor = {0,0,255,255};
     //仮宣言
-    int myid = GetMyID();
+    int myid = GetSystem().GetMyID();
 
     //視点変更
     lookatPlace.x = playerData[myid].pos.x + playerData[myid].pos.w / 2 + 60 * -sin(playerData[myid].direction);

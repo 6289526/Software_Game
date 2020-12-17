@@ -14,6 +14,8 @@ int Go(void *args);
 
 char WiiAddress[18];
 InputType _______Type;
+System::ClientSystem _System;
+System::ClientSystem& GetSystem() { return _System; }
 
 // client用のmain関数
 int main(int argc, char *argv[])
@@ -27,7 +29,6 @@ int main(int argc, char *argv[])
 	u_short port = DEFAULT_PORT;
 
 	char server_name[MAX_LEN_NAME];
-	InitData initData;
 	//multithread
 	SDL_Thread *SelectThread;
 	SDL_mutex *mtx1 = SDL_CreateMutex();
@@ -64,21 +65,21 @@ int main(int argc, char *argv[])
 	// グラフィックの初期化
 	InitGraphic();
 	/*クライアントの作成*/
-	InitControl(&initData);
+	_System.InitControl(_System.GetInitData());
 	// 指定されたサーバー名、ポート番号に参加するクライアントとして設定する。
-	GetInitData(initData);
+	GetInitData(*_System.GetInitData());
 	SetupClient(server_name, port);
-	InitPlayerData(); // プレイヤーデータ初期化処理
+	_System.InitPlayerData(); // プレイヤーデータ初期化処理
 	/**サーバー関連 END**/
-	InitSystem(&initData);
+	_System.InitSystem(_System.GetInitData());
 
-	while (cond && !initData.input->GetInputType().End)
+	while (cond && !_System.GetInitData()->input->GetInputType().End)
 	{
-		SystemRun();
+		_System.SystemRun();
 
 		Disp();
 		SDL_Delay(10);
-		initData.timer->UpdateFrame(); // Update the game frame.
+		_System.GetInitData()->timer->UpdateFrame(); // Update the game frame.
 	}
 	fprintf(stderr, "hoge\n");
 	// ウィンドウシステムの終了
@@ -87,7 +88,7 @@ int main(int argc, char *argv[])
 	// クライアントを終了する。
 	TerminateClient();
 	SDL_Quit();
-	ExitSystem(&initData);
+	_System.ExitSystem(_System.GetInitData());
 	KillGoServer();
 	TerminateGraphic();
 	return 0;

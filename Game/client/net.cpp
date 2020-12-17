@@ -92,11 +92,11 @@ void SetupClient(char *server_name, u_short port)
     ReceiveData(&NumClients, sizeof(int));
     // 受け取った人数を表示
     fprintf(stderr, "Number of Clients = %d.\n", NumClients);
-    SetNumClients(NumClients); // システムに渡す
+    GetSystem().SetNumClients(NumClients); // システムに渡す
     // 自身のIDを受け取る
     ReceiveData(&MyId, sizeof(int));
     // 受け取ったIDをシステムモジュールに渡す
-    SetMyID(MyId);
+    GetSystem().SetMyID(MyId);
     fprintf(stderr, "Your ID = %d.\n", MyId);
 
     /** 全クライアントの情報を受け取る **/
@@ -109,7 +109,7 @@ void SetupClient(char *server_name, u_short port)
         ReceiveData(&Name_Clients[i], sizeof(PlayerName));
     }
     for (int i = 0; i < NumClients; ++i) {
-        SetClientName(i, Name_Clients[i].name);
+        GetSystem().SetClientName(i, Name_Clients[i].name);
     }
     delete[] Name_Clients;
     // マップデータ入手
@@ -121,7 +121,7 @@ void SetupClient(char *server_name, u_short port)
             }
         }
     }
-    Map.SetMapData(MAP_SIZE_W, MAP_SIZE_H, MAP_SIZE_D, terrainData);
+    GetSystem().GetClientMap().SetMapData(MAP_SIZE_W, MAP_SIZE_H, MAP_SIZE_D, terrainData);
 
     /** ファイルディスクリプタの操作 **/
     // select関数の第一引数ので必要
@@ -186,7 +186,7 @@ int InCommand(char com)
 {
     /*変数*/
     // システムモジュールからデータをもらう
-    const PlayerData* pData = GetPlayerData();
+    const PlayerData* pData = GetSystem().GetPlayerData();
     // ソケットに送るデータ達
     FloatPosition posData = {pData[MyId].velocity.x, pData[MyId].velocity.y, pData[MyId].velocity.z};
     float direction = pData[MyId].direction;
@@ -203,7 +203,7 @@ int InCommand(char com)
         break;
     case PUT_COMMAND:
         PlaceData placeData;
-        placeData = GetPlaceData();
+        placeData = GetSystem().GetPlaceData();
         SendData(&com, sizeof(char));
         SendData(&placeData, sizeof(PlaceData));
         break;
@@ -251,13 +251,13 @@ int ExeCommand()
         {
             ReceiveData(&data[i], sizeof(FloatPosition));
             ReceiveData(&direction, sizeof(float));
-            SetDirection(direction, i);
+            GetSystem().SetDirection(direction, i);
             ReceiveData(&flags[i], sizeof(VelocityFlag));
         }
         // 受け取った座標とフラッグをシステムモジュールにわたす
-        SetPlace(data, NumClients);
+        GetSystem().SetPlace(data, NumClients);
 
-        UpdateFlag(flags, NumClients);
+        GetSystem().UpdateFlag(flags, NumClients);
 
         // 通信継続
         result = 1;
@@ -267,7 +267,7 @@ int ExeCommand()
 
         if(placeData.object != NonBlock){
             fprintf(stderr, "ブロック置けた！\n");
-            UpdatePlaceData(placeData);
+            GetSystem().UpdatePlaceData(placeData);
 
         }else{
             fprintf(stderr, "ブロックがおけなかった\n");
@@ -285,14 +285,14 @@ int ExeCommand()
     case GOAL_COMMAND:
         ReceiveData(&rank, sizeof(int));
         fprintf(stderr, "you goaled.\n");
-        SetRank(MyId, rank);
+        GetSystem().SetRank(MyId, rank);
         result = 1;
         break;
     case FINISH_COMMAND:
         fprintf(stderr, "All clients goaled.\n");
         for (int i = 0; i < NumClients; ++i)  {
           ReceiveData(&rank, sizeof(int));
-          SetRank(i, rank);
+          GetSystem().SetRank(i, rank);
         }
         result = 1;
         break;

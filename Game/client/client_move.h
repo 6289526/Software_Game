@@ -13,7 +13,8 @@
 namespace Mover{
     class MoveCalculator {
     private:
-        System::ClientSystem *_System = NULL;
+        System::ClientSystem _System;
+
         bool isOnGround = true;
         bool isJumped = false;
         bool isPreGround;
@@ -23,7 +24,7 @@ namespace Mover{
         bool DisUseGravity(InputModuleBase *inputModule, PlayerData *pData, Timer *timer);
 
     public:
-        MoveCalculator(const System::ClientSystem *system);
+        MoveCalculator(System::ClientSystem& system);
 
         PlaceData BuildPlaceData(PlayerData player, float handLength);
         Vector3 GetMoveDirection(PlayerData player, float angle);

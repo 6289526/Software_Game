@@ -35,11 +35,14 @@ extern void TerminateClient();
 extern int ControlRequests();
 extern int InCommand(char com);
 
+// ----- system ----- //
+System::ClientSystem& GetSystem();
+
 /*control_setup*/
 extern int ControlSetUp();
 
 /*name_setup*/
-extern void GetInitData(InitData initData);
+extern void GetInitData(System::InitData initData);
 extern void NameSetUp();
 
 
