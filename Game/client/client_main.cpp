@@ -71,6 +71,7 @@ int main(int argc, char *argv[])
 	InitPlayerData(); // プレイヤーデータ初期化処理
 	/**サーバー関連 END**/
 	InitSystem(&initData);
+	Init2dGraphic();
 
 	while (cond && !initData.input->GetInputType().End)
 	{

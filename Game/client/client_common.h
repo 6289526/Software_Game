@@ -6,7 +6,8 @@
 #pragma once
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <string>
+#include <map>
 #include <unistd.h>
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -16,6 +17,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 #include <tuple>
 #include "../header/constants.h"
 #include "client_map.hpp"
@@ -26,6 +28,7 @@
 #include "client_gamestate.hpp"
 #include "graphic.h"
 #include "client_smart.h"
+#include "client_music.hpp"
 
 #define PLAYER_MOVE_SPEED 15					   // 移動速度
 #define PLAYER_ROTATE_SPEED 2					   // 回転速度
@@ -42,8 +45,8 @@ extern char MyName[MAX_LEN_NAME];
 extern InputType _______Type;
 /* ウインドウサイズ */
 enum {
-    Wd_Width  = 928,
-    Wd_Height = 696
+    Wd_Width  = 2400,
+    Wd_Height = 1350
 };
 
 /* ゲームの状態 */
@@ -55,7 +58,7 @@ enum {
 typedef struct InitData{
 	InputModuleBase *input;
     Timer *timer;
-    GameStateController *stateController;
+    GameState::GameStateController *stateController;
 
     InitData() :
         input(NULL),
@@ -87,7 +90,7 @@ extern void UpdateFlag(VelocityFlag* flag, int numClients);
 extern PlaceData GetPlaceData();
 extern void SystemRun();
 extern void UpdatePlaceData(PlaceData data);
-extern GameStateController GetGameStateController();
+extern GameState::GameStateController GetGameStateController();
 extern void SetDirection(float direction, int id);
 extern void SetRemoveClient(int id);
 

@@ -1,5 +1,7 @@
 #include "client_music.hpp"
 
+using namespace Sound;
+
 // ===== * ===== BGMController ===== * ===== //
 BGMController::BGMController(){ }
 BGMController::~BGMController(){
@@ -9,7 +11,7 @@ BGMController::~BGMController(){
 void BGMController::Initialize(){
     fprintf(stderr, "Path: %s\n", _BGMFilePath.c_str());
 }
-void BGMController::Update(GameState state){
+void BGMController::Update(GameState::GameState state){
     if(state != GameState::Init)
         return;
         

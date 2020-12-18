@@ -1,5 +1,7 @@
 #include "client_common.h"
 
+using namespace GameState;
+
 // ===== * ===== GameStateController ===== * ===== //
 void GameStateController::SetGameState(GameState state){
     _PreState = _State;
