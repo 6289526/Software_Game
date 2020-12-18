@@ -262,7 +262,7 @@ void DrawCharacter(){
     );
 
 
-    for(int i = 0; i < Num_Clients; i++){
+    for(int i = 0; i < GetSystem().Num_Clients; i++){
         FloatCube ccube = playerData[i].pos;
 
         // キャラの色分け

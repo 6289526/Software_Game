@@ -6,6 +6,15 @@
 
 using namespace System;
 
+int InputThread(void *data);
+
+ClientSystem::ClientSystem(){ 
+	_MoveCalculator = new Mover::MoveCalculator(this);
+}
+ClientSystem::~ClientSystem(){ 
+	delete _MoveCalculator;
+}
+
 // ----- * ----- //
 void ClientSystem::InitControl(InitData *data)
 {
@@ -43,7 +52,7 @@ bool ClientSystem::InitSystem(InitData *data)
 	SDL_Thread *inputThread;
 
 	SDL_mutex *input_mtx = SDL_CreateMutex(); // 相互排除
-	SDL_ThreadFunction inputThreadFunction = (SDL_ThreadFunction)(&InputThread);
+	SDL_ThreadFunction inputThreadFunction = (SDL_ThreadFunction)&InputThread;
 	InputThreadVar = SDL_CreateThread(inputThreadFunction, "InputThread", input_mtx);
 	// InputThreadVar = SDL_CreateThread(InputThread, "InputThread", input_mtx);
 	if (InputThreadVar == NULL)
@@ -203,7 +212,6 @@ void ClientSystem::SetDirection(float direction, int id)
 	}
 }
 
-
 GameState::GameStateController System::ClientSystem::GetGameStateController() { return *StateController; }
 
 // ===== * ===== マルチスレッド ===== * ===== //
@@ -214,21 +222,22 @@ GameState::GameStateController System::ClientSystem::GetGameStateController() { 
 	return 0;
 }*/
 
-int ClientSystem::InputThread(void *data)
+int InputThread(void *data)
 {
 	SDL_mutex *mtx = (SDL_mutex *)data;
 
 	while (1)
 	{
 		SDL_LockMutex(mtx);
-		if (Input == NULL)
+		auto input = GetSystem().GetInput();
+		if (input == NULL)
 		{
 			throw "system.cppに宣言されている Input がNULL";
 			return -1;
 		}
 
 		// 入力受け付け
-		Input->UpdateInput();
+		input->UpdateInput();
 		/*サーバーにリクエストを送る*/
 		SDL_UnlockMutex(mtx);
 	}

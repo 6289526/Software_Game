@@ -10,21 +10,23 @@
 #define USE_GRAVITY true
 #define PI 3.14159265358979323846
 
+System::ClientSystem& GetSystem();
+
 namespace Mover{
     class MoveCalculator {
     private:
-        System::ClientSystem _System;
+        System::ClientSystem *_System;
 
         bool isOnGround = true;
         bool isJumped = false;
-        bool isPreGround;
+        bool isPreGround = false;
 
         float DegreeToRadian(float degree){ return degree * PI / 180.0; }
         float RadianToDegree(float radian){ return radian * 180.0 / PI; }
         bool DisUseGravity(InputModuleBase *inputModule, PlayerData *pData, Timer *timer);
 
     public:
-        MoveCalculator(System::ClientSystem& system);
+        MoveCalculator(System::ClientSystem *system);
 
         PlaceData BuildPlaceData(PlayerData player, float handLength);
         Vector3 GetMoveDirection(PlayerData player, float angle);

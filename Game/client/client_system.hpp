@@ -36,8 +36,6 @@ namespace System{
         int MyId;   // クライアントのID
         PlayerData *PData; // プレイヤーのデータ
 
-        int Num_Clients;																			 // クライアント人数
-        char Name_Clients[MAX_NUMCLIENTS][MAX_LEN_NAME];										 // クライアントの名前
         FloatCube Pos_Clients = {PLAYER_X, PLAYER_Y, PLAYER_Z, PLAYER_W, PLAYER_H, PLAYER_D}; // クライアント情報
 
         ClientMap Map;						  	// マップ
@@ -56,11 +54,14 @@ namespace System{
         ClientSystem();
         ~ClientSystem();
 
+        int Num_Clients;								// クライアント人数
+        char Name_Clients[MAX_NUMCLIENTS][MAX_LEN_NAME];// クライアントの名前
+
         const PlayerData *GetPlayerData() { return PData; }
         int GetMyID() { return MyId; }
         void SetMyID(int id) { MyId = id; }
         ClientMap& GetClientMap() { return Map; }
-        const InputModuleBase* GetInput() { return Input; }
+        InputModuleBase* GetInput() { return Input; }
         InitData* GetInitData() { return &_InitData; }
 
         bool InitSystem(InitData *data);
@@ -82,9 +83,6 @@ namespace System{
         GameState::GameStateController GetGameStateController();
         template <class T>
         T Abs(T value){ return value  < 0 ? -value : value; }
-        // int GraphicThread(void *data); // This Function isn't used now.
-        int InputThread(void *data);
-
-        ClientSystem &operator =(const ClientSystem &p);
+        // int GraphicThread(void *data); // This Function isn't used now
     };
 }
