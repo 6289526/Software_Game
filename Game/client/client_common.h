@@ -45,8 +45,8 @@ extern char MyName[MAX_LEN_NAME];
 extern InputType _______Type;
 /* ウインドウサイズ */
 enum {
-    Wd_Width  = 928,
-    Wd_Height = 696
+    Wd_Width  = 2400,
+    Wd_Height = 1350
 };
 
 /* ゲームの状態 */
