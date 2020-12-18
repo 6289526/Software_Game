@@ -18,6 +18,35 @@ void Smart::UpdateInput()
 	{
 		if (GoSInput.L1)
 		{
+			_Input.Forward = true;
+		}
+		else
+		{
+			_Input.Forward = false;
+		}
+
+		if (GoSInput.R1)
+		{
+			_Input.Jump = true;
+			
+		}
+		else
+		{
+			_Input.Jump = false;
+		}
+
+		if (GoSInput.R2)
+		{
+			_Input.Jump = true;
+			
+		}
+		else
+		{
+			_Input.Jump = false;
+		}
+		
+		if (GoSInput.R3)
+		{
 			_Input.Up = true;
 		}
 		else
@@ -25,47 +54,30 @@ void Smart::UpdateInput()
 			_Input.Up = false;
 		}
 
-		if (GoSInput.L2)
+		if (GoSInput.R4)
+		{
+			_Input.Left = true;
+		}
+		else
+		{
+			_Input.Left = false;
+		}
+		if (GoSInput.R5)
+		{
+			_Input.Right = true;
+		}
+		else
+		{
+			_Input.Right = false;
+		}
+		
+		if (GoSInput.R6)
 		{
 			_Input.Down = true;
 		}
 		else
 		{
 			_Input.Down = false;
-		}
-
-		if (GoSInput.R1)
-		{
-			_Input.Left = true;
-			_Input.Right = false;
-		}
-		else if (GoSInput.R2)
-		{
-			_Input.Left = false;
-			_Input.Right = true;
-		}
-		else
-		{
-			_Input.Left = false;
-			_Input.Right = false;
-		}
-
-		if (GoSInput.R3)
-		{
-			_Input.Jump = true;
-		}
-		else
-		{
-			_Input.Jump = false;
-		}
-
-		if (GoSInput.R4)
-		{
-			_Input.Forward = true;
-		}
-		else
-		{
-			_Input.Forward = false;
 		}
 	}
 	else
@@ -77,7 +89,7 @@ void Smart::UpdateInput()
 		/************/
 		/**移動関連**/
 		/************/
-		if (GoSInput.L1 || GoSInput.L2)
+		if (GoSInput.L1)
 		{
 			_Input.Forward = true;
 		}
@@ -86,12 +98,12 @@ void Smart::UpdateInput()
 			_Input.Forward = false;
 		}
 
-		if (GoSInput.R1)
+		if (GoSInput.R4)
 		{
 			_Input.Right = false;
 			_Input.Left = true;
 		}
-		else if (GoSInput.R2)
+		else if (GoSInput.R5)
 		{
 			_Input.Left = false;
 			_Input.Right = true;
@@ -102,7 +114,7 @@ void Smart::UpdateInput()
 			_Input.Left = false;
 		}
 
-		if (GoSInput.R4)
+		if (GoSInput.R2)
 		{
 			_Input.Jump = true;
 		}
@@ -115,7 +127,7 @@ void Smart::UpdateInput()
 		/************/
 		/**配置関連**/
 		/************/
-		if (GoSInput.R3)
+		if (GoSInput.R1)
 		{
 			_Input.Put = true;
 		}
