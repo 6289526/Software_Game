@@ -15,8 +15,8 @@ PlaceData MoveCalculator::BuildPlaceData(PlayerData playerData, float handLength
     PlaceData result;
 
     result.object = BlockType::MetalBlock;
-    result.pos.x = playerData.pos.x + sin(playerData.direction) * handLength;
-    result.pos.z = playerData.pos.z + cos(playerData.direction) * handLength;
+    result.pos.x = playerData.pos.x + sin(playerData.direction.horizontal) * handLength;
+    result.pos.z = playerData.pos.z + cos(playerData.direction.horizontal) * handLength;
     // Vector2Int v2 = {result.pos.x / MAP_MAGNIFICATION, result.pos.z / MAP_MAGNIFICATION};
     result.pos.y = playerData.pos.y;
 
@@ -32,8 +32,8 @@ PlaceData MoveCalculator::BuildPlaceData(PlayerData playerData, float handLength
 */
 Vector3 MoveCalculator::GetMoveDirection(PlayerData player, float angle){
     Vector3 result;
-    result.z = cos(player.direction + DegreeToRadian(angle));
-    result.x = sin(player.direction + DegreeToRadian(angle));
+    result.z = cos(player.direction.horizontal + DegreeToRadian(angle));
+    result.x = sin(player.direction.horizontal + DegreeToRadian(angle));
     result.y = 0;
     return result;
 }
@@ -188,7 +188,7 @@ pair<bool, bool> MoveCalculator::SetPlayerVelocity(InputModuleBase *inputModule,
 				// if(strcmp(WiiAddress, "") != 0){
 				// 	pData->velocity.x += 5*GetMoveDirection(*pData, 90).x * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
 				// 	pData->velocity.z += 5*GetMoveDirection(*pData, 90).z * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
-					pData->direction += PLAYER_ROTATE_SPEED * timer->GetDeltaTime();
+					pData->direction.horizontal += PLAYER_ROTATE_SPEED * timer->GetDeltaTime();
 				// }
 				// else
 				// {
@@ -203,7 +203,7 @@ pair<bool, bool> MoveCalculator::SetPlayerVelocity(InputModuleBase *inputModule,
 				// if(strcmp(WiiAddress, "") != 0){
 				// 	pData->velocity.x += 5*GetMoveDirection(*pData, 270).x * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
 				// 	pData->velocity.z += 5*GetMoveDirection(*pData, 270).z * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
-					pData->direction -= PLAYER_ROTATE_SPEED * timer->GetDeltaTime();
+					pData->direction.horizontal -= PLAYER_ROTATE_SPEED * timer->GetDeltaTime();
 				// }
 				// else{
 				// pData->velocity.x += GetMoveDirection(*pData, 270).x * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
@@ -224,12 +224,12 @@ pair<bool, bool> MoveCalculator::SetPlayerVelocity(InputModuleBase *inputModule,
 
 			if (data.R)
 			{
-				pData->direction -= PLAYER_ROTATE_SPEED * timer->GetDeltaTime();
+				pData->direction.horizontal -= PLAYER_ROTATE_SPEED * timer->GetDeltaTime();
 				data.R = false;
 			}
 			if (data.L)
 			{
-				pData->direction += PLAYER_ROTATE_SPEED * timer->GetDeltaTime();
+				pData->direction.horizontal += PLAYER_ROTATE_SPEED * timer->GetDeltaTime();
 				data.L = false;
 			}
 
@@ -293,7 +293,7 @@ bool MoveCalculator::DisUseGravity(InputModuleBase *inputModule, PlayerData *pDa
 			// if(strcmp(WiiAddress, "") != 0){
 			// 	pData->velocity.x += 5*GetMoveDirection(*pData, 90).x * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
 			// 	pData->velocity.z += 5*GetMoveDirection(*pData, 90).z * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
-				pData->direction += PLAYER_ROTATE_SPEED * timer->GetDeltaTime();
+				pData->direction.horizontal += PLAYER_ROTATE_SPEED * timer->GetDeltaTime();
 			// }
 			// else
 			// {
@@ -307,7 +307,7 @@ bool MoveCalculator::DisUseGravity(InputModuleBase *inputModule, PlayerData *pDa
 			// if(strcmp(WiiAddress, "") != 0){
 			// 	pData->velocity.x += 5*GetMoveDirection(*pData, 270).x * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
 			// 	pData->velocity.z += 5*GetMoveDirection(*pData, 270).z * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
-				pData->direction -= PLAYER_ROTATE_SPEED * timer->GetDeltaTime();
+				pData->direction.horizontal -= PLAYER_ROTATE_SPEED * timer->GetDeltaTime();
 			// }
 			// else{
 			// pData->velocity.x += GetMoveDirection(*pData, 270).x * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
@@ -320,7 +320,7 @@ bool MoveCalculator::DisUseGravity(InputModuleBase *inputModule, PlayerData *pDa
 		}
 		if (data.L)
 		{
-			pData->direction += PLAYER_ROTATE_SPEED * timer->GetDeltaTime();
+			pData->direction.horizontal += PLAYER_ROTATE_SPEED * timer->GetDeltaTime();
 		}
 
 		///////////////////////////////// デバッグ用 後ろに下がる

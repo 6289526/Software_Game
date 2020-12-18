@@ -189,7 +189,7 @@ int InCommand(char com)
     const PlayerData* pData = GetSystem().GetPlayerData();
     // ソケットに送るデータ達
     FloatPosition posData = {pData[MyId].velocity.x, pData[MyId].velocity.y, pData[MyId].velocity.z};
-    float direction = pData[MyId].direction;
+    float direction = pData[MyId].direction.horizontal;
 
     /** 入力されたコマンドに応じて分岐 **/
     switch (com)

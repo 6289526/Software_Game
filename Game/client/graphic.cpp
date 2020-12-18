@@ -1,5 +1,6 @@
 #include "graphic.h"
 #include "graphic_objmesh.hpp"
+#include "graphic_2dui.hpp"
 #include <math.h>
 
 /*private*/
@@ -39,13 +40,13 @@ bool InitOpenGL();
 void SetBlockTexture();
 void View2D();
 void View3D();
-void Disp2D();
 void Disp3D();
 void DrawMap(); //マップ描画
 void DrawCharacter();//キャラクター描画
 void DrowMapBlock(FloatCube cube, BlockType block);
 void RotateCube(FloatCube cube, double dir, SDL_Color *color);
 
+Gui2D gui2d;
 
 /*public*/
 
@@ -60,6 +61,11 @@ void InitGraphic(){
     characterMesh.LoadFile(Meshfile);
 }
 
+void Init2dGraphic(){
+    TTF_Init();
+    gui2d.Set();
+}
+
 //画面描画
 void Disp(){
 	glClearColor(1.0, 1.0, 1.0, 1.0);
@@ -69,7 +75,7 @@ void Disp(){
     Disp3D();
     glFlush();
     View2D();
-    Disp2D();
+    gui2d.Draw();
     glFlush();
     SDL_GL_SwapWindow(window);
 }
@@ -144,7 +150,7 @@ void View2D() {
     glMatrixMode(GL_PROJECTION);// 射影変換行列設定
     glPopMatrix();// 射影変換行列を復元
     glPushMatrix();// 現在の射影変換行列を保存
-    glOrtho(0, 640, 420, 0, -1, 1);// 正射影変換設定
+    glOrtho(0, Wd_Width, Wd_Height, 0, -1, 1);// 正射影変換設定
     glMatrixMode(GL_MODELVIEW);// モデルビュー変換行列設定
     glPopMatrix();// モデルビュー行列を復元
     glPushMatrix();// 現在のモデルビュー行列を保存
@@ -169,14 +175,14 @@ void View3D() {
     glPopMatrix();// 射影変換行列を復元
     glPushMatrix();// 現在の射影変換行列を保存
     glLoadIdentity();// 単位行列を設定
-    gluPerspective(60.0, Wd_Width / Wd_Height, 20.0, 2000.0);
+    gluPerspective(60.0, (double)Wd_Width / (double)Wd_Height, 20.0, 2000.0);
     glMatrixMode(GL_MODELVIEW);// モデルビュー変換行列設定
     glPopMatrix();// モデルビュー行列を復元
     glPushMatrix();// 現在のモデルビュー行列を保存
     glLoadIdentity();// 単位行列を設定
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
-    glOrtho(0.0, 640, 420, 0.0, 0.0, 0.0);
+    glOrtho(0.0, (double)Wd_Width, (double)Wd_Height, 0.0, 0.0, 0.0);
 	glEnable(GL_LIGHTING);
 
 }
@@ -185,11 +191,6 @@ void View3D() {
 void Disp3D(){
     DrawCharacter();
     DrawMap();
-}
-
-//2D描画
-void Disp2D(){
-
 }
 
 //マップ描画
@@ -245,9 +246,9 @@ void DrawCharacter(){
     int myid = GetSystem().GetMyID();
 
     //視点変更
-    lookatPlace.x = playerData[myid].pos.x + playerData[myid].pos.w / 2 + 60 * -sin(playerData[myid].direction);
+    lookatPlace.x = playerData[myid].pos.x + playerData[myid].pos.w / 2 + 60 * -sin(playerData[myid].direction.horizontal);
     lookatPlace.y = playerData[myid].pos.y + 50;
-    lookatPlace.z = playerData[myid].pos.z + playerData[myid].pos.d / 2 + 60 * -cos(playerData[myid].direction);
+    lookatPlace.z = playerData[myid].pos.z + playerData[myid].pos.d / 2 + 60 * -cos(playerData[myid].direction.horizontal);
 
     lookatCenter.x = playerData[myid].pos.x + playerData[myid].pos.w / 2;
     lookatCenter.y = playerData[myid].pos.y + playerData[myid].pos.h / 2;
@@ -291,8 +292,8 @@ void DrawCharacter(){
         glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
         glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
         glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-        characterMesh.Draw(&(playerData[i].pos),playerData[i].direction);
-        RotateCube(ccube,playerData[i].direction, &playercolor);
+        characterMesh.Draw(&(playerData[i].pos),playerData[i].direction.horizontal);
+        RotateCube(ccube,playerData[i].direction.horizontal, &playercolor);
     }
 }
 
