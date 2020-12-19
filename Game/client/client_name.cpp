@@ -98,23 +98,24 @@ void NameSetUp()
     
     SDL_Event event;
     
+    using namespace React;
     // 描画要素の宣言
     int componentNum = 0;
-    vector<struct Component> allComponents;
+    vector<Component> allComponents;
     componentNum++;
     image[0] = IMG_Load(ImagePath[1]);
-    struct Component subBackGround;
+    Component subBackGround;
     subBackGround.CreateComponent(renderer, image[0]);
     allComponents.push_back(subBackGround);
 
     componentNum++;
     image[1] = IMG_Load(ImagePath[0]);
-    struct Component titleBackGround;
+    Component titleBackGround;
     titleBackGround.CreateComponent(renderer, image[1]);
     allComponents.push_back(titleBackGround);
 
     
-    struct Component messages[MESSAGE_NUM];
+    Component messages[MESSAGE_NUM];
     for (int i = 0; i < MESSAGE_NUM; i++)
     {
         componentNum++;
@@ -123,12 +124,12 @@ void NameSetUp()
     }
 
     componentNum++;
-    struct Component inputName;
+    Component inputName;
     inputName.CreateComponent(renderer, TTF_RenderUTF8_Blended(font, MyName, (SDL_Color){255, 255, 255, 255}));
     allComponents.push_back(inputName);
     
     componentNum++;
-    struct Component inputCresol;
+    Component inputCresol;
     inputCresol.CreateComponent(renderer, TTF_RenderUTF8_Blended(font, "|", (SDL_Color){255, 255, 255, 255}));
     allComponents.push_back(inputCresol);
 
@@ -199,7 +200,7 @@ void NameSetUp()
         NinitData.input->_setname = true;
         
         componentNum++;
-        struct Component keyMap;
+        Component keyMap;
         keyMap.CreateComponent(renderer, TTF_RenderUTF8_Blended(font, "Enter", (SDL_Color){255, 255, 0, 255}));
         allComponents.push_back(keyMap);
 

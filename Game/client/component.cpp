@@ -1,5 +1,6 @@
 #include "component.h"
 
+using namespace React;
 Component::Component()
 {
 }
@@ -37,19 +38,21 @@ void Component::RenderingComponent(int positionX, int positionY, int scaleX, int
         _width,
         _height};
     SDL_Rect drawRect;
-    if(mode == 1){// <<拡大モード
+    if (mode == 1)
+    { // <<拡大モード
         drawRect = (SDL_Rect){
-        positionX - _width * scaleX / 2,
-        positionY - _height * scaleY / 2,
-        _width * scaleX,
-        _height * scaleY};
+            positionX - _width * scaleX / 2,
+            positionY - _height * scaleY / 2,
+            _width * scaleX,
+            _height * scaleY};
     }
-    else{ // <<縮小モード
+    else
+    { // <<縮小モード
         drawRect = (SDL_Rect){
-        positionX - _width / scaleX / 2,
-        positionY - _height / scaleY / 2,
-        _width / scaleX,
-        _height / scaleY};
+            positionX - _width / scaleX / 2,
+            positionY - _height / scaleY / 2,
+            _width / scaleX,
+            _height / scaleY};
     }
     SDL_RenderCopy(_renderer, _texture, &loadRect, &drawRect);
 }

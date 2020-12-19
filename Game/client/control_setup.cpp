@@ -64,6 +64,27 @@ int GetAddress(void *args)
     return 0;
 }
 
+char *GetIpAddress()
+{
+    FILE *fp;
+    char command[MAX_STRING];
+    char output[MAX_STRING];
+    sprintf(command, "ifconfig | grep 192.168 | awk '{print $2}'");
+
+    fp = popen(command, "r");
+    int index = 0;
+    char* address = (char*)malloc(32);
+    char trash1[MAX_STRING];
+    char trash2[MAX_STRING];
+    while (fgets(output, MAX_STRING, fp) != NULL)
+    {
+        fprintf(stderr, "%s\n", output);
+        sscanf(output, "%s", address);
+    }
+
+    return address;
+}
+
 /*必要な情報を描画*/
 int ControlSetUp()
 {
@@ -92,34 +113,43 @@ int ControlSetUp()
     SDL_Surface *image[2];
 
     SDL_Event event;
-    
+
     /*くるくる回るやつの角度*/
     float angle[3] = {30, 20, 10};
     /*角加速度*/
     float alpha = 0;
 
+    using namespace React;
     // 描画要素の宣言
     int componentNum = 0;
-    vector<struct Component> allComponents;
+    vector<Component> allComponents;
     componentNum++;
     image[0] = IMG_Load(ImagePath[0]);
-    struct Component subBackGround;
+    Component subBackGround;
     subBackGround.CreateComponent(renderer, image[0]);
     allComponents.push_back(subBackGround);
 
     componentNum++;
     image[1] = IMG_Load(ImagePath[1]);
-    struct Component titleBackGround;
+    Component titleBackGround;
     titleBackGround.CreateComponent(renderer, image[1]);
     allComponents.push_back(titleBackGround);
 
-    struct Component messages[MESSAGE_NUM];
+    Component messages[MESSAGE_NUM];
     for (int i = 0; i < MESSAGE_NUM; i++)
     {
         componentNum++;
         messages[i].CreateComponent(renderer, TTF_RenderUTF8_Blended(font, Text[i], (SDL_Color){255, 255, 255, 255}));
         allComponents.push_back(messages[i]);
     }
+
+    char urlMsg[128];
+    char* ipAddress = (char*)malloc(32);
+    sprintf(urlMsg, "If you want to use tablet or phone, access http://%s:8080", ipAddress = GetIpAddress());
+    componentNum++;
+    Component GoServerAddress;
+    GoServerAddress.CreateComponent(renderer, TTF_RenderUTF8_Blended(font, urlMsg, (SDL_Color){255, 255, 255, 255}));
+    allComponents.push_back(GoServerAddress);
 
     /*描画*/
     while (data.finish != 1 && !GoSInput.J && !(strcmp(WiiAddress, "")))
@@ -143,6 +173,13 @@ int ControlSetUp()
                 1,
                 -1);
         }
+
+        GoServerAddress.RenderingComponent(
+            SCREEN_WIDTH / 2,
+            SCREEN_HEIGHT * 4 / 9 + MESSAGE_NUM * GoServerAddress._height + MESSAGE_NUM * GoServerAddress._height / 2,
+            1,
+            1,
+            -1);
 
         /*くるくるするやつを描画*/
         for (int i = 0; i < 3; i++)
@@ -213,14 +250,14 @@ int ControlSetUp()
     SDL_Delay(1000);
 
     // すべてのコンポーネントを破棄
-    for(int i = 0; i < componentNum; i++){
+    for (int i = 0; i < componentNum; i++)
+    {
         allComponents[i].DestroyComponent();
     }
 
     TTF_CloseFont(font);
     TTF_Quit();
 
-    
     return 0;
 }
 
