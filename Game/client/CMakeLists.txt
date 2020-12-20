@@ -23,6 +23,7 @@ set(CLIENT_CODE
     client_gamestate
     client_smart
     client_go
+    client_music
 )
 # CMakeの最低バージョンを記述
 cmake_minimum_required(VERSION 2.8)
@@ -56,4 +57,4 @@ target_compile_definitions(${SORYUTION_NAME} PUBLIC
 )
 
 #リンク先のライブラリを指定
-target_link_libraries( ${SORYUTION_NAME} ${SDL2_LIBRARIES}  ${SDL2ttf_LIBRARIES} ${SDL2image_LIBRARIES} -lGL -lGLU -lcwiimote -lbluetooth -L/usr/local/lib -lm)
+target_link_libraries( ${SORYUTION_NAME} ${SDL2_LIBRARIES}  ${SDL2ttf_LIBRARIES} ${SDL2image_LIBRARIES} ${SDL2mixer_LIBRARIES} -lGL -lGLU -lcwiimote -lbluetooth -L/usr/local/lib -lm)
