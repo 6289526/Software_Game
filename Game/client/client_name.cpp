@@ -58,7 +58,7 @@ static char ImagePath[2][MAX_STRING] = {
 };
 #endif
 
-static InitData NinitData;
+static System::InitData NinitData;
 //読み取った入力データ
 static InputData Data;
 static WiiInputData WIData;
@@ -69,7 +69,7 @@ static InputData InputEvents(SDL_Event event);
 static void SetString();
 static void SetWiiString();
 
-void GetInitData(InitData initData)
+void GetInitData(System::InitData initData)
 {
     NinitData = initData;
 }
