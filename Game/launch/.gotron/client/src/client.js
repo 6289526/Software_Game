@@ -22,7 +22,7 @@ ws.onmessage = (message) => {
         case "pid":
             if (ID === obj.ID) {
                 nowPid = obj.AtrNameInFrontend;
-                console.log("nowPid:"+nowPid);
+                console.log("nowPid:" + nowPid);
             }
             break;
         case "comdone":
@@ -31,8 +31,12 @@ ws.onmessage = (message) => {
                 var messages = document.querySelector('ul');
                 const li2 = document.createElement('li');
                 li2.textContent = '$';
-                messages.insertBefore(li2, messages.firstElementChild);
-                console.log(`${line}`);
+                messages.appendChild(li2);
+                // console.log(`${line}`);
+                const div = document.getElementsByClassName("mainWindow");
+                div.scrollTop = div.scrollHeight;
+                const mainWindow = document.getElementById("mainWindow");
+                mainWindow.scrollTop = mainWindow.scrollHeight;
             }
             break;
         case "stdout":
@@ -42,8 +46,10 @@ ws.onmessage = (message) => {
                 for (let line of obj.AtrNameInFrontend.split('\n')) {
                     const li2 = document.createElement('li');
                     li2.textContent = line;
-                    messages.insertBefore(li2, messages.firstElementChild);
-                    console.log(`${line}`);
+                    messages.appendChild(li2);
+                    // console.log(`${line}`);
+                    const mainWindow = document.getElementById("mainWindow");
+                    mainWindow.scrollTop = mainWindow.scrollHeight;
                 }
             }
             break;
@@ -54,8 +60,13 @@ ws.onmessage = (message) => {
                 for (let line of obj.AtrNameInFrontend.split('\n')) {
                     const li2 = document.createElement('li');
                     li2.textContent = line;
-                    messages.insertBefore(li2, messages.firstElementChild);
-                    console.log(`${line}`);
+                    messages.appendChild(li2);
+                    // console.log(`${line}`);
+                    const div = document.getElementsByClassName("mainWindow");
+                    div.scrollTop = div.scrollHeight;
+                    console.log(div.scrollTop);
+                    const mainWindow = document.getElementById("mainWindow");
+                    mainWindow.scrollTop = mainWindow.scrollHeight;
                 }
             }
             break;

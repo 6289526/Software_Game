@@ -37,13 +37,17 @@ a {
   color: white;
 }
 
-.mainWindow {
+#mainWindow {
   /* background-color: #282a36; */
   /* font-size: 0; */
+  /* overflow-y: scroll; */
+  overflow:auto;
   height: 100%;
   width: 100%;
   letter-spacing: 0;
+  /* border: 1px solid white; */
 }
+
 
 /* 子要素 */
 ul{
