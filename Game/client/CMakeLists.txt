@@ -19,6 +19,7 @@ set(CLIENT_CODE
     client_smart
     client_system
     client_time
+    component
     control_setup
     client_WiiInput
     graphic_2dui

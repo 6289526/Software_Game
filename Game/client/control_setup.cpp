@@ -1,7 +1,7 @@
 /*
     キーボードかwiiリモコンかを選択でき,Wiiリモコンのアドレスを取得する
 */
-#include "client_common.h"
+#include "component.h"
 
 #ifdef DEBUG
 #define FONT_PATH "fonts/PixelMplus12-Regular.ttf"
@@ -64,6 +64,27 @@ int GetAddress(void *args)
     return 0;
 }
 
+char *GetIpAddress()
+{
+    FILE *fp;
+    char command[MAX_STRING];
+    char output[MAX_STRING];
+    sprintf(command, "ifconfig | grep 192.168 | awk '{print $2}'");
+
+    fp = popen(command, "r");
+    int index = 0;
+    char* address = (char*)malloc(32);
+    char trash1[MAX_STRING];
+    char trash2[MAX_STRING];
+    while (fgets(output, MAX_STRING, fp) != NULL)
+    {
+        fprintf(stderr, "%s\n", output);
+        sscanf(output, "%s", address);
+    }
+
+    return address;
+}
+
 /*必要な情報を描画*/
 int ControlSetUp()
 {
@@ -90,101 +111,80 @@ int ControlSetUp()
     GetAddressThread = SDL_CreateThread(GetAddress, "Draw", mtx1);
 
     SDL_Surface *image[2];
-    SDL_Surface *surface;
-    SDL_Texture *texture;
 
     SDL_Event event;
-    //文字を描写したTextureのサイズを取得する
-    int iw, ih;
 
     /*くるくる回るやつの角度*/
     float angle[3] = {30, 20, 10};
     /*角加速度*/
     float alpha = 0;
 
-    /*描画*/
+    using namespace React;
+    // 描画要素の宣言
+    int componentNum = 0;
+    vector<Component> allComponents;
+    componentNum++;
     image[0] = IMG_Load(ImagePath[0]);
+    Component subBackGround;
+    subBackGround.CreateComponent(renderer, image[0]);
+    allComponents.push_back(subBackGround);
+
+    componentNum++;
     image[1] = IMG_Load(ImagePath[1]);
+    Component titleBackGround;
+    titleBackGround.CreateComponent(renderer, image[1]);
+    allComponents.push_back(titleBackGround);
+
+    Component messages[MESSAGE_NUM];
+    for (int i = 0; i < MESSAGE_NUM; i++)
+    {
+        componentNum++;
+        messages[i].CreateComponent(renderer, TTF_RenderUTF8_Blended(font, Text[i], (SDL_Color){255, 255, 255, 255}));
+        allComponents.push_back(messages[i]);
+    }
+
+    char urlMsg[128];
+    char* ipAddress = (char*)malloc(32);
+    sprintf(urlMsg, "If you want to use tablet or phone, access http://%s:8080", ipAddress = GetIpAddress());
+    componentNum++;
+    Component GoServerAddress;
+    GoServerAddress.CreateComponent(renderer, TTF_RenderUTF8_Blended(font, urlMsg, (SDL_Color){255, 255, 255, 255}));
+    allComponents.push_back(GoServerAddress);
+
+    /*描画*/
     while (data.finish != 1 && !GoSInput.J && !(strcmp(WiiAddress, "")))
     {
         /*キーボード入力取得 kキーでwhileループ抜ける*/
         data = InputEvents(event);
 
         SDL_RenderClear(renderer);
-        texture = SDL_CreateTextureFromSurface(renderer, image[1]);
-
         SDL_SetRenderDrawColor(renderer, 0, 85, 150, 255);
 
-        SDL_QueryTexture(texture, NULL, NULL, &iw, &ih);
+        titleBackGround.RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 1, 1, -1);
 
-        SDL_Rect imgRect = (SDL_Rect){0, 0, iw, ih};
-        SDL_Rect impasteRect = (SDL_Rect){0, 0, iw, ih};
-        //Textureを描写する
-        //描写元の描写する部分,描写先の描写する部分)
-        //サイズが違うと勝手にTextureを伸展してくれる
-        SDL_RenderCopy(renderer, texture, &imgRect, &impasteRect);
-        SDL_DestroyTexture(texture);
-
-        texture = SDL_CreateTextureFromSurface(renderer, image[0]);
-
-        SDL_SetRenderDrawColor(renderer, 0, 85, 150, 255);
-
-        SDL_QueryTexture(texture, NULL, NULL, &iw, &ih);
-
-        imgRect = (SDL_Rect){0, 0, iw, ih};
-        impasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - iw / 8, SCREEN_HEIGHT / 2 - ih / 8, iw / 4, ih / 4};
-
-        //Textureを描写する
-        //描写元の描写する部分,描写先の描写する部分)
-        //サイズが違うと勝手にTextureを伸展してくれる
-        SDL_RenderCopy(renderer, texture, &imgRect, &impasteRect);
-        SDL_DestroyTexture(texture);
+        subBackGround.RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 4, 4, -1);
 
         for (int i = 0; i < MESSAGE_NUM - 1; i++)
         {
-            //TTF_SetFontOutline(font, 1);//枠抜きで描写するとき
-            surface = TTF_RenderUTF8_Blended(font, Text[i], (SDL_Color){255, 255, 255, 255});
-            //surfaceからTextureを作る
-            texture = SDL_CreateTextureFromSurface(renderer, surface);
-
-            SDL_SetRenderDrawColor(renderer, 0, 85, 150, 255);
-
-            SDL_QueryTexture(texture, NULL, NULL, &iw, &ih);
-
-            SDL_Rect txtRect = (SDL_Rect){0, 0, iw, ih};
-            SDL_Rect pasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - iw / 2, SCREEN_HEIGHT / 5 + i * ih + i * ih / 2, iw, ih};
-
-            //Textureを描写する
-            //描写元の描写する部分,描写先の描写する部分)
-            //サイズが違うと勝手にTextureを伸展してくれる
-            SDL_RenderCopy(renderer, texture, &txtRect, &pasteRect);
-            SDL_FreeSurface(surface);
-            SDL_DestroyTexture(texture);
+            messages[i].RenderingComponent(
+                SCREEN_WIDTH / 2,
+                SCREEN_HEIGHT * 4 / 9 + i * messages[i]._height + i * messages[i]._height / 2,
+                1,
+                1,
+                -1);
         }
+
+        GoServerAddress.RenderingComponent(
+            SCREEN_WIDTH / 2,
+            SCREEN_HEIGHT * 4 / 9 + MESSAGE_NUM * GoServerAddress._height + MESSAGE_NUM * GoServerAddress._height / 2,
+            1,
+            1,
+            -1);
 
         /*くるくるするやつを描画*/
         for (int i = 0; i < 3; i++)
         {
-
-            //TTF_SetFontOutline(font, 1);//枠抜きで描写するとき
-            surface = TTF_RenderUTF8_Blended(font, Text[4], (SDL_Color){255, 255, 255, 255});
-            //surfaceからTextureを作る
-            texture = SDL_CreateTextureFromSurface(renderer, surface);
-
-            SDL_SetRenderDrawColor(renderer, 0, 85, 150, 255);
-
-            SDL_QueryTexture(texture, NULL, NULL, &iw, &ih);
-
-            SDL_Rect txtRect = (SDL_Rect){0, 0, iw, ih};
-            SDL_Rect pasteRect = (SDL_Rect){(int)(SCREEN_WIDTH*7/9 + 30 * sin(angle[i] * M_PI / 180.0)), (int)(SCREEN_HEIGHT * 2 / 3 - 30 * cos(angle[i] * M_PI / 180.0)-50), iw, ih};
-
-            //Textureを描写する
-            //描写元の描写する部分,描写先の描写する部分)
-            //サイズが違うと勝手にTextureを伸展してくれる
-            SDL_RenderCopy(renderer, texture, &txtRect, &pasteRect);
-            SDL_FreeSurface(surface);
-            SDL_DestroyTexture(texture);
-            // index -= 1;
+            messages[4].RenderingComponent((int)(SCREEN_WIDTH * 7 / 9 + 30 * sin(angle[i] * M_PI / 180.0)), (int)(SCREEN_HEIGHT * 2 / 3 - 30 * cos(angle[i] * M_PI / 180.0) - 50), 1, 1, -1);
         }
 
         /*くるくるするやつの角度計算*/
@@ -216,105 +216,44 @@ int ControlSetUp()
 
     /*結果の描画*/
     SDL_RenderClear(renderer);
-    SDL_RenderClear(renderer);
-    //surfaceからTextureを作る
-    texture = SDL_CreateTextureFromSurface(renderer, image[1]);
-
     SDL_SetRenderDrawColor(renderer, 0, 85, 150, 255);
 
-    SDL_QueryTexture(texture, NULL, NULL, &iw, &ih);
+    titleBackGround.RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 1, 1, -1);
 
-    SDL_Rect imgRect = (SDL_Rect){0, 0, iw, ih};
-    SDL_Rect impasteRect = (SDL_Rect){0, 0, iw, ih};
-    //Textureを描写する
-    //描写元の描写する部分,描写先の描写する部分)
-    //サイズが違うと勝手にTextureを伸展してくれる
-    SDL_RenderCopy(renderer, texture, &imgRect, &impasteRect);
-    SDL_DestroyTexture(texture);
+    subBackGround.RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 4, 4, -1);
 
-    texture = SDL_CreateTextureFromSurface(renderer, image[0]);
-
-    SDL_SetRenderDrawColor(renderer, 0, 85, 150, 255);
-
-    SDL_QueryTexture(texture, NULL, NULL, &iw, &ih);
-
-    imgRect = (SDL_Rect){0, 0, iw, ih};
-    impasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - iw / 8, SCREEN_HEIGHT / 2 - ih / 8, iw / 4, ih / 4};
-
-    //Textureを描写する
-    //描写元の描写する部分,描写先の描写する部分)
-    //サイズが違うと勝手にTextureを伸展してくれる
-    SDL_RenderCopy(renderer, texture, &imgRect, &impasteRect);
-    SDL_DestroyTexture(texture);
     if (GetResult == 1)
     {
-        //TTF_SetFontOutline(font, 1);//枠抜きで描写するとき
-        surface = TTF_RenderUTF8_Blended(font, "Find your Wiilimocon!", (SDL_Color){255, 255, 255, 255});
+        struct Component findWiiMessage;
+        findWiiMessage.CreateComponent(renderer, TTF_RenderUTF8_Blended(font, "Find your Wiilimocon!", (SDL_Color){255, 255, 255, 255}));
         fprintf(stderr, "Find your Wiilimocon!\n");
-        //surfaceからTextureを作る
-        texture = SDL_CreateTextureFromSurface(renderer, surface);
 
-        SDL_SetRenderDrawColor(renderer, 0, 85, 150, 255);
-
-        SDL_QueryTexture(texture, NULL, NULL, &iw, &ih);
-
-        SDL_Rect txtRect = (SDL_Rect){0, 0, iw, ih};
-        SDL_Rect pasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - iw / 2, SCREEN_HEIGHT / 2 - ih / 2, iw, ih};
-
-        //Textureを描写する
-        //描写元の描写する部分,描写先の描写する部分)
-        //サイズが違うと勝手にTextureを伸展してくれる
-        SDL_RenderCopy(renderer, texture, &txtRect, &pasteRect);
-        SDL_FreeSurface(surface);
-        SDL_DestroyTexture(texture);
+        findWiiMessage.RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 1, 1, -1);
     }
-    else if(GoSInput.J){
-        //TTF_SetFontOutline(font, 1);//枠抜きで描写するとき
-        surface = TTF_RenderUTF8_Blended(font, "Select Phone", (SDL_Color){255, 255, 255, 255});
+    else if (GoSInput.J)
+    {
+        struct Component selectSmartMessage;
+        selectSmartMessage.CreateComponent(renderer, TTF_RenderUTF8_Blended(font, "Select Phone", (SDL_Color){255, 255, 255, 255}));
         fprintf(stderr, "Select Browser!\n");
-        //surfaceからTextureを作る
-        texture = SDL_CreateTextureFromSurface(renderer, surface);
-
-        SDL_SetRenderDrawColor(renderer, 0, 85, 150, 255);
-
-        SDL_QueryTexture(texture, NULL, NULL, &iw, &ih);
-
-        SDL_Rect txtRect = (SDL_Rect){0, 0, iw, ih};
-        SDL_Rect pasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - iw / 2, SCREEN_HEIGHT / 2 - ih / 2, iw, ih};
-
-        //Textureを描写する
-        //描写元の描写する部分,描写先の描写する部分)
-        //サイズが違うと勝手にTextureを伸展してくれる
-        SDL_RenderCopy(renderer, texture, &txtRect, &pasteRect);
-        SDL_FreeSurface(surface);
-        SDL_DestroyTexture(texture);
+        selectSmartMessage.RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 1, 1, -1);
     }
     else
     {
-        //TTF_SetFontOutline(font, 1);//枠抜きで描写するとき
-        surface = TTF_RenderUTF8_Blended(font, "Select Keyboard", (SDL_Color){255, 255, 255, 255});
+        struct Component selectKeyboardMessage;
+        selectKeyboardMessage.CreateComponent(renderer, TTF_RenderUTF8_Blended(font, "Select Keyboard", (SDL_Color){255, 255, 255, 255}));
         fprintf(stderr, "Select Keyboard!\n");
-        //surfaceからTextureを作る
-        texture = SDL_CreateTextureFromSurface(renderer, surface);
-
-        SDL_SetRenderDrawColor(renderer, 0, 85, 150, 255);
-
-        SDL_QueryTexture(texture, NULL, NULL, &iw, &ih);
-
-        SDL_Rect txtRect = (SDL_Rect){0, 0, iw, ih};
-        SDL_Rect pasteRect = (SDL_Rect){SCREEN_WIDTH / 2 - iw / 2, SCREEN_HEIGHT / 2 - ih / 2, iw, ih};
-
-        //Textureを描写する
-        //描写元の描写する部分,描写先の描写する部分)
-        //サイズが違うと勝手にTextureを伸展してくれる
-        SDL_RenderCopy(renderer, texture, &txtRect, &pasteRect);
-        SDL_FreeSurface(surface);
-        SDL_DestroyTexture(texture);
+        selectKeyboardMessage.RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 1, 1, -1);
     }
     //windowにレンダリングする
     SDL_RenderPresent(renderer);
     /*一秒待つ*/
     SDL_Delay(1000);
+
+    // すべてのコンポーネントを破棄
+    for (int i = 0; i < componentNum; i++)
+    {
+        allComponents[i].DestroyComponent();
+    }
 
     TTF_CloseFont(font);
     TTF_Quit();
