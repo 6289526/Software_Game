@@ -109,6 +109,6 @@ void Gui2D::Draw(){
     playerName.Draw();
     direction.Draw(-(pData->direction.horizontal), rotdir);
     minimap.Draw();
-    rotdir += 0.001;
+    rotdir += 0.008;
     if(rotdir >= 2* PI)rotdir -= 2*PI;
 }

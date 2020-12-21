@@ -121,7 +121,7 @@ typedef struct
 	Direction direction;         // 向き
 	int rank;                // 順位
 	bool goal;               // ゴールしているか
-	bool onGame; 			 // ゲームプレイ中かどうか		
+	bool onGame; 			 // ゲームプレイ中かどうか
 } PlayerData;
 
 typedef struct
