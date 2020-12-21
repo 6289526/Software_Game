@@ -13,8 +13,7 @@ ClientSystem::ClientSystem()
 	_MoveCalculator = new Mover::MoveCalculator(this);
 	StateController = new GameState::GameStateController();
 	_InitData.stateController = StateController;
-	StateController->Subscribe(&_StateOutputer);
-	StateController->Subscribe(&_BgmController);
+	
 }
 ClientSystem::~ClientSystem()
 {
@@ -69,6 +68,8 @@ bool ClientSystem::InitSystem(InitData *data)
 	}
 
 	data->timer = &Time;
+	StateController->Subscribe(&_StateOutputer);
+	StateController->Subscribe(&_BgmController);
 	StateController->OnNest(GameState::Init);
 	return true;
 }
