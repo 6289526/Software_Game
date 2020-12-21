@@ -350,7 +350,7 @@ void RunCommand(int id, char com)
     VelocityFlag flag = {false, false, false};
     PlaceData placeData = GetPlaceData();
     time_t timer = Get_Time();
-    
+
     // コマンドに応じた処理
     switch (com)
     {
@@ -403,7 +403,6 @@ void RunCommand(int id, char com)
 
         break;
         case TIMER_COMMAND:
-            fprintf(stderr, "send timer.\n");
             SendData(id, &com, sizeof(com));
             SendData(id, &timer, sizeof(time_t));
     break;

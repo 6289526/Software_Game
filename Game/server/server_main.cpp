@@ -128,6 +128,7 @@ int main(int argc, char *argv[]) {
 
   while (!end && result) {
     Set_Time(); // システムに時間をセット
+    Send_Time(); // クライアントにタイム送信
     for (int i = 0; i < PlayerNum; ++i) {
       MovePosition(i);
     }

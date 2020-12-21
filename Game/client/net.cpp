@@ -286,6 +286,7 @@ int ExeCommand()
         break;
     case TIMER_COMMAND: // 通信終了
         ReceiveData(&timer, sizeof(time_t));
+        GetSystem().GetTimer().SetCurrentTime(timer);
         // 通信継続
         result = 1;
         break;
