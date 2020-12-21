@@ -15,7 +15,7 @@ int Go(void *args);
 char WiiAddress[18];
 InputType _______Type;
 System::ClientSystem _System;
-System::ClientSystem& GetSystem() { return _System; }
+System::ClientSystem &GetSystem() { return _System; }
 
 // client用のmain関数
 int main(int argc, char *argv[])
@@ -30,10 +30,6 @@ int main(int argc, char *argv[])
 
 	char server_name[MAX_LEN_NAME];
 	//multithread
-	SDL_Thread *SelectThread;
-	SDL_mutex *mtx1 = SDL_CreateMutex();
-	SelectThread = SDL_CreateThread(Select, "getCommand", mtx1);
-
 	SDL_Thread *goThread;
 	SDL_mutex *gMtx = SDL_CreateMutex();
 	goThread = SDL_CreateThread(Go, "Go!", gMtx);
@@ -74,6 +70,10 @@ int main(int argc, char *argv[])
 	_System.InitSystem(_System.GetInitData());
 	Init2dGraphic();
 
+	SDL_Thread *SelectThread;
+	SDL_mutex *mtx1 = SDL_CreateMutex();
+	SelectThread = SDL_CreateThread(Select, "getCommand", mtx1);
+
 	while (cond && !_System.GetInitData()->input->GetInputType().End)
 	{
 		_System.SystemRun();
@@ -100,17 +100,19 @@ int Select(void *args)
 
 	while (1)
 	{
-		SDL_LockMutex(mtx);
+		auto state = GetSystem().GetGameStateController().GetState();
+		if (state == GameState::Init)
+		{
+			SDL_LockMutex(mtx);
+			cond = ControlRequests();
 
-		cond = ControlRequests();
-
-		SDL_UnlockMutex(mtx);
-		SDL_Delay(10);
+			SDL_UnlockMutex(mtx);
+			SDL_Delay(10);
+		}
 	}
 
 	return 0;
 }
-
 
 // スマホからの入力を受け取る
 int Go(void *args)

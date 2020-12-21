@@ -32,7 +32,7 @@ namespace React
         void UpdateComponent(SDL_Surface *surface);
 
         void RenderingComponent(int positionX, int positionY, int scaleX, int scaleY, int mode);
-
+        void RenderingComponentEx(int positionX, int positionY, double angle, int scaleX, int scaleY, int mode);
         void DestroyComponent();
     } Component;
 } // namespace React

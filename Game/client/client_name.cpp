@@ -47,15 +47,15 @@ static int Index = 3;
 static int KeyboardNum = 0;
 
 #ifdef DEBUG
-static char ImagePath[2][MAX_STRING] = {
-    {"Game.png"},
-    {"UI.png"},
-};
+static char all_bace2_image[MAX_STRING] = "../data/ui/all_bace2.png";
+static char title_logo_image[MAX_STRING] = "../data/ui/title_logo.png";
+static char ui_image[MAX_STRING] = "../data/ui/UI.png";
+static char timer_circle_Image[MAX_STRING] = "../data/ui/timer_circle.png";
 #else
-static char ImagePath[2][MAX_STRING] = {
-    {"../Game.png"},
-    {"../UI.png"},
-};
+static char all_bace2_image[MAX_STRING] = "../../data/ui/all_bace2.png";
+static char title_logo_image[MAX_STRING] = "../../data/ui/title_logo.png";
+static char ui_image[MAX_STRING] = "../../data/ui/UI.png";
+static char timer_circle_Image[MAX_STRING] = "../../data/ui/timer_circle.png";
 #endif
 
 static System::InitData NinitData;
@@ -95,26 +95,33 @@ void NameSetUp()
     }
 
     SDL_Surface *image[2];
-    
+
     SDL_Event event;
-    
+
     using namespace React;
     // 描画要素の宣言
     int componentNum = 0;
     vector<Component> allComponents;
     componentNum++;
-    image[0] = IMG_Load(ImagePath[1]);
-    Component subBackGround;
-    subBackGround.CreateComponent(renderer, image[0]);
-    allComponents.push_back(subBackGround);
+    Component allBace;
+    allBace.CreateComponent(renderer, IMG_Load(all_bace2_image));
+    allComponents.push_back(allBace);
 
     componentNum++;
-    image[1] = IMG_Load(ImagePath[0]);
-    Component titleBackGround;
-    titleBackGround.CreateComponent(renderer, image[1]);
-    allComponents.push_back(titleBackGround);
+    Component titleLogo;
+    titleLogo.CreateComponent(renderer, IMG_Load(title_logo_image));
+    allComponents.push_back(titleLogo);
 
-    
+    componentNum++;
+    Component baceUi;
+    baceUi.CreateComponent(renderer, IMG_Load(ui_image));
+    allComponents.push_back(baceUi);
+
+    componentNum++;
+    Component timerCircle;
+    timerCircle.CreateComponent(renderer, IMG_Load(timer_circle_Image));
+    allComponents.push_back(timerCircle);
+
     Component messages[MESSAGE_NUM];
     for (int i = 0; i < MESSAGE_NUM; i++)
     {
@@ -127,7 +134,7 @@ void NameSetUp()
     Component inputName;
     inputName.CreateComponent(renderer, TTF_RenderUTF8_Blended(font, MyName, (SDL_Color){255, 255, 255, 255}));
     allComponents.push_back(inputName);
-    
+
     componentNum++;
     Component inputCresol;
     inputCresol.CreateComponent(renderer, TTF_RenderUTF8_Blended(font, "|", (SDL_Color){255, 255, 255, 255}));
@@ -141,7 +148,7 @@ void NameSetUp()
         SDL_StartTextInput();
         while (data.finish != 1)
         {
-            
+
             /*キーボード入力取得 kキーでwhileループ抜ける*/
             data = InputEvents(event);
             if (Index <= 8)
@@ -151,16 +158,23 @@ void NameSetUp()
 
             SDL_RenderClear(renderer);
 
-            SDL_SetRenderDrawColor(renderer, 0, 85, 150, 255);
+            SDL_SetRenderDrawColor(renderer, 0, 0, 40, 255);
 
-            titleBackGround.RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 1, 1, -1);
+            allBace.RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 2, 2, -1);
+            titleLogo.RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 10 / 30, 3, 3, -1);
 
-            subBackGround.RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 4, 4, -1);
+            baceUi.RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 3, 3, -1);
 
-            for (int i = 0; i < MESSAGE_NUM; i++)
-            {
-                messages[i].RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 5 + i * messages[i]._height + i * messages[i]._height / 2, 1, 1, -1);
-            }
+            // for (int i = 0; i < MESSAGE_NUM; i++)
+            // {
+            //     messages[i].RenderingComponent(
+            //         SCREEN_WIDTH / 2,
+            //         SCREEN_HEIGHT*2 / 6 + i * messages[i]._height + i * messages[i]._height / 2,
+            //         1,
+            //         1,
+            //         -1
+            //         );
+            // }
 
             // 名前の表示
             // テクスチャ更新
@@ -198,12 +212,12 @@ void NameSetUp()
     else
     {
         NinitData.input->_setname = true;
-        
+
         componentNum++;
         Component keyMap;
         keyMap.CreateComponent(renderer, TTF_RenderUTF8_Blended(font, "Enter", (SDL_Color){255, 255, 0, 255}));
         allComponents.push_back(keyMap);
-
+        int angle = 0;
         while (KeyboardNum != 26 || !NinitData.input->GetInputType().Forward)
         {
             //wii入力取得
@@ -213,23 +227,24 @@ void NameSetUp()
             SetWiiString();
 
             SDL_RenderClear(renderer);
-            SDL_SetRenderDrawColor(renderer, 0, 85, 150, 255);
+            SDL_SetRenderDrawColor(renderer, 0, 0, 40, 255);
 
-            titleBackGround.RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 1, 1, -1);
+            allBace.RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 2, 2, -1);
+            titleLogo.RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 10 / 30, 3, 3, -1);
 
-            subBackGround.RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 4, 4, -1);
+            baceUi.RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 3, 3, -1);
 
-            for (int i = 0; i < MESSAGE_NUM; i++)
-            {
-                messages[i].RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 5 + i * messages[i]._height + i * messages[i]._height / 2, 1, 1, -1);
-            }
+            // for (int i = 0; i < MESSAGE_NUM; i++)
+            // {
+            //     messages[i].RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT*2 / 6 + i * messages[i]._height + i * messages[i]._height / 2, 1, 1, -1);
+            // }
 
             // 名前の表示
             // テクスチャ更新
             inputName.UpdateComponent(TTF_RenderUTF8_Blended(font, MyName, (SDL_Color){255, 255, 255, 255}));
             // 名前のサイズ
             int nameSize = inputName._width;
-            inputName.RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 1, 1, -1);
+            inputName.RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 2 / 6, 1, 1, -1);
 
             // 点滅するやつの表示
             if (showCresol % 50 > 25)
@@ -237,11 +252,11 @@ void NameSetUp()
 
                 if (Index == -1)
                 {
-                    inputCresol.RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 1, 1, -1);
+                    inputCresol.RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 2 / 6, 1, 1, -1);
                 }
                 else
                 {
-                    inputCresol.RenderingComponent(SCREEN_WIDTH / 2 + nameSize / 2, SCREEN_HEIGHT / 2, 1, 1, -1);
+                    inputCresol.RenderingComponent(SCREEN_WIDTH / 2 + nameSize / 2, SCREEN_HEIGHT * 2 / 6, 1, 1, -1);
                 }
             }
             showCresol++;
@@ -261,6 +276,13 @@ void NameSetUp()
                         if (keynum == KeyboardNum)
                         {
                             keyMap.UpdateComponent(TTF_RenderUTF8_Blended(font, "Enter", (SDL_Color){255, 255, 0, 255}));
+                            timerCircle.RenderingComponentEx(
+                                SCREEN_WIDTH / 2 - (keyMap._width * 2) + keyMap._width*4/7 * j,
+                                SCREEN_HEIGHT * 3 / 6 + keyMap._height * 3 / 2 * i,
+                                angle,
+                                10,
+                                10,
+                                -1);
                         }
                         else
                         {
@@ -275,6 +297,13 @@ void NameSetUp()
                         if (keynum == KeyboardNum)
                         {
                             keyMap.UpdateComponent(TTF_RenderUTF8_Blended(font, text, (SDL_Color){255, 255, 0, 255}));
+                            timerCircle.RenderingComponentEx(
+                                SCREEN_WIDTH / 2 - (keyMap._width * 9) + keyMap._width * 5 / 2 * j,
+                                SCREEN_HEIGHT * 3 / 6 + keyMap._height * 3 / 2 * i,
+                                angle,
+                                10,
+                                10,
+                                -1);
                         }
                         else
                         {
@@ -285,15 +314,16 @@ void NameSetUp()
                     if (i == 2 && j == 8)
                     {
                         keyMap.RenderingComponent(
-                            SCREEN_WIDTH / 2 - (keyMap._width * 2) + keyMap._width / 2 * j, 
-                            SCREEN_HEIGHT * 2 / 3 + keyMap._height * i, 
+                            SCREEN_WIDTH / 2 - (keyMap._width * 2) + keyMap._width*4/7 * j,
+                            SCREEN_HEIGHT * 3 / 6 + keyMap._height * 3 / 2 * i,
                             1, 1, -1);
                     }
                     else
                     {
-                        keyMap.RenderingComponent(SCREEN_WIDTH / 2 - (keyMap._width * 9) + keyMap._width * 2 * j,
-                        SCREEN_HEIGHT * 2 / 3 + keyMap._height * i, 
-                        1, 1, -1);
+                        keyMap.RenderingComponent(
+                            SCREEN_WIDTH / 2 - (keyMap._width * 9) + keyMap._width * 5 / 2 * j,
+                            SCREEN_HEIGHT * 3 / 6 + keyMap._height * 3 / 2 * i,
+                            1, 1, -1);
                     }
 
                     keynum++;
@@ -303,6 +333,12 @@ void NameSetUp()
             SDL_RenderPresent(renderer);
             /*ホット一息*/
             SDL_Delay(10);
+
+            angle += 1;
+            if (angle > 360)
+            {
+                angle = 0;
+            }
         }
     }
     TTF_CloseFont(font);
@@ -310,7 +346,8 @@ void NameSetUp()
     NinitData.input->_setname = false;
 
     // すべてのコンポーネントを破棄
-    for(int i = 0; i < componentNum; i++){
+    for (int i = 0; i < componentNum; i++)
+    {
         allComponents[i].DestroyComponent();
     }
 }
