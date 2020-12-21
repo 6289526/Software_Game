@@ -93,7 +93,7 @@ void MapUI::Draw(){
 void Gui2D::Set(){
     font = TTF_OpenFont(fontpath,2000);
     if(font == NULL) fprintf(stderr,"ttf font cannot loaded\n");
-    pData = GetSystem().GetPlayerData();
+    pData = GetSystem().GetPlayerData() + GetSystem().GetMyID();
     dst = {0,0,Wd_Width,Wd_Height};
     back.LoadImg(basefile);
     timer.Set(font);
