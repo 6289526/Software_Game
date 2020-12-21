@@ -127,6 +127,7 @@ int main(int argc, char *argv[]) {
   int end = 0;
 
   while (!end && result) {
+    Set_Time(); // システムに時間をセット
     for (int i = 0; i < PlayerNum; ++i) {
       MovePosition(i);
     }

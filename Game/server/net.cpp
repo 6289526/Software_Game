@@ -349,7 +349,8 @@ void RunCommand(int id, char com)
     float direction;
     VelocityFlag flag = {false, false, false};
     PlaceData placeData = GetPlaceData();
-
+    time_t timer = Get_Time();
+    
     // コマンドに応じた処理
     switch (com)
     {
@@ -401,7 +402,11 @@ void RunCommand(int id, char com)
         SendData(id, &placeData, sizeof(PlaceData));
 
         break;
-
+        case TIMER_COMMAND:
+            fprintf(stderr, "send timer.\n");
+            SendData(id, &com, sizeof(com));
+            SendData(id, &timer, sizeof(time_t));
+    break;
     case FINISH_COMMAND:
         fprintf(stderr, "All clients goaled.\n");
         SendData(id, &com, sizeof(com));
