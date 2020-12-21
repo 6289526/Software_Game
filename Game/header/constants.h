@@ -119,7 +119,7 @@ typedef struct
 	char name[MAX_LEN_NAME]; // 名前
 	FloatCube pos;           // 場所
 	Vector3 velocity;        // 速度ベクトル
-	Direction direction;         // 向き
+	Direction direction;     // 向き
 	int rank;                // 順位
 	bool goal;               // ゴールしているか
 	bool onGame; 			 // ゲームプレイ中かどうか
