@@ -4,11 +4,15 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/usr/include/"
+                "/usr/include/**",
+                "/usr/include/c++/9/",
+                "/usr/local/include/**",
+                "/usr/local/include/",
+                "/usr/local/include/libcwiimote-0.4.0/libcwiimote/",
+                "/usr/include/x86_64-linux-gnu/sys/"
             ],
             "defines": [],
-            "compilerPath": "/opt/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-gcc",
-            "cStandard": "gnu18",
+            //"compilerPath": "/opt/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-gcc",
             "cppStandard": "gnu++14",
             "intelliSenseMode": "gcc-arm"
         }
