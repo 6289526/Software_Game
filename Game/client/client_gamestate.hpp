@@ -37,8 +37,8 @@ namespace GameState{
     class GameStateController : public Subject{
     public:
         void SetGameState(GameState state);
-        GameState GetState(){ return _State; }
-        GameState GetPreState(){ return _PreState; }
+        inline GameState GetState(){ return _State; }
+        inline GameState GetPreState(){ return _PreState; }
     protected:
         GameState _State, _PreState;
     };

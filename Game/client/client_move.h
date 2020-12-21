@@ -21,8 +21,8 @@ namespace Mover{
         bool isJumped = false;
         bool isPreGround = false;
 
-        float DegreeToRadian(float degree){ return degree * PI / 180.0; }
-        float RadianToDegree(float radian){ return radian * 180.0 / PI; }
+        inline float DegreeToRadian(float degree){ return degree * PI / 180.0; }
+        inline float RadianToDegree(float radian){ return radian * 180.0 / PI; }
         bool DisUseGravity(InputModuleBase *inputModule, PlayerData *pData, Timer *timer);
 
     public:

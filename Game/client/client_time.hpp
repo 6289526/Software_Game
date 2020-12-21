@@ -17,6 +17,6 @@ public:
     double GetDeltaTime();
     void UpdateFrame();
 
-    void SetCurrentTime(int time) { _CurrentTime = time; }
-    int GetCurrentTime() { return _CurrentTime; }
+    inline void SetCurrentTime(int time) { _CurrentTime = time; }
+    inline int GetCurrentTime() { return _CurrentTime; }
 };

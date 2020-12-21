@@ -60,13 +60,13 @@ namespace System
         int Num_Clients;                                 // クライアント人数
         char Name_Clients[MAX_NUMCLIENTS][MAX_LEN_NAME]; // クライアントの名前
 
-        const PlayerData *GetPlayerData() { return PData; }
-        int GetMyID() { return MyId; }
-        void SetMyID(int id) { MyId = id; }
-        ClientMap &GetClientMap() { return Map; }
-        InputModuleBase *GetInput() { return Input; }
-        InitData *GetInitData() { return &_InitData; }
-        Timer &GetTimer() { return Time; }
+        inline const PlayerData *GetPlayerData() { return PData; }
+        inline const int GetMyID() { return MyId; }
+        inline void SetMyID(int id) { MyId = id; }
+        inline const ClientMap &GetClientMap() { return Map; }
+        inline InputModuleBase *GetInput() { return Input; }
+        inline const InitData *GetInitData() { return &_InitData; }
+        inline const Timer &GetTimer() { return Time; }
 
         bool InitSystem(InitData *data);
         void ExitSystem(InitData *data);
