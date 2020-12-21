@@ -8,10 +8,18 @@ using namespace System;
 
 int InputThread(void *data);
 
-ClientSystem::ClientSystem(){ 
+ClientSystem::ClientSystem()
+{
 	_MoveCalculator = new Mover::MoveCalculator(this);
+	StateController = new GameState::GameStateController();
+	_InitData.stateController = StateController;
+	StateController->Subscribe(&_StateOutputer);
+	StateController->Subscribe(&_BgmController);
+
+	StateController->OnNest(GameState::Init);
 }
-ClientSystem::~ClientSystem(){ 
+ClientSystem::~ClientSystem()
+{
 	delete _MoveCalculator;
 }
 
@@ -19,7 +27,8 @@ ClientSystem::~ClientSystem(){
 void ClientSystem::InitControl(InitData *data)
 {
 	ControlSetUp();
-	if(GoSInput.J){
+	if (GoSInput.J)
+	{
 		Input = new Smart();
 	}
 	else if (strcmp(WiiAddress, "") == 0)
@@ -63,12 +72,6 @@ bool ClientSystem::InitSystem(InitData *data)
 
 	data->timer = &Time;
 
-	StateController = new GameState::GameStateController();
-	data->stateController = StateController;
-	StateController->Subscribe(&_StateOutputer);
-	StateController->Subscribe(&_BgmController);
-	
-	StateController->OnNest(GameState::Init);
 	return true;
 }
 
@@ -128,7 +131,8 @@ void ClientSystem::SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClien
 	}
 }
 
-void ClientSystem::SetRank(int id, int rank) {
+void ClientSystem::SetRank(int id, int rank)
+{
 	PData[id].rank = rank;
 	fprintf(stderr, "Client [%d] is rank is %d\n", id, PData[id].rank);
 }
@@ -158,7 +162,8 @@ void ClientSystem::SystemRun()
 	pair<bool, bool> t = _MoveCalculator->SetPlayerVelocity(Input, &PData[MyId], &Time);
 	isJumped = t.second;
 	// 移動処理
-	if (t.first){
+	if (t.first)
+	{
 		// 移動コマンド実行
 		InCommand(MOVE_COMMAND);
 	}
@@ -182,10 +187,12 @@ void ClientSystem::UpdateFlag(VelocityFlag *flags, int numClients)
 		if (flags[i].x == false)
 			PData[i].velocity.x = 0;
 #if USE_GRAVITY
-		if (flags[i].y == false && !isJumped){
-			PData[i].velocity.y = 0;}
+		if (flags[i].y == false && !isJumped)
+		{
+			PData[i].velocity.y = 0;
+		}
 #else
-		/*if (flags[i].y == false){
+			/*if (flags[i].y == false){
 			PData[i].velocity.y = 0;
 		}*/
 #endif
@@ -199,7 +206,6 @@ void ClientSystem::UpdateFlag(VelocityFlag *flags, int numClients)
 void ClientSystem::UpdatePlaceData(PlaceData data)
 {
 	Map.SetObjectData(&data);
-	
 }
 
 // 方向の取得

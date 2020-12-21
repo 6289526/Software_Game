@@ -30,6 +30,9 @@ int main(int argc, char *argv[])
 
 	char server_name[MAX_LEN_NAME];
 	//multithread
+	SDL_Thread *SelectThread;
+	SDL_mutex *mtx1 = SDL_CreateMutex();
+	SelectThread = SDL_CreateThread(Select, "getCommand", mtx1);
 	SDL_Thread *goThread;
 	SDL_mutex *gMtx = SDL_CreateMutex();
 	goThread = SDL_CreateThread(Go, "Go!", gMtx);
@@ -70,9 +73,7 @@ int main(int argc, char *argv[])
 	_System.InitSystem(_System.GetInitData());
 	Init2dGraphic();
 
-	SDL_Thread *SelectThread;
-	SDL_mutex *mtx1 = SDL_CreateMutex();
-	SelectThread = SDL_CreateThread(Select, "getCommand", mtx1);
+	
 
 	while (cond && !_System.GetInitData()->input->GetInputType().End)
 	{
