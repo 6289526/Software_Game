@@ -16,9 +16,11 @@ PlaceData MoveCalculator::BuildPlaceData(PlayerData playerData, float handLength
 
     result.object = BlockType::MetalBlock;
     result.pos.x = playerData.pos.x + sin(playerData.direction.horizontal) * handLength;
+	result.pos.y = playerData.pos.y + sin(playerData.direction.vertical) * handLength;
     result.pos.z = playerData.pos.z + cos(playerData.direction.horizontal) * handLength;
     // Vector2Int v2 = {result.pos.x / MAP_MAGNIFICATION, result.pos.z / MAP_MAGNIFICATION};
-    result.pos.y = playerData.pos.y;
+
+	// fprintf(stderr, "rot: (%.2f, %.2f)\n", playerData.direction.horizontal, playerData.direction.vertical, playerData.direction.vertical);
 
     return result;
 }
