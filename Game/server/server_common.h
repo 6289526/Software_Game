@@ -75,7 +75,7 @@ void Set_Time(); // 時間セット
 
 int Get_Time(); // 経過時間入手
 
-static void Send_Time(); // タイムを送信
+void Send_Time(); // タイムを送信
 
 // 埋まっているピクセル数を返す 横
 static int BuryCheck_Horizontal(const int chara_ID, const int accuracy,
