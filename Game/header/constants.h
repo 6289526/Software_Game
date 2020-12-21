@@ -34,6 +34,7 @@
 #define ERROR_COMMAND 'E'
 #define FINISH_COMMAND 'F'
 #define QUIT_COMMAND 'Q'
+#define TIMER_COMMAND 'I'
 #define TERMINATE_COMMAND 'T'
 /*----------define 終了-----------*/
 
@@ -121,7 +122,7 @@ typedef struct
 	Direction direction;         // 向き
 	int rank;                // 順位
 	bool goal;               // ゴールしているか
-	bool onGame; 			 // ゲームプレイ中かどうか		
+	bool onGame; 			 // ゲームプレイ中かどうか
 } PlayerData;
 
 typedef struct

@@ -233,6 +233,8 @@ int ExeCommand()
     VelocityFlag flags[MAX_NUMCLIENTS];
     int id = 0;
     int rank = 0;
+    time_t timer;
+
     // 通信を継続するかを判定する変数
     int result = 1;
     // dataの初期化
@@ -279,6 +281,12 @@ int ExeCommand()
         ReceiveData(&id, sizeof(int));
         // 通信を終了したことを表示
         fprintf(stderr, "client %d sent quit command.\n", id);
+        // 通信継続
+        result = 1;
+        break;
+    case TIMER_COMMAND: // 通信終了
+        ReceiveData(&timer, sizeof(time_t));
+        GetSystem().GetTimer().SetCurrentTime(timer);
         // 通信継続
         result = 1;
         break;

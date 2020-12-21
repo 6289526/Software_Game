@@ -61,8 +61,7 @@ bool ClientSystem::InitSystem(InitData *data)
 		return false;
 	}
 
-	Time = new Timer();
-	data->timer = Time;
+	data->timer = &Time;
 
 	StateController = new GameState::GameStateController();
 	data->stateController = StateController;
@@ -156,7 +155,7 @@ PlaceData ClientSystem::GetPlaceData()
 */
 void ClientSystem::SystemRun()
 {
-	pair<bool, bool> t = _MoveCalculator->SetPlayerVelocity(Input, &PData[MyId], Time);
+	pair<bool, bool> t = _MoveCalculator->SetPlayerVelocity(Input, &PData[MyId], &Time);
 	isJumped = t.second;
 	// 移動処理
 	if (t.first){
