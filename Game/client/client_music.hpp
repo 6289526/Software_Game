@@ -36,6 +36,6 @@ namespace Sound {
 
             void Initialize();
         public:
-            std::map<SoundEffectType, Mix_Music*> GetSEDictionary() { return _SEDictionary; }
+            inline std::map<SoundEffectType, Mix_Music*> GetSEDictionary() { return _SEDictionary; }
     };
 }
