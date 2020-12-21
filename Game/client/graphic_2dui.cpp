@@ -44,7 +44,7 @@ void TimerUI::Draw(float dir, float time){
 
 void PlayerNameUI::Set(const PlayerData *pData, TTF_Font *font){
     double nameMagW = 0.80, NameMagH = 0.65, idMagW = 0.18, idMagH = 0.48;
-    int id = GetMyID();
+    int id = GetSystem().GetMyID();
     char idstr[3];
     sprintf(idstr,"%02d",id);
     SDL_Color color {255,255,255,255};
@@ -93,7 +93,7 @@ void MapUI::Draw(){
 void Gui2D::Set(){
     font = TTF_OpenFont(fontpath,2000);
     if(font == NULL) fprintf(stderr,"ttf font cannot loaded\n");
-    pData = GetPlayerData();
+    pData = GetSystem().GetPlayerData();
     dst = {0,0,Wd_Width,Wd_Height};
     back.LoadImg(basefile);
     timer.Set(font);
@@ -107,8 +107,8 @@ void Gui2D::Draw(){
     back.Draw(&dst);
     timer.Draw(rotdir,time);
     playerName.Draw();
-    direction.Draw(-(pData->direction), rotdir);
+    direction.Draw(-(pData->direction.horizontal), rotdir);
     minimap.Draw();
-    rotdir += 0.001;
+    rotdir += 0.008;
     if(rotdir >= 2* PI)rotdir -= 2*PI;
 }

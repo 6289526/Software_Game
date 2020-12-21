@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>websocket example</title>
+  </head>
+
+  <body>
+    <div>
+      <button>イベントボタン</button>
+    </div>
+    <script>
+      const ws = new WebSocket(
+        "ws://localhost:" + global.backendPort + "/web/app/events"
+      );
+      console.log("Setup web socket:", ws);
+      // This is being called for all incoming messages
+      ws.onmessage = (message) => {
+        let obj = JSON.parse(message.data);
+
+        // event name
+        console.log(obj.event);
+
+        // event data
+        console.log(obj.AtrNameInFrontend);
+      };
+      const button = document.querySelector("button");
+      button.addEventListener("click", (event) => {
+        ws.send(
+          JSON.stringify({
+            event: "event-name",
+            AtrNameInFrontend: "Hello World!",
+          })
+        );
+        console.log("Send success!!");
+      });
+    </script>
+  </body>
+</html>

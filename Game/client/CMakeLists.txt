@@ -1,28 +1,32 @@
-#g++ -o client client_main.cpp client_input.cpp client_WiiInput.cpp net.cpp graphic.cpp client_system.cpp client_move.cpp client_map.cpp -lm -lSDL2 -lSDL2_image -lSDL2_ttf -lGL -lGLU -lcwiimote -lbluetooth -L/usr/lib -I/usr/local/include/libcwiimote-0.4.0/libcwiimote
+# コマンドイメージ
+# g++ ${CLIENT_CODE} -o ${SORYUTION_NAME} target_compile_options target_compile_definitions target_link_libraries
 
 #buildフォルダ内でcmake ..
 # 変数を宣言し、値を入れる。
 set(WIIMOTE_HEADER /usr/local/include/libcwiimote-0.4.0/libcwiimote/)
 set(SORYUTION_NAME client)
+# エディターに表示されている順に書いて
 set(CLIENT_CODE
-    client_main
+    client_gamestate
+    client_go
     client_input
     client_KeybordInput
-    client_WiiInput
-    net
-    graphic
-    graphic_objmesh
-    image
-    graphic_2dui
-    client_system
+    client_main
+    client_map  
     client_move
-    client_map
-    client_time
-    control_setup
+    client_music
     client_name
-    client_gamestate
     client_smart
-    client_go
+    client_system
+    client_time
+    component
+    control_setup
+    client_WiiInput
+    graphic_2dui
+    graphic_objmesh
+    graphic
+    image
+    net
 )
 # CMakeの最低バージョンを記述
 cmake_minimum_required(VERSION 2.8)
@@ -56,4 +60,4 @@ target_compile_definitions(${SORYUTION_NAME} PUBLIC
 )
 
 #リンク先のライブラリを指定
-target_link_libraries( ${SORYUTION_NAME} ${SDL2_LIBRARIES}  ${SDL2ttf_LIBRARIES} ${SDL2image_LIBRARIES} -lGL -lGLU -lcwiimote -lbluetooth -L/usr/local/lib -lm)
+target_link_libraries( ${SORYUTION_NAME} ${SDL2_LIBRARIES}  ${SDL2ttf_LIBRARIES} ${SDL2image_LIBRARIES} ${SDL2mixer_LIBRARIES} -lGL -lGLU -lcwiimote -lbluetooth -L/usr/local/lib -lm)
