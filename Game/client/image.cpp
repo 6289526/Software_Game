@@ -111,3 +111,7 @@ void Image::Draw(FloatRect *argDst, FloatRect *argSrc, float dir){
     glBindTexture(GL_TEXTURE_2D,0);
     
 }
+
+void Image::DestroyTexture(){
+    glDeleteTextures(1,&Texture);
+}

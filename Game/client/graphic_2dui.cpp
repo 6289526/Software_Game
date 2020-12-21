@@ -26,6 +26,12 @@ void TimeImg::DrawTime(int time, FloatRect dst){
     str_s.Draw(&tmpdst);
 
 }
+void TimeImg::DestroyTexture(){
+    for(int i = 0; i < 10; i++){
+        nums[i].DestroyTexture();
+    }
+    str_s.DestroyTexture();
+}
 
 void TimerUI::Set(TTF_Font *font){
     double timeMagW = 0.45, timeMagH = 0.56;
@@ -40,6 +46,12 @@ void TimerUI::Draw(float dir, float time){
     base.Draw(&dst);
     rotate.Draw(&dst, NULL, dir);
     timer.DrawTime(time, timeDst);
+}
+
+void TimerUI::Destroy(){
+    base.DestroyTexture();
+    rotate.DestroyTexture();
+    timer.DestroyTexture();
 }
 
 void PlayerNameUI::Set(const PlayerData *pData, TTF_Font *font){
@@ -62,6 +74,12 @@ void PlayerNameUI::Draw(){
     ID.Draw(&idDst);
 }
 
+void PlayerNameUI::Destroy(){
+    base.DestroyTexture();
+    name.DestroyTexture();
+    ID.DestroyTexture();
+}
+
 void DirectionUI::Set(){
     base.LoadImg(basefile);
     rotate.LoadImg(rotatefile);
@@ -79,6 +97,13 @@ void DirectionUI::Draw(float playerdir, float rotdir){
     rotate.Draw(&dst,NULL,rotdir);
     Playerdir.Draw(&dst,NULL,playerdir);
     meterRect.Draw(&meterDst, &meterSrc);
+}
+
+void DirectionUI::Destroy(){
+    base.DestroyTexture();
+    rotate.DestroyTexture();
+    Playerdir.DestroyTexture();
+    meterRect.DestroyTexture();
 }
 
 void MiniMap::SetMap(){
@@ -190,6 +215,10 @@ void MiniMap::Draw(FloatRect *argDst, FloatRect *argSrc, float dir){
     glBindTexture(GL_TEXTURE_2D,0);
 }
 
+void MiniMap::DestroyTexture(){
+    glDeleteTextures(1,&Texture);
+}
+
 void MapUI::Set(){
     base.LoadImg(basefile);
     minimap.SetMap();
@@ -199,6 +228,11 @@ void MapUI::Set(){
 void MapUI::Draw(){
     base.Draw(&dst);
     minimap.Draw(&dst,NULL,PI);
+}
+
+void MapUI::Destroy(){
+    base.DestroyTexture();
+    minimap.DestroyTexture();
 }
 
 void Gui2D::Set(){
@@ -224,4 +258,13 @@ void Gui2D::Draw(){
     minimap.Draw();
     rotdir += 0.01;
     if(rotdir >= 2* PI)rotdir -= 2*PI;
+}
+
+void Gui2D::Destroy(){
+    back.DestroyTexture();
+    timer.Destroy();
+    playerName.Destroy();
+    direction.Destroy();
+    minimap.Destroy();
+    TTF_CloseFont(font);
 }

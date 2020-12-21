@@ -86,6 +86,7 @@ SDL_Renderer* GetWindowRenderer(){
 
 void TerminateGraphic(){
     characterMesh.Release();
+    gui2d.Destroy();
     SDL_DestroyRenderer(renderer);
     SDL_GL_DeleteContext(context);
     SDL_DestroyWindow(window);
