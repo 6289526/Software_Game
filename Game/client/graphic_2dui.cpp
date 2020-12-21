@@ -179,7 +179,7 @@ void MiniMap::Draw(FloatRect *argDst, FloatRect *argSrc, float dir){
     dstPoint[3].y = center.y + sin(dir) * (dst.x - center.x) + cos(dir) * (dst.y + dst.h - center.y);
 
 
-    
+
     glBindTexture(GL_TEXTURE_2D,Texture);
     glBegin(GL_QUADS);
         glTexCoord2f(src.x, src.y); glVertex3f(dstPoint[0].x, dstPoint[0].y, 0);
@@ -216,7 +216,7 @@ void Gui2D::Set(){
 
 void Gui2D::Draw(){
     time = GetSystem().GetTimer().GetCurrentTime();
-    fprintf(stderr,"%d\n",time);
+    // fprintf(stderr,"%d\n",time);
     back.Draw(&dst);
     timer.Draw(rotdir,time);
     playerName.Draw();
