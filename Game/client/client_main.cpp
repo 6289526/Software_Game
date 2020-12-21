@@ -81,7 +81,6 @@ int main(int argc, char *argv[])
 		Disp();
 		SDL_Delay(10);
 		_System.GetInitData()->timer->UpdateFrame(); // Update the game frame.
-		fprintf(stderr, "TIME: %d\n", _System.GetTimer().GetCurrentTime());
 	}
 	// ウィンドウシステムの終了
 	// TerminateWindowSys();
