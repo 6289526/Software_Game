@@ -72,10 +72,29 @@ class DirectionUI{
         void Draw(float playerdir, float rotdir);
 };
 
+class MiniMap{
+    private:
+        GLuint Texture;
+        FloatRect src = {0,0,0,0};
+        FloatRect dst = {0,0,0,0};
+        FloatRect imgRect = {0,0,0,0};
+    
+    public:
+        void SetMap(); //画像ファイル読込
+        void SetDstRect(int x, int y, int w = 0, int h = 0);
+        //範囲0~1
+        void SetSrcRect(float x = -1, float y = -1, float w = 0, float h = 0);
+        //srcRectの範囲0~1
+        void Draw(FloatRect *argDst = NULL, FloatRect *argSrc = NULL, float dir = 0); //描画
+        FloatRect GetImgRect(){
+            return imgRect;
+        };
+};
+
 class MapUI{
     private:
         Image base;
-        //minimap
+        MiniMap minimap;
         FloatRect dst = {0,0,0,0};
         char basefile[MAX_FILE_NAME] = "../../data/ui/map_bace.png";
 
