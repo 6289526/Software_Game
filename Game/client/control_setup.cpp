@@ -138,6 +138,7 @@ int ControlSetUp()
     componentNum++;
     Component timerCircle;
     timerCircle.CreateComponent(renderer, IMG_Load(timer_circle_Image));
+    allComponents.push_back(timerCircle);
 
     Component messages[MESSAGE_NUM];
     for (int i = 0; i < MESSAGE_NUM; i++)
@@ -226,28 +227,33 @@ int ControlSetUp()
     allBace.RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 2, 2, -1);
     titleLogo.RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 10 / 30, 3, 3, -1);
 
-    baceUi.RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 4, 4, -1);
+    baceUi.RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 3, 3, -1);
 
     if (GetResult == 1)
     {
         struct Component findWiiMessage;
+        componentNum++;
         findWiiMessage.CreateComponent(renderer, TTF_RenderUTF8_Blended(font, "Find your Wiilimocon!", (SDL_Color){255, 255, 255, 255}));
         fprintf(stderr, "Find your Wiilimocon!\n");
-
+        allComponents.push_back(findWiiMessage);
         findWiiMessage.RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 1, 1, -1);
     }
     else if (GoSInput.J)
     {
         struct Component selectSmartMessage;
+        componentNum++;
         selectSmartMessage.CreateComponent(renderer, TTF_RenderUTF8_Blended(font, "Select Phone", (SDL_Color){255, 255, 255, 255}));
         fprintf(stderr, "Select Browser!\n");
+        allComponents.push_back(selectSmartMessage);
         selectSmartMessage.RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 1, 1, -1);
     }
     else
     {
         struct Component selectKeyboardMessage;
+        componentNum++;
         selectKeyboardMessage.CreateComponent(renderer, TTF_RenderUTF8_Blended(font, "Select Keyboard", (SDL_Color){255, 255, 255, 255}));
         fprintf(stderr, "Select Keyboard!\n");
+        allComponents.push_back(selectKeyboardMessage);
         selectKeyboardMessage.RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 1, 1, -1);
     }
     //windowにレンダリングする
