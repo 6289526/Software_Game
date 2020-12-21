@@ -215,6 +215,8 @@ void Gui2D::Set(){
 }
 
 void Gui2D::Draw(){
+    time = GetSystem().GetTimer().GetCurrentTime();
+    fprintf(stderr,"%d\n",time);
     back.Draw(&dst);
     timer.Draw(rotdir,time);
     playerName.Draw();

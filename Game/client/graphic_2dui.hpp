@@ -117,7 +117,7 @@ class Gui2D{
 
         const PlayerData *pData;
         SDL_GLContext context;
-        float time = 689;
+        int time = 0;
 
         char basefile[MAX_FILE_NAME] = "../../data/ui/all_bace.png";
         char fontpath[MAX_FILE_NAME] = "../fonts/BadFennec.ttf";
