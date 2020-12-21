@@ -19,6 +19,7 @@ class TimeImg{
     public:
         void Set(TTF_Font *font);
         void DrawTime(int time, FloatRect dst);
+        void DestroyTexture();
 };
 
 class TimerUI{
@@ -35,6 +36,7 @@ class TimerUI{
     public:
         void Set(TTF_Font *font);
         void Draw(float dir, float time);
+        void Destroy();
 };
 
 class PlayerNameUI{
@@ -51,6 +53,7 @@ class PlayerNameUI{
     public:
         void Set(const PlayerData *pData, TTF_Font *font);
         void Draw();
+        void Destroy();
 };
 
 class DirectionUI{
@@ -70,6 +73,7 @@ class DirectionUI{
     public:
         void Set();
         void Draw(float playerdir, float rotdir);
+        void Destroy();
 };
 
 class MiniMap{
@@ -89,6 +93,7 @@ class MiniMap{
         FloatRect GetImgRect(){
             return imgRect;
         };
+        void DestroyTexture();
 };
 
 class MapUI{
@@ -101,6 +106,7 @@ class MapUI{
     public:
         void Set();
         void Draw();
+        void Destroy();
 };
 
 class Gui2D{
@@ -124,4 +130,5 @@ class Gui2D{
     public:
         void Set();
         void Draw();
+        void Destroy();
 };
