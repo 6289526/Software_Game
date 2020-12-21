@@ -236,8 +236,8 @@ Collision Collision_CB_Horizontal(const int chara_ID, const int y,
 
   // 当たり判定を調べる座標をすべて格納
   for (int i = 0; i < accuracy; ++i) {
-    point_X[i] = PData[chara_ID].pos.x + static_cast<int>(PData[chara_ID].velocity.x) + wide * i;
-    point_Z[i] = PData[chara_ID].pos.z + static_cast<int>(PData[chara_ID].velocity.z) + depth * i;
+    point_X[i] = PData[chara_ID].pos.x + PData[chara_ID].velocity.x + wide * i;
+    point_Z[i] = PData[chara_ID].pos.z + PData[chara_ID].velocity.z + depth * i;
   }
 
   // マップデータ入手
@@ -356,8 +356,8 @@ Collision Collision_CB_Vertical(const int chara_ID, const int y,
 
   // 当たり判定を調べる座標をすべて格納
   for (int i = 0; i < accuracy; ++i) {
-    point_X[i] = PData[chara_ID].pos.x + static_cast<int>(PData[chara_ID].velocity.x) + wide * i;
-    point_Z[i] = PData[chara_ID].pos.z + static_cast<int>(PData[chara_ID].velocity.z) + depth * i;
+    point_X[i] = PData[chara_ID].pos.x + PData[chara_ID].velocity.x + wide * i;
+    point_Z[i] = PData[chara_ID].pos.z + PData[chara_ID].velocity.z + depth * i;
   }
 
   // マップデータ入手
@@ -684,8 +684,8 @@ void MoveHorizontal(int chara_ID) {
   }
 
   // 移動後の座標に書き換え
-  PData[chara_ID].pos.x += static_cast<int>(PData[chara_ID].velocity.x);
-  PData[chara_ID].pos.z += static_cast<int>(PData[chara_ID].velocity.z);
+  PData[chara_ID].pos.x += PData[chara_ID].velocity.x;
+  PData[chara_ID].pos.z += PData[chara_ID].velocity.z;
 
   switch (t_Collision_Side_Max.dire) {
   case Front:
@@ -718,8 +718,8 @@ void MovePosition(int chara_ID) try {
   Collision_CC(Num_Clients);
 
   // 速度を０に戻す
-  // PData[chara_ID].velocity.x = 0;
-  // PData[chara_ID].velocity.z = 0;
+  PData[chara_ID].velocity.x = 0;
+  PData[chara_ID].velocity.z = 0;
 } catch (error::error e) {
   if (e == error::OutSide_Map_y) {
     PData[chara_ID].pos.x = PLAYER_X + chara_ID * PLAYER_W;
