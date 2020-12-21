@@ -34,7 +34,7 @@ static int ReceiveData(int cid, void *data, int size);
  *   port  : サーバーのポート番号
  *
  */
-void SetupServer(int num_cl, u_short port)
+void SetupGetSock(int num_cl, u_short port)
 {
     /*変数初期化*/
     /*ソケット
@@ -209,7 +209,7 @@ void SetupServer(int num_cl, u_short port)
 
     /** セットアップ終了 **/
     // サーバーのセットアップが完了したことを知らせる
-    fprintf(stderr, "Server setup is done.\n");
+    fprintf(stderr, "GetSock setup is done.\n");
 }
 
 /* クライアントからのリクエストに対応する
@@ -317,9 +317,9 @@ int ControlRequests()
                         // ゲームの継続
                         result = 1;
                     }
-                    com = QUIT_COMMAND;
-                    SendData(BROADCAST, &com, sizeof(char));
-                    SendData(BROADCAST, &i, sizeof(int));
+                    // com = QUIT_COMMAND;
+                    // SendData(BROADCAST, &com, sizeof(char));
+                    // SendData(BROADCAST, &i, sizeof(int));
 
                     break;
                 default:
@@ -333,101 +333,6 @@ int ControlRequests()
 
     //
     return result;
-}
-
-/*コマンドの実行
-*引数
-*   int id: 送り先のID
-*   char com: コマンド
-*/
-void RunCommand(int id, char com)
-{
-    /* 変数 */
-    const PlayerData *pData = GetPlayerData();
-    // 送るデータ
-    FloatPosition posData;
-    float direction;
-    VelocityFlag flag = {false, false, false};
-    PlaceData placeData = GetPlaceData();
-    time_t timer = Get_Time();
-
-    // コマンドに応じた処理
-    switch (com)
-    {
-    case MOVE_COMMAND:
-
-        //コマンド送信
-        SendData(id, &com, sizeof(char));
-
-        for (int i = 0; i < NumClient; ++i)
-        {
-            // 座標に変更
-            posData.x = pData[i].pos.x;
-            posData.y = pData[i].pos.y;
-            posData.z = pData[i].pos.z;
-
-            //  方向の取得
-            direction = GetDirection(i);
-
-            // フラッグ設定
-            if (pData->velocity.x != 0)
-            {
-                flag.x = true;
-            }
-            if (pData->velocity.y != 0)
-            {
-                flag.y = true;
-            }
-            if (pData->velocity.z != 0)
-            {
-                flag.z = true;
-            }
-            // 座標と方向とフラッグを送信
-            SendData(id, &posData, sizeof(FloatPosition));
-            SendData(id, &direction, sizeof(float));
-            SendData(id, &flag, sizeof(VelocityFlag));
-        }
-        break;
-    case PUT_COMMAND:
-        if (placeData.object == NonBlock)
-        {
-            fprintf(stderr, "%d can't put\n", id);
-        }
-        else
-        {
-            fprintf(stderr, "%d put.\n", id);
-        }
-        //コマンド送信
-        SendData(id, &com, sizeof(char));
-        SendData(id, &placeData, sizeof(PlaceData));
-
-        break;
-        case TIMER_COMMAND:
-            SendData(id, &com, sizeof(com));
-            SendData(id, &timer, sizeof(time_t));
-    break;
-    case FINISH_COMMAND:
-        fprintf(stderr, "All clients goaled.\n");
-        SendData(id, &com, sizeof(com));
-        for (int i = 0; i < NumClient; ++i) {
-          SendData(id, &pData[i].rank, sizeof(int));
-        }
-        break;
-    case GOAL_COMMAND:
-        SendData(id, &com, sizeof(com));
-        fprintf(stderr, "clinet%d goaled!\n", id);
-        SendData(id, &pData[id].rank, sizeof(int));
-        break;
-    case TERMINATE_COMMAND:
-        fprintf(stderr, "Terminate!\n");
-        TerminateFlag = 1;
-        // コマンド送信 この時全員
-        SendData(id, &com, sizeof(com));
-        break;
-
-    default:
-        break;
-    }
 }
 
 /* ソケットにデータを送信
@@ -483,7 +388,6 @@ void SendData(int cid, const void *data, int size)
         }
     }
 }
-
 /* データの受信
  *
  * 引数
@@ -529,7 +433,7 @@ static int HandleError(char *message)
 }
 
 /* サーバーの終了 */
-void TerminateServer(void)
+void TerminateGetSock(void)
 {
     /*変数*/
     int i;
@@ -541,5 +445,5 @@ void TerminateServer(void)
     // メッセージの表示
     fprintf(stderr, "All connections are closed.\n");
     // 正常終了
-    exit(0);
+    // exit(0);
 }

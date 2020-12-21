@@ -26,7 +26,8 @@ set(CLIENT_CODE
     graphic_objmesh
     graphic
     image
-    net
+    network_send
+    network_get
 )
 # CMakeの最低バージョンを記述
 cmake_minimum_required(VERSION 2.8)

@@ -32,7 +32,7 @@ static int ExeCommand(void);
 *   *server_name: 接続するサーバーの名前
 *   port  : サーバーのポート番号
 */
-void SetupClient(char *server_name, u_short port)
+void SetupSendSock(char *server_name, u_short port)
 {
     /*変数*/
     // サーバー
@@ -137,43 +137,6 @@ void SetupClient(char *server_name, u_short port)
     fprintf(stderr, "Input command (M=message, Q=quit): \n");
 }
 
-/* クライアントのリクエスト処理
- * 返値
- *   通信継続: result = 1
- *   通信終了: result = 0
- */
-int ControlRequests()
-{
-    /*変数*/
-    // ファイルディスクリプタ
-    fd_set read_flag = Mask;
-    // タイマー
-    struct timeval timeout;
-    timeout.tv_sec = 0;   //秒数
-    timeout.tv_usec = 30; //マイクロ秒
-
-    /*
-   *ファイルディスクリプタの集合から読み込み可能なファイルディスクリプタを
-   *探す。timeoutだけ待つ。
-  */
-    if (select(NumSock, (fd_set *)&read_flag, NULL, NULL, &timeout) == -1)
-    {
-        char m[] = "select()";
-        HandleError(m);
-    }
-    // 通信を継続するかを判定する変数
-    int result = 1;
-
-
-    if (FD_ISSET(sock, &read_flag))
-    { //サーバーからのメッセージを受け取った場合
-        result = ExeCommand();
-
-    }
-
-    return result;
-}
-
 /*
 * 入力があった場合コマンドを受け付けメッセージを送信する
 * 引数
@@ -214,116 +177,6 @@ int InCommand(char com)
     }
 
     return 1;
-}
-
-/*
-* メッセージを受け取った場合表示する
-* 返り値
-*   通信継続: result = 1
-*   通信終了: result = 0
-*/
-int ExeCommand()
-{
-    /*変数*/
-    char com;
-    // ソケットから来るデータ
-    FloatPosition data[MAX_NUMCLIENTS];
-    PlaceData placeData;
-    float direction = 0;
-    VelocityFlag flags[MAX_NUMCLIENTS];
-    int id = 0;
-    int rank = 0;
-    time_t timer;
-
-    // 通信を継続するかを判定する変数
-    int result = 1;
-    // dataの初期化
-    for (int i = 0; i < MAX_NUMCLIENTS; i++)
-    {
-        memset(&data[i], 0, sizeof(FloatPosition));
-    }
-    memset(&placeData, 0, sizeof(PlaceData));
-    // dataを受信する
-    ReceiveData(&com, sizeof(com));
-    /** 受信したデータに含まれるコマンドに応じて分岐 **/
-    switch (com)
-    {
-    case MOVE_COMMAND: // 座標受信
-        for (int i = 0; i < NumClients; i++)
-        {
-            ReceiveData(&data[i], sizeof(FloatPosition));
-            ReceiveData(&direction, sizeof(float));
-            GetSystem().SetDirection(direction, i);
-            ReceiveData(&flags[i], sizeof(VelocityFlag));
-        }
-        // 受け取った座標とフラッグをシステムモジュールにわたす
-        GetSystem().SetPlace(data, NumClients);
-
-        GetSystem().UpdateFlag(flags, NumClients);
-
-        // 通信継続
-        result = 1;
-        break;
-    case PUT_COMMAND:
-        ReceiveData(&placeData, sizeof(PlaceData));
-
-        if(placeData.object != NonBlock){
-            fprintf(stderr, "ブロック置けた！\n");
-            GetSystem().UpdatePlaceData(placeData);
-
-        }else{
-            fprintf(stderr, "ブロックがおけなかった\n");
-        }
-
-        result = 1;
-        break;
-    case QUIT_COMMAND: // 通信終了
-        ReceiveData(&id, sizeof(int));
-        // 通信を終了したことを表示
-        fprintf(stderr, "client %d sent quit command.\n", id);
-        // 通信継続
-        result = 1;
-        break;
-    case TIMER_COMMAND: // 通信終了
-        ReceiveData(&timer, sizeof(time_t));
-        GetSystem().GetTimer().SetCurrentTime(timer);
-        // 通信継続
-        result = 1;
-        break;
-    case GOAL_COMMAND:
-        ReceiveData(&rank, sizeof(int));
-        fprintf(stderr, "you goaled.\n");
-        GetSystem().SetRank(MyId, rank);
-        result = 1;
-        break;
-    case FINISH_COMMAND:
-        fprintf(stderr, "All clients goaled.\n");
-        for (int i = 0; i < NumClients; ++i)  {
-          ReceiveData(&rank, sizeof(int));
-          GetSystem().SetRank(i, rank);
-        }
-        result = 1;
-        break;
-    // case GOAL_COMMAND:
-    //     fprintf(stderr, "GOALLLL!!!");
-    //     // 通信継続
-    //     result = 1;
-    //     break;
-    case TERMINATE_COMMAND:
-        // サーバーが通信を終了したことを表示
-        fprintf(stderr, "server sent terminate command.\n");
-        // 通信終了
-        result = 0;
-        break;
-    default:
-        // 上記以外のコマンドは存在しないので、エラーを表示して終了
-        fprintf(stderr, "ExeCommand(): %c, %d is not a valid command.\n", com, com);
-        // 通信継続
-        result = 1;
-    }
-
-    // 値を返す
-    return result;
 }
 
 /*データを送信する
@@ -369,6 +222,7 @@ int ReceiveData(void *data, int size)
     return (read(sock, data, size));
 }
 
+
 /* エラーの表示
  *
  * 引数
@@ -386,7 +240,7 @@ static int HandleError(char *message)
 /*
 * クライアントの削除
 */
-void TerminateClient()
+void TerminateSendSock()
 {
     char com = QUIT_COMMAND;
     // データを送信する
@@ -398,5 +252,5 @@ void TerminateClient()
     // ソケットを閉じる
     close(sock);
     // プログラムの終了
-    exit(0);
+    // exit(0);
 }

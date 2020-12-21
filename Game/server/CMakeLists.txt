@@ -2,8 +2,9 @@
 # 変数を宣言し、値を入れる。
 set(SORYUTION_NAME server)
 set(SERVER_CODE
+    network_send
+    network_get
     server_main
-    net
     sys
     server_map
 )

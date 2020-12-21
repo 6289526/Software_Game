@@ -65,9 +65,12 @@ int main(int argc, char *argv[])
 	InitGraphic();
 	/*クライアントの作成*/
 	_System.InitControl(_System.GetInitData());
-	// 指定されたサーバー名、ポート番号に参加するクライアントとして設定する。
+	
 	GetInitData(*_System.GetInitData());
-	SetupClient(server_name, port);
+	// 指定されたサーバー名、ポート番号に参加するクライアントとして設定する。
+	SetupSendSock(server_name, port);
+	SetupGetSock(server_name, port+1000);
+	
 	_System.InitPlayerData(); // プレイヤーデータ初期化処理
 	/**サーバー関連 END**/
 	_System.InitSystem(_System.GetInitData());
@@ -87,11 +90,17 @@ int main(int argc, char *argv[])
 	// TerminateWindowSys();
 
 	// クライアントを終了する。
-	TerminateClient();
-	SDL_Quit();
-	_System.ExitSystem(_System.GetInitData());
-	KillGoServer();
 	TerminateGraphic();
+	fprintf(stderr, "TerminateGraphic\n");
+	TerminateGetSock();
+	TerminateSendSock();
+	fprintf(stderr, "All Sock closed\n");
+	
+	_System.ExitSystem(_System.GetInitData());
+	fprintf(stderr, "ExitSystem\n");
+	KillGoServer();
+	fprintf(stderr, "KillGoServer\n");
+	SDL_Quit();
 	return 0;
 }
 

@@ -1,7 +1,3 @@
-/*
- *  ファイル名  : client_common.h
- *  機能    : クライアント用のマクロ、構造体等の定義
- */
 #pragma once
 /*----------include 開始----------*/
 #include "../header/constants.h"
@@ -34,8 +30,12 @@
 extern ServerMap Map;
 
 /* net.c */
-extern void SetupServer(int, u_short);
-extern void TerminateServer();
+extern void SetupSendSock(int, u_short);
+extern void SetupGetSock(int, u_short);
+extern void TerminateSendSock();
+extern void TerminateGetSock();
+// int ReceiveData(int cid, void *data, int size);
+// void SendData(int cid, const void *data, int size);
 extern int ControlRequests();
 extern void RunCommand(int, char);
 

@@ -30,8 +30,12 @@
 #include "client_music.hpp"
 
 /* net.c */
-extern void SetupClient(char *, u_short);
-extern void TerminateClient();
+extern void SetupSendSock(char *, u_short);
+extern void SetupGetSock(char *, u_short);
+extern void TerminateSendSock();
+extern void TerminateGetSock();
+// void SendData(void *data, int size);
+// int ReceiveData(void *data, int size);
 extern int ControlRequests();
 extern int InCommand(char com);
 
