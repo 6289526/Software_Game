@@ -40,7 +40,7 @@ namespace System{
 
         ClientMap Map;						  	// マップ
         InputModuleBase *Input;				  	// Input Module
-        Timer *Time;						  	// FrameTimer
+        Timer Time;						  	    // FrameTimer
         GameState::GameStateController *StateController; 	// GameStateController
         GameState::GameStateOutputer _StateOutputer;	  	// _StateOutputer
         Sound::BGMController _BgmController;			// BGM Controller
@@ -63,6 +63,7 @@ namespace System{
         ClientMap& GetClientMap() { return Map; }
         InputModuleBase* GetInput() { return Input; }
         InitData* GetInitData() { return &_InitData; }
+        Timer& GetTimer() { return Time; }
 
         bool InitSystem(InitData *data);
         void ExitSystem(InitData *data);
