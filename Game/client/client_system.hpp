@@ -63,10 +63,10 @@ namespace System
         inline const PlayerData *GetPlayerData() { return PData; }
         inline const int GetMyID() { return MyId; }
         inline void SetMyID(int id) { MyId = id; }
-        inline const ClientMap &GetClientMap() { return Map; }
+        inline ClientMap &GetClientMap() { return Map; }
         inline InputModuleBase *GetInput() { return Input; }
-        inline const InitData *GetInitData() { return &_InitData; }
-        inline const Timer &GetTimer() { return Time; }
+        inline InitData *GetInitData() { return &_InitData; }
+        inline Timer &GetTimer() { return Time; }
 
         bool InitSystem(InitData *data);
         void ExitSystem(InitData *data);

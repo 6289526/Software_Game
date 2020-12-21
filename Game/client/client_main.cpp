@@ -100,8 +100,7 @@ int Select(void *args)
 
 	while (1)
 	{
-		auto state = GetSystem().GetGameStateController().GetState();
-		if (state == GameState::Init)
+		if (GetSystem().GetGameStateController().GetState() == GameState::Init)
 		{
 			SDL_LockMutex(mtx);
 			cond = ControlRequests();
