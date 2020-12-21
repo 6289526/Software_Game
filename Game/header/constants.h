@@ -34,6 +34,7 @@
 #define ERROR_COMMAND 'E'
 #define FINISH_COMMAND 'F'
 #define QUIT_COMMAND 'Q'
+#define TIMER_COMMAND 'I'
 #define TERMINATE_COMMAND 'T'
 /*----------define 終了-----------*/
 
