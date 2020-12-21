@@ -330,10 +330,9 @@ Collision Collision_CB_Horizontal(const int chara_ID, const int y,
   ret.dire = t_dire;
   ret.power = t_Max_Count;
 
-  // なんかよくわからん補正　これがないとグラフィックがぶれる
-  // これでうまく行けるんで書いときます　誰か計算して理由教えて
-  if (ret.dire == Left || ret.dire == Front) {
-    ret.power -= 1;
+  // 謎補正
+  if (ret.dire == Right || ret.dire == Back) {
+    ret.power += 1;
   }
 
   return ret;
@@ -623,8 +622,10 @@ bool Collision_BB() // ブロックを置けるかどうかの判定
 
 // キャラとブロックの当たり判定
 static void Collision_CB(int chara_ID) {
-  MoveVertical(chara_ID);
-  MoveHorizontal(chara_ID);
+  bool t_bool = MoveHorizontal(chara_ID);
+  if (!t_bool) {
+    MoveVertical(chara_ID);
+  }
 }
 
 void Goal(int chara_ID) {
@@ -638,40 +639,43 @@ void Goal(int chara_ID) {
 }
 
 // キャラの縦方向移動
-void MoveVertical(int chara_ID) {
+bool MoveVertical(int chara_ID) {
   // 下の当たり判定
-  Collision t_Collision_Under = Collision_CB_Vertical(chara_ID, 0);
-
-  // 上の当たり判定
-  Collision t_Collision_Over = Collision_CB_Vertical(chara_ID, 0);
+  Collision t_Collision_Vertical = Collision_CB_Vertical(chara_ID, 0);
 
   // 移動後の座標に書き換え
   PData[chara_ID].pos.y += PData[chara_ID].velocity.y;
 
+  bool ret = false;
+
   // 下の補正
-  switch (t_Collision_Under.dire) {
+  switch (t_Collision_Vertical.dire) {
   case Under:
     PData[chara_ID].pos.y =
-        static_cast<int>(PData[chara_ID].pos.y + t_Collision_Under.power);
+        static_cast<int>(PData[chara_ID].pos.y + t_Collision_Vertical.power);
+        ret = true;
     break;
   default:
     break;
   }
 
   // 上の補正
-  switch (t_Collision_Over.dire) {
+  switch (t_Collision_Vertical.dire) {
   case Over:
     PData[chara_ID].pos.y =
-        static_cast<int>(PData[chara_ID].pos.y - t_Collision_Over.power);
+        static_cast<int>(PData[chara_ID].pos.y - t_Collision_Vertical.power);
     PData[chara_ID].velocity.y = 0;
+    ret = true;
     break;
   default:
     break;
   }
+
+  return ret;
 }
 
 // キャラの横方向移動
-void MoveHorizontal(int chara_ID) {
+bool MoveHorizontal(int chara_ID) {
   // 横の当たり判定
   Collision t_Collision_Side_Max = {Non, 0};
   Collision t_Collision_Side;
@@ -687,26 +691,34 @@ void MoveHorizontal(int chara_ID) {
   PData[chara_ID].pos.x += PData[chara_ID].velocity.x;
   PData[chara_ID].pos.z += PData[chara_ID].velocity.z;
 
+  bool ret = false;
+
   switch (t_Collision_Side_Max.dire) {
   case Front:
     PData[chara_ID].pos.z =
         static_cast<int>(PData[chara_ID].pos.z - t_Collision_Side_Max.power);
+        ret = true;
     break;
   case Right:
     PData[chara_ID].pos.x =
         static_cast<int>(PData[chara_ID].pos.x + t_Collision_Side_Max.power);
+        ret = true;
     break;
   case Back:
     PData[chara_ID].pos.z =
         static_cast<int>(PData[chara_ID].pos.z + t_Collision_Side_Max.power);
+        ret = true;
     break;
   case Left:
     PData[chara_ID].pos.x =
         static_cast<int>(PData[chara_ID].pos.x - t_Collision_Side_Max.power);
+        ret = true;
     break;
   default:
     break;
   }
+
+  return ret;
 }
 
 void MovePosition(int chara_ID) try {
