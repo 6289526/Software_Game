@@ -15,8 +15,6 @@ ClientSystem::ClientSystem()
 	_InitData.stateController = StateController;
 	StateController->Subscribe(&_StateOutputer);
 	StateController->Subscribe(&_BgmController);
-
-	StateController->OnNest(GameState::Init);
 }
 ClientSystem::~ClientSystem()
 {
@@ -71,7 +69,7 @@ bool ClientSystem::InitSystem(InitData *data)
 	}
 
 	data->timer = &Time;
-
+	StateController->OnNest(GameState::Init);
 	return true;
 }
 
