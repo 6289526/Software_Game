@@ -143,9 +143,16 @@ int ControlSetUp()
         allComponents.push_back(messages[i]);
     }
 
-    char urlMsg[128];
+    char phoneMsg[64];
+    sprintf(phoneMsg, "If you want to use tablet or phone,");
+    componentNum++;
+    Component phoneMessage;
+    phoneMessage.CreateComponent(renderer, TTF_RenderUTF8_Blended(font, phoneMsg, (SDL_Color){255, 255, 255, 255}));
+    allComponents.push_back(phoneMessage);
+
+    char urlMsg[64];
     char* ipAddress = (char*)malloc(32);
-    sprintf(urlMsg, "If you want to use tablet or phone, access http://%s:8080", ipAddress = GetIpAddress());
+    sprintf(urlMsg, "access http://%s:8080", ipAddress = GetIpAddress());
     componentNum++;
     Component GoServerAddress;
     GoServerAddress.CreateComponent(renderer, TTF_RenderUTF8_Blended(font, urlMsg, (SDL_Color){255, 255, 255, 255}));
@@ -168,15 +175,22 @@ int ControlSetUp()
         {
             messages[i].RenderingComponent(
                 SCREEN_WIDTH / 2,
-                SCREEN_HEIGHT * 4 / 9 + i * messages[i]._height + i * messages[i]._height / 2,
+                SCREEN_HEIGHT * 3 / 9 + i * messages[i]._height + i * messages[i]._height / 2,
                 1,
                 1,
                 -1);
         }
 
+        phoneMessage.RenderingComponent(
+            SCREEN_WIDTH / 2, 
+            SCREEN_HEIGHT * 3 / 9 + MESSAGE_NUM * GoServerAddress._height + MESSAGE_NUM * GoServerAddress._height / 2,
+            1,
+            1,
+            -1);
+
         GoServerAddress.RenderingComponent(
             SCREEN_WIDTH / 2,
-            SCREEN_HEIGHT * 4 / 9 + MESSAGE_NUM * GoServerAddress._height + MESSAGE_NUM * GoServerAddress._height / 2,
+            SCREEN_HEIGHT * 3 / 9 + (MESSAGE_NUM+1) * GoServerAddress._height + (MESSAGE_NUM+1) * GoServerAddress._height / 2,
             1,
             1,
             -1);
