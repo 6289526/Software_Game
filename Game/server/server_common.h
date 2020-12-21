@@ -71,6 +71,12 @@ void InitPlayerData(); // プレイヤーデータ初期化処理
 
 void EndSys(); // システム終了処理
 
+void Set_Time(); // 時間セット
+
+int Get_Time(); // 経過時間入手
+
+void Send_Time(); // タイムを送信
+
 // 埋まっているピクセル数を返す 横
 static int BuryCheck_Horizontal(const int chara_ID, const int accuracy,
                                 Vector3Int block, const float *point_X,
@@ -93,7 +99,8 @@ static Collision Collision_CB_Vertical(const int chara_ID, const int y,
                                        const int accuracy = PLAYER_W);
 
 // キャラの中心座標を入れる
-static void Get_Chara_Center(const FloatCube player_1, const FloatCube player_2, FloatCube &pos_1, FloatCube &pos_2);
+static void Get_Chara_Center(const FloatCube player_1, const FloatCube player_2,
+                             FloatCube &pos_1, FloatCube &pos_2);
 
 // キャラとキャラの当たり判定 横
 static float Collision_CC_Horizontal(FloatCube &player_1, FloatCube &player_2);
@@ -111,6 +118,10 @@ static bool Collision_BB(); // ブロックを置けるなら true
 static void Collision_CB(int chara_ID);
 
 static void Goal(int chara_ID); // ゴールの処理
+
+static bool MoveVertical(int chara_ID); // キャラの縦方向移動
+
+static bool MoveHorizontal(int chara_ID); // キャラの横方向移動
 
 void MovePosition(int chara_ID); // キャラを移動させる
 
