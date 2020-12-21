@@ -247,7 +247,7 @@ void DrawCharacter(){
 
     //視点変更
     lookatPlace.x = playerData[myid].pos.x + playerData[myid].pos.w / 2 + 60 * -sin(playerData[myid].direction.horizontal);
-    lookatPlace.y = playerData[myid].pos.y + 50;
+    lookatPlace.y = playerData[myid].pos.y + playerData[myid].pos.h / 2 + 60 * -sin(playerData[myid].direction.vertical);
     lookatPlace.z = playerData[myid].pos.z + playerData[myid].pos.d / 2 + 60 * -cos(playerData[myid].direction.horizontal);
 
     lookatCenter.x = playerData[myid].pos.x + playerData[myid].pos.w / 2;
