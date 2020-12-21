@@ -112,6 +112,10 @@ static void Collision_CB(int chara_ID);
 
 static void Goal(int chara_ID); // ゴールの処理
 
+static bool MoveVertical(int chara_ID); // キャラの縦方向移動
+
+static bool MoveHorizontal(int chara_ID); // キャラの横方向移動
+
 void MovePosition(int chara_ID); // キャラを移動させる
 
 void PutBlock(int chara_ID); // ブロックを置けるなら置く
