@@ -231,7 +231,7 @@ int InputThread(void *data)
 {
 	SDL_mutex *mtx = (SDL_mutex *)data;
 
-	while (1)
+	while (cond)
 	{
 		SDL_LockMutex(mtx);
 		auto input = GetSystem().GetInput();

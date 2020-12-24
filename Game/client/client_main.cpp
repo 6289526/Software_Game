@@ -79,12 +79,7 @@ int main(int argc, char *argv[])
 
 		Disp();
 		SDL_Delay(10);
-		_System.GetInitData()->timer->UpdateFrame(); // Update the game frame.
-													 // if(GetSystem().GetGameStateController().GetState() == GameState::AllGoaled){
-													 // 	fprintf(stderr, "will Show Result");
-													 // 	ShowResult();
-													 // 	fprintf(stderr, "Showed Result");
-													 // }
+		_System.GetInitData()->timer->UpdateFrame(); 
 	}
 
 	if (_System.GetInitData()->input->GetInputType().End)
