@@ -80,7 +80,7 @@ void Set_Time(); // 時間セット
 
 int Get_Time(); // 経過時間入手
 
-void Send_Time(); // タイムを送信
+void Send_Per_Time(); // １秒ごとに送信
 
 // 埋まっているピクセル数を返す 横
 static int BuryCheck_Horizontal(const int chara_ID, const int accuracy,
@@ -140,7 +140,9 @@ void SetPlaceData(PlaceData &data); // 配置したいブロックの場所を�
 
 void SendAllPos(int client_num); // クライアント全員に全員の座標を送る
 
-void GetRank(); // 順位取得
+void SetRank(); // 順位を格納
+
+int GetRank(int chara_ID); // ネットワークにあげる
 
 void SendRank(int chara_ID); // 順位送信
 

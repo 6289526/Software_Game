@@ -350,7 +350,7 @@ void RunCommand(int id, char com)
     VelocityFlag flag = {false, false, false};
     PlaceData placeData = GetPlaceData();
     time_t timer = Get_Time();
-    Rank rank;
+    int rank;
     // コマンドに応じた処理
     switch (com)
     {
@@ -407,10 +407,9 @@ void RunCommand(int id, char com)
         SendData(id, &timer, sizeof(time_t));
         break;
     case RANK_COMMAND:
-        for(int i = 0; i < NumClient; ++i){
-            
-            SendData(id, &rank[i], sizeof(int));
-        }
+        SendData(id, &com, sizeof(com));
+        rank = GetRank(id);
+        SendData(id, &rank, sizeof(int));
         break;
     case FINISH_COMMAND:
         fprintf(stderr, "All clients goaled.\n");

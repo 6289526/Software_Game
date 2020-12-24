@@ -291,12 +291,9 @@ int ExeCommand()
         result = 1;
         break;
     case RANK_COMMAND:
-        for (int i = 0; i < NumClient; ++i)
-        {
             ReceiveData(&rank, sizeof(int));
-            fprintf(stderr, "%d", ,rank)
-            GetSystem().SetRank(i, rank);
-        }
+            fprintf(stderr, "Client%d : %dRank\n", MyId, rank);
+            GetSystem().SetRank(MyId, rank);
         break;
     case TIMER_COMMAND: // 通信終了
         ReceiveData(&timer, sizeof(time_t));
