@@ -80,6 +80,7 @@ void ClientSystem::ExitSystem(InitData *data)
 	delete[] PData;
 	delete data->input;
 	delete data->stateController;
+	_BgmController.Finalize();
 }
 
 void ClientSystem::SetNumClients(int n) // クライアント人数セット
