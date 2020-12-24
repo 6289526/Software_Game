@@ -124,6 +124,19 @@ void Smart::UpdateInput()
 			_Input.Jump = false;
 		}
 
+		if(GoSInput.R3){
+			_Input.U = true;
+		}
+		else{
+			_Input.U = false;
+		}
+		if(GoSInput.R6){
+			_Input.D = true;
+		}
+		else{
+			_Input.D = false;
+		}
+
 		/************/
 		/**配置関連**/
 		/************/

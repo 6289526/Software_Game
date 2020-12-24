@@ -88,10 +88,13 @@ int main(int argc, char *argv[])
 
 	// クライアントを終了する。
 	TerminateClient();
-	SDL_Quit();
-	_System.ExitSystem(_System.GetInitData());
-	KillGoServer();
 	TerminateGraphic();
+	fprintf(stderr, "Terminate Graphic\n");
+	_System.ExitSystem(_System.GetInitData());
+	fprintf(stderr, "ExitSystem\n");
+	KillGoServer();
+	SDL_Quit();
+	fprintf(stderr, "SDL Quit\n");
 	return 0;
 }
 

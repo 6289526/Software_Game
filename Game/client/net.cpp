@@ -339,7 +339,7 @@ void SendData(void *data, int size)
     {
         //メッセージを表示して終了
         fprintf(stderr, "SendData(): data is illegal.\n");
-        exit(1);
+        
     }
 
     /*ソケットにデータを送る*/
@@ -397,6 +397,4 @@ void TerminateClient()
     fprintf(stderr, "Connection is closed.\n");
     // ソケットを閉じる
     close(sock);
-    // プログラムの終了
-    exit(0);
 }

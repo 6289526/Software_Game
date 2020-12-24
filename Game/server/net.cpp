@@ -402,15 +402,16 @@ void RunCommand(int id, char com)
         SendData(id, &placeData, sizeof(PlaceData));
 
         break;
-        case TIMER_COMMAND:
-            SendData(id, &com, sizeof(com));
-            SendData(id, &timer, sizeof(time_t));
-    break;
+    case TIMER_COMMAND:
+        SendData(id, &com, sizeof(com));
+        SendData(id, &timer, sizeof(time_t));
+        break;
     case FINISH_COMMAND:
         fprintf(stderr, "All clients goaled.\n");
         SendData(id, &com, sizeof(com));
-        for (int i = 0; i < NumClient; ++i) {
-          SendData(id, &pData[i].rank, sizeof(int));
+        for (int i = 0; i < NumClient; ++i)
+        {
+            SendData(id, &pData[i].rank, sizeof(int));
         }
         break;
     case GOAL_COMMAND:
@@ -443,15 +444,11 @@ void SendData(int cid, const void *data, int size)
     if ((cid != BROADCAST) && (0 > cid || cid >= NumClient))
     {
         fprintf(stderr, "SendData(): client id is illegal.\n");
-        // 終了
-        exit(1);
     }
     //データが無いもしくはサイズが負のとき
     if ((data == NULL) || (size <= 0))
     {
         fprintf(stderr, "SendData(): data is illegal.\n");
-        // 終了
-        exit(1);
     }
     if (cid == BROADCAST)
     { //全員に送るとき
@@ -500,15 +497,11 @@ int ReceiveData(int cid, void *data, int size)
     if ((cid != BROADCAST) && (0 > cid || cid >= NumClient))
     {
         fprintf(stderr, "ReceiveData(): client id is illegal.\n");
-        // 終了
-        exit(1);
     }
     //データが無いもしくはサイズが負のとき
     if ((data == NULL) || (size <= 0))
     {
         fprintf(stderr, "ReceiveData(): data is illegal.\n");
-        // 終了
-        exit(1);
     }
     // ソケットに送られてきたデータをdataに読み込む
     return read(Clients[cid].sock, data, size);
@@ -540,6 +533,4 @@ void TerminateServer(void)
     }
     // メッセージの表示
     fprintf(stderr, "All connections are closed.\n");
-    // 正常終了
-    exit(0);
 }
