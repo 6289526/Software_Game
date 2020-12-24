@@ -20,8 +20,8 @@
 
 
 #define PLAYER_X 40 		// クライアントの
-#define PLAYER_Y 30 		// クライアントの
-#define PLAYER_Z 40 		// クライアントの初期座標
+#define PLAYER_Y 60 		// クライアントの
+#define PLAYER_Z 1900 		// クライアントの初期座標
 #define PLAYER_W 10 		// クライアントの
 #define PLAYER_D 10			// クライアントの
 #define PLAYER_H 20 		// クライアントの大きさ
@@ -36,6 +36,7 @@
 #define QUIT_COMMAND 'Q'
 #define TIMER_COMMAND 'I'
 #define TERMINATE_COMMAND 'T'
+// #define DEBUG
 /*----------define 終了-----------*/
 
 /*----------構造体宣言 開始-----------*/

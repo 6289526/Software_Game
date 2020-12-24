@@ -30,8 +30,13 @@ class TimerUI{
         FloatRect dst = {0,0,0,0};
         FloatRect timeDst = {0,0,0,0};
 
+#ifdef DEBUG
+        char basefile[MAX_FILE_NAME] = "../data/ui/timer_bace.png";
+        char rotatefile[MAX_FILE_NAME] = "../data/ui/timer_circle.png";
+#else
         char basefile[MAX_FILE_NAME] = "../../data/ui/timer_bace.png";
         char rotatefile[MAX_FILE_NAME] = "../../data/ui/timer_circle.png";
+#endif
 
     public:
         void Set(TTF_Font *font);
@@ -48,7 +53,11 @@ class PlayerNameUI{
         FloatRect nameDst = {0,0,0,0};
         FloatRect idDst = {0,0,0,0};
 
+#ifdef DEBUG
+        char basefile[MAX_FILE_NAME] = "../data/ui/name_bace.png";
+#else
         char basefile[MAX_FILE_NAME] = "../../data/ui/name_bace.png";
+#endif
 
     public:
         void Set(const PlayerData *pData, TTF_Font *font);
@@ -64,11 +73,17 @@ class DirectionUI{
         Image meterRect;
         FloatRect dst = {0,0,0,0};
 
-
+#ifdef DEBUG
+        char basefile[MAX_FILE_NAME]    = "../data/ui/direction_bace.png";
+        char rotatefile[MAX_FILE_NAME]  = "../data/ui/direction_circleL.png";
+        char dirfile[MAX_FILE_NAME]     = "../data/ui/direction_circleS.png";
+        char meterfile[MAX_FILE_NAME]   = "../data/ui/direction_meter.png";
+#else
         char basefile[MAX_FILE_NAME] = "../../data/ui/direction_bace.png";
         char rotatefile[MAX_FILE_NAME] = "../../data/ui/direction_circleL.png";
         char dirfile[MAX_FILE_NAME] = "../../data/ui/direction_circleS.png";
         char meterfile[MAX_FILE_NAME] = "../../data/ui/direction_meter.png";
+#endif
 
     public:
         void Set();
@@ -82,7 +97,7 @@ class MiniMap{
         FloatRect src = {0,0,0,0};
         FloatRect dst = {0,0,0,0};
         FloatRect imgRect = {0,0,0,0};
-    
+
     public:
         void SetMap(); //画像ファイル読込
         void SetDstRect(int x, int y, int w = 0, int h = 0);
@@ -101,7 +116,11 @@ class MapUI{
         Image base;
         MiniMap minimap;
         FloatRect dst = {0,0,0,0};
+#ifdef DEBUG
+        char basefile[MAX_FILE_NAME] = "../data/ui/map_bace.png";
+#else
         char basefile[MAX_FILE_NAME] = "../../data/ui/map_bace.png";
+#endif
 
     public:
         void Set();
@@ -125,8 +144,13 @@ class Gui2D{
         SDL_GLContext context;
         int time = 0;
 
+#ifdef DEBUG
+        char basefile[MAX_FILE_NAME] = "../data/ui/all_bace.png";
+        char fontpath[MAX_FILE_NAME] = "fonts/BadFennec.ttf";
+#else
         char basefile[MAX_FILE_NAME] = "../../data/ui/all_bace.png";
         char fontpath[MAX_FILE_NAME] = "../fonts/BadFennec.ttf";
+#endif
     public:
         void Set();
         void Draw();

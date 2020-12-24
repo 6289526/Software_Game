@@ -16,6 +16,7 @@ set(CLIENT_CODE
     client_move
     client_music
     client_name
+    client_result
     client_smart
     client_system
     client_time

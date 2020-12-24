@@ -19,6 +19,8 @@ PlayerData *PData;
 
 PlaceData PlData = {NonBlock, {0, 0, 0}};
 
+Rank PRank; // キャラランク
+
 ServerMap Map;
 
 time_t StartTime = 0; // ゲーム開始時間
@@ -49,6 +51,8 @@ void InitSys(char *file) // システム初期化
 void InitPlayerData() // プレイヤーデータ初期化処理
 {
   PData = new PlayerData[Num_Clients];
+  PRank.distance = new float[Num_Clients];
+  PRank.Rank = new int[Num_Clients];
   for (int i = 0; i < Num_Clients; ++i) {
     strcpy(PData[i].name, Name_Clients[i]);
     PData[i].pos = Pos_Clients;
@@ -64,6 +68,8 @@ void InitPlayerData() // プレイヤーデータ初期化処理
 void EndSys() // システム終了処理
 {
   delete[] PData;
+  delete[] PRank.distance;
+  delete[] PRank.Rank;
 }
 
 // 時間セット
@@ -827,6 +833,42 @@ void SendAllPos(int client_num) {
   for (int i = 0; i < client_num; ++i) {
     // 特定のIDにコマンドを送る
     RunCommand(i, com);
+  }
+}
+
+// 順位取得
+void GetRank() {
+  for (int i = 0; i < Num_Clients; ++i) {
+    PRank.distance[i] = Map.GetMapD() * BLOCK_MAGNIFICATION - PData[i].pos.z;
+  }
+
+  float max_distance = 0;
+  int rank = Num_Clients;
+  for (int i = 0; i < Num_Clients; ++i) {
+    for (int j = 0; j < Num_Clients; ++j) {
+      max_distance = std::max(max_distance, PRank.distance[j]);
+    }
+    if (max_distance == 0) {
+      break;
+    }
+    for (int k = 0; k < Num_Clients; ++k) {
+      if (max_distance == PRank.distance[k]) {
+        PRank.Rank[k] = rank;
+        --rank;
+      //  fprintf(stderr, "%d %f %f\n", PRank.Rank[k], PRank.distance[k], max_distance);
+        PRank.distance[k] = 0;
+        max_distance = 0;
+        break;
+      }
+    }
+    fprintf(stderr, "\n");
+  }
+}
+
+// 順位送信
+void SendRank(int chara_ID) {
+  for (int i = 0; i < Num_Clients; ++i) {
+    //fprintf(stderr, "[%d]  %d\n", i, PRank.Rank[i]);
   }
 }
 
