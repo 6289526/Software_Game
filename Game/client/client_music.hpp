@@ -4,18 +4,10 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
 #include "client_gamestate.hpp"
+#include "client_musicfile.hpp"
 #include <map>
 
 namespace Sound {
-    enum SoundEffectType{
-        Jump,   // ジャンプ
-        Landing,// 着地
-        Puts,   // ブロック設置
-        Result, // リザルト画面
-        Goal,   // 自身ゴール
-        Finish, // 全員ゴール
-    };
-
     class BGMController : public GameState::Observer{
         private:
             const std::string _BGMFilePath = "./../../data/game_maoudamashii_5_village10.ogg";
@@ -52,7 +44,9 @@ namespace Sound {
     class SoundEffectPlayer : SoundEffectObserver{
         private:
             std::map<SoundEffectType, Mix_Music*> _SEDictionary; // SEDictionary
+            Mix_Music* _MusicList[Sound::SoundEffectTypeNum];
 
+            SoundLoader::MusicFileLoader Loader;
             void Initialize();
         public:
             inline std::map<SoundEffectType, Mix_Music*> GetSEDictionary() { return _SEDictionary; }

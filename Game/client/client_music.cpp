@@ -59,6 +59,14 @@ SoundEffectObserver::~SoundEffectObserver(){
 }
 
 // ===== * ===== SoundEffectPlayer ===== * ===== //
+void SoundEffectPlayer::Initialize(){
+    for (int i = 0; i < Sound::SoundEffectTypeNum; i++)
+    {
+        fprintf(stderr, "SE file path[%d] : %s", i, Loader.GetSEPath()[(Sound::SoundEffectType)i]);
+        _MusicList[i] = Mix_LoadMUS(Loader.GetSEPath()[(Sound::SoundEffectType)i].c_str());
+    }
+}
+
 void SoundEffectPlayer::OnUpdate(SoundEffectType soundType){ 
     if(Mix_PlayMusic(_SEDictionary[soundType], 0) == -1)
         fprintf(stderr,"Error");
