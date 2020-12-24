@@ -36,6 +36,7 @@
 #define QUIT_COMMAND 'Q'
 #define TIMER_COMMAND 'I'
 #define TERMINATE_COMMAND 'T'
+// #define DEBUG
 /*----------define 終了-----------*/
 
 /*----------構造体宣言 開始-----------*/
