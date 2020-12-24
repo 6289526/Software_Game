@@ -132,11 +132,17 @@ int ShowResult()
     int showRanker = 0;
     for (int i = 0; i < Num_Clients; i++)
     {
-        if (showRanker >= 3)
+        if (showRanker == 3)
         {
             break;
         }
-        resultMessage[i].RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 2 / 5 + resultMessage[i]._height * i, 1, 1, 1);
+        resultMessage[i].RenderingComponent(
+            SCREEN_WIDTH / 2, 
+            SCREEN_HEIGHT * 2 / 5 + resultMessage[i]._height * i, 
+            1, 
+            1, 
+            1
+            );
         showRanker++;
     }
 

@@ -19,13 +19,11 @@ static fd_set Mask;
 // クライアントの情報
 static NetworkData Clients[MAX_NUMCLIENTS];
 
-
 /*関数*/
 static int HandleError(char *);
 static void SendData(void *data, int size);
 static int ReceiveData(void *data, int size);
 static int ExeCommand(void);
-
 
 /*クライアントの初期設定
 * 引数
@@ -101,22 +99,26 @@ void SetupClient(char *server_name, u_short port)
 
     /** 全クライアントの情報を受け取る **/
     int i;
-    PlayerName* Name_Clients = new PlayerName[NumClients];
+    PlayerName *Name_Clients = new PlayerName[NumClients];
 
     for (i = 0; i < NumClients; i++)
     {
         ReceiveData(&Clients[i], sizeof(NetworkData));
         ReceiveData(&Name_Clients[i], sizeof(PlayerName));
     }
-    for (int i = 0; i < NumClients; ++i) {
+    for (int i = 0; i < NumClients; ++i)
+    {
         GetSystem().SetClientName(i, Name_Clients[i].name);
     }
     delete[] Name_Clients;
     // マップデータ入手
     int terrainData[MAP_SIZE_W][MAP_SIZE_H][MAP_SIZE_D];
-    for(int l = 0; l < MAP_SIZE_W; ++l) {
-        for(int j = 0; j < MAP_SIZE_H; ++j) {
-            for(int k = 0; k < MAP_SIZE_D; ++k) {
+    for (int l = 0; l < MAP_SIZE_W; ++l)
+    {
+        for (int j = 0; j < MAP_SIZE_H; ++j)
+        {
+            for (int k = 0; k < MAP_SIZE_D; ++k)
+            {
                 ReceiveData(&(terrainData[l][j][k]), sizeof(int));
             }
         }
@@ -164,11 +166,9 @@ int ControlRequests()
     // 通信を継続するかを判定する変数
     int result = 1;
 
-
     if (FD_ISSET(sock, &read_flag))
     { //サーバーからのメッセージを受け取った場合
         result = ExeCommand();
-
     }
 
     return result;
@@ -186,7 +186,7 @@ int InCommand(char com)
 {
     /*変数*/
     // システムモジュールからデータをもらう
-    const PlayerData* pData = GetSystem().GetPlayerData();
+    const PlayerData *pData = GetSystem().GetPlayerData();
     // ソケットに送るデータ達
     FloatPosition posData = {pData[MyId].velocity.x, pData[MyId].velocity.y, pData[MyId].velocity.z};
     float direction = pData[MyId].direction.horizontal;
@@ -267,11 +267,13 @@ int ExeCommand()
     case PUT_COMMAND:
         ReceiveData(&placeData, sizeof(PlaceData));
 
-        if(placeData.object != NonBlock){
+        if (placeData.object != NonBlock)
+        {
             fprintf(stderr, "ブロック置けた！\n");
             GetSystem().UpdatePlaceData(placeData);
-
-        }else{
+        }
+        else
+        {
             fprintf(stderr, "ブロックがおけなかった\n");
         }
 
@@ -298,11 +300,14 @@ int ExeCommand()
         break;
     case FINISH_COMMAND:
         fprintf(stderr, "All clients goaled.\n");
-        for (int i = 0; i < NumClients; ++i)  {
-          ReceiveData(&rank, sizeof(int));
-          GetSystem().SetRank(i, rank);
+        for (int i = 0; i < NumClients; ++i)
+        {
+            ReceiveData(&rank, sizeof(int));
+            GetSystem().SetRank(i, rank);
         }
-        result = 0;
+        result = 1;
+        GetSystem().GetGameStateController().OnNest(GameState::AllGoaled);
+        fprintf(stderr, "gamestate %d", GetSystem().GetGameStateController().GetState());
         break;
     // case GOAL_COMMAND:
     //     fprintf(stderr, "GOALLLL!!!");
@@ -314,6 +319,7 @@ int ExeCommand()
         fprintf(stderr, "server sent terminate command.\n");
         // 通信終了
         result = 0;
+        
         break;
     default:
         // 上記以外のコマンドは存在しないので、エラーを表示して終了
@@ -339,7 +345,6 @@ void SendData(void *data, int size)
     {
         //メッセージを表示して終了
         fprintf(stderr, "SendData(): data is illegal.\n");
-        
     }
 
     /*ソケットにデータを送る*/

@@ -73,18 +73,22 @@ int main(int argc, char *argv[])
 	_System.InitSystem(_System.GetInitData());
 	Init2dGraphic();
 
-	while (cond && !_System.GetInitData()->input->GetInputType().End)
+	while (!_System.GetInitData()->input->GetInputType().End)
 	{
 		_System.SystemRun();
 
 		Disp();
 		SDL_Delay(10);
 		_System.GetInitData()->timer->UpdateFrame(); // Update the game frame.
+		if(GetSystem().GetGameStateController().GetState() == GameState::AllGoaled){
+			fprintf(stderr, "will Show Result");
+			ShowResult();
+			fprintf(stderr, "Showed Result");
+		}
 	}
 	// ウィンドウシステムの終了
 	// TerminateWindowSys();
-	ShowResult();
-	fprintf(stderr, "ShowResult");
+	
 	// クライアントを終了する。
 	TerminateClient();
 	TerminateGraphic();
@@ -102,7 +106,7 @@ int Select(void *args)
 {
 	SDL_mutex *mtx = (SDL_mutex *)args;
 
-	while (cond)
+	while (1)
 	{
 		if (GetSystem().GetGameStateController().GetState() == GameState::Init)
 		{
@@ -113,6 +117,7 @@ int Select(void *args)
 			SDL_Delay(10);
 		}
 	}
+
 
 	return 0;
 }
