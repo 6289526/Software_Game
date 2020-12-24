@@ -861,7 +861,7 @@ void GetRank() {
         break;
       }
     }
-    fprintf(stderr, "\n");
+    // fprintf(stderr, "\n");
   }
 }
 

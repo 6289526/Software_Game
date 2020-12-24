@@ -409,7 +409,7 @@ void RunCommand(int id, char com)
     case RANK_COMMAND:
         for(int i = 0; i < NumClient; ++i){
             
-            SendData(id, &rank.rank[i], sizeof(int));
+            SendData(id, &rank[i], sizeof(int));
         }
         break;
     case FINISH_COMMAND:
