@@ -15,37 +15,29 @@ const int SCREEN_WIDTH = Wd_Width;
 const int SCREEN_HEIGHT = Wd_Height;
 
 // フォント
-TTF_Font *font;
+static TTF_Font *font;
 // メッセージ
 static char Text[MESSAGE_NUM][MAX_STRING] = {
-    {"This game's result!"}
-};
+    {"This game's result!"}};
 
 #ifdef DEBUG
 static char all_bace2_image[MAX_STRING] = "../data/ui/all_bace2.png";
 static char title_logo_image[MAX_STRING] = "../data/ui/title_logo.png";
-static char ui_image[MAX_STRING] = "../data/ui/UI.png";
+static char ui_image[MAX_STRING] = "../data/ui/map_bace.png";
 static char timer_circle_Image[MAX_STRING] = "../data/ui/timer_circle.png";
 #else
 static char all_bace2_image[MAX_STRING] = "../../data/ui/all_bace2.png";
 static char title_logo_image[MAX_STRING] = "../../data/ui/title_logo.png";
-static char ui_image[MAX_STRING] = "../../data/ui/UI.png";
+static char ui_image[MAX_STRING] = "../../data/ui/map_bace.png";
 static char timer_circle_Image[MAX_STRING] = "../../data/ui/timer_circle.png";
 
 #endif
 
-
-
 /*必要な情報を描画*/
 int ShowResult()
 {
-    PData = new PlayerData[Num_Clients];
-    pData = GetSystem().GetPlayerData();
     SDL_Renderer *renderer = GetWindowRenderer();
-    // 入力モジュール初期化
-    InputData data;
 
-    InitInput();
     //Initialize TTF
     TTF_Init();
 
@@ -58,12 +50,30 @@ int ShowResult()
         exit(1);
     }
 
-    /*プログラムが止まってしまうのでマルチスレッドにします*/
-
     SDL_Event event;
 
     /*くるくる回るやつの角度*/
     float angle = 0;
+    int Num_Clients = GetSystem().Num_Clients;
+    // プレイヤーデータ
+    const PlayerData *pData = new PlayerData[Num_Clients];
+    pData = GetSystem().GetPlayerData();
+    // 順位で並べたプレイヤーデータ
+    PlayerData playerResult[Num_Clients];
+
+    // 順位で並べ替える
+    for (int i = 0; i < Num_Clients; i++)
+    {
+        int rank = 1;
+        for (int j = 0; j < Num_Clients; j++)
+        {
+            if (rank == pData[j].rank)
+            {
+                playerResult[i] = pData[i];
+            }
+        }
+        rank++;
+    }
 
     using namespace React;
     // 描画要素の宣言
@@ -89,34 +99,51 @@ int ShowResult()
     timerCircle.CreateComponent(renderer, IMG_Load(timer_circle_Image));
     allComponents.push_back(timerCircle);
 
-    Component messages[Num_Clients];
-    for (int i = 0; i < Num_Clients; i++)
+    Component messages[MESSAGE_NUM];
+    for (int i = 0; i < MESSAGE_NUM; i++)
     {
         componentNum++;
         messages[i].CreateComponent(renderer, TTF_RenderUTF8_Blended(font, Text[i], (SDL_Color){255, 255, 255, 255}));
         allComponents.push_back(messages[i]);
     }
 
-    /*描画*/
-    while (data.finish != 1 && !GoSInput.J && !(strcmp(WiiAddress, "")))
+    Component resultMessage[Num_Clients];
+    char resultMessageTxt[MAX_STRING];
+    for (int i = 0; i < Num_Clients; i++)
     {
-        /*キーボード入力取得 kキーでwhileループ抜ける*/
-        data = InputEvents(event);
-
-        SDL_RenderClear(renderer);
-        SDL_SetRenderDrawColor(renderer, 0, 0, 40, 255);
-
-        allBace.RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 2, 2, -1);
-        titleLogo.RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 10 / 30, 3, 3, -1);
-
-        
-
-        //windowにレンダリングする
-        SDL_RenderPresent(renderer);
-        /*ホット一息*/
-        SDL_Delay(10);
+        sprintf(resultMessageTxt, "<< %d >> | %s |", playerResult[i].rank, playerResult[i].name);
+        componentNum++;
+        resultMessage[i].CreateComponent(renderer, TTF_RenderUTF8_Blended(font, resultMessageTxt, (SDL_Color){255, 255, 255, 255}));
+        allComponents.push_back(resultMessage[i]);
     }
 
+    SDL_RenderClear(renderer);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 40, 255);
+
+    allBace.RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 2, 2, -1);
+    titleLogo.RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 10 / 30, 3, 3, -1);
+    baceUi.RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 4, 4, -1);
+
+    for (int i = 0; i < Num_Clients; i++)
+    {
+        messages[i].RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 5, 1, 1, 1);
+    }
+
+    int showRanker = 0;
+    for (int i = 0; i < Num_Clients; i++)
+    {
+        if (showRanker >= 3)
+        {
+            break;
+        }
+        resultMessage[i].RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 2 / 5 + resultMessage[i]._height * i, 1, 1, 1);
+        showRanker++;
+    }
+
+    //windowにレンダリングする
+    SDL_RenderPresent(renderer);
+    /*ホット一息*/
+    SDL_Delay(10000);
 
     // すべてのコンポーネントを破棄
     for (int i = 0; i < componentNum; i++)

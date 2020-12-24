@@ -73,8 +73,6 @@ int main(int argc, char *argv[])
 	_System.InitSystem(_System.GetInitData());
 	Init2dGraphic();
 
-	
-
 	while (cond && !_System.GetInitData()->input->GetInputType().End)
 	{
 		_System.SystemRun();
@@ -85,7 +83,8 @@ int main(int argc, char *argv[])
 	}
 	// ウィンドウシステムの終了
 	// TerminateWindowSys();
-
+	ShowResult();
+	fprintf(stderr, "ShowResult");
 	// クライアントを終了する。
 	TerminateClient();
 	TerminateGraphic();
@@ -103,7 +102,7 @@ int Select(void *args)
 {
 	SDL_mutex *mtx = (SDL_mutex *)args;
 
-	while (1)
+	while (cond)
 	{
 		if (GetSystem().GetGameStateController().GetState() == GameState::Init)
 		{

@@ -302,7 +302,7 @@ int ExeCommand()
           ReceiveData(&rank, sizeof(int));
           GetSystem().SetRank(i, rank);
         }
-        result = 1;
+        result = 0;
         break;
     // case GOAL_COMMAND:
     //     fprintf(stderr, "GOALLLL!!!");

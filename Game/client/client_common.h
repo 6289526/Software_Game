@@ -48,3 +48,5 @@ extern void NameSetUp();
 
 extern void KillGoServer();
 extern void Goroutine();
+
+int ShowResult();
