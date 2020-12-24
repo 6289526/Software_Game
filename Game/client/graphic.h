@@ -20,5 +20,6 @@ void Disp();
 void InitGraphic();
 void Init2dGraphic();
 SDL_Renderer* GetWindowRenderer();
+SDL_Color* GetPlayerColors();
 
 void TerminateGraphic();
