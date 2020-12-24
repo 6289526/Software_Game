@@ -88,7 +88,9 @@ void Send_Per_Time() {
   if (NowTime - PleveTime) {
     RunCommand(BROADCAST, TIMER_COMMAND);
     for (int i = 0; i < Num_Clients; ++i) {
-      RunCommand(i, RANK_COMMAND);
+      if (!PData[i].goal) {
+        RunCommand(i, RANK_COMMAND);
+      }
     }
   }
 }
