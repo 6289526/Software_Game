@@ -9,7 +9,7 @@ BGMController::~BGMController(){
     Mix_CloseAudio();
 }
 void BGMController::Initialize(){
-    fprintf(stderr, "Path: %s\n", _BGMFilePath.c_str());
+    fprintf(stderr, "BGM file path: %s\n", _BGMFilePath.c_str());
 }
 void BGMController::Update(GameState::GameState state){
     if(state != GameState::Init)
@@ -29,4 +29,37 @@ void BGMController::Update(GameState::GameState state){
 
     Mix_VolumeMusic(BGMVolume);
     Mix_PlayingMusic();
+}
+
+// ===== * ===== SoundEffectSubject ===== * ===== //
+SoundEffectSubject::~SoundEffectSubject(){
+    std::list<SoundEffectObserver*>::iterator it;
+    for (it = _Subscribers.begin(); it != _Subscribers.end(); it++)
+    {
+        (*it)->SetSubject(NULL);
+    }
+}
+
+void SoundEffectSubject::OnNest(SoundEffectType soundType){
+    std::list<SoundEffectObserver *>::iterator it;
+    for (it = _Subscribers.begin(); it != _Subscribers.end(); it++)
+    {
+        (*it)->OnUpdate(soundType);
+    }
+}
+
+void SoundEffectSubject::Subscribe(SoundEffectObserver *pObserver){
+    _Subscribers.push_back(pObserver);
+    pObserver->SetSubject(this);
+}
+
+// ===== * ===== SoundEffectObserver ===== * ===== //
+SoundEffectObserver::~SoundEffectObserver(){ 
+
+}
+
+// ===== * ===== SoundEffectPlayer ===== * ===== //
+void SoundEffectPlayer::OnUpdate(SoundEffectType soundType){ 
+    if(Mix_PlayMusic(_SEDictionary[soundType], 0) == -1)
+        fprintf(stderr,"Error");
 }

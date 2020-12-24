@@ -30,12 +30,32 @@ namespace Sound {
             virtual void Update(GameState::GameState state);
     };
 
-    class SoundEffectPlayer{
+    class SoundEffectObserver;
+    class SoundEffectSubject{
+    public:
+        virtual ~SoundEffectSubject();
+        virtual void OnNest(SoundEffectType soundType);
+        virtual void Subscribe(SoundEffectObserver *pObserver);
+    protected:
+        std::list<SoundEffectObserver *> _Subscribers;
+    };
+
+    class SoundEffectObserver{
+    public:
+        virtual ~SoundEffectObserver();
+        virtual void OnUpdate(SoundEffectType soundType) = 0;
+        void SetSubject(SoundEffectSubject *pSubject){ _Subject = pSubject; }
+    protected:
+        SoundEffectSubject *_Subject;
+    };
+
+    class SoundEffectPlayer : SoundEffectObserver{
         private:
             std::map<SoundEffectType, Mix_Music*> _SEDictionary; // SEDictionary
 
             void Initialize();
         public:
             inline std::map<SoundEffectType, Mix_Music*> GetSEDictionary() { return _SEDictionary; }
+            void OnUpdate(SoundEffectType soundType);
     };
 }
