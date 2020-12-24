@@ -114,6 +114,11 @@ void SetupClient(char *server_name, u_short port)
     delete[] Name_Clients;
     // マップデータ入手
     int terrainData[MAP_SIZE_W][MAP_SIZE_H][MAP_SIZE_D];
+    int w,h,d;
+    ReceiveData(&w,sizeof(int));
+    ReceiveData(&h,sizeof(int));
+    ReceiveData(&d,sizeof(int));
+    //fprintf(stderr,"%d,%d,%d\n",w,h,d);
     for(int l = 0; l < MAP_SIZE_W; ++l) {
         for(int j = 0; j < MAP_SIZE_H; ++j) {
             for(int k = 0; k < MAP_SIZE_D; ++k) {
@@ -121,7 +126,7 @@ void SetupClient(char *server_name, u_short port)
             }
         }
     }
-    GetSystem().GetClientMap().SetMapData(MAP_SIZE_W, MAP_SIZE_H, MAP_SIZE_D, terrainData);
+    GetSystem().GetClientMap().SetMapData(w, h, d, terrainData);
 
     /** ファイルディスクリプタの操作 **/
     // select関数の第一引数ので必要
