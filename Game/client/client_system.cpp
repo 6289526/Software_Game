@@ -103,7 +103,7 @@ void ClientSystem::InitPlayerData() // プレイヤーデータ初期化処理
 	{
 		strcpy(PData[i].name, Name_Clients[i]);
 		PData[i].pos = Pos_Clients;
-		PData[i].pos.x = Pos_Clients.x + i * PLAYER_W;
+		PData[i].pos.x = Pos_Clients.x + i * PLAYER_W * 2;
 		PData[i].velocity = {0, 0, 0};
 		PData[i].direction.horizontal = 0;
 		PData[i].rank = 0;
