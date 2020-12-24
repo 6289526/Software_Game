@@ -13,7 +13,7 @@ ClientSystem::ClientSystem()
 	_MoveCalculator = new Mover::MoveCalculator(this);
 	StateController = new GameState::GameStateController();
 	_InitData.stateController = StateController;
-	
+
 }
 ClientSystem::~ClientSystem()
 {
@@ -79,7 +79,6 @@ void ClientSystem::ExitSystem(InitData *data)
 {
 	delete[] PData;
 	delete data->input;
-	delete data->timer;
 	delete data->stateController;
 }
 
