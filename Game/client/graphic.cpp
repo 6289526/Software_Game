@@ -15,14 +15,14 @@ SDL_Color playerColors[MAX_NUMCLIENTS];
 GLuint BlockTexture[BLOCK_TYPE_NUM];
 #ifdef DEBUG
 char TextureFileName[BLOCK_TYPE_NUM][128] ={
-    "../data/cat.bmp",
+    "../data/ui/all_bace2.png",
     "../data/FieldBlock.jpg",
     "../data/nbrock1.jpg"
 };
 char Meshfile[256] ={"../data/SegModel.obj"};
 #else
 char TextureFileName[BLOCK_TYPE_NUM][128] ={
-    "../../data/cat.bmp",
+    "../../data/ui/all_bace2.png",
     "../../data/FieldBlock.jpg",
     "../../data/nbrock1.jpg"
     
@@ -93,6 +93,9 @@ SDL_Color* GetPlayerColors(){
 }
 
 void TerminateGraphic(){
+    for(int i = 0; i < BLOCK_TYPE_NUM; i++){
+        glDeleteTextures(1, &(BlockTexture[i]));
+    }
     characterMesh.Release();
     gui2d.Destroy();
     SDL_DestroyRenderer(renderer);
@@ -251,7 +254,7 @@ void DrawMap(){
     const int (*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = GetSystem().GetClientMap().GetTerrainData();
     FloatCube mcube;
     //仮宣言
-    int map_w = GetSystem().GetClientMap().GetMapW(), map_d = GetSystem().GetClientMap().GetMapD();
+    int map_w = GetSystem().GetClientMap().GetMapW(), map_d = GetSystem().GetClientMap().GetMapD(), map_h = GetSystem().GetClientMap().GetMapH();
 
     //床
     // マテリアルを設定する
@@ -279,15 +282,26 @@ void DrawMap(){
     //3次元配列データ使用時
     for(int width = 0; width < map_w; width++){
         for(int depth = 0; depth < map_d; depth++){
-            for(int hight = 0; hight < MAP_SIZE_H; hight++){
+            for(int hight = 0; hight < map_h; hight++){
                 mcube = {
                     width * BLOCK_MAGNIFICATION, hight * BLOCK_MAGNIFICATION, depth * BLOCK_MAGNIFICATION,
                     BLOCK_MAGNIFICATION, BLOCK_MAGNIFICATION, BLOCK_MAGNIFICATION
                 };
-                if(terrainData[width][hight][depth] != 0) DrowMapBlock(mcube,(BlockType)(terrainData[width][hight][depth]));
+                if(terrainData[width][hight][depth] > 0) DrowMapBlock(mcube,(BlockType)(terrainData[width][hight][depth]));
             }
         }
     }
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D,BlockTexture[0]);
+    glBegin(GL_QUADS);
+        glNormal3f(0.0,0.0,-1.0);
+        glTexCoord2f(0.0, 0.0);glVertex3f(map_w * BLOCK_MAGNIFICATION, map_h * BLOCK_MAGNIFICATION, map_d * BLOCK_MAGNIFICATION);
+        glTexCoord2f(1.0, 0.0);glVertex3f(0, map_h * BLOCK_MAGNIFICATION, map_d * BLOCK_MAGNIFICATION);
+        glTexCoord2f(1.0, 1.0);glVertex3f(0, 0, map_d * BLOCK_MAGNIFICATION);
+        glTexCoord2f(0.0, 1.0);glVertex3f(map_w * BLOCK_MAGNIFICATION, 0, map_d * BLOCK_MAGNIFICATION);
+    glEnd();
+    glDisable(GL_TEXTURE_2D);
 
 }
 
