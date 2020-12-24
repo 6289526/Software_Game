@@ -97,9 +97,10 @@ int main(int argc, char *argv[])
 	fprintf(stderr, "GoServer\n");
 	_System.ExitSystem(_System.GetInitData());
 	fprintf(stderr, "ExitSystem\n");
-	TTF_Quit();
+
 	TerminateGraphic();
 	fprintf(stderr, "Terminate Graphic\n");
+	TTF_Quit();
 	SDL_Quit();
 	fprintf(stderr, "SDL Quit\n");
 	return 0;

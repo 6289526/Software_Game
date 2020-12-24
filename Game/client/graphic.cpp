@@ -90,6 +90,7 @@ void TerminateGraphic(){
     SDL_DestroyRenderer(renderer);
     SDL_GL_DeleteContext(context);
     SDL_DestroyWindow(window);
+    
 }
 
 /*private*/
