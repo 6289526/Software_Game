@@ -51,6 +51,11 @@ struct Collision {
   int power;           // キャラを跳ね返す力
 };
 
+struct Rank {
+  float *distance; // ゴールまでの距離
+  int* Rank; // 順位
+};
+
 namespace error {
 enum error {
   OutSide_Map_x,
@@ -134,6 +139,10 @@ void SetVec(int chara_ID, Vector3 &vec); // キャラの速度ベクトルをセ
 void SetPlaceData(PlaceData &data); // 配置したいブロックの場所をセット
 
 void SendAllPos(int client_num); // クライアント全員に全員の座標を送る
+
+void GetRank(); // 順位取得
+
+void SendRank(int chara_ID); // 順位送信
 
 void SetDirection(int chara_ID,
                   float direction); // システムにクライアントの角度を渡す

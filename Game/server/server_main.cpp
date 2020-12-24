@@ -162,6 +162,9 @@ int main(int argc, char *argv[])
       end = 1;
     }
 
+    GetRank();
+    SendRank(1);
+
     SDL_Delay(10);
   }
 
