@@ -180,6 +180,14 @@ void SetupServer(int num_cl, u_short port)
 
         // マップデータ入手
         const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
+        int w = 0, h = 0, d = 0;
+        w = Map.GetMapW();
+        h = Map.GetMapH();
+        d = Map.GetMapD();
+        //fprintf(stderr,"%d,%d,%d\n",w,h,d);
+        SendData(i,&w,sizeof(int));
+        SendData(i,&h,sizeof(int));
+        SendData(i,&d,sizeof(int));
         for (int l = 0; l < MAP_SIZE_W; ++l)
         {
             for (int j = 0; j < MAP_SIZE_H; ++j)
@@ -350,7 +358,7 @@ void RunCommand(int id, char com)
     VelocityFlag flag = {false, false, false};
     PlaceData placeData = GetPlaceData();
     time_t timer = Get_Time();
-    Rank rank;
+    int rank;
     // コマンドに応じた処理
     switch (com)
     {
@@ -407,10 +415,9 @@ void RunCommand(int id, char com)
         SendData(id, &timer, sizeof(time_t));
         break;
     case RANK_COMMAND:
-        for(int i = 0; i < NumClient; ++i){
-            
-            SendData(id, &rank[i], sizeof(int));
-        }
+        SendData(id, &com, sizeof(com));
+        rank = GetRank(id);
+        SendData(id, &rank, sizeof(int));
         break;
     case FINISH_COMMAND:
         fprintf(stderr, "All clients goaled.\n");

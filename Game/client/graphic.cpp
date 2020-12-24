@@ -10,6 +10,7 @@ FloatPosition lookatUp = {0.0f, 1.0f, 0.0f};
 const double PI = 3.141592;
 
 OBJMESH characterMesh;
+SDL_Color playerColors[MAX_NUMCLIENTS];
 
 GLuint BlockTexture[BLOCK_TYPE_NUM];
 #ifdef DEBUG
@@ -38,6 +39,7 @@ SDL_Renderer *renderer = NULL;
 //内部関数
 bool InitOpenGL();
 void SetBlockTexture();
+void SetPlayerColors();
 void View2D();
 void View3D();
 void Disp3D();
@@ -59,6 +61,8 @@ void InitGraphic(){
     InitOpenGL();
     SetBlockTexture();
     characterMesh.LoadFile(Meshfile);
+    SetPlayerColors();
+
 }
 
 void Init2dGraphic(){
@@ -82,6 +86,10 @@ void Disp(){
 
 SDL_Renderer* GetWindowRenderer(){
     return renderer;
+}
+
+SDL_Color* GetPlayerColors(){
+    return playerColors;
 }
 
 void TerminateGraphic(){
@@ -142,6 +150,49 @@ void SetBlockTexture(){
             SDL_FreeSurface(img);
 
         }
+    }
+}
+
+SDL_Color HSVtoRGB(int h){
+    SDL_Color res = {255, 255, 255, 255};
+    float s = 90, l = 55;
+    float max, min;
+    max = 2.55 * (l + (100 - l) * s/100.0);
+    min = 2.55 * (l - (100 - l) * s/100.0);
+
+    if(h < 60){
+        res.r = max;
+        res.g = (h * (max - min) / 60.0) + min;
+        res.b = min;
+    }else if(h < 120){
+        res.r = ((120 - h) * (max - min) / 60.0) + min;
+        res.g = max;
+        res.b = min;
+    }else if(h < 180){
+        res.r = min;
+        res.g = max;
+        res.b = ((h - 120) * (max - min) / 60.0) + min;
+    }else if(h < 240){
+        res.r = min;
+        res.g = ((240 - h) * (max - min) / 60.0) + min;
+        res.b = max;
+    }else if(h < 300){
+        res.r = ((h - 240) * (max - min) / 60.0) + min;
+        res.g = min;
+        res.b = max;
+    }else{
+        res.r = max;
+        res.g = min;
+        res.b = ((360 - h) * (max - min) / 60.0) + min;
+    }
+    return res;
+}
+
+void SetPlayerColors(){
+    for(int i = 0; i < MAX_NUMCLIENTS; i++){
+        int H = i * 360 / (MAX_NUMCLIENTS + 1);
+        playerColors[i] = HSVtoRGB(H);
+        //fprintf(stderr,"%d, %d, %d, %d\n",playerColors[i].r, playerColors[i].g, playerColors[i].b, playerColors[i].a);
     }
 }
 
@@ -243,7 +294,6 @@ void DrawMap(){
 //キャラクター描画
 void DrawCharacter(){
     const PlayerData* playerData = GetSystem().GetPlayerData();
-    SDL_Color playercolor = {0,0,255,255};
     //仮宣言
     int myid = GetSystem().GetMyID();
 
@@ -266,26 +316,9 @@ void DrawCharacter(){
 
 
     for(int i = 0; i < GetSystem().Num_Clients; i++){
+        //fprintf(stderr,"%d, %d, %d, %d\n",playerColors[i].r, playerColors[i].g, playerColors[i].b, playerColors[i].a);
         FloatCube ccube = playerData[i].pos;
-
-        // キャラの色分け
-        const int difference = 85;
-        if ((i * difference) <= (255 * 3)){
-            playercolor.r = i * difference;
-            playercolor.g = i * difference;
-            if ((i * difference) <= (255 * 2)){
-                playercolor.r = 0;
-                playercolor.g = i * difference;
-                if ((i * difference) <= (255 * 1)){
-                    playercolor.r = i * difference;
-                    playercolor.g = 0;
-                }
-            }
-        }
-        else {
-            fprintf(stderr, "色足らん\n");
-        }
-        GLfloat diffuse[] = {playercolor.r / 255.0f, playercolor.g / 255.0f, playercolor.b / 255.0f, playercolor.a / 255.0f};
+        GLfloat diffuse[] = {playerColors[i].r / 255.0f, playerColors[i].g / 255.0f, playerColors[i].b / 255.0f, playerColors[i].a / 255.0f};
         GLfloat ambient  [] = { 0.1f, 0.1f, 0.1f, 1.0f};
         GLfloat specular [] = { 1.0f, 1.0f, 1.0f, 1.0f};
         GLfloat shininess[] = { 0.0f};
@@ -295,7 +328,7 @@ void DrawCharacter(){
         glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
         glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
         characterMesh.Draw(&(playerData[i].pos),playerData[i].direction.horizontal);
-        RotateCube(ccube,playerData[i].direction.horizontal, &playercolor);
+        //RotateCube(ccube,playerData[i].direction.horizontal, &(playerColors[i]));
     }
 }
 

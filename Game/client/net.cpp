@@ -113,17 +113,20 @@ void SetupClient(char *server_name, u_short port)
     delete[] Name_Clients;
     // マップデータ入手
     int terrainData[MAP_SIZE_W][MAP_SIZE_H][MAP_SIZE_D];
-    for (int l = 0; l < MAP_SIZE_W; ++l)
-    {
-        for (int j = 0; j < MAP_SIZE_H; ++j)
-        {
-            for (int k = 0; k < MAP_SIZE_D; ++k)
-            {
+    int w,h,d;
+    ReceiveData(&w,sizeof(int));
+    ReceiveData(&h,sizeof(int));
+    ReceiveData(&d,sizeof(int));
+    //fprintf(stderr,"%d,%d,%d\n",w,h,d);
+    for(int l = 0; l < MAP_SIZE_W; ++l) {
+        for(int j = 0; j < MAP_SIZE_H; ++j) {
+            for(int k = 0; k < MAP_SIZE_D; ++k) {
+
                 ReceiveData(&(terrainData[l][j][k]), sizeof(int));
             }
         }
     }
-    GetSystem().GetClientMap().SetMapData(MAP_SIZE_W, MAP_SIZE_H, MAP_SIZE_D, terrainData);
+    GetSystem().GetClientMap().SetMapData(w, h, d, terrainData);
 
     /** ファイルディスクリプタの操作 **/
     // select関数の第一引数ので必要
@@ -291,12 +294,8 @@ int ExeCommand()
         result = 1;
         break;
     case RANK_COMMAND:
-        for (int i = 0; i < NumClient; ++i)
-        {
             ReceiveData(&rank, sizeof(int));
-            fprintf(stderr, "%d", ,rank)
-            GetSystem().SetRank(i, rank);
-        }
+            GetSystem().SetRank(MyId, rank);
         break;
     case TIMER_COMMAND: // 通信終了
         ReceiveData(&timer, sizeof(time_t));

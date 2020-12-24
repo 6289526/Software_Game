@@ -53,7 +53,7 @@ int SendPosFunc(void *args)
     {
       SDL_LockMutex(mtx);
       Set_Time();            // システムに時間をセット
-      Send_Time();           // クライアントにタイム送信
+      Send_Per_Time();           // クライアントにタイム送信
       SendAllPos(PlayerNum); // クライアントの座標を全員に送る(別スレッドにする予定)
 
       SDL_UnlockMutex(mtx);
@@ -148,7 +148,7 @@ int main(int argc, char *argv[])
   SelectThread = SDL_CreateThread(Select, "getCommand", mtx3);
   /**SDL END**/
 
-  
+
   while (!GameEnd && result)
   {
 
@@ -163,8 +163,7 @@ int main(int argc, char *argv[])
       GameEnd = true;
     }
 
-    GetRank();
-    SendRank(1);
+    SetRank();
 
     SDL_Delay(10);
   }

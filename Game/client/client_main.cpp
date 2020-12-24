@@ -86,6 +86,7 @@ int main(int argc, char *argv[])
 
 	if (_System.GetInitData()->input->GetInputType().End)
 	{
+		cond = 0;
 		InCommand(QUIT_COMMAND);
 		fprintf(stderr, "Skip Result\n");
 	}
