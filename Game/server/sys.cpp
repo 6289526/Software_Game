@@ -869,6 +869,7 @@ void GetRank() {
 void SendRank(int chara_ID) {
   for (int i = 0; i < Num_Clients; ++i) {
     //fprintf(stderr, "[%d]  %d\n", i, PRank.Rank[i]);
+    RunCommand(i, RANK_COMMAND);
   }
 }
 
