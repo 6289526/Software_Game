@@ -15,14 +15,15 @@ set(CLIENT_CODE
     client_map  
     client_move
     client_music
+    client_musicfile
     client_name
     client_result
     client_smart
     client_system
     client_time
+    client_WiiInput
     component
     control_setup
-    client_WiiInput
     graphic_2dui
     graphic_objmesh
     graphic

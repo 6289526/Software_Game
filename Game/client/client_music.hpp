@@ -14,6 +14,9 @@ namespace Sound {
         public:
             void Initialize();
             void Finalize();
+
+            BGMPlayer& GetBGMPlayer(){ return _BGMPlayer; }
+            SoundEffectPlayer& GetSoundEffectPlayer(){ return _SEPlayer; }
         
         private:
             BGMPlayer _BGMPlayer;
@@ -25,10 +28,9 @@ namespace Sound {
             const std::string _BGMFilePath = "./../../data/game_maoudamashii_5_village10.ogg";
             Mix_Music* music = NULL;
             int BGMVolume = 30;
-
-            void Initialize();
         public:
             virtual void Update(GameState::GameState state);
+            void Initialize();
             void Finalize();
     };
 
@@ -56,11 +58,10 @@ namespace Sound {
             Mix_Music* _MusicList[Sound::SoundEffectTypeNum];
 
             SoundLoader::MusicFileLoader Loader;
-            void Initialize();
-            
         public:
             inline std::map<SoundEffectType, Mix_Music*> GetSEDictionary() { return _SEDictionary; }
             void OnUpdate(SoundEffectType soundType);
+            void Initialize();
             void Finalize();
     };
 }

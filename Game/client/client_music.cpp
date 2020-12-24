@@ -2,14 +2,18 @@
 
 using namespace Sound;
 
-// ===== * ===== BGMPlayer ===== * ===== //
+// ===== * ===== SoundController ===== * ===== //
 void SoundController::Initialize(){
     if( Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 ) == -1 ) {
         printf( "Mix_OpenAudio could not initialize! Mixer_Error: %s\n", Mix_GetError());
         return;
     }
+    _BGMPlayer.Initialize();
+    _SEPlayer.Initialize();
 }
 void SoundController::Finalize(){
+    _BGMPlayer.Finalize();
+    _SEPlayer.Finalize();
     Mix_CloseAudio();
 }
 

@@ -43,9 +43,9 @@ namespace System
         ClientMap Map;                                   // マップ
         InputModuleBase *Input;                          // Input Module
         Timer Time;                                      // FrameTimer
-        GameState::GameStateController *StateController; // GameStateController
+        GameState::GameStateController _StateController; // GameStateController
         GameState::GameStateOutputer _StateOutputer;     // _StateOutputer
-        Sound::BGMController _BgmController;             // BGM Controller
+        Sound::SoundController _SoundController;         // Sound Controller
         Mover::MoveCalculator *_MoveCalculator;          // MoveCalculator
 
         SDL_Thread *InputThreadVar;
@@ -67,6 +67,7 @@ namespace System
         inline InputModuleBase *GetInput() { return Input; }
         inline InitData *GetInitData() { return &_InitData; }
         inline Timer &GetTimer() { return Time; }
+        GameState::GameStateController &GetGameStateController(){ return _StateController; }
 
         bool InitSystem(InitData *data);
         void ExitSystem(InitData *data);
@@ -84,7 +85,6 @@ namespace System
         void UpdatePlaceData(PlaceData data);
         void SetRank(int id, int rank);
         void SetDirection(float direction, int id);
-        GameState::GameStateController GetGameStateController();
         template <class T>
         T Abs(T value) { return value < 0 ? -value : value; }
         // int GraphicThread(void *data); // This Function isn't used now
