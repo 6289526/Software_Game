@@ -29,6 +29,8 @@
 #include "client_smart.h"
 #include "client_music.hpp"
 
+extern int cond;
+
 /* net.c */
 extern void SetupClient(char *, u_short);
 extern void TerminateClient();
@@ -48,3 +50,5 @@ extern void NameSetUp();
 
 extern void KillGoServer();
 extern void Goroutine();
+
+int ShowResult();

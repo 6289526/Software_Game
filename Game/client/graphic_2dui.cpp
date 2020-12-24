@@ -332,4 +332,5 @@ void Gui2D::Destroy(){
     direction.Destroy();
     minimap.Destroy();
     TTF_CloseFont(font);
+    
 }

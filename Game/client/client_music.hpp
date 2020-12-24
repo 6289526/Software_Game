@@ -28,6 +28,7 @@ namespace Sound {
             BGMController();
             ~BGMController();
             virtual void Update(GameState::GameState state);
+            void Finalize();
     };
 
     class SoundEffectPlayer{

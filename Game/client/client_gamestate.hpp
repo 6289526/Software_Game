@@ -11,7 +11,7 @@ namespace GameState{
         InputSetup,
         EnterPlayerName,
         Goaled,
-        AllGoaled,
+        AllGoaled = 7,
         Result,
     };
 
