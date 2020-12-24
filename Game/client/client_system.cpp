@@ -80,6 +80,7 @@ void ClientSystem::ExitSystem(InitData *data)
 	delete[] PData;
 	delete data->input;
 	delete data->stateController;
+	_BgmController.Finalize();
 }
 
 void ClientSystem::SetNumClients(int n) // クライアント人数セット
@@ -134,6 +135,8 @@ void ClientSystem::SetRank(int id, int rank)
 	PData[id].rank = rank;
 	fprintf(stderr, "Client [%d] is rank is %d\n", id, PData[id].rank);
 }
+
+
 
 /*現在の設置データを返す
 *	返り値: MyIDのキャラの設置データ
@@ -229,7 +232,7 @@ int InputThread(void *data)
 {
 	SDL_mutex *mtx = (SDL_mutex *)data;
 
-	while (1)
+	while (cond)
 	{
 		SDL_LockMutex(mtx);
 		auto input = GetSystem().GetInput();
