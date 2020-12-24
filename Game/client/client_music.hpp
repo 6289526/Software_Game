@@ -8,17 +8,26 @@
 #include <map>
 
 namespace Sound {
-    class BGMController : public GameState::Observer{
+    class BGMPlayer;
+    class SoundEffectPlayer;
+    class SoundController {
+        public:
+            void Initialize();
+            void Finalize();
+        
+        private:
+            BGMPlayer _BGMPlayer;
+            SoundEffectPlayer _SEPlayer;
+    };
+
+    class BGMPlayer : public GameState::Observer{
         private:
             const std::string _BGMFilePath = "./../../data/game_maoudamashii_5_village10.ogg";
             Mix_Music* music = NULL;
             int BGMVolume = 30;
-            bool initialized = false;
 
             void Initialize();
         public:
-            BGMController();
-            ~BGMController();
             virtual void Update(GameState::GameState state);
             void Finalize();
     };
@@ -35,7 +44,6 @@ namespace Sound {
 
     class SoundEffectObserver{
     public:
-        virtual ~SoundEffectObserver();
         virtual void OnUpdate(SoundEffectType soundType) = 0;
         void SetSubject(SoundEffectSubject *pSubject){ _Subject = pSubject; }
     protected:
@@ -52,7 +60,7 @@ namespace Sound {
             
         public:
             inline std::map<SoundEffectType, Mix_Music*> GetSEDictionary() { return _SEDictionary; }
-            ~SoundEffectPlayer();
             void OnUpdate(SoundEffectType soundType);
+            void Finalize();
     };
 }

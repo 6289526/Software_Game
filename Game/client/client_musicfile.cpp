@@ -10,7 +10,3 @@ MusicFileLoader::MusicFileLoader(){
         _SEPathDictionary.insert(std::make_pair((Sound::SoundEffectType)type, path));
     }
 }
-
-MusicFileLoader::~MusicFileLoader(){
-    
-}

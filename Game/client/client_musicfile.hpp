@@ -40,7 +40,6 @@ namespace SoundLoader{
 
         public:
             MusicFileLoader();
-            ~MusicFileLoader();
             std::map<Sound::SoundEffectType, std::string>& GetSEPath(){ return _SEPathDictionary; }
     };
 }

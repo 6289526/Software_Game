@@ -2,28 +2,28 @@
 
 using namespace Sound;
 
-// ===== * ===== BGMController ===== * ===== //
-BGMController::BGMController(){ }
-BGMController::~BGMController(){ }
-void BGMController::Initialize(){
-    fprintf(stderr, "BGM file path: %s\n", _BGMFilePath.c_str());
+// ===== * ===== BGMPlayer ===== * ===== //
+void SoundController::Initialize(){
+    if( Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 ) == -1 ) {
+        printf( "Mix_OpenAudio could not initialize! Mixer_Error: %s\n", Mix_GetError());
+        return;
+    }
 }
-void BGMController::Finalize(){
-    Mix_FreeMusic(music);
+void SoundController::Finalize(){
     Mix_CloseAudio();
 }
-void BGMController::Update(GameState::GameState state){
+
+// ===== * ===== BGMPlayer ===== * ===== //
+void BGMPlayer::Initialize(){
+    fprintf(stderr, "BGM file path: %s\n", _BGMFilePath.c_str());
+}
+void BGMPlayer::Finalize(){
+    Mix_FreeMusic(music);
+}
+void BGMPlayer::Update(GameState::GameState state){
     if(state != GameState::Init)
         return;
-        
-    if(!initialized) {
-        if( Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 ) == -1 ) {
-            printf( "Mix_OpenAudio could not initialize! Mixer_Error: %s\n", Mix_GetError());
-            return;
-        }
-        initialized = true;
-    }
-    
+            
     music = Mix_LoadMUS(_BGMFilePath.c_str());
     if(Mix_PlayMusic(music, -1) == -1)
         return;
@@ -55,14 +55,8 @@ void SoundEffectSubject::Subscribe(SoundEffectObserver *pObserver){
 }
 
 // ===== * ===== SoundEffectObserver ===== * ===== //
-SoundEffectObserver::~SoundEffectObserver(){ 
-
-}
 
 // ===== * ===== SoundEffectPlayer ===== * ===== //
-SoundEffectPlayer::~SoundEffectPlayer(){
-
-}
 void SoundEffectPlayer::Initialize(){
     for (int i = 0; i < Sound::SoundEffectTypeNum; i++)
     {
@@ -74,6 +68,12 @@ void SoundEffectPlayer::Initialize(){
         if(_MusicList[i] == NULL){
             fprintf(stderr,"%s のファイルの読み取りに失敗しました。", s);
         }
+    }
+}
+void SoundEffectPlayer::Finalize(){
+    for (int i = 0; i < Sound::SoundEffectTypeNum; i++)
+    {
+        Mix_FreeMusic(_MusicList[i]);
     }
 }
 
