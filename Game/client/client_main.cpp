@@ -29,13 +29,7 @@ int main(int argc, char *argv[])
 	u_short port = DEFAULT_PORT;
 
 	char server_name[MAX_LEN_NAME];
-	//multithread
-	SDL_Thread *SelectThread;
-	SDL_mutex *mtx1 = SDL_CreateMutex();
-	SelectThread = SDL_CreateThread(Select, "getCommand", mtx1);
-	SDL_Thread *goThread;
-	SDL_mutex *gMtx = SDL_CreateMutex();
-	goThread = SDL_CreateThread(Go, "Go!", gMtx);
+	
 	/*初期設定*/
 	sprintf(server_name, "localhost");
 
@@ -72,6 +66,14 @@ int main(int argc, char *argv[])
 	/**サーバー関連 END**/
 	_System.InitSystem(_System.GetInitData());
 	Init2dGraphic();
+
+	//multithread
+	SDL_Thread *SelectThread;
+	SDL_mutex *mtx1 = SDL_CreateMutex();
+	SelectThread = SDL_CreateThread(Select, "getCommand", mtx1);
+	SDL_Thread *goThread;
+	SDL_mutex *gMtx = SDL_CreateMutex();
+	goThread = SDL_CreateThread(Go, "Go!", gMtx);
 
 	while (cond && !_System.GetInitData()->input->GetInputType().End)
 	{
