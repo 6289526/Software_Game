@@ -136,6 +136,8 @@ void ClientSystem::SetRank(int id, int rank)
 	fprintf(stderr, "Client [%d] is rank is %d\n", id, PData[id].rank);
 }
 
+
+
 /*現在の設置データを返す
 *	返り値: MyIDのキャラの設置データ
 */

@@ -90,9 +90,10 @@ int main(int argc, char *argv[])
 	TerminateClient();
 	TerminateGraphic();
 	fprintf(stderr, "Terminate Graphic\n");
+	KillGoServer();
+	fprintf(stderr, "GoServer\n");
 	_System.ExitSystem(_System.GetInitData());
 	fprintf(stderr, "ExitSystem\n");
-	KillGoServer();
 	SDL_Quit();
 	fprintf(stderr, "SDL Quit\n");
 	return 0;
