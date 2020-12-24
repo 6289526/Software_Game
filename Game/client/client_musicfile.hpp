@@ -24,12 +24,12 @@ namespace Sound{
         SoundEffectTypeNum,    // 個数取得用
     };
     static const std::string SoundEffectTypeNames[] {
-        "Jump",
-        "Landing",
-        "Puts",
-        "Result",
-        "Goal",
-        "Finish" 
+        "Jump.mp3",
+        "Landing.mp3",
+        "Puts.mp3",
+        "Result.mp3",
+        "Goal.mp3",
+        "Finish.mp3" 
     };
 }
 
@@ -38,10 +38,9 @@ namespace SoundLoader{
         private:
             std::map<Sound::SoundEffectType, std::string> _SEPathDictionary; // SEDictionary
 
+        public:
             MusicFileLoader();
             ~MusicFileLoader();
-
-        public:
             std::map<Sound::SoundEffectType, std::string>& GetSEPath(){ return _SEPathDictionary; }
     };
 }

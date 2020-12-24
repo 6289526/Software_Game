@@ -60,11 +60,20 @@ SoundEffectObserver::~SoundEffectObserver(){
 }
 
 // ===== * ===== SoundEffectPlayer ===== * ===== //
+SoundEffectPlayer::~SoundEffectPlayer(){
+
+}
 void SoundEffectPlayer::Initialize(){
     for (int i = 0; i < Sound::SoundEffectTypeNum; i++)
     {
-        fprintf(stderr, "SE file path[%d] : %s", i, Loader.GetSEPath()[(Sound::SoundEffectType)i]);
+        char s[MAX_FILE_PATH_SIZE];
+        sprintf(s, Loader.GetSEPath()[(Sound::SoundEffectType)i].c_str());
+        fprintf(stderr, "SE file path[%d] : %s\n", i, s);
         _MusicList[i] = Mix_LoadMUS(Loader.GetSEPath()[(Sound::SoundEffectType)i].c_str());
+        
+        if(_MusicList[i] == NULL){
+            fprintf(stderr,"%s のファイルの読み取りに失敗しました。", s);
+        }
     }
 }
 

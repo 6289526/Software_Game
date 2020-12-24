@@ -52,6 +52,7 @@ namespace Sound {
             
         public:
             inline std::map<SoundEffectType, Mix_Music*> GetSEDictionary() { return _SEDictionary; }
+            ~SoundEffectPlayer();
             void OnUpdate(SoundEffectType soundType);
     };
 }
