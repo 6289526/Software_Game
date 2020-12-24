@@ -84,9 +84,13 @@ int Get_Time() {
 }
 
 // タイムを送信
-void Send_Time() {
+void Send_Per_Time() {
   if (NowTime - PleveTime) {
     RunCommand(BROADCAST, TIMER_COMMAND);
+    for (int i = 0; i < Num_Clients; ++i) {
+      RunCommand(i, RANK_COMMAND);
+      fprintf(stderr, "%d\n", PRank.Rank[i]);
+    }
   }
 }
 
@@ -837,7 +841,7 @@ void SendAllPos(int client_num) {
 }
 
 // 順位取得
-void GetRank() {
+void SetRank() {
   for (int i = 0; i < Num_Clients; ++i) {
     PRank.distance[i] = Map.GetMapD() * BLOCK_MAGNIFICATION - PData[i].pos.z;
   }
@@ -863,6 +867,11 @@ void GetRank() {
     }
     // fprintf(stderr, "\n");
   }
+}
+
+// ネットワークにあげる
+int GetRank(int chara_ID) {
+  return PRank.Rank[chara_ID];
 }
 
 // 順位送信
