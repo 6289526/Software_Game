@@ -69,7 +69,7 @@ int ShowResult()
         {
             if (rank == pData[j].rank)
             {
-                playerResult[i] = pData[i];
+                playerResult[i] = pData[j];
                 break;
             }
         }
