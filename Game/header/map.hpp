@@ -19,7 +19,7 @@ class MapData{
     protected:
         int _TerrainData[MAP_SIZE_W][MAP_SIZE_H][MAP_SIZE_D] = {{{0}}};  //マップデータ
         // vector<PlaceData> _ObjectDatas; //オブジェクトデータ
-        int _MapW = MAP_SIZE_W, _MapH = MAP_SIZE_H, _MapD = MAP_SIZE_D;  //マップデータ
+        int _MapW = 0, _MapH = 0, _MapD = 0;  //マップデータ
 
     public:
         //マップデータの取得
