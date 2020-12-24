@@ -156,8 +156,8 @@ void MiniMap::SetMap(){
     amask = 0xff000000;
 #endif
 
-    SDL_Surface *img = SDL_CreateRGBSurface(0, map_w * MiniMap_Mag, map_d * MiniMap_Mag, 32, rmask, gmask, bmask, amask);
-    SDL_Rect dst = {0, 0, MiniMap_Mag, MiniMap_Mag};
+    SDL_Surface *img = SDL_CreateRGBSurface(0, map_w, map_d, 32, rmask, gmask, bmask, amask);
+    SDL_Rect dst = {0, 0, 1, 1};
     for(int w = 0; w < map_w; w++){
         for(int d = 0; d < map_d; d++){
             int count = 0;
@@ -169,10 +169,11 @@ void MiniMap::SetMap(){
                 }else break;
             }
             Uint32 color;
-            dst.x = MiniMap_Mag * w;
-            dst.y = MiniMap_Mag * d;
-            if(count == 0) color = SDL_MapRGBA(img->format, 0, 0, 0, 0);
-            else if(count > 0) color = SDL_MapRGB(img->format, 0, (int)((double)(count/map_h) * 255), 0);
+            dst.x = w;
+            dst.y = d;
+            if(count == 0) color = SDL_MapRGBA(img->format, 0, 0, 0, 255);
+            else if(count == 1) color = SDL_MapRGB(img->format, 0, 255, 0);
+            else if(count > 1) color = SDL_MapRGB(img->format, 0,(255*((float)(map_h - count)/map_h)) + 0, 0);
             else color = SDL_MapRGB(img->format, 255, 255, 0);
             SDL_FillRect(img, &dst,color);
         }
@@ -234,7 +235,6 @@ void MiniMap::Draw(FloatRect *argDst, FloatRect *argSrc, float dir){
     dstPoint[3].y = center.y + sin(dir) * (dst.x - center.x) + cos(dir) * (dst.y + dst.h - center.y);
 
 
-
     glBindTexture(GL_TEXTURE_2D,Texture);
     glBegin(GL_QUADS);
         glTexCoord2f(src.x, src.y); glVertex3f(dstPoint[0].x, dstPoint[0].y, 0);
@@ -243,6 +243,27 @@ void MiniMap::Draw(FloatRect *argDst, FloatRect *argSrc, float dir){
         glTexCoord2f(src.x, src.y + src.h); glVertex3f(dstPoint[3].x, dstPoint[3].y, 0);
     glEnd();
     glBindTexture(GL_TEXTURE_2D,0);
+
+    glColor3f(1.0, 1.0, 1.0);
+    glBegin(GL_LINE_LOOP);
+        glVertex3f(dstPoint[0].x, dstPoint[0].y, 0);
+        glVertex3f(dstPoint[1].x, dstPoint[1].y, 0);
+        glVertex3f(dstPoint[2].x, dstPoint[2].y, 0);
+        glVertex3f(dstPoint[3].x, dstPoint[3].y, 0);
+    glEnd();
+    
+    float mag = 5;
+    
+    glColor3f(GetPlayerColors()[GetSystem().GetMyID()].r / 255.0f, GetPlayerColors()[GetSystem().GetMyID()].g / 255.0f, GetPlayerColors()[GetSystem().GetMyID()].g / 255.0f);
+    glBegin(GL_QUADS);
+        glVertex3f(center.x - mag, center.y - mag, 0);
+        glVertex3f(center.x + mag, center.y - mag, 0);
+        glVertex3f(center.x + mag, center.y + mag, 0);
+        glVertex3f(center.x - mag, center.y + mag, 0);
+    glEnd();
+
+    GLfloat defaultDiffuse[] = {1,1,1,1};
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, defaultDiffuse);
 }
 
 void MiniMap::DestroyTexture(){
@@ -251,18 +272,27 @@ void MiniMap::DestroyTexture(){
 
 void MapUI::Set(){
     base.LoadImg(basefile);
+    float mapMag = 0.8;
     minimap.SetMap();
-    dst = {
-            Wd_Width * 4/40 - UI_MAGNIFICATION * base.GetImgRect().w/2,
-            Wd_Height * 21/30 - UI_MAGNIFICATION * base.GetImgRect().h/2,
-            UI_MAGNIFICATION * base.GetImgRect().w,
-            UI_MAGNIFICATION * base.GetImgRect().h
-        };
+    baseDst = {
+        Wd_Width * 4/40 - UI_MAGNIFICATION * base.GetImgRect().w/2,
+        Wd_Height * 21/30 - UI_MAGNIFICATION * base.GetImgRect().h/2,
+        UI_MAGNIFICATION * base.GetImgRect().w,
+        UI_MAGNIFICATION * base.GetImgRect().h
+    };
+    mapDst = {
+        Wd_Width * 4/40 - UI_MAGNIFICATION * mapMag * (minimap.GetImgRect().w/minimap.GetImgRect().h) * 4 * base.GetImgRect().w/2,
+        Wd_Height * 21/30 - UI_MAGNIFICATION * mapMag * base.GetImgRect().h/2,
+        UI_MAGNIFICATION * mapMag * (minimap.GetImgRect().w/minimap.GetImgRect().h) * base.GetImgRect().w * 4,
+        UI_MAGNIFICATION * mapMag * base.GetImgRect().h
+    };
 }
 
-void MapUI::Draw(){
-    base.Draw(&dst);
-    minimap.Draw(&dst,NULL,PI);
+void MapUI::Draw(const PlayerData *pData){
+    Vector2 pCenter = {(float)(pData->pos.x + pData->pos.w/2)/BLOCK_MAGNIFICATION, (float)(pData->pos.z + pData->pos.d)/BLOCK_MAGNIFICATION};
+    FloatRect mapSrc = {(pCenter.x - 5)/minimap.GetImgRect().w, (pCenter.y - 10)/minimap.GetImgRect().h, 10/minimap.GetImgRect().w, 20/minimap.GetImgRect().h};
+    base.Draw(&baseDst);
+    minimap.Draw(&mapDst,&mapSrc,PI);
 }
 
 void MapUI::Destroy(){
@@ -290,7 +320,7 @@ void Gui2D::Draw(){
     timer.Draw(rotdir,time);
     playerName.Draw();
     direction.Draw(-(pData->direction.horizontal), rotdir);
-    minimap.Draw();
+    minimap.Draw(pData);
     rotdir += 0.01;
     if(rotdir >= 2* PI)rotdir -= 2*PI;
 }

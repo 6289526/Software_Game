@@ -115,7 +115,8 @@ class MapUI{
     private:
         Image base;
         MiniMap minimap;
-        FloatRect dst = {0,0,0,0};
+        FloatRect baseDst = {0,0,0,0};
+        FloatRect mapDst;
 #ifdef DEBUG
         char basefile[MAX_FILE_NAME] = "../data/ui/map_bace.png";
 #else
@@ -124,7 +125,7 @@ class MapUI{
 
     public:
         void Set();
-        void Draw();
+        void Draw(const PlayerData *pData);
         void Destroy();
 };
 
