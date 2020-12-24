@@ -35,6 +35,7 @@
 #define FINISH_COMMAND 'F'
 #define QUIT_COMMAND 'Q'
 #define TIMER_COMMAND 'I'
+#define RANK_COMMAND 'R'
 #define TERMINATE_COMMAND 'T'
 // #define DEBUG
 /*----------define 終了-----------*/
