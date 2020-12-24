@@ -133,7 +133,6 @@ void ClientSystem::SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClien
 void ClientSystem::SetRank(int id, int rank)
 {
 	PData[id].rank = rank;
-	fprintf(stderr, "Client [%d] is rank is %d\n", id, PData[id].rank);
 }
 
 

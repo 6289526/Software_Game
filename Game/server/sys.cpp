@@ -89,7 +89,6 @@ void Send_Per_Time() {
     RunCommand(BROADCAST, TIMER_COMMAND);
     for (int i = 0; i < Num_Clients; ++i) {
       RunCommand(i, RANK_COMMAND);
-      fprintf(stderr, "%d\n", PRank.Rank[i]);
     }
   }
 }
