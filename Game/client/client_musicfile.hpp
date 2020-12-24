@@ -23,7 +23,7 @@ namespace Sound{
         Finish, // 全員ゴール
         SoundEffectTypeNum,    // 個数取得用
     };
-    static const std::string SoundEffectTypeNames[] {
+    static const char* SoundEffectTypeNames[] {
         "Jump.mp3",
         "Landing.mp3",
         "Puts.mp3",

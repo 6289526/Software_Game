@@ -8,24 +8,9 @@
 #include <map>
 
 namespace Sound {
-    class BGMPlayer;
-    class SoundEffectPlayer;
-    class SoundController {
-        public:
-            void Initialize();
-            void Finalize();
-
-            BGMPlayer& GetBGMPlayer(){ return _BGMPlayer; }
-            SoundEffectPlayer& GetSoundEffectPlayer(){ return _SEPlayer; }
-        
-        private:
-            BGMPlayer _BGMPlayer;
-            SoundEffectPlayer _SEPlayer;
-    };
-
     class BGMPlayer : public GameState::Observer{
         private:
-            const std::string _BGMFilePath = "./../../data/game_maoudamashii_5_village10.ogg";
+            const std::string _BGMFilePath = "../../data/game_maoudamashii_5_village10.ogg";
             Mix_Music* music = NULL;
             int BGMVolume = 30;
         public:
@@ -63,5 +48,17 @@ namespace Sound {
             void OnUpdate(SoundEffectType soundType);
             void Initialize();
             void Finalize();
+    };
+
+    class SoundController {
+        private:
+            BGMPlayer _BGMPlayer;
+            SoundEffectPlayer _SEPlayer;
+        public:
+            void Initialize();
+            void Finalize();
+
+            BGMPlayer& GetBGMPlayer(){ return _BGMPlayer; }
+            SoundEffectPlayer& GetSoundEffectPlayer(){ return _SEPlayer; }
     };
 }

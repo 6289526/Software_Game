@@ -67,6 +67,8 @@ bool ClientSystem::InitSystem(InitData *data)
 	}
 
 	data->timer = &Time;
+	_SoundController.Initialize();
+
 	_StateController.Subscribe(&_StateOutputer);
 	_StateController.Subscribe(&_SoundController.GetBGMPlayer());
 	_StateController.OnNest(GameState::Init);

@@ -10,6 +10,7 @@ void SoundController::Initialize(){
     }
     _BGMPlayer.Initialize();
     _SEPlayer.Initialize();
+    fprintf(stderr, "Initialized Music\n");
 }
 void SoundController::Finalize(){
     _BGMPlayer.Finalize();
@@ -29,8 +30,10 @@ void BGMPlayer::Update(GameState::GameState state){
         return;
             
     music = Mix_LoadMUS(_BGMFilePath.c_str());
-    if(Mix_PlayMusic(music, -1) == -1)
+    if(Mix_PlayMusic(music, -1) == -1){
+        fprintf(stderr,"BGMの読み込みに失敗しました。\n");
         return;
+    }
 
     Mix_VolumeMusic(BGMVolume);
     Mix_PlayingMusic();
@@ -66,11 +69,10 @@ void SoundEffectPlayer::Initialize(){
     {
         char s[MAX_FILE_PATH_SIZE];
         sprintf(s, Loader.GetSEPath()[(Sound::SoundEffectType)i].c_str());
-        fprintf(stderr, "SE file path[%d] : %s\n", i, s);
         _MusicList[i] = Mix_LoadMUS(Loader.GetSEPath()[(Sound::SoundEffectType)i].c_str());
         
         if(_MusicList[i] == NULL){
-            fprintf(stderr,"%s のファイルの読み取りに失敗しました。", s);
+            fprintf(stderr,"SE file path[%d] - %s - ファイルの読み取りに失敗しました。\n", i, s);
         }
     }
 }
