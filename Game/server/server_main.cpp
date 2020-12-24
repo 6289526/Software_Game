@@ -13,6 +13,7 @@ int PlayerNum;
 int PortNum;
 
 int result = 1;
+bool GameEnd = false;
 
 int GetCommand(void *args)
 {
@@ -21,7 +22,7 @@ int GetCommand(void *args)
   char str[25];
   char com, buf[24];
 
-  while (1)
+  while (!GameEnd && result)
   {
     SDL_LockMutex(mtx);
 
@@ -42,12 +43,13 @@ int GetCommand(void *args)
   return 0;
 }
 
+
 int SendPosFunc(void *args)
 {
   SDL_mutex *mtx = (SDL_mutex *)args;
   try
   {
-    while (1)
+    while (!GameEnd && result)
     {
       SDL_LockMutex(mtx);
       Set_Time();            // システムに時間をセット
@@ -71,7 +73,7 @@ int Select(void *args)
   SDL_mutex *mtx = (SDL_mutex *)args;
   try
   {
-    while (1)
+    while (!GameEnd && result)
     {
       SDL_LockMutex(mtx);
 
@@ -146,9 +148,8 @@ int main(int argc, char *argv[])
   SelectThread = SDL_CreateThread(Select, "getCommand", mtx3);
   /**SDL END**/
 
-  int end = 0;
-
-  while (!end && result)
+  
+  while (!GameEnd && result)
   {
 
     for (int i = 0; i < PlayerNum; ++i)
@@ -159,7 +160,7 @@ int main(int argc, char *argv[])
     if (AllGoal())
     {
       fprintf(stderr, "全員ゴール\n");
-      end = 1;
+      GameEnd = true;
     }
 
     SDL_Delay(10);

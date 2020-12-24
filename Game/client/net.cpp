@@ -207,6 +207,10 @@ int InCommand(char com)
         SendData(&com, sizeof(char));
         SendData(&placeData, sizeof(PlaceData));
         break;
+    case QUIT_COMMAND:
+        // データを送信する
+        SendData(&com, sizeof(char));
+        break;
     default:
         // 存在しないコマンドの場合はメッセージを表示して、再入力させる
         fprintf(stderr, "%c is not a valid command.\n", com);
@@ -305,9 +309,8 @@ int ExeCommand()
             ReceiveData(&rank, sizeof(int));
             GetSystem().SetRank(i, rank);
         }
-        result = 1;
-        GetSystem().GetGameStateController().OnNest(GameState::AllGoaled);
-        fprintf(stderr, "gamestate %d", GetSystem().GetGameStateController().GetState());
+        result = 0;
+
         break;
     // case GOAL_COMMAND:
     //     fprintf(stderr, "GOALLLL!!!");
@@ -319,7 +322,7 @@ int ExeCommand()
         fprintf(stderr, "server sent terminate command.\n");
         // 通信終了
         result = 0;
-        
+
         break;
     default:
         // 上記以外のコマンドは存在しないので、エラーを表示して終了
@@ -393,11 +396,6 @@ static int HandleError(char *message)
 */
 void TerminateClient()
 {
-    char com = QUIT_COMMAND;
-    // データを送信する
-    SendData(&com, sizeof(char));
-
-    // SDL_Delay(1000);
     // メッセージを表示
     fprintf(stderr, "Connection is closed.\n");
     // ソケットを閉じる

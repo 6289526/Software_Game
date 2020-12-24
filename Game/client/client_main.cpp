@@ -73,30 +73,38 @@ int main(int argc, char *argv[])
 	_System.InitSystem(_System.GetInitData());
 	Init2dGraphic();
 
-	while (!_System.GetInitData()->input->GetInputType().End)
+	while (cond && !_System.GetInitData()->input->GetInputType().End)
 	{
 		_System.SystemRun();
 
 		Disp();
 		SDL_Delay(10);
 		_System.GetInitData()->timer->UpdateFrame(); // Update the game frame.
-		if(GetSystem().GetGameStateController().GetState() == GameState::AllGoaled){
-			fprintf(stderr, "will Show Result");
-			ShowResult();
-			fprintf(stderr, "Showed Result");
-		}
+													 // if(GetSystem().GetGameStateController().GetState() == GameState::AllGoaled){
+													 // 	fprintf(stderr, "will Show Result");
+													 // 	ShowResult();
+													 // 	fprintf(stderr, "Showed Result");
+													 // }
 	}
+
+	if (_System.GetInitData()->input->GetInputType().End)
+	{
+		InCommand(QUIT_COMMAND);
+	}
+
 	// ウィンドウシステムの終了
 	// TerminateWindowSys();
-	
+	ShowResult();
+	fprintf(stderr, "Show Result\n");
 	// クライアントを終了する。
 	TerminateClient();
-	TerminateGraphic();
-	fprintf(stderr, "Terminate Graphic\n");
 	KillGoServer();
 	fprintf(stderr, "GoServer\n");
 	_System.ExitSystem(_System.GetInitData());
 	fprintf(stderr, "ExitSystem\n");
+	TTF_Quit();
+	TerminateGraphic();
+	fprintf(stderr, "Terminate Graphic\n");
 	SDL_Quit();
 	fprintf(stderr, "SDL Quit\n");
 	return 0;
@@ -106,7 +114,7 @@ int Select(void *args)
 {
 	SDL_mutex *mtx = (SDL_mutex *)args;
 
-	while (1)
+	while (cond)
 	{
 		if (GetSystem().GetGameStateController().GetState() == GameState::Init)
 		{
@@ -117,7 +125,6 @@ int Select(void *args)
 			SDL_Delay(10);
 		}
 	}
-
 
 	return 0;
 }

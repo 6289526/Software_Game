@@ -62,14 +62,15 @@ int ShowResult()
     PlayerData playerResult[Num_Clients];
 
     // 順位で並べ替える
+    int rank = 1;
     for (int i = 0; i < Num_Clients; i++)
     {
-        int rank = 1;
         for (int j = 0; j < Num_Clients; j++)
         {
             if (rank == pData[j].rank)
             {
                 playerResult[i] = pData[i];
+                break;
             }
         }
         rank++;
@@ -124,7 +125,7 @@ int ShowResult()
     titleLogo.RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 10 / 30, 3, 3, -1);
     baceUi.RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 4, 4, -1);
 
-    for (int i = 0; i < Num_Clients; i++)
+    for (int i = 0; i < MESSAGE_NUM; i++)
     {
         messages[i].RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 5, 1, 1, 1);
     }
