@@ -97,7 +97,7 @@ class MiniMap{
         FloatRect src = {0,0,0,0};
         FloatRect dst = {0,0,0,0};
         FloatRect imgRect = {0,0,0,0};
-    
+
     public:
         void SetMap(); //画像ファイル読込
         void SetDstRect(int x, int y, int w = 0, int h = 0);
@@ -148,8 +148,8 @@ class Gui2D{
         char basefile[MAX_FILE_NAME] = "../data/ui/all_bace.png";
         char fontpath[MAX_FILE_NAME] = "fonts/BadFennec.ttf";
 #else
-        char basefile[MAX_FILE_NAME] = "../data/ui/all_bace.png";
-        char fontpath[MAX_FILE_NAME] = "fonts/BadFennec.ttf";
+        char basefile[MAX_FILE_NAME] = "../../data/ui/all_bace.png";
+        char fontpath[MAX_FILE_NAME] = "../fonts/BadFennec.ttf";
 #endif
     public:
         void Set();
