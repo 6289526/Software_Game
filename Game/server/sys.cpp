@@ -56,7 +56,7 @@ void InitPlayerData() // プレイヤーデータ初期化処理
   for (int i = 0; i < Num_Clients; ++i) {
     strcpy(PData[i].name, Name_Clients[i]);
     PData[i].pos = Pos_Clients;
-    PData[i].pos.x = Pos_Clients.x + i * 20;
+    PData[i].pos.x = Pos_Clients.x + i * PLAYER_W * 2;
     Vector3 t_v = {0, 0, 0};
     PData[i].velocity = t_v;
     PData[i].direction.horizontal = 0;
