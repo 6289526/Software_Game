@@ -48,6 +48,7 @@ namespace Sound {
 
             SoundLoader::MusicFileLoader Loader;
             void Initialize();
+            
         public:
             inline std::map<SoundEffectType, Mix_Music*> GetSEDictionary() { return _SEDictionary; }
             void OnUpdate(SoundEffectType soundType);
