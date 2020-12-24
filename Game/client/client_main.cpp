@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 	u_short port = DEFAULT_PORT;
 
 	char server_name[MAX_LEN_NAME];
-	
+
 	/*初期設定*/
 	sprintf(server_name, "localhost");
 
@@ -81,18 +81,23 @@ int main(int argc, char *argv[])
 
 		Disp();
 		SDL_Delay(10);
-		_System.GetInitData()->timer->UpdateFrame(); 
+		_System.GetInitData()->timer->UpdateFrame();
 	}
 
 	if (_System.GetInitData()->input->GetInputType().End)
 	{
 		InCommand(QUIT_COMMAND);
+		fprintf(stderr, "Skip Result\n");
+	}
+	else
+	{
+		ShowResult();
+		fprintf(stderr, "Show Result\n");
 	}
 
 	// ウィンドウシステムの終了
 	// TerminateWindowSys();
-	ShowResult();
-	fprintf(stderr, "Show Result\n");
+
 	// クライアントを終了する。
 	TerminateClient();
 	KillGoServer();
