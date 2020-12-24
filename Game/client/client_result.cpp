@@ -7,7 +7,7 @@
 #ifdef DEBUG
 #define FONT_PATH "fonts/PixelMplus12-Regular.ttf"
 #else
-#define FONT_PATH "../fonts/PixelMplus12-Regular.ttf"
+#define FONT_PATH "../fonts/BadFennec.ttf"
 #endif
 #define MAX_STRING 128
 #define MESSAGE_NUM 1
