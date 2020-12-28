@@ -206,6 +206,7 @@ pair<bool, bool> MoveCalculator::SetPlayerVelocity(InputModuleBase *inputModule,
 				data.Jump = false;
 				pData->velocity.y += PLAYER_JUMP_POWER;
 				isJumped = true;
+				_System->GetSounfController().GetSoundEffectSubject().OnNest(Sound::Jump);
 			}
 			else if (!isOnGround)
 			{

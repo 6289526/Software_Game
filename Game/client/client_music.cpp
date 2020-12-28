@@ -9,7 +9,7 @@ void SoundController::Initialize(){
         return;
     }
     _BGMPlayer.Initialize();
-    _SEPlayer.Initialize();
+    _SEPlayer.Initialize(_SESubject);
     fprintf(stderr, "Initialized Music\n");
 }
 void SoundController::Finalize(){
@@ -64,7 +64,7 @@ void SoundEffectSubject::Subscribe(SoundEffectObserver *pObserver){
 // ===== * ===== SoundEffectObserver ===== * ===== //
 
 // ===== * ===== SoundEffectPlayer ===== * ===== //
-void SoundEffectPlayer::Initialize(){
+void SoundEffectPlayer::Initialize(SoundEffectSubject& sESubject){
     for (int i = 0; i < Sound::SoundEffectTypeNum; i++)
     {
         char s[MAX_FILE_PATH_SIZE];
@@ -75,6 +75,8 @@ void SoundEffectPlayer::Initialize(){
             fprintf(stderr,"SE file path[%d] - %s - ファイルの読み取りに失敗しました。\n", i, s);
         }
     }
+
+    sESubject.Subscribe(this);
 }
 void SoundEffectPlayer::Finalize(){
     for (int i = 0; i < Sound::SoundEffectTypeNum; i++)
@@ -86,4 +88,6 @@ void SoundEffectPlayer::Finalize(){
 void SoundEffectPlayer::OnUpdate(SoundEffectType soundType){ 
     if(Mix_PlayMusic(_SEDictionary[soundType], 0) == -1)
         fprintf(stderr,"Error");
+    
+    fprintf(stderr, "Played Music No. %d\n", soundType);
 }

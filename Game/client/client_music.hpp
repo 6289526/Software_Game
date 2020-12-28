@@ -41,23 +41,26 @@ namespace Sound {
         private:
             std::map<SoundEffectType, Mix_Music*> _SEDictionary; // SEDictionary
             Mix_Music* _MusicList[Sound::SoundEffectTypeNum];
+            SoundEffectSubject _SESubject;
 
             SoundLoader::MusicFileLoader Loader;
         public:
             inline std::map<SoundEffectType, Mix_Music*> GetSEDictionary() { return _SEDictionary; }
             void OnUpdate(SoundEffectType soundType);
-            void Initialize();
+            void Initialize(SoundEffectSubject& sESubject);
             void Finalize();
     };
 
     class SoundController {
         private:
+            SoundEffectSubject _SESubject;
             BGMPlayer _BGMPlayer;
             SoundEffectPlayer _SEPlayer;
         public:
             void Initialize();
             void Finalize();
 
+            SoundEffectSubject& GetSoundEffectSubject() { return _SESubject; }
             BGMPlayer& GetBGMPlayer(){ return _BGMPlayer; }
             SoundEffectPlayer& GetSoundEffectPlayer(){ return _SEPlayer; }
     };
