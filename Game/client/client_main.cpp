@@ -13,7 +13,7 @@ int Select(void *args);
 int Go(void *args);
 
 char WiiAddress[18];
-InputType _______Type;
+
 System::ClientSystem _System;
 System::ClientSystem &GetSystem() { return _System; }
 
@@ -23,6 +23,11 @@ int main(int argc, char *argv[])
 	/**SDL2関連 BEGIN******/
 	SDL_Init(SDL_INIT_EVERYTHING);
 	/**SDL2関連 END********/
+
+	// スマートフォン用のサーバーを作る
+	SDL_Thread *goThread;
+	SDL_mutex *gMtx = SDL_CreateMutex();
+	goThread = SDL_CreateThread(Go, "Go!", gMtx);
 
 	/**サーバー関連 BEGIN**/
 	// 参加したいサーバーのポート番号
@@ -71,9 +76,6 @@ int main(int argc, char *argv[])
 	SDL_Thread *SelectThread;
 	SDL_mutex *mtx1 = SDL_CreateMutex();
 	SelectThread = SDL_CreateThread(Select, "getCommand", mtx1);
-	SDL_Thread *goThread;
-	SDL_mutex *gMtx = SDL_CreateMutex();
-	goThread = SDL_CreateThread(Go, "Go!", gMtx);
 
 	while (cond && !_System.GetInitData()->input->GetInputType().End)
 	{
