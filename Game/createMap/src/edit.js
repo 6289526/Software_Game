@@ -134,48 +134,16 @@ const template = [
 
 
 
-window.addEventListener('DOMContentLoaded', onLoad);
+window.addEventListener('load', onLoad);
 
 
 function onLoad() {
-
     //メニューバー設置
     const menu = Menu.buildFromTemplate(template);
     Menu.setApplicationMenu(menu);
     // inputArea = document.getElementById('input_area');
     // inputTxt = document.getElementById('input_txt');
     footerArea = document.getElementById('footer_fixed');
-    
-    // editor = ace.edit('input_txt');
-    // // Ace.jsのカラーテーマ
-    // editor.setTheme('ace/theme/dracula');
-    // editor.focus();
-    // editor.gotoLine(1);
-    // editor.renderer.setShowPrintMargin(false);
-    // setEditorTheme();
-
-    // document.addEventListener('dragover', (event) => {
-    //     event.preventDefault();
-    // });
-    // document.addEventListener('drop', (event) => {
-    //     event.preventDefault();
-    // });
-
-    // inputArea.addEventListener('dragover', (event) => {
-    //     event.preventDefault();
-    // });
-    // inputArea.addEventListener('dragleave', (event) => {
-    //     event.preventDefault();
-    // });
-    // inputArea.addEventListener('dragend', (event) => {
-    //     event.preventDefault();
-    // });
-    // inputArea.addEventListener('drop', (event) => {
-    //     event.preventDefault();
-    //     const file = event.dataTransfer.files[0];
-    //     readFile(file.path);
-    // });
-
     
 };
 
@@ -261,107 +229,7 @@ function readFile(path) {
 
         console.log(ArrayData);
 
-        // // エディターに表示
-        // editor.setValue(text.toString(), -1);
-        // setEditorTheme(path);
-
         // ファイルを読み込んだら再レンダリング
         setMap();
     });
-}
-
-function saveFile() {
-    // 新しいファイルの時名前を付けて保存
-    if (currentPath === '') {
-        saveNewFile();
-        return;
-    }
-    // ファイルに書き込み
-    const data = editor.getValue();
-    writeFile(currentPath, data);
-    readFile(currentPath);
-    // const win = BrowserWindow.getFocusedWindow();
-    // dialog.showMessageBox(win, {
-    //     title: 'ファイルの上書き保存を行います。',
-    //     type: 'info',
-    //     buttons: ['OK', 'Cancel'],
-    //     detail: '本当に保存しますか？'
-    // }).then(result => {
-    //     if (result.response === 0) {
-    //         const data = editor.getValue();
-    //         writeFile(currentPath, data);
-    //     }
-    // }).catch(err => {
-    //     console.log(err)
-    // });
-}
-
-function writeFile(path, data) {
-    fs.writeFile(path, data, (error) => {
-        if (error != null) {
-            alert('error : ' + error);
-        } else {
-            setEditorTheme(path);
-        }
-    });
-}
-
-function saveNewFile() {
-    const win = BrowserWindow.getFocusedWindow();
-    dialog.showSaveDialog(win, {
-        properties: ['openFile'],
-        filters: [
-            {
-                name: 'Documents',
-                extensions: ['*']
-            }
-        ]
-    }).then(result => {
-        if (!result.canceled) {
-            // ファイルに書き込み
-            const data = editor.getValue();
-            currentPath = result.filePath;
-            writeFile(currentPath, data);
-            readFile(currentPath);
-
-        }
-    }).catch(err => {
-        console.log(err)
-    });
-}
-
-// 構文チェック機能設定.ファイルの読み込み時などに拡張子からターゲットの言語を変更
-function setEditorTheme(fileName = '') {
-    const type = fileName.split('.');
-    const ext = type[type.length - 1].toLowerCase()
-
-    switch (ext) {
-        case 'txt':
-            editor.getSession().setMode('ace/mode/plain_text');
-            break;
-        case 'py':
-            editor.getSession().setMode('ace/mode/python');
-            break;
-        case 'rb':
-            editor.getSession().setMode('ace/mode/ruby');
-            break;
-        case 'c':
-        case 'cpp':
-        case 'h':
-            editor.getSession().setMode('ace/mode/c_cpp');
-            break
-        case 'html':
-            editor.getSession().setMode('ace/mode/html');
-            break;
-        case 'js':
-            editor.getSession().setMode('ace/mode/javascript');
-            break;
-        case 'md':
-            editor.getSession().setMode('ace/mode/markdown');
-            break;
-        default:
-            editor.getSession().setMode('ace/mode/plain_text');
-            break;
-    }
-
 }
