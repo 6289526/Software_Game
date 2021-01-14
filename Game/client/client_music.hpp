@@ -39,13 +39,13 @@ namespace Sound {
 
     class SoundEffectPlayer : SoundEffectObserver{
         private:
-            std::map<SoundEffectType, Mix_Music*> _SEDictionary; // SEDictionary
-            Mix_Music* _MusicList[Sound::SoundEffectTypeNum];
+            std::map<SoundEffectType, Mix_Chunk*> _SEDictionary; // SEDictionary
+            Mix_Chunk* _MusicList[Sound::SoundEffectTypeNum];
             SoundEffectSubject _SESubject;
 
             SoundLoader::MusicFileLoader Loader;
         public:
-            inline std::map<SoundEffectType, Mix_Music*> GetSEDictionary() { return _SEDictionary; }
+            inline std::map<SoundEffectType, Mix_Chunk*> GetSEDictionary() { return _SEDictionary; }
             void OnUpdate(SoundEffectType soundType);
             void Initialize(SoundEffectSubject& sESubject);
             void Finalize();
@@ -59,6 +59,7 @@ namespace Sound {
         public:
             void Initialize();
             void Finalize();
+            void Playing();
 
             SoundEffectSubject& GetSoundEffectSubject() { return _SESubject; }
             BGMPlayer& GetBGMPlayer(){ return _BGMPlayer; }

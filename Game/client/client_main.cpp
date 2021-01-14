@@ -77,9 +77,8 @@ int main(int argc, char *argv[])
 
 	while (cond && !_System.GetInitData()->input->GetInputType().End)
 	{
-		_System.SystemRun();
-
 		Disp();
+		_System.SystemRun();
 		SDL_Delay(10);
 		_System.GetInitData()->timer->UpdateFrame();
 	}
