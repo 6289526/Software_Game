@@ -68,7 +68,7 @@ char *GetIpAddress()
     FILE *fp;
     char command[MAX_STRING];
     char output[MAX_STRING];
-    sprintf(command, "ifconfig | grep 192.168 | awk '{print $2}'");
+    sprintf(command, "hostname -I| cut -d' ' -f1");
 
     fp = popen(command, "r");
     int index = 0;
