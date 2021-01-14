@@ -108,7 +108,7 @@ void PlayerNameUI::Set(const PlayerData *pData, TTF_Font *font){
 void PlayerNameUI::Draw(){
     base.Draw(&baseDst);
     name.Draw(&nameDst);
-    ID.DrawNum2dig(GetSystem().GetPlayerData()->rank, idDst);
+    ID.DrawNum2dig(GetSystem().GetPlayerData()[GetSystem().GetMyID()].rank, idDst);
 }
 
 void PlayerNameUI::Destroy(){
