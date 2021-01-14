@@ -310,10 +310,11 @@ void DrawCharacter(){
     const PlayerData* playerData = GetSystem().GetPlayerData();
     //仮宣言
     int myid = GetSystem().GetMyID();
+    float ver = MAXIMUM_ANGLE_DOWN + (0 - MAXIMUM_ANGLE_DOWN) * ((playerData[myid].direction.vertical - MAXIMUM_ANGLE_DOWN) / (MAXIMUM_ANGLE_UP - MAXIMUM_ANGLE_DOWN));
 
     //視点変更
     lookatPlace.x = playerData[myid].pos.x + playerData[myid].pos.w / 2 + 60 * -sin(playerData[myid].direction.horizontal);
-    lookatPlace.y = playerData[myid].pos.y + playerData[myid].pos.h / 2 + 60 * -sin(playerData[myid].direction.vertical);
+    lookatPlace.y = playerData[myid].pos.y + playerData[myid].pos.h / 2 + 60 * -sin(ver);
     lookatPlace.z = playerData[myid].pos.z + playerData[myid].pos.d / 2 + 60 * -cos(playerData[myid].direction.horizontal);
 
     lookatCenter.x = playerData[myid].pos.x + playerData[myid].pos.w / 2;
