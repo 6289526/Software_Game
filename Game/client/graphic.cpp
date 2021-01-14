@@ -329,6 +329,18 @@ void DrawCharacter(){
         lookatUp.x,     lookatUp.y,     lookatUp.z
     );
 
+    //設置場所の表示
+    PlaceData placeData = GetSystem().GetPlaceData();
+    placeData.pos.x /= BLOCK_MAGNIFICATION;
+    placeData.pos.y /= BLOCK_MAGNIFICATION;
+    placeData.pos.z /= BLOCK_MAGNIFICATION;
+
+    FloatCube mcube = {
+        placeData.pos.x * BLOCK_MAGNIFICATION, placeData.pos.y * BLOCK_MAGNIFICATION, placeData.pos.z * BLOCK_MAGNIFICATION,
+        BLOCK_MAGNIFICATION, BLOCK_MAGNIFICATION, BLOCK_MAGNIFICATION
+    };
+    SDL_Color color = {0, 0, 0, 255};
+    RotateCube(mcube, 0.0, &color);
 
     for(int i = 0; i < GetSystem().Num_Clients; i++){
         //fprintf(stderr,"%d, %d, %d, %d\n",playerColors[i].r, playerColors[i].g, playerColors[i].b, playerColors[i].a);
@@ -460,6 +472,8 @@ void RotateCube(FloatCube cube, double dir, SDL_Color *color){
         top[i] = base[i];
         top[i].y += cube.h;
     }
+    
+    glLineWidth(3.0);
 
     // 立方体を描画する
     glBegin(GL_QUADS);
