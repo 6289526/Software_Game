@@ -19,6 +19,7 @@ class TimeImg{
     public:
         void Set(TTF_Font *font);
         void DrawTime(int time, FloatRect dst);
+        void DrawNum2dig(int num, FloatRect dst);
         void DestroyTexture();
 };
 
@@ -48,7 +49,7 @@ class PlayerNameUI{
     private:
         Image base; //img
         Image name; //text
-        Image ID; //text
+        TimeImg ID;
         FloatRect baseDst = {0,0,0,0};
         FloatRect nameDst = {0,0,0,0};
         FloatRect idDst = {0,0,0,0};
