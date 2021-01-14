@@ -9,7 +9,8 @@
 
 #define GRAVITY 9.8 * 0.25		// 重力
 #define TERMINAL_SPEED (BLOCK_MAGNIFICATION - 1) // 終端速度
-#define MAXIMUM_ANGLE PI / 2    // 縦方向の角度制限
+#define MAXIMUM_ANGLE_UP PI / 2    // 縦方向の角度制限
+#define MAXIMUM_ANGLE_DOWN -PI / 2
 
 extern int Num_Clients; // クライアント人数
 extern char WiiAddress[18];
