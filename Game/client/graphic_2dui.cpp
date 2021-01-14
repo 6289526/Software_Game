@@ -26,6 +26,18 @@ void TimeImg::DrawTime(int time, FloatRect dst){
     str_s.Draw(&tmpdst);
 
 }
+
+void TimeImg::DrawNum2dig(int num, FloatRect dst){
+    if(num > 99) num = 999;
+    if(num < 0) num = 0;
+    int tmpnum[2] = {num / 10, num % 10};
+    FloatRect tmpdst, tmpsrc;
+    for(int i = 0; i < 2; i++){
+        tmpdst = {dst.x + (dst.w/2)*i, dst.y, dst.w/2, dst.h};
+        nums[tmpnum[i]].Draw(&tmpdst);
+    }
+}
+
 void TimeImg::DestroyTexture(){
     for(int i = 0; i < 10; i++){
         nums[i].DestroyTexture();
@@ -72,7 +84,7 @@ void PlayerNameUI::Set(const PlayerData *pData, TTF_Font *font){
     SDL_Color color {255,255,255,255};
     base.LoadImg(basefile);
     name.LoadText(font,pData->name, color);
-    ID.LoadText(font, idstr, color);
+    ID.Set(font);
     baseDst = {
             Wd_Width * 35 / 40 - UI_MAGNIFICATION * base.GetImgRect().w / 2,
             Wd_Height * 24 / 30 - UI_MAGNIFICATION * base.GetImgRect().h / 2,
@@ -96,7 +108,7 @@ void PlayerNameUI::Set(const PlayerData *pData, TTF_Font *font){
 void PlayerNameUI::Draw(){
     base.Draw(&baseDst);
     name.Draw(&nameDst);
-    ID.Draw(&idDst);
+    ID.DrawNum2dig(GetSystem().GetPlayerData()[GetSystem().GetMyID()].rank, idDst);
 }
 
 void PlayerNameUI::Destroy(){
