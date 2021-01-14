@@ -223,10 +223,10 @@ pair<bool, bool> MoveCalculator::SetPlayerVelocity(InputModuleBase *inputModule,
 			if (TERMINAL_SPEED < pData->velocity.z)
 				pData->velocity.z = TERMINAL_SPEED;
 				
-			if (pData->direction.vertical > MAXIMUM_ANGLE)
-				pData->direction.vertical = MAXIMUM_ANGLE;
-			if (pData->direction.vertical < -MAXIMUM_ANGLE)
-				pData->direction.vertical = -MAXIMUM_ANGLE;
+			if (pData->direction.vertical > MAXIMUM_ANGLE_UP)
+				pData->direction.vertical = MAXIMUM_ANGLE_UP;
+			if (pData->direction.vertical < MAXIMUM_ANGLE_DOWN)
+				pData->direction.vertical = MAXIMUM_ANGLE_DOWN;
 #pragma endregion
 
 			return make_pair(true, isJumped);

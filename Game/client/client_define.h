@@ -2,14 +2,15 @@
 #include "../header/constants.h"
 #include "client_input.h"
 
-#define PLAYER_MOVE_SPEED 20					   // 移動速度
+#define PLAYER_MOVE_SPEED 40					   // 移動速度
 #define PLAYER_ROTATE_SPEED 2					   // 回転速度
 #define PLAYER_JUMP_POWER 2						   // ジャンプ力
 #define PLAYER_HAND_LENGTH (BLOCK_MAGNIFICATION + PLAYER_W) // 手の長さ(ブロックの設置先までの距離)
 
 #define GRAVITY 9.8 * 0.25		// 重力
 #define TERMINAL_SPEED (BLOCK_MAGNIFICATION - 1) // 終端速度
-#define MAXIMUM_ANGLE PI / 2    // 縦方向の角度制限
+#define MAXIMUM_ANGLE_UP PI / 2    // 縦方向の角度制限
+#define MAXIMUM_ANGLE_DOWN -PI / 2
 
 extern int Num_Clients; // クライアント人数
 extern char WiiAddress[18];

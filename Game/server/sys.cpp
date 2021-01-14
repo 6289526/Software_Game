@@ -646,10 +646,10 @@ bool Collision_BB() // ブロックを置けるかどうかの判定
   // 置く場所にブロックがないなら
   if (terrainData[Block_X][Block_Y][Block_Z] == NonBlock) {
     // 最下段なら
-    if (Block_Y - 1 < 0) {
-      // 置けません
-      return false;
-    }
+    // if (Block_Y - 1 < 0) {
+    //   // 置けません
+    //   return false;
+    // }
     // それ以外
     return true;
   }
@@ -771,10 +771,17 @@ void MovePosition(int chara_ID) try {
   PData[chara_ID].velocity.x = 0;
   PData[chara_ID].velocity.z = 0;
 } catch (error::error e) {
-  if (e == error::OutSide_Map_y) {
+  if (e == error::OutSide_Map_x || e == error::OutSide_Map_y || e == error::OutSide_Map_z) {
+    PData[chara_ID].pos.x = PLAYER_X + chara_ID * PLAYER_W;
+    PData[chara_ID].pos.y = PLAYER_Y;
+    PData[chara_ID].pos.z = PLAYER_Z;if (e == error::OutSide_Map_y) {
     PData[chara_ID].pos.x = PLAYER_X + chara_ID * PLAYER_W;
     PData[chara_ID].pos.y = PLAYER_Y;
     PData[chara_ID].pos.z = PLAYER_Z;
+    PData[chara_ID].velocity.x = 0;
+    // PData[chara_ID].velocity.y = 0;
+    PData[chara_ID].velocity.z = 0;
+  }
     PData[chara_ID].velocity.x = 0;
     // PData[chara_ID].velocity.y = 0;
     PData[chara_ID].velocity.z = 0;
