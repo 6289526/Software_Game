@@ -307,6 +307,7 @@ int ExeCommand()
         ReceiveData(&rank, sizeof(int));
         fprintf(stderr, "you goaled.\n");
         GetSystem().SetRank(MyId, rank);
+        GetSystem().GetSoundController().GetSoundEffectSubject().OnNest(Sound::Goal);
         result = 1;
         break;
     case FINISH_COMMAND:

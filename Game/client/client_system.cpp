@@ -135,8 +135,6 @@ void ClientSystem::SetRank(int id, int rank)
 	PData[id].rank = rank;
 }
 
-
-
 /*現在の設置データを返す
 *	返り値: MyIDのキャラの設置データ
 */
