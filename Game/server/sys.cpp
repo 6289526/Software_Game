@@ -646,10 +646,10 @@ bool Collision_BB() // ブロックを置けるかどうかの判定
   // 置く場所にブロックがないなら
   if (terrainData[Block_X][Block_Y][Block_Z] == NonBlock) {
     // 最下段なら
-    if (Block_Y - 1 < 0) {
-      // 置けません
-      return false;
-    }
+    // if (Block_Y - 1 < 0) {
+    //   // 置けません
+    //   return false;
+    // }
     // それ以外
     return true;
   }

@@ -49,7 +49,7 @@ char* CutDirectoryPath( const char* filename )
 		return s;
 	}
 	else
-	{ 
+	{
 		return base;
 	}
 }
@@ -83,13 +83,13 @@ OBJVEC2::OBJVEC2( float nx, float ny )
 //-----------------------------------------------------------------------
 // operator float*
 //-----------------------------------------------------------------------
-OBJVEC2::operator float * () 
+OBJVEC2::operator float * ()
 { return (float*)&x; }
 
 //-----------------------------------------------------------------------
 // operator const float*
 //-----------------------------------------------------------------------
-OBJVEC2::operator const float *() const 
+OBJVEC2::operator const float *() const
 { return (const float*)&x; }
 
 
@@ -109,7 +109,7 @@ OBJVEC3::OBJVEC3( float nx, float ny, float nz )
 //------------------------------------------------------------------------
 // operator float*
 //------------------------------------------------------------------------
-OBJVEC3::operator float *() 
+OBJVEC3::operator float *()
 { return (float*)&x; }
 
 //------------------------------------------------------------------------
@@ -152,7 +152,7 @@ void OBJMESH::Release()
 {
 	SAFE_DELETE_ARRAY( m_Vertices );
 	SAFE_DELETE_ARRAY( m_Indices );
-	
+
 	m_NumVertices = 0;
 	m_NumIndices = 0;
 }
@@ -231,13 +231,13 @@ bool OBJMESH::LoadOBJFile(const char *filename)
 		else if ( 0 == strcmp( buf, "f" ) )
 		{
 			unsigned int iPosition, iTexCoord, iNormal;
-			int p[4] = {-1}, t[4] = {-1}, n[4] = {-1};	
+			int p[4] = {-1}, t[4] = {-1}, n[4] = {-1};
 			OBJVERTEX vertex;
 			dwFaceIndex++;
 			dwFaceCount++;
 			int count = 0;
 			unsigned int index = 0;
-		
+
 			//　三角形・四角形のみ対応
 			for ( int iFace = 0; iFace < 4; iFace++ )
 			{
@@ -247,7 +247,7 @@ bool OBJMESH::LoadOBJFile(const char *filename)
 				file >> iPosition;
 				vertex.position = positions[ iPosition - 1 ];
 				p[iFace] = iPosition -1;
-				
+
 				if ( '/' == file.peek() )
 				{
 					file.ignore();
@@ -365,7 +365,7 @@ bool OBJMESH::LoadFile( const char* filename )
 	}
 
 	//　正常終了
-	printf("complete load objfile\n");
+	fprintf(stderr, "complete load objfile\n");
 	return true;
 }
 
@@ -389,7 +389,7 @@ void OBJMESH::Draw(const FloatCube *cube, float dir)
     glEnableClientState(GL_VERTEX_ARRAY);
 	glInterleavedArrays( GL_T2F_N3F_V3F, 0, Vertices );
 	glDrawElements( GL_TRIANGLES, m_NumIndices, GL_UNSIGNED_INT, &m_Indices[0] );
-	
+
 	SAFE_DELETE_ARRAY(Vertices);
 }
 
@@ -435,4 +435,3 @@ OBJVERTEX* OBJMESH::GetVertices()
 //-----------------------------------------------------------------------
 unsigned int* OBJMESH::GetIndices()
 { return m_Indices; }
-		
