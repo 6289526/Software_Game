@@ -92,6 +92,7 @@ int main(int argc, char *argv[])
 	else
 	{
 		ShowResult();
+		_System.GetSoundController().GetSoundEffectSubject().OnNest(Sound::Result);
 		fprintf(stderr, "Show Result\n");
 	}
 

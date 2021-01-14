@@ -24,11 +24,11 @@ namespace Sound{
         SoundEffectTypeNum,    // 個数取得用
     };
     static const char* SoundEffectTypeNames[] {
-        "Jump.mp3",
-        "Landing.mp3",
+        "Jump.wav",
+        "Landing.wav",
         "Puts.mp3",
-        "Result.mp3",
-        "Goal.mp3",
+        "Result.wav",
+        "Goal.wav",
         "Finish.mp3" 
     };
 }
