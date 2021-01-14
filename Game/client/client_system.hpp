@@ -68,6 +68,7 @@ namespace System
         inline InitData *GetInitData() { return &_InitData; }
         inline Timer &GetTimer() { return Time; }
         GameState::GameStateController &GetGameStateController(){ return _StateController; }
+        Sound::SoundController &GetSounfController(){ return _SoundController; }
 
         bool InitSystem(InitData *data);
         void ExitSystem(InitData *data);

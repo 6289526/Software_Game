@@ -8,14 +8,17 @@ void SoundController::Initialize(){
         printf( "Mix_OpenAudio could not initialize! Mixer_Error: %s\n", Mix_GetError());
         return;
     }
+    fprintf(stderr, "Opened Audio\n");
     _BGMPlayer.Initialize();
-    _SEPlayer.Initialize();
-    fprintf(stderr, "Initialized Music\n");
+    _SEPlayer.Initialize(_SESubject);
 }
 void SoundController::Finalize(){
     _BGMPlayer.Finalize();
     _SEPlayer.Finalize();
     Mix_CloseAudio();
+}
+void SoundController::Playing(){ 
+    Mix_Playing(-1);
 }
 
 // ===== * ===== BGMPlayer ===== * ===== //
@@ -35,8 +38,8 @@ void BGMPlayer::Update(GameState::GameState state){
         return;
     }
 
+    fprintf(stderr, "Played BGM\n");
     Mix_VolumeMusic(BGMVolume);
-    Mix_PlayingMusic();
 }
 
 // ===== * ===== SoundEffectSubject ===== * ===== //
@@ -64,26 +67,31 @@ void SoundEffectSubject::Subscribe(SoundEffectObserver *pObserver){
 // ===== * ===== SoundEffectObserver ===== * ===== //
 
 // ===== * ===== SoundEffectPlayer ===== * ===== //
-void SoundEffectPlayer::Initialize(){
+void SoundEffectPlayer::Initialize(SoundEffectSubject& sESubject){
     for (int i = 0; i < Sound::SoundEffectTypeNum; i++)
     {
         char s[MAX_FILE_PATH_SIZE];
         sprintf(s, Loader.GetSEPath()[(Sound::SoundEffectType)i].c_str());
-        _MusicList[i] = Mix_LoadMUS(Loader.GetSEPath()[(Sound::SoundEffectType)i].c_str());
-        
+        _MusicList[i] = Mix_LoadWAV(Loader.GetSEPath()[(Sound::SoundEffectType)i].c_str());
+        _SEDictionary.insert(std::make_pair((Sound::SoundEffectType)i, _MusicList[i]));
         if(_MusicList[i] == NULL){
             fprintf(stderr,"SE file path[%d] - %s - ファイルの読み取りに失敗しました。\n", i, s);
         }
     }
+
+    sESubject.Subscribe(this);
 }
 void SoundEffectPlayer::Finalize(){
     for (int i = 0; i < Sound::SoundEffectTypeNum; i++)
     {
-        Mix_FreeMusic(_MusicList[i]);
+        Mix_FreeChunk(_MusicList[i]);
     }
 }
 
-void SoundEffectPlayer::OnUpdate(SoundEffectType soundType){ 
-    if(Mix_PlayMusic(_SEDictionary[soundType], 0) == -1)
-        fprintf(stderr,"Error");
+void SoundEffectPlayer::OnUpdate(SoundEffectType soundType){
+    Mix_VolumeMusic(40);
+    if(Mix_PlayChannel(-1, _SEDictionary[soundType], 0) == -1)
+        fprintf(stderr,"Error: %s\n", Mix_GetError());
+    
+    fprintf(stderr, "Played Music No. %d\n", soundType);
 }

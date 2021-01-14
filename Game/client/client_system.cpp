@@ -175,6 +175,8 @@ void ClientSystem::SystemRun()
 	}
 
 	// fprintf(stderr, "time: %lf[mms] | IsGround = %d \n", Time->GetDeltaTime(), IsPlayerOnGround());
+
+	_SoundController.Playing();
 }
 
 /*各プレイヤーのvelocityを変更する
