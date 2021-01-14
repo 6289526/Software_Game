@@ -771,10 +771,17 @@ void MovePosition(int chara_ID) try {
   PData[chara_ID].velocity.x = 0;
   PData[chara_ID].velocity.z = 0;
 } catch (error::error e) {
-  if (e == error::OutSide_Map_y) {
+  if (e == error::OutSide_Map_x || e == error::OutSide_Map_y || e == error::OutSide_Map_z) {
+    PData[chara_ID].pos.x = PLAYER_X + chara_ID * PLAYER_W;
+    PData[chara_ID].pos.y = PLAYER_Y;
+    PData[chara_ID].pos.z = PLAYER_Z;if (e == error::OutSide_Map_y) {
     PData[chara_ID].pos.x = PLAYER_X + chara_ID * PLAYER_W;
     PData[chara_ID].pos.y = PLAYER_Y;
     PData[chara_ID].pos.z = PLAYER_Z;
+    PData[chara_ID].velocity.x = 0;
+    // PData[chara_ID].velocity.y = 0;
+    PData[chara_ID].velocity.z = 0;
+  }
     PData[chara_ID].velocity.x = 0;
     // PData[chara_ID].velocity.y = 0;
     PData[chara_ID].velocity.z = 0;
