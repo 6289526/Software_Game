@@ -11,8 +11,7 @@ int InputThread(void *data);
 ClientSystem::ClientSystem()
 {
 	_MoveCalculator = new Mover::MoveCalculator(this);
-	StateController = new GameState::GameStateController();
-	_InitData.stateController = StateController;
+	_InitData.stateController = &_StateController;
 
 }
 ClientSystem::~ClientSystem()
@@ -68,9 +67,11 @@ bool ClientSystem::InitSystem(InitData *data)
 	}
 
 	data->timer = &Time;
-	StateController->Subscribe(&_StateOutputer);
-	StateController->Subscribe(&_BgmController);
-	StateController->OnNest(GameState::Init);
+	_SoundController.Initialize();
+
+	_StateController.Subscribe(&_StateOutputer);
+	_StateController.Subscribe(&_SoundController.GetBGMPlayer());
+	_StateController.OnNest(GameState::Init);
 	return true;
 }
 
@@ -79,8 +80,7 @@ void ClientSystem::ExitSystem(InitData *data)
 {
 	delete[] PData;
 	delete data->input;
-	delete data->stateController;
-	_BgmController.Finalize();
+	_SoundController.Finalize();
 }
 
 void ClientSystem::SetNumClients(int n) // クライアント人数セット
@@ -216,8 +216,6 @@ void ClientSystem::SetDirection(float direction, int id)
 		PData[id].direction.horizontal = direction;
 	}
 }
-
-GameState::GameStateController System::ClientSystem::GetGameStateController() { return *StateController; }
 
 // ===== * ===== マルチスレッド ===== * ===== //
 
