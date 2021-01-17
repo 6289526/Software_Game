@@ -54,7 +54,7 @@ Gui2D gui2d;
 
 void InitGraphic(){
     IMG_Init(IMG_INIT_JPG);
-    window = SDL_CreateWindow("OpenGL Test", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, Wd_Width, Wd_Height, SDL_WINDOW_OPENGL);
+    window = SDL_CreateWindow("SeVia", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, Wd_Width, Wd_Height, SDL_WINDOW_OPENGL);
 	context = SDL_GL_CreateContext(window);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
 
