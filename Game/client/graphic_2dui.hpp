@@ -1,3 +1,8 @@
+/**
+ * @file graphic_2dui.hpp
+ * @brief 2dグラフィックモジュール
+ * 
+ */
 #pragma once
 #include <iostream>
 #include <SDL2/SDL.h>
@@ -9,20 +14,25 @@
 
 #define MAX_FILE_NAME 128
 
-SDL_Surface CreateMiniMap();
-
-//3桁
+/**
+ * @brief 時間画像
+ * 
+ */
 class TimeImg{
     private:
     Image nums[10];
     Image str_s;
     public:
         void Set(TTF_Font *font);
-        void DrawTime(int time, FloatRect dst);
-        void DrawNum2dig(int num, FloatRect dst);
+        void DrawTime(int time, FloatRect dst); //!< 3桁
+        void DrawNum2dig(int num, FloatRect dst); //!< 2桁
         void DestroyTexture();
 };
 
+/**
+ * @brief タイマーUI
+ * 
+ */
 class TimerUI{
     private:
         TimeImg timer;
@@ -45,6 +55,10 @@ class TimerUI{
         void Destroy();
 };
 
+/**
+ * @brief プレイヤーネームUI
+ * 
+ */
 class PlayerNameUI{
     private:
         Image base; //img
@@ -66,6 +80,10 @@ class PlayerNameUI{
         void Destroy();
 };
 
+/**
+ * @brief プレイヤー角度UI
+ * 
+ */
 class DirectionUI{
     private:
         Image base;
@@ -92,6 +110,10 @@ class DirectionUI{
         void Destroy();
 };
 
+/**
+ * @brief ミニマップ画像
+ * 
+ */
 class MiniMap{
     private:
         GLuint Texture;
@@ -112,6 +134,10 @@ class MiniMap{
         void DestroyTexture();
 };
 
+/**
+ * @brief ミニマップUI
+ * 
+ */
 class MapUI{
     private:
         Image base;
@@ -130,6 +156,10 @@ class MapUI{
         void Destroy();
 };
 
+/**
+ * @brief 2dUI
+ * 
+ */
 class Gui2D{
     private:
         Image back;

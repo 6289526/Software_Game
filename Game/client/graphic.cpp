@@ -1,18 +1,23 @@
+/**
+ * @file graphic.cpp
+ * @brief グラフィックモジュール
+ */
 #include "graphic.h"
 #include "graphic_objmesh.hpp"
 #include "graphic_2dui.hpp"
 #include <math.h>
 
 /*private*/
-FloatPosition lookatPlace = {0.0f, 100.0f, 0.0f};
-FloatPosition lookatCenter = {5.0f, 0.0f, 5.0f};
-FloatPosition lookatUp = {0.0f, 1.0f, 0.0f};
+FloatPosition lookatPlace = {0.0f, 100.0f, 0.0f}; //!< 視点の位置
+FloatPosition lookatCenter = {5.0f, 0.0f, 5.0f}; //!< 視線の中心
+FloatPosition lookatUp = {0.0f, 1.0f, 0.0f}; //!< カメラの上方向
 const double PI = 3.141592;
 
-OBJMESH characterMesh;
-SDL_Color playerColors[MAX_NUMCLIENTS];
+OBJMESH characterMesh; //!< 3dモデル
+SDL_Color playerColors[MAX_NUMCLIENTS]; //!< 各プレイヤーの色
 
-GLuint BlockTexture[BLOCK_TYPE_NUM];
+GLuint BlockTexture[BLOCK_TYPE_NUM]; //!< ブロックのテクスチャ
+//! 各種ファイル名
 #ifdef DEBUG
 char TextureFileName[BLOCK_TYPE_NUM][128] ={
     "../data/ui/all_bace2.png",
@@ -52,6 +57,10 @@ Gui2D gui2d;
 
 /*public*/
 
+/**
+ * @fn
+ * @brief グラフィックモジュールの初期化
+ */
 void InitGraphic(){
     IMG_Init(IMG_INIT_JPG);
     window = SDL_CreateWindow("SeVia", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, Wd_Width, Wd_Height, SDL_WINDOW_OPENGL);
@@ -65,12 +74,19 @@ void InitGraphic(){
 
 }
 
+/**
+ * @brief 2duiｍの初期化
+ * 
+ */
 void Init2dGraphic(){
     TTF_Init();
     gui2d.Set();
 }
 
-//画面描画
+/**
+ * @brief 画面の表示
+ * 
+ */
 void Disp(){
 	glClearColor(1.0, 1.0, 1.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -84,14 +100,28 @@ void Disp(){
     SDL_GL_SwapWindow(window);
 }
 
+/**
+ * @brief Get the Window Renderer object
+ * 
+ * @return SDL_Renderer* 
+ */
 SDL_Renderer* GetWindowRenderer(){
     return renderer;
 }
 
+/**
+ * @brief Get the Player Colors object
+ * 
+ * @return SDL_Color* プレイヤーカラー
+ */
 SDL_Color* GetPlayerColors(){
     return playerColors;
 }
 
+/**
+ * @brief グラフィックモジュールの終了処理
+ * 
+ */
 void TerminateGraphic(){
     for(int i = 0; i < BLOCK_TYPE_NUM; i++){
         glDeleteTextures(1, &(BlockTexture[i]));
@@ -106,7 +136,11 @@ void TerminateGraphic(){
 
 /*private*/
 
-//OpenGL初期化
+/**
+ * @brief OpenGLの初期化
+ * 
+ * @return true 初期化成功
+ */
 bool InitOpenGL() {
 
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
@@ -130,6 +164,10 @@ bool InitOpenGL() {
 	return true;
 }
 
+/**
+ * @brief ブロックのテクスチャの初期設定
+ * 
+ */
 void SetBlockTexture(){
 
     for(int i = 0; i < BLOCK_TYPE_NUM; i++){
@@ -156,6 +194,12 @@ void SetBlockTexture(){
     }
 }
 
+/**
+ * @brief HをもとにRGB値を生成
+ * 
+ * @param h 色調
+ * @return SDL_Color 
+ */
 SDL_Color HSVtoRGB(int h){
     SDL_Color res = {255, 255, 255, 255};
     float s = 90, l = 55;
@@ -191,6 +235,10 @@ SDL_Color HSVtoRGB(int h){
     return res;
 }
 
+/**
+ * @brief Set the Player Colors object
+ * 
+ */
 void SetPlayerColors(){
     for(int i = 0; i < MAX_NUMCLIENTS; i++){
         int H = i * 360 / (MAX_NUMCLIENTS + 1);
@@ -199,7 +247,10 @@ void SetPlayerColors(){
     }
 }
 
-//2D描画用設定
+/**
+ * @brief 2d表示の設定
+ * 
+ */
 void View2D() {
     glDisable(GL_DEPTH_TEST); //Depthバッファ無効
     glDisable( GL_LIGHTING ); //光源処理無効
@@ -220,7 +271,10 @@ void View2D() {
     glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 }
 
-//3D描画用設定
+/**
+ * @brief 3D描画用設定
+ * 
+ */
 void View3D() {
     //２D設定解除
     glDisable(GL_TEXTURE_2D);
@@ -243,13 +297,19 @@ void View3D() {
 
 }
 
-//3D描画
+/**
+ * @brief 3d表示
+ * 
+ */
 void Disp3D(){
     DrawCharacter();
     DrawMap();
 }
 
-//マップ描画
+/**
+ * @brief マップの表示
+ * 
+ */
 void DrawMap(){
     const int (*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = GetSystem().GetClientMap().GetTerrainData();
     FloatCube mcube;
@@ -305,7 +365,10 @@ void DrawMap(){
 
 }
 
-//キャラクター描画
+/**
+ * @brief キャラクターの表示
+ * 
+ */
 void DrawCharacter(){
     const PlayerData* playerData = GetSystem().GetPlayerData();
     //仮宣言
@@ -359,7 +422,12 @@ void DrawCharacter(){
     }
 }
 
-
+/**
+ * @brief マップブロックの表示
+ * 
+ * @param cube 表示する位置
+ * @param block ブロックテクスチャの種類
+ */
 void DrowMapBlock(FloatCube cube, BlockType block){
 
     glEnable(GL_TEXTURE_2D);
@@ -433,6 +501,13 @@ void DrowMapBlock(FloatCube cube, BlockType block){
     glDisable(GL_TEXTURE_2D);
 }
 
+/**
+ * @brief 回転した直方体を表示
+ * 
+ * @param cube 表示する位置
+ * @param dir 回転角
+ * @param color 色
+ */
 void RotateCube(FloatCube cube, double dir, SDL_Color *color){
 
     // マテリアルを設定する

@@ -1,3 +1,8 @@
+/**
+ * @file graphic_objmesh.hpp
+ * @brief メッシュファイルの管理クラス
+ * 
+ */
 #pragma once
 
 #include <iostream>
