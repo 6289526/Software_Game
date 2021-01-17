@@ -1,3 +1,9 @@
+/**
+ * @file client_system.cpp
+ * @brief 
+ * クライアントシステムメインモジュールの実装
+ */
+
 #include "client_common.h"
 #include "client_system.hpp"
 #include "graphic.h"
@@ -19,7 +25,11 @@ ClientSystem::~ClientSystem()
 	delete _MoveCalculator;
 }
 
-// ----- * ----- //
+/**
+ * @fn
+ * @brief 入力端末を決定する
+ * @param data 初期化用データ
+ */
 void ClientSystem::InitControl(InitData *data)
 {
 	ControlSetUp();
@@ -39,21 +49,13 @@ void ClientSystem::InitControl(InitData *data)
 	data->input = Input;
 }
 
+/**
+ * @fn
+ * @brief システムを初期化する
+ * @param data 初期化用データ
+ */
 bool ClientSystem::InitSystem(InitData *data)
 {
-	// SDL_Thread *thread;
-	/*
-	// グラフィックのスレッド化
-	thread = SDL_CreateThread(GraphicThread, "GraphicThread", NULL);
-	if (thread == NULL)
-	{
-		fprintf(stderr, "Failed to create a graphics red.\n");
-		return false;
-	}
-	SDL_DetachThread(thread);
-	*/
-	/*入力方式の選択またwiiリモコンのアドレスを取得*/
-
 	SDL_Thread *inputThread;
 
 	SDL_mutex *input_mtx = SDL_CreateMutex(); // 相互排除
@@ -75,7 +77,11 @@ bool ClientSystem::InitSystem(InitData *data)
 	return true;
 }
 
-// システム終了処理
+/**
+ * @fn
+ * @brief システム終了処理
+ * @param data 初期化用データ
+ */
 void ClientSystem::ExitSystem(InitData *data)
 {
 	delete[] PData;
@@ -83,20 +89,32 @@ void ClientSystem::ExitSystem(InitData *data)
 	_SoundController.Finalize();
 }
 
-void ClientSystem::SetNumClients(int n) // クライアント人数セット
+/**
+ * @fn
+ * @brief クライアント人数セットする
+ * @param n クライアント数
+ */
+void ClientSystem::SetNumClients(int n)
 {
 	Num_Clients = n;
 }
 
-// 名前のセット
-// id: クライアントのID
-// clientName:クライアントの名前
+/**
+ * @fn
+ * @brief 名前のセット
+ * @param id クライアントのID
+ * @param name クライアントの名前
+ */
 void ClientSystem::SetClientName(int id, char *name)
 {
 	strcpy(Name_Clients[id], name);
 }
 
-void ClientSystem::InitPlayerData() // プレイヤーデータ初期化処理
+/**
+ * @fn
+ * @brief プレイヤーデータ初期化処理
+ */
+void ClientSystem::InitPlayerData()
 {
 	PData = new PlayerData[Num_Clients];
 	for (int i = 0; i < Num_Clients; ++i)
@@ -112,11 +130,12 @@ void ClientSystem::InitPlayerData() // プレイヤーデータ初期化処理
 	}
 }
 
-/*クライアントの位置の取得
-* 引数
-*   moveData[MAX_NUMCLIENTS]: 移動位置
-*   numCLients : 接続しているクライアントの数
-*/
+/**
+ * @fn
+ * @brief クライアントの位置の取得
+ * @param moveData 移動位置
+ * @param numClients 接続しているクライアントの数
+ */
 void ClientSystem::SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients)
 {
 	int count = 0;
@@ -130,14 +149,22 @@ void ClientSystem::SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClien
 	}
 }
 
+/**
+ * @fn
+ * @brief ランクをセットする
+ * @param id クライアントID
+ * @param rank ランクング
+ */
 void ClientSystem::SetRank(int id, int rank)
 {
 	PData[id].rank = rank;
 }
 
-/*現在の設置データを返す
-*	返り値: MyIDのキャラの設置データ
-*/
+/**
+ * @fn
+ * @brief 現在の設置データを返す
+ * @return MyIDのキャラの設置データ
+ */
 PlaceData ClientSystem::GetPlaceData()
 {
 
@@ -150,11 +177,10 @@ PlaceData ClientSystem::GetPlaceData()
 	return data;
 }
 
-/*移動処理とか設置処理
-* 引数
-*   data: 入力データ
-*
-*/
+/**
+ * @fn
+ * @brief 移動処理や設置処理等のメイン処理を実行
+ */
 void ClientSystem::SystemRun()
 {
 	pair<bool, bool> t = _MoveCalculator->SetPlayerVelocity(Input, &PData[MyId], &Time);
@@ -177,10 +203,13 @@ void ClientSystem::SystemRun()
 	_SoundController.Playing();
 }
 
-/*各プレイヤーのvelocityを変更する
-* 引数
-*/
-void ClientSystem::UpdateFlag(VelocityFlag *flags, int numClients)
+/**
+ * @fn
+ * @brief 各プレイヤーの速度フラグを変更する
+ * @param flags 速度フラグ
+ * @param numClients クライアント数
+ */
+void ClientSystem::UpdateVelocityFlag(VelocityFlag *flags, int numClients)
 {
 	for (int i = 0; i < numClients; i++)
 	{
@@ -202,13 +231,22 @@ void ClientSystem::UpdateFlag(VelocityFlag *flags, int numClients)
 	}
 }
 
-// Updated place data from server
+/**
+ * @fn
+ * @brief マップに対し設置データを更新する
+ * @param data 設置データ
+ */
 void ClientSystem::UpdatePlaceData(PlaceData data)
 {
 	Map.SetObjectData(&data);
 }
 
-// 方向の取得
+/**
+ * @fn
+ * @brief クライアントの角度を設定する
+ * @param direction 角度
+ * @param id クライアントID
+ */
 void ClientSystem::SetDirection(float direction, int id)
 {
 	if (id != MyId)
@@ -219,12 +257,11 @@ void ClientSystem::SetDirection(float direction, int id)
 
 // ===== * ===== マルチスレッド ===== * ===== //
 
-// グラフィック用の
-/*int GraphicThread(void *data){
-	Disp();
-	return 0;
-}*/
-
+/**
+ * @fn
+ * @brief 入力用マルチスレッド 
+ * @param 
+ */
 int InputThread(void *data)
 {
 	SDL_mutex *mtx = (SDL_mutex *)data;
@@ -236,7 +273,6 @@ int InputThread(void *data)
 		if (input == NULL)
 		{
 			throw "system.cppに宣言されている Input がNULL";
-			return -1;
 		}
 
 		// 入力受け付け

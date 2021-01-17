@@ -1,3 +1,9 @@
+/**
+ * @file client_musicfile.hpp
+ * @brief 
+ * 音楽ファイルの読み込みに関する定義
+ */
+
 #pragma once
 
 #include <map>
@@ -34,12 +40,23 @@ namespace Sound{
 }
 
 namespace SoundLoader{
+    
+    /**
+     * @brief 
+     * 音楽ファイル読み込みモジュール
+     */
     class MusicFileLoader{
         private:
             std::map<Sound::SoundEffectType, std::string> _SEPathDictionary; // SEDictionary
 
         public:
             MusicFileLoader();
+            
+            /**
+             * @brief 
+             * SEファイルのパスを返す
+             * @return std::map<Sound::SoundEffectType, std::string>& SEファイルのパス
+             */
             std::map<Sound::SoundEffectType, std::string>& GetSEPath(){ return _SEPathDictionary; }
     };
 }

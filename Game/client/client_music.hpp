@@ -1,3 +1,9 @@
+/**
+ * @file client_music.hpp
+ * @brief 
+ * 音楽モジュールの定義をする
+ */
+
 #pragma once
 
 #include <string>

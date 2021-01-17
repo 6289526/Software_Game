@@ -1,15 +1,13 @@
-/*
- *  ファイル名	: constants.h
- *  機能	: マクロ、構造体の定義
+/**
+ * @file constants.h
+ * @brief 
+ * マクロ、構造体の定義
  */
+
 #pragma once
-/*----------include 開始----------*/
 #include <netinet/in.h>
 #include <stdio.h>
 
-/*----------include 終了----------*/
-
-/*----------define 開始-----------*/
 #define DEFAULT_PORT 51000 	//デフォルトのポート番号
 #define MAX_LEN_NAME 32 	//名前の最大文字数
 #define MAX_NUMCLIENTS 8	//最大参加人数
@@ -38,9 +36,7 @@
 #define RANK_COMMAND 'R'
 #define TERMINATE_COMMAND 'T'
 // #define DEBUG
-/*----------define 終了-----------*/
 
-/*----------構造体宣言 開始-----------*/
 /*座標情報*/
 typedef struct
 {
@@ -149,7 +145,6 @@ typedef struct
 	IntPosition pos; /*場所*/
 } PlaceData;
 
-/*----------構造体宣言 終了-----------*/
 
 template <typename T> class Pointer {
 

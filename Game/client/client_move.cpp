@@ -1,16 +1,22 @@
 #include "client_move.h"
 using namespace Mover;
 
+/**
+ * @brief
+ * 移動計算機のコンストラクタ
+ * @param system クライアントシステム
+ */
 MoveCalculator::MoveCalculator(System::ClientSystem *system){
 	_System = system;
 }
 
-/*ブロックの設置場所を計算する
-* 引数
-*   player: 設置するプレイヤーの情報
-* 返り値
-*   PlaceData: 設置するブロックのデータ
-*/
+/**
+ * @brief 
+ * ブロックの設置場所を計算する
+ * @param playerData 設置するプレイヤーの情報
+ * @param handLength プレイヤーの手の長さ
+ * @return PlaceData 設置するブロックのデータ
+ */
 PlaceData MoveCalculator::BuildPlaceData(PlayerData playerData, float handLength){
     PlaceData result;
 
@@ -25,13 +31,13 @@ PlaceData MoveCalculator::BuildPlaceData(PlayerData playerData, float handLength
     return result;
 }
 
-/*プレイヤーの移動向きを返す
-* 引数
-*   player: 設置するプレイヤーの情報
-* 返り値
-*   Vector3: 向きベクトル
-*   float:   Additional Angle (base value is 0)
-*/
+/**
+ * @brief 
+ * プレイヤーの移動向きを返す
+ * @param player 設置するプレイヤーの情報
+ * @param angle プレイヤーの角度
+ * @return Vector3 向きベクトル
+ */
 Vector3 MoveCalculator::GetMoveDirection(PlayerData player, float angle){
     Vector3 result;
     result.z = cos(player.direction.horizontal + DegreeToRadian(angle));
@@ -40,7 +46,13 @@ Vector3 MoveCalculator::GetMoveDirection(PlayerData player, float angle){
     return result;
 }
 
-int MoveCalculator::GetPutableBlockHeightFromMap(Vector2Int pos){
+/**
+ * @brief 
+ * マップに設置可能なブロックの高さを返す
+ * @param pos 計算する座標位置
+ * @return int 高さ
+ */
+int MoveCalculator::GetPutableBlockHeightIndexFromMap(Vector2Int pos){
     const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = _System->GetClientMap().GetTerrainData();
 
     for (int height = 0; height < MAP_SIZE_H; height++)
@@ -55,6 +67,12 @@ int MoveCalculator::GetPutableBlockHeightFromMap(Vector2Int pos){
     return MAP_SIZE_H;
 }
 
+/**
+ * @brief 
+ * マップの最も高い位置のブロックの要素番号を返す
+ * @param position 計算する位置
+ * @return Vector3Int ブロックの位置
+ */
 Vector3Int MoveCalculator::GetTopOfHeightBlockIndex(Vector3 position){
     const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = _System->GetClientMap().GetTerrainData();
 
@@ -68,6 +86,12 @@ Vector3Int MoveCalculator::GetTopOfHeightBlockIndex(Vector3 position){
     return result;
 }
 
+/**
+ * @brief 
+ * プレイヤーが地面にいるかを返す
+ * @return true 地面にいる
+ * @return false 宙に浮いている
+ */
 bool MoveCalculator::IsPlayerOnGroundSimple(){
     const PlayerData *pData = _System->GetPlayerData();
     const int myId = _System->GetMyID();
@@ -125,6 +149,14 @@ bool MoveCalculator::IsPlayerOnGroundSimple(){
 	return false;
 }
 
+/**
+ * @brief 
+ * プレイヤーの角度を計算し返す
+ * @param inputModule 入力モジュール
+ * @param pData プレイヤーデータ
+ * @param timer タイマー
+ * @return pair<bool, bool> 移動したか、ジャンプ中か
+ */
 pair<bool, bool> MoveCalculator::SetPlayerVelocity(InputModuleBase *inputModule, PlayerData *pData, Timer *timer){
 
 	if (inputModule == NULL || pData == NULL || timer == NULL) {
@@ -236,6 +268,15 @@ pair<bool, bool> MoveCalculator::SetPlayerVelocity(InputModuleBase *inputModule,
 	return make_pair(false, isJumped);
 }
 
+/**
+ * @brief 
+ * 重力を考慮しない移動法で移動を計算する
+ * @param inputModule 入力モジュール
+ * @param pData プレイヤーデータ
+ * @param timer タイマー
+ * @return true 移動を行った
+ * @return false 移動を行わなかった
+ */
 bool MoveCalculator::DisUseGravity(InputModuleBase *inputModule, PlayerData *pData, Timer *timer){
 	pData->velocity = {0, 0, 0};
 
@@ -317,6 +358,7 @@ bool MoveCalculator::DisUseGravity(InputModuleBase *inputModule, PlayerData *pDa
 		{
 			pData->velocity.z = TERMINAL_SPEED;
 		}
+		return true;
 	}
-	return true;
+	return false;
 }
