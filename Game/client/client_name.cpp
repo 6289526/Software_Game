@@ -1,6 +1,12 @@
-/*
-    キーボードかwiiリモコンかを選択でき,Wiiリモコンのアドレスを取得する
-*/
+/**
+ * @file client_name.cpp
+ * @brief 名前入力
+ * @version 0.1
+ * @date 2021-01-17
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
 #include "component.h"
 
 #ifdef DEBUG
@@ -19,6 +25,7 @@ typedef struct
     int backspace;
     int a;
 } InputData;
+
 
 typedef struct
 {
@@ -69,12 +76,20 @@ static InputData InputEvents(SDL_Event event);
 static void SetString();
 static void SetWiiString();
 
+/**
+ * @brief Get the Init Data object
+ * 
+ * @param initData 
+ */
 void GetInitData(System::InitData initData)
 {
     NinitData = initData;
 }
 
-/*必要な情報を描画*/
+/**
+ * @brief 名前入力
+ * 
+ */
 void NameSetUp()
 {
     SDL_Renderer *renderer = GetWindowRenderer();
@@ -165,16 +180,6 @@ void NameSetUp()
 
             baceUi.RenderingComponent(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 3, 3, -1);
 
-            // for (int i = 0; i < MESSAGE_NUM; i++)
-            // {
-            //     messages[i].RenderingComponent(
-            //         SCREEN_WIDTH / 2,
-            //         SCREEN_HEIGHT*2 / 6 + i * messages[i]._height + i * messages[i]._height / 2,
-            //         1,
-            //         1,
-            //         -1
-            //         );
-            // }
 
             // 名前の表示
             // テクスチャ更新
@@ -352,13 +357,21 @@ void NameSetUp()
     }
 }
 
-//入力システムの初期化
+/**
+ * @brief キーボード入力開始
+ * 
+ */
 void InitInput()
 {
     K = SDL_GetKeyboardState(NULL);
 }
 
-/*キーボードの読み取り*/
+/**
+ * @brief キーボード入力を受け取る
+ * 
+ * @param event 
+ * @return InputData 
+ */
 InputData InputEvents(SDL_Event event)
 {
     if (SDL_PollEvent(&event))
@@ -385,6 +398,10 @@ InputData InputEvents(SDL_Event event)
     return Data;
 }
 
+/**
+ * @brief 名前入力
+ * 
+ */
 void SetString()
 {
     // char text[32] = {};
@@ -421,7 +438,10 @@ void SetString()
     }
 }
 
-// Wiiリモコンによる文字の入力
+/**
+ * @brief wiiリモコンとスマートフォンによる名前入力
+ * 
+ */
 void SetWiiString()
 {
     if (WIData.left == false && NinitData.input->GetInputType().Left)

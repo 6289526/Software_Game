@@ -1,8 +1,3 @@
-/*
- *  ファイル名	: client_main.cpp
- *  機能	: クライアント用のメイン関数を記述
- */
-
 #include "client_common.h"
 
 // ループするかを判定

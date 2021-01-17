@@ -1,3 +1,12 @@
+/**
+ * @file go.h
+ * @brief 
+ * @version 0.1
+ * @date 2021-01-17
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
 #pragma once
 #include <iostream>
 

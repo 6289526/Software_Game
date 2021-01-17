@@ -1,3 +1,12 @@
+/**
+ * @file component.cpp
+ * @brief 
+ * @version 0.1
+ * @date 2021-01-17
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
 #include "component.h"
 
 using namespace React;
@@ -9,6 +18,12 @@ Component::~Component()
 {
 }
 
+/**
+ * @brief コンポーネントを作成する
+ * 
+ * @param render 
+ * @param surface 
+ */
 void Component::CreateComponent(SDL_Renderer *render, SDL_Surface *surface)
 {
     _texture = SDL_CreateTextureFromSurface(render, surface);
@@ -16,6 +31,11 @@ void Component::CreateComponent(SDL_Renderer *render, SDL_Surface *surface)
     _renderer = render;
 }
 
+/**
+ * @brief コンポーネントを更新する
+ * 
+ * @param surface 
+ */
 void Component::UpdateComponent(SDL_Surface *surface)
 {
     SDL_DestroyTexture(_texture);
@@ -23,13 +43,15 @@ void Component::UpdateComponent(SDL_Surface *surface)
     SDL_QueryTexture(_texture, NULL, NULL, &_width, &_height);
 }
 
-/*
-    positionX << 中心座標X
-    positionY << 中心座標Y
-    scaleX   << 拡縮率X
-    scaleY   << 拡縮率Y
-    mode     << 1のとき拡大,それ以外縮小
-*/
+/**
+ * @brief コンポーネントをレンダラーに貼り付ける
+ * 
+ * @param positionX 
+ * @param positionY 
+ * @param scaleX 
+ * @param scaleY 
+ * @param mode 
+ */
 void Component::RenderingComponent(int positionX, int positionY, int scaleX, int scaleY, int mode)
 {
     SDL_Rect loadRect = (SDL_Rect){
@@ -57,14 +79,16 @@ void Component::RenderingComponent(int positionX, int positionY, int scaleX, int
     SDL_RenderCopy(_renderer, _texture, &loadRect, &drawRect);
 }
 
-/*
-    positionX << 中心座標X
-    positionY << 中心座標Y
-    angle << 回転角度
-    scaleX   << 拡縮率X
-    scaleY   << 拡縮率Y
-    mode     << 1のとき拡大,それ以外縮小
-*/
+/**
+ * @brief コンポーネントを回転させてレンダラーに貼り付ける
+ * 
+ * @param positionX 
+ * @param positionY 
+ * @param angle 
+ * @param scaleX 
+ * @param scaleY 
+ * @param mode 
+ */
 void Component::RenderingComponentEx(int positionX, int positionY, double angle, int scaleX, int scaleY, int mode)
 {
     SDL_Rect loadRect = (SDL_Rect){
@@ -92,6 +116,10 @@ void Component::RenderingComponentEx(int positionX, int positionY, double angle,
     SDL_RenderCopyEx(_renderer, _texture, &loadRect, &drawRect, angle, NULL, SDL_FLIP_NONE);
 }
 
+/**
+ * @brief コンポーネントを削除する
+ * 
+ */
 void Component::DestroyComponent()
 {
     SDL_DestroyTexture(_texture);

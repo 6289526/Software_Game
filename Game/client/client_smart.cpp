@@ -1,5 +1,17 @@
+/**
+ * @file client_smart.cpp
+ * @brief スマートフォン入力管理
+ * @version 0.1
+ * @date 2021-01-17
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
 #include "client_smart.h"
-
+/**
+ * @brief Construct a new Smart:: Smart object
+ * 
+ */
 Smart::Smart()
 {
 }
@@ -8,6 +20,10 @@ Smart::~Smart()
 {
 }
 
+/**
+ * @brief 入力を受け取る
+ * 
+ */
 void Smart::UpdateInput()
 {
 

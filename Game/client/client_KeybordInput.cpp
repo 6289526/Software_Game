@@ -1,3 +1,12 @@
+/**
+ * @file client_KeybordInput.cpp
+ * @brief キーボード入力管理
+ * @version 0.1
+ * @date 2021-01-17
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
 #include "client_KeybordInput.h"
 
 KeybordInput::KeybordInput() : _key(SDL_GetKeyboardState(NULL))

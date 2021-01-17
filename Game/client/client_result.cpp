@@ -1,6 +1,12 @@
-/*
-    キーボードかwiiリモコンかを選択でき,Wiiリモコンのアドレスを取得する
-*/
+/**
+ * @file client_result.cpp
+ * @brief リザルトの表示
+ * @version 0.1
+ * @date 2021-01-17
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
 #include "component.h"
 #include <cmath>
 
@@ -33,7 +39,11 @@ static char timer_circle_Image[MAX_STRING] = "../../data/ui/timer_circle.png";
 
 #endif
 
-/*必要な情報を描画*/
+/**
+ * @brief リザルトを表示
+ * 
+ * @return int 
+ */
 int ShowResult()
 {
     SDL_Renderer *renderer = GetWindowRenderer();

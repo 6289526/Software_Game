@@ -49,27 +49,6 @@ class touchObject {
 
   draw() {
     noFill();
-
-    // // 回す
-    // for (var i = 0; i < circleS.length; i++) {
-    //   circleS[i].position.x = this.touch.x;
-    //   circleS[i].position.y = this.touch.y;
-    //   circleS[i].life = 10;
-    //   circleS[i]._rotation = angle;
-    // }
-    // for (var i = 0; i < circleL.length; i++) {
-    //   circleL[i].position.x = this.touch.x;
-    //   circleL[i].position.y = this.touch.y;
-    //   circleL[i].life = 10;
-    //   circleL[i]._rotation = -angle;
-    // }
-    // // direction_circleS.scale = 0.1 + 0.025*sin(angle/180*PI);
-
-    // angle += 2;
-    // if (angle === 360) {
-    //   angle = 0;
-    // }
-
   }
 }
 
@@ -96,6 +75,8 @@ var context;
 var buttons = [];
 var currentWidth;
 var currentHeight;
+
+
 function setup() {
 
   window.addEventListener("touchstart", function (event) { event.preventDefault(); }, { passive: false });
