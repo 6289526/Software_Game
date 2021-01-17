@@ -1,8 +1,18 @@
+/**
+ * @file graphic_2dui.cpp
+ * @brief 2dグラフィックモジュール
+ * 
+ */
 #include "graphic_2dui.hpp"
 
 const float PI = 3.141592;
 const float UI_MAGNIFICATION = 0.15 / 900 * Wd_Height;
 
+/**
+ * @brief 初期化
+ * 
+ * @param font TTFフォント
+ */
 void TimeImg::Set(TTF_Font *font){
     char numbers_string[10][2] = {"0","1", "2", "3", "4", "5", "6", "7", "8", "9"};
     char s[2] = "s";
@@ -13,6 +23,12 @@ void TimeImg::Set(TTF_Font *font){
     str_s.LoadText(font, s, color);
 }
 
+/**
+ * @brief 時間の表示
+ * 
+ * @param time 時間
+ * @param dst 表示位置
+ */
 void TimeImg::DrawTime(int time, FloatRect dst){
     if(time > 999) time = 999;
     if(time < 0) time = 0;
@@ -27,6 +43,12 @@ void TimeImg::DrawTime(int time, FloatRect dst){
 
 }
 
+/**
+ * @brief 2桁の数字の表示
+ * 
+ * @param num 数値
+ * @param dst 表示位置
+ */
 void TimeImg::DrawNum2dig(int num, FloatRect dst){
     if(num > 99) num = 999;
     if(num < 0) num = 0;
@@ -38,6 +60,10 @@ void TimeImg::DrawNum2dig(int num, FloatRect dst){
     }
 }
 
+/**
+ * @brief 終了処理
+ * 
+ */
 void TimeImg::DestroyTexture(){
     for(int i = 0; i < 10; i++){
         nums[i].DestroyTexture();
@@ -45,6 +71,11 @@ void TimeImg::DestroyTexture(){
     str_s.DestroyTexture();
 }
 
+/**
+ * @brief 初期化
+ * 
+ * @param font TTFフォント
+ */
 void TimerUI::Set(TTF_Font *font){
     double timeMagW = 0.45, timeMagH = 0.56;
     timer.Set(font);
@@ -64,18 +95,34 @@ void TimerUI::Set(TTF_Font *font){
         };
 }
 
+/**
+ * @brief タイマーUIの表示
+ * 
+ * @param dir 回転角
+ * @param time 時間
+ */
 void TimerUI::Draw(float dir, float time){
     base.Draw(&dst);
     rotate.Draw(&dst, NULL, dir);
     timer.DrawTime(time, timeDst);
 }
 
+/**
+ * @brief 終了処理
+ * 
+ */
 void TimerUI::Destroy(){
     base.DestroyTexture();
     rotate.DestroyTexture();
     timer.DestroyTexture();
 }
 
+/**
+ * @brief 初期化
+ * 
+ * @param pData プレイヤーデータ
+ * @param font TTFフォント
+ */
 void PlayerNameUI::Set(const PlayerData *pData, TTF_Font *font){
     double nameMagW = 0.80, NameMagH = 0.65, idMagW = 0.18, idMagH = 0.48;
     int id = GetSystem().GetMyID();
@@ -105,18 +152,30 @@ void PlayerNameUI::Set(const PlayerData *pData, TTF_Font *font){
         };
 }
 
+/**
+ * @brief プレイヤーネームUIの表示
+ * 
+ */
 void PlayerNameUI::Draw(){
     base.Draw(&baseDst);
     name.Draw(&nameDst);
     ID.DrawNum2dig(GetSystem().GetPlayerData()[GetSystem().GetMyID()].rank, idDst);
 }
 
+/**
+ * @brief 終了処理
+ * 
+ */
 void PlayerNameUI::Destroy(){
     base.DestroyTexture();
     name.DestroyTexture();
     ID.DestroyTexture();
 }
 
+/**
+ * @brief 初期化
+ * 
+ */
 void DirectionUI::Set(){
     base.LoadImg(basefile);
     rotate.LoadImg(rotatefile);
@@ -131,6 +190,12 @@ void DirectionUI::Set(){
         };
 }
 
+/**
+ * @brief 角度の表示
+ * 
+ * @param playerdir  プレイヤーの角度
+ * @param rotdir 回転角
+ */
 void DirectionUI::Draw(float playerdir, float rotdir){
 
     FloatRect meterSrc = {0, 1 - 0.3f * (float)sin(5 * rotdir) * (float)sin(5 * rotdir), 1, 1};
@@ -141,6 +206,10 @@ void DirectionUI::Draw(float playerdir, float rotdir){
     meterRect.Draw(&meterDst, &meterSrc);
 }
 
+/**
+ * @brief 終了処理
+ * 
+ */
 void DirectionUI::Destroy(){
     base.DestroyTexture();
     rotate.DestroyTexture();
@@ -148,6 +217,10 @@ void DirectionUI::Destroy(){
     meterRect.DestroyTexture();
 }
 
+/**
+ * @brief 初期化
+ * 
+ */
 void MiniMap::SetMap(){
     const int (*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = GetSystem().GetClientMap().GetTerrainData();
     int map_w = GetSystem().GetClientMap().GetMapW() , map_h = GetSystem().GetClientMap().GetMapH() , map_d = GetSystem().GetClientMap().GetMapD();
@@ -211,6 +284,14 @@ void MiniMap::SetMap(){
     SDL_FreeSurface(img);
 }
 
+/**
+ * @brief 表示位置の設定
+ * 
+ * @param x 左上のx座標
+ * @param y 左上のy座標
+ * @param w 幅
+ * @param h 高さ
+ */
 void MiniMap::SetDstRect(int x, int y, int w, int h){
     if(w <= 0) dst.w = src.w;
     else dst.w = w;
@@ -220,6 +301,14 @@ void MiniMap::SetDstRect(int x, int y, int w, int h){
     dst.y = y;
 }
 
+/**
+ * @brief テクスチャの表示位置の設定
+ * 
+ * @param x 左上のx座標
+ * @param y 左上のy座標
+ * @param w 幅
+ * @param h 高さ
+ */
 void MiniMap::SetSrcRect(float x, float y, float w, float h){
     if(w <= 0) src.w = imgRect.w;
     else src.w = imgRect.w;
@@ -231,6 +320,13 @@ void MiniMap::SetSrcRect(float x, float y, float w, float h){
     else src.y = y;
 }
 
+/**
+ * @brief ミニマップの表示
+ * 
+ * @param argDst 表示位置
+ * @param argSrc テクスチャの表示範囲
+ * @param dir 回転角
+ */
 void MiniMap::Draw(FloatRect *argDst, FloatRect *argSrc, float dir){
 
     if(argDst != NULL) dst = *argDst;
@@ -278,10 +374,18 @@ void MiniMap::Draw(FloatRect *argDst, FloatRect *argSrc, float dir){
     glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, defaultDiffuse);
 }
 
+/**
+ * @brief 終了処理
+ * 
+ */
 void MiniMap::DestroyTexture(){
     glDeleteTextures(1,&Texture);
 }
 
+/**
+ * @brief 初期化
+ * 
+ */
 void MapUI::Set(){
     base.LoadImg(basefile);
     float mapMag = 0.8;
@@ -300,6 +404,11 @@ void MapUI::Set(){
     };
 }
 
+/**
+ * @brief マップUIの表示
+ * 
+ * @param pData 自身のプレイヤーデータ
+ */
 void MapUI::Draw(const PlayerData *pData){
     Vector2 pCenter = {(float)(pData->pos.x + pData->pos.w/2)/BLOCK_MAGNIFICATION, (float)(pData->pos.z + pData->pos.d)/BLOCK_MAGNIFICATION};
     FloatRect mapSrc = {(pCenter.x - 5)/minimap.GetImgRect().w, (pCenter.y - 10)/minimap.GetImgRect().h, 10/minimap.GetImgRect().w, 20/minimap.GetImgRect().h};
@@ -307,11 +416,19 @@ void MapUI::Draw(const PlayerData *pData){
     minimap.Draw(&mapDst,&mapSrc,PI);
 }
 
+/**
+ * @brief 終了処理
+ * 
+ */
 void MapUI::Destroy(){
     base.DestroyTexture();
     minimap.DestroyTexture();
 }
 
+/**
+ * @brief 2duiの初期化
+ * 
+ */
 void Gui2D::Set(){
     font = TTF_OpenFont(fontpath,2000);
     if(font == NULL) fprintf(stderr,"ttf font cannot loaded\n");
@@ -325,6 +442,10 @@ void Gui2D::Set(){
     fprintf(stderr,"finish to load 2Dimg\n");
 }
 
+/**
+ * @brief 2duiの表示
+ * 
+ */
 void Gui2D::Draw(){
     time = GetSystem().GetTimer().GetCurrentTime();
     // fprintf(stderr,"%d\n",time);
@@ -337,6 +458,10 @@ void Gui2D::Draw(){
     if(rotdir >= 2* PI)rotdir -= 2*PI;
 }
 
+/**
+ * @brief 終了処理
+ * 
+ */
 void Gui2D::Destroy(){
     back.DestroyTexture();
     timer.Destroy();

@@ -1,7 +1,17 @@
+/**
+ * @file image.cpp
+ * @brief 2dテクスチャの管理クラス
+ * 
+ */
 #include "image.hpp"
 
 const double PI = 3.141592;
 
+/**
+ * @brief 画像の設定
+ * 
+ * @param filename 
+ */
 void Image::LoadImg(const char *filename){
     SDL_Surface *img = NULL;
     img = IMG_Load(filename);
@@ -32,6 +42,13 @@ void Image::LoadImg(const char *filename){
     }
 }
 
+/**
+ * @brief 文字画像の設定
+ * 
+ * @param font TTFフォント
+ * @param text 文字列
+ * @param color 色
+ */
 void Image::LoadText(TTF_Font *font, const char *text, SDL_Color color){
     SDL_Surface *img = NULL;
     img = TTF_RenderText_Blended(font, text, color);
@@ -61,6 +78,14 @@ void Image::LoadText(TTF_Font *font, const char *text, SDL_Color color){
     }
 }
 
+/**
+ * @brief 表示位置の設定
+ * 
+ * @param x 左上のx座標
+ * @param y 左上のy座標
+ * @param w 幅
+ * @param h 高さ
+ */
 void Image::SetDstRect(int x, int y, int w, int h){
     if(w <= 0) dst.w = src.w;
     else dst.w = w;
@@ -70,6 +95,14 @@ void Image::SetDstRect(int x, int y, int w, int h){
     dst.y = y;
 }
 
+/**
+ * @brief テクスチャの表示位置の設定
+ * 
+ * @param x 左上のx座標
+ * @param y 左上のy座標
+ * @param w 幅
+ * @param h 高さ
+ */
 void Image::SetSrcRect(float x, float y, float w, float h){
     if(w <= 0) src.w = imgRect.w;
     else src.w = imgRect.w;
@@ -81,6 +114,13 @@ void Image::SetSrcRect(float x, float y, float w, float h){
     else src.y = y;
 }
 
+/**
+ * @brief 画像の表示
+ * 
+ * @param argDst 表示位置
+ * @param argSrc テクスチャの表示範囲
+ * @param dir 回転角 
+ */
 void Image::Draw(FloatRect *argDst, FloatRect *argSrc, float dir){
 
     if(argDst != NULL) dst = *argDst;
@@ -112,6 +152,10 @@ void Image::Draw(FloatRect *argDst, FloatRect *argSrc, float dir){
     
 }
 
+/**
+ * @brief 終了処理
+ * 
+ */
 void Image::DestroyTexture(){
     glDeleteTextures(1,&Texture);
 }

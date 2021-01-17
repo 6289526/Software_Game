@@ -1,3 +1,8 @@
+/**
+ * @file graphic.h
+ * @brief グラフィックモジュール用ヘッダファイル
+ * 
+ */
 #pragma once
 
 #include <stdio.h>

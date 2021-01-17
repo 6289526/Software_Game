@@ -1,3 +1,8 @@
+/**
+ * @file graphic_objmesh.cpp
+ * @brief メッシュファイルの管理クラス
+ * 
+ */
 #include"graphic_objmesh.hpp"
 #include <math.h>
 

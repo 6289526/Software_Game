@@ -1,3 +1,8 @@
+/**
+ * @file image.hpp
+ * @brief 2dテクスチャの管理クラス
+ * 
+ */
 #pragma once
 
 #include <stdio.h>
