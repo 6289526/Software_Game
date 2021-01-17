@@ -1,7 +1,11 @@
-/*
- *  ファイル名	：net.cpp
- *  機能	：ネットワークの処理
- *
+/**
+ * @file net.cpp
+ * @brief クライアントのネットワークモジュール
+ * @version 0.1
+ * @date 2021-01-17
+ * 
+ * @copyright Copyright (c) 2021
+ * 
  */
 #include "client_common.h"
 
@@ -25,11 +29,12 @@ static void SendData(void *data, int size);
 static int ReceiveData(void *data, int size);
 static int ExeCommand(void);
 
-/*クライアントの初期設定
-* 引数
-*   *server_name: 接続するサーバーの名前
-*   port  : サーバーのポート番号
-*/
+/**
+ * @brief クライアントのソケットの構築
+ * 
+ * @param server_name 
+ * @param port 
+ */
 void SetupClient(char *server_name, u_short port)
 {
     /*変数*/
@@ -47,11 +52,11 @@ void SetupClient(char *server_name, u_short port)
         HandleError(m);
     }
     /*
-  * ソケットの生成
-  * ネットワークアドレスの種類：インタネット
-  * ソケットの種類：TCP用ストリームソケット
-  * プロトコル：自動選択でTCPが選ばれる
-  */
+    * ソケットの生成
+    * ネットワークアドレスの種類：インタネット
+    * ソケットの種類：TCP用ストリームソケット
+    * プロトコル：自動選択でTCPが選ばれる
+    */
     sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock < 0)
     {
@@ -117,7 +122,7 @@ void SetupClient(char *server_name, u_short port)
     ReceiveData(&w,sizeof(int));
     ReceiveData(&h,sizeof(int));
     ReceiveData(&d,sizeof(int));
-    //fprintf(stderr,"%d,%d,%d\n",w,h,d);
+
     for(int l = 0; l < MAP_SIZE_W; ++l) {
         for(int j = 0; j < MAP_SIZE_H; ++j) {
             for(int k = 0; k < MAP_SIZE_D; ++k) {
@@ -138,14 +143,14 @@ void SetupClient(char *server_name, u_short port)
     // 第一引数のファイルディスクリプタをセットに追加。[1]
     FD_SET(sock, &Mask);
 
-    /** 初期設定終了 **/
+    
     fprintf(stderr, "Input command (M=message, Q=quit): \n");
 }
 
-/* クライアントのリクエスト処理
- * 返値
- *   通信継続: result = 1
- *   通信終了: result = 0
+/**
+ * @brief リクエスト管理
+ * 
+ * @return int 
  */
 int ControlRequests()
 {
@@ -177,14 +182,12 @@ int ControlRequests()
     return result;
 }
 
-/*
-* 入力があった場合コマンドを受け付けメッセージを送信する
-* 引数
-*    char com: コマンド
-*    FloatPosition data: 座標
-* 返り値
-*    通信継続：result = 1
-*/
+/**
+ * @brief コマンドを受け取る
+ * 
+ * @param com 
+ * @return int 
+ */
 int InCommand(char com)
 {
     /*変数*/
@@ -223,12 +226,11 @@ int InCommand(char com)
     return 1;
 }
 
-/*
-* メッセージを受け取った場合表示する
-* 返り値
-*   通信継続: result = 1
-*   通信終了: result = 0
-*/
+/**
+ * @brief 受け取ったコマンドを実行
+ * 
+ * @return int 通信終了->0
+ */
 int ExeCommand()
 {
     /*変数*/
@@ -320,11 +322,6 @@ int ExeCommand()
         result = 0;
 
         break;
-    // case GOAL_COMMAND:
-    //     fprintf(stderr, "GOALLLL!!!");
-    //     // 通信継続
-    //     result = 1;
-    //     break;
     case TERMINATE_COMMAND:
         // サーバーが通信を終了したことを表示
         fprintf(stderr, "server sent terminate command.\n");
@@ -343,12 +340,12 @@ int ExeCommand()
     return result;
 }
 
-/*データを送信する
- * 引数
- *    void *data: 送信するデータ
- *    int size: データのサイズ
- *
-*/
+/**
+ * @brief データを送る
+ * 
+ * @param data 
+ * @param size 
+ */
 void SendData(void *data, int size)
 {
     // データが無いもしくはサイズが負のとき
@@ -366,12 +363,13 @@ void SendData(void *data, int size)
     }
 }
 
-/*データを送る
- * 引数
- *    *data: 送信するデータ
- *    size: データのサイズ
- *
-*/
+/**
+ * @brief データを受け取る
+ * 
+ * @param data 
+ * @param size 
+ * @return int 
+ */
 int ReceiveData(void *data, int size)
 {
     // データが無いもしくはサイズが負のとき
@@ -385,10 +383,11 @@ int ReceiveData(void *data, int size)
     return (read(sock, data, size));
 }
 
-/* エラーの表示
- *
- * 引数
- *   *message: エラーの発生した段階
+/**
+ * @brief エラーを表示
+ * 
+ * @param message 
+ * @return int 
  */
 static int HandleError(char *message)
 {
@@ -399,9 +398,10 @@ static int HandleError(char *message)
     return -1;
 }
 
-/*
-* クライアントの削除
-*/
+/**
+ * @brief クライアントのソケットを閉じる
+ * 
+ */
 void TerminateClient()
 {
     // メッセージを表示

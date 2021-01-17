@@ -1,9 +1,22 @@
+/**
+ * @file client_go.cpp
+ * @brief スマートフォン用のサーバーを管理
+ * @version 0.1
+ * @date 2021-01-17
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
 #include "client_common.h"
 #include "go.h"
 
 // スマホからの入力を打ち込む構造体ちなみにextern
 SmartInput GoSInput;
 
+/**
+ * @brief スマートフォン用のサーバーを削除する。
+ * 
+ */
 void KillGoServer()
 {
     FILE *fp;
@@ -35,7 +48,10 @@ SmartInput GetGosInput()
     return GoSInput;
 }
 
-// スマホからの入力を受け取る
+/**
+ * @brief スマートフォン用のサーバーからの入力を受け付ける
+ * 
+ */
 void Goroutine()
 {
 // コマンド

@@ -1,5 +1,18 @@
+/**
+ * @file client_WiiInput.cpp
+ * @brief wiiリモコンの入力管理
+ * @version 0.1
+ * @date 2021-01-17
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
 #include "client_WiiInput.h"
-
+/**
+ * @brief Construct a new Wii Input:: Wii Input object
+ * 
+ * @param Address 
+ */
 WiiInput::WiiInput(char Address[17]) : _wiimote(WIIMOTE_INIT), _report(WIIMOTE_REPORT_INIT) // レポートタイプ用
 {
     fprintf(stderr, "%s\n", Address);
@@ -17,6 +30,10 @@ WiiInput::~WiiInput()
 {
 }
 
+/**
+ * @brief 入力を受け付ける
+ * 
+ */
 void WiiInput::UpdateInput()
 {
     if (wiimote_is_open(&_wiimote))

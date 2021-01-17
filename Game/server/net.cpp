@@ -1,9 +1,13 @@
-/*
-
- *  ファイル名	：net.cpp
- *  機能	：ネットワーク処理
- *
+/**
+ * @file net.cpp
+ * @brief サーバーのネットワークモジュール
+ * @version 0.1
+ * @date 2021-01-17
+ * 
+ * @copyright Copyright (c) 2021
+ * 
  */
+
 #include "server_common.h"
 
 /*変数初期化*/
@@ -27,29 +31,21 @@ static int HandleError(char *);
 static void SendData(int cid, const void *data, int size);
 static int ReceiveData(int cid, void *data, int size);
 
-/* サーバー初期化
- *
- * 引数
- *   num_cl: ゲームに参加する人数
- *   port  : サーバーのポート番号
- *
- */
+/**
+ * @brief サーバーの初期化
+ * @param num_cl クライアントの人数
+ * @param port ポート番号
+ * */
 void SetupServer(int num_cl, u_short port)
 {
     /*変数初期化*/
-    /*ソケット
-  * rsock: 接続リクエストを受け取るソケット
-  * sock: 通信を行うためのソケット
-  */
+    //ソケット
     int rsock, sock = 0;
-    /*インタネットソケットの設定
-  * sv_addr: rsockの設定
-  * cl_addr: sockの設定
-  */
+    
+    //インタネットソケットの設定
     struct sockaddr_in sv_addr, cl_addr;
 
     /** 接続リクエストを受け取るためのソケットを作る **/
-    //サーバーのセットアップが開始されたことを表示する
     fprintf(stderr, "Server setup is started.\n");
 
     //ゲームに参加する人数
@@ -58,11 +54,11 @@ void SetupServer(int num_cl, u_short port)
     SetNumClients(NumClient); // システムに渡す
 
     /*
-  * ソケットの生成
-  * ネットワークアドレスの種類：インタネット
-  * ソケットの種類：TCP用ストリームソケット
-  * プロトコル：自動選択でTCPが選ばれる
-  */
+    * ソケットの生成
+    * ネットワークアドレスの種類：インタネット
+    * ソケットの種類：TCP用ストリームソケット
+    * プロトコル：自動選択でTCPが選ばれる
+    */
     rsock = socket(AF_INET, SOCK_STREAM, 0);
     if (rsock < 0)
     {
@@ -105,10 +101,7 @@ void SetupServer(int num_cl, u_short port)
     socklen_t len;
 
     char src[MAX_LEN_ADDR];
-    /*
-  *  NumClientの人数のクライアントが通信を要求してくるまで
-  *  ここから先には進まない
-  */
+    
     for (int i = 0; i < NumClient; i++)
     {
         // 接続先アドレス情報のサイズ
@@ -120,13 +113,13 @@ void SetupServer(int num_cl, u_short port)
             char s[] = "accept()";
             HandleError(s);
         }
-        /*ソケットの最大個数を更新*/
+        //ソケットの最大個数を更新
         if (max_sock < sock)
         {
             max_sock = sock;
         }
 
-        /*クライアントからの名前を読み込む*/
+        //クライアントからの名前を読み込む
         if (read(sock, name[i], MAX_LEN_NAME) == -1)
         {
             char s[] = "read()";
@@ -143,10 +136,10 @@ void SetupServer(int num_cl, u_short port)
         //srcの初期化
         memset(src, 0, sizeof(src));
         /*
-    * ネットワークアドレス構造体を、そのアドレスを表す文字列に変換する
-    * 構造体の内容を IPv4 ネットワークアドレスの ドット区切り 4 分割形式 "ddd.ddd.ddd.ddd" に変換[1]
-    *
-    */
+        * ネットワークアドレス構造体を、そのアドレスを表す文字列に変換する
+        * 構造体の内容を IPv4 ネットワークアドレスの ドット区切り 4 分割形式 "ddd.ddd.ddd.ddd" に変換[1]
+        *
+        */
         inet_ntop(AF_INET, (struct sockaddr *)&cl_addr.sin_addr, src, sizeof(src));
         //通信を受け入れたことを知らせる
         fprintf(stderr, "Client %d is accepted (name=%s, address=%s, port=%d).\n", i, name[i], src, ntohs(cl_addr.sin_port));
@@ -164,7 +157,7 @@ void SetupServer(int num_cl, u_short port)
         strcpy(Cname[i].name, name[i]);
     }
 
-    /*接続したクライアントに情報を送る*/
+    //接続したクライアントに情報を送る
     for (int i = 0; i < NumClient; i++)
     {
         // 接続しているクライアントの人数を送る
@@ -201,7 +194,7 @@ void SetupServer(int num_cl, u_short port)
     }
     delete[] Cname;
 
-    /** ファイルディスクリプタの操作 **/
+    // ファイルディスクリプタの操作 
     // select関数の第一引数ので必要
     NumSock = max_sock + 1;
     // ファイルディスクリプタセットからすべてのファイルディスクリプタを削除。
@@ -215,15 +208,13 @@ void SetupServer(int num_cl, u_short port)
         FD_SET(Clients[i].sock, &Mask);
     }
 
-    /** セットアップ終了 **/
-    // サーバーのセットアップが完了したことを知らせる
     fprintf(stderr, "Server setup is done.\n");
 }
 
-/* クライアントからのリクエストに対応する
- * 返値
- *   通信継続: result = 1
- *   通信終了: result = 0
+/**
+ * @brief クライアントからのリクエストを受け取る
+ * 
+ * @return int 通信終了->0
  */
 int ControlRequests()
 {
@@ -343,11 +334,13 @@ int ControlRequests()
     return result;
 }
 
-/*コマンドの実行
-*引数
-*   int id: 送り先のID
-*   char com: コマンド
-*/
+/**
+ * @fn
+ * @brief サーバーの初期化
+ * @param id 
+ * @param com 
+ * 
+ */
 void RunCommand(int id, char com)
 {
     /* 変数 */
@@ -444,12 +437,13 @@ void RunCommand(int id, char com)
     }
 }
 
-/* ソケットにデータを送信
- *
- * 引数
- *    int cid:送り先
- *    void *data:送られるデータ
- *    int size:dataの型のサイズ
+/**
+ * @brief データを送る
+ * 
+ * @param cid 
+ * @param data 
+ * @param size 
+ * 
  */
 void SendData(int cid, const void *data, int size)
 {
@@ -494,24 +488,20 @@ void SendData(int cid, const void *data, int size)
     }
 }
 
-/* データの受信
- *
- * 引数
- *    int cid:送り先
- *    void *data:送られるデータ
- *    int size:dataの型のサイズ
- * 返り値
- *
- *    エラーの場合0,-1を返す
+/**
+ * @brief データを受け取る
+ * 
+ * @param cid 
+ * @param data 
+ * @param size 
+ * @return int 
  */
 int ReceiveData(int cid, void *data, int size)
 {
-    //全員に送らないかつ、cidが負もしくは最大人数の値を超えているとき
     if ((cid != BROADCAST) && (0 > cid || cid >= NumClient))
     {
         fprintf(stderr, "ReceiveData(): client id is illegal.\n");
     }
-    //データが無いもしくはサイズが負のとき
     if ((data == NULL) || (size <= 0))
     {
         fprintf(stderr, "ReceiveData(): data is illegal.\n");
@@ -520,10 +510,11 @@ int ReceiveData(int cid, void *data, int size)
     return read(Clients[cid].sock, data, size);
 }
 
-/* エラーの表示
- *
- * 引数
- *   char *message: エラーの発生した段階
+/**
+ * @brief エラーの表示
+ * 
+ * @param message 
+ * @return int 
  */
 static int HandleError(char *message)
 {

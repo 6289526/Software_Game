@@ -1,3 +1,13 @@
+/**
+ * @file control_setup.cpp
+ * @author your name (you@domain.com)
+ * @brief 
+ * @version 0.1
+ * @date 2021-01-17
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
 /*
     キーボードかwiiリモコンかを選択でき,Wiiリモコンのアドレスを取得する
 */
@@ -49,7 +59,12 @@ static void InitInput();
 static InputData InputEvents(SDL_Event event);
 static int GetWiiAddress();
 
-/*wiiリモコンのアドレスを取得できる*/
+/**
+ * @brief Get the Address
+ * 
+ * @param args 
+ * @return int 
+ */
 int GetAddress(void *args)
 {
     SDL_mutex *mtx = (SDL_mutex *)args;
@@ -63,6 +78,11 @@ int GetAddress(void *args)
     return 0;
 }
 
+/**
+ * @brief Get the Ip Address
+ * 
+ * @return char* 
+ */
 char *GetIpAddress()
 {
     FILE *fp;
@@ -84,7 +104,11 @@ char *GetIpAddress()
     return address;
 }
 
-/*必要な情報を描画*/
+/**
+ * @brief 
+ * 
+ * @return int 
+ */
 int ControlSetUp()
 {
     SDL_Renderer *renderer = GetWindowRenderer();
@@ -273,13 +297,21 @@ int ControlSetUp()
     return 0;
 }
 
-//入力システムの初期化
+/**
+ * @brief キーボード入力の開始
+ * 
+ */
 void InitInput()
 {
     Key = SDL_GetKeyboardState(NULL);
 }
 
-/*キーボードの読み取り*/
+/**
+ * @brief 
+ * 
+ * @param event 
+ * @return InputData 
+ */
 InputData InputEvents(SDL_Event event)
 {
     if (SDL_PollEvent(&event))
@@ -293,9 +325,11 @@ InputData InputEvents(SDL_Event event)
     return Data;
 }
 
-/*
-wiiリモコンのMACアドレスの取得
-*/
+/**
+ * @brief Get the Wii MAC Address
+ * 
+ * @return int 
+ */
 int GetWiiAddress()
 {
 
@@ -337,12 +371,4 @@ int GetWiiAddress()
     }
 
     return -1;
-    // if (strcmp(WiiAddress, "") == 0)
-    // {
-    //     return -1;
-    // }
-    // else
-    // {
-    //     return 1;
-    // }
 }

@@ -1,8 +1,12 @@
-/*
- *  ファイル名  : client_input.h
- *  機能    : キーボード入力の定義
+/**
+ * @file client_KeybordInput.h
+ * @brief キーボード入力クラス
+ * @version 0.1
+ * @date 2021-01-17
+ * 
+ * @copyright Copyright (c) 2021
+ * 
  */
-
 #pragma once
 #include "client_input.h"
 

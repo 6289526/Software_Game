@@ -1,6 +1,11 @@
-/*
- *  ファイル名	: server_main.cpp
- *  機能	: クライアント用のメイン関数を記述
+/**
+ * @file server_main.cpp
+ * @brief サーバーのメイン関数
+ * @version 0.1
+ * @date 2021-01-17
+ * 
+ * @copyright Copyright (c) 2021
+ * 
  */
 
 #include "server_common.h"
@@ -15,6 +20,12 @@ int PortNum;
 int result = 1;
 bool GameEnd = false;
 
+/**
+ * @brief Get the Command object
+ * 
+ * @param args 
+ * @return int 
+ */
 int GetCommand(void *args)
 {
   SDL_mutex *mtx = (SDL_mutex *)args;
@@ -43,7 +54,12 @@ int GetCommand(void *args)
   return 0;
 }
 
-
+/**
+ * @brief 時間と現在位置を送る
+ * 
+ * @param args 
+ * @return int 
+ */
 int SendPosFunc(void *args)
 {
   SDL_mutex *mtx = (SDL_mutex *)args;
@@ -68,6 +84,12 @@ int SendPosFunc(void *args)
   return 0;
 }
 
+/**
+ * @brief クライアントからのリクエストを受け付ける
+ * 
+ * @param args 
+ * @return int 
+ */
 int Select(void *args)
 {
   SDL_mutex *mtx = (SDL_mutex *)args;
@@ -91,7 +113,13 @@ int Select(void *args)
   return 0;
 }
 
-// server用のmain関数
+/**
+ * @brief 
+ * 
+ * @param argc 
+ * @param argv 
+ * @return int 
+ */
 int main(int argc, char *argv[])
 {
   if (argc == 2)
