@@ -266,7 +266,7 @@ int ExeCommand()
         // 受け取った座標とフラッグをシステムモジュールにわたす
         GetSystem().SetPlace(data, NumClients);
 
-        GetSystem().UpdateFlag(flags, NumClients);
+        GetSystem().UpdateVelocityFlag(flags, NumClients);
 
         // 通信継続
         result = 1;

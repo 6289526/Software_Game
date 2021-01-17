@@ -1,29 +1,35 @@
-#include "client_time.hpp"
-// using namespace std::chrono;
+/**
+ * @file client_time.cpp
+ * @brief 
+ * タイマーモジュールの処理実装
+ */
 
+#include "client_time.hpp"
+
+/**
+ * @brief 
+ * 現在時間をセットする
+ */
 Timer::Timer()
 {
     _Prev = _Now = clock();
     UpdateFrame();
 }
 
-Timer::~Timer() { }
-
+/**
+ * @brief 
+ * 前フレームとの差を返す
+ * @return double 時間の差(sec)
+ */
 double Timer::GetDeltaTime(){
-    // return static_cast<double>(duration_cast<microseconds>(system_clock::now() - _Prev).count() / 1000.0);
     return static_cast<double>(_Now - _Prev) / CLOCKS_PER_SEC;
 }
 
+/**
+ * @brief 
+ * フレームを更新する
+ */
 void Timer::UpdateFrame(){
-    // _Prev = system_clock::now();
     _Prev = _Now;
     _Now = clock();
-    
-    /*clock_t start = clock();
-
-    // 何かの処理
-
-    clock_t end = clock();
-
-    const double time = static_cast<double>(end - start) / CLOCKS_PER_SEC * 1000.0;*/
 }

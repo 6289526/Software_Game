@@ -13,7 +13,6 @@ private:
     int _CurrentTime = 0; // 現在時間
 public:
     Timer();
-    ~Timer();
     double GetDeltaTime();
     void UpdateFrame();
 

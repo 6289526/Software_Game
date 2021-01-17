@@ -3,6 +3,10 @@
 using namespace SoundLoader;
 
 // ===== * ===== MusicFileLoader ===== * ===== //
+/**
+ * @brief 
+ * 音楽ファイルを読み込む
+ */
 MusicFileLoader::MusicFileLoader(){
     for (int type = 0; type < Sound::SoundEffectTypeNum; type++)
     {

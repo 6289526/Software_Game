@@ -1,21 +1,37 @@
 #include "client_input.h"
+
+/**
+ * @brief 
+ * 入力モジュールのコンストラクタ
+ */
 InputModuleBase::InputModuleBase() : _putFlag(false), _jumpFlag(false), _setname(false)
 {
 }
 
+/**
+ * @brief 
+ * 入力モジュールのデストラクタ
+ */
 InputModuleBase::~InputModuleBase()
 {
-    // printf("siieeeeeeee");
 }
 
-// 現在の入力情報を返す
+/**
+ * @brief 
+ * 現在の入力情報を返す
+ * @return InputType 入力タイプ
+ */
 InputType InputModuleBase::GetInputType()
 {
     return _Input;
 }
 
-// SystemRun内で呼ばれる。専用の処理を行い、入力情報を返す。
-// SystemRun以外で呼び出さないこと!!
+/**
+ * @brief 
+ * SystemRun内で呼ばれる。専用の処理を行い、入力情報を返す。
+ * SystemRun以外で呼び出さないこと!!
+ * @return InputType 入力タイプ
+ */
 InputType InputModuleBase::SystemGetInputType()
 {
     // すでに置いたなら置かせない
@@ -43,10 +59,16 @@ InputType InputModuleBase::SystemGetInputType()
     return _Input;
 }
 
+/**
+ * @brief 
+ * 移動に関する入力が入っているかを返す
+ * @return true 入っている
+ * @return false 入っていない
+ */
 bool InputModuleBase::IsMoveButtonDown()
 {
     bool result = false;
-    result = result | _Input.Forward; //
+    result = result | _Input.Forward;
     result = result | _Input.Right;
     result = result | _Input.Left;
     result = result | _Input.Jump;

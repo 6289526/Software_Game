@@ -27,7 +27,6 @@ namespace GameState{
 
     class Observer{
     public:
-        virtual ~Observer();
         virtual void Update(GameState state) = 0;
         void SetSubject(Subject *pSubject){ _Subject = pSubject; }
     protected:
@@ -47,8 +46,6 @@ namespace GameState{
     private:
         GameState _State, _PreState;
     public:
-        GameStateOutputer();
-        ~GameStateOutputer();
         virtual void Update(GameState state);
     };
 }

@@ -82,7 +82,7 @@ namespace System
         void SetPlace(FloatPosition moveData[MAX_NUMCLIENTS], int numClients);
         PlaceData GetPlaceData();
         void SystemRun();
-        void UpdateFlag(VelocityFlag *flags, int numClients);
+        void UpdateVelocityFlag(VelocityFlag *flags, int numClients);
         void UpdatePlaceData(PlaceData data);
         void SetRank(int id, int rank);
         void SetDirection(float direction, int id);

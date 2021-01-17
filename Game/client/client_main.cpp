@@ -15,6 +15,7 @@ int Go(void *args);
 char WiiAddress[18];
 
 System::ClientSystem _System;
+// ClientSystemを返す
 System::ClientSystem &GetSystem() { return _System; }
 
 // client用のmain関数
@@ -77,12 +78,13 @@ int main(int argc, char *argv[])
 	SDL_mutex *mtx1 = SDL_CreateMutex();
 	SelectThread = SDL_CreateThread(Select, "getCommand", mtx1);
 
+	// End入力が入っていればループから抜ける
 	while (cond && !_System.GetInitData()->input->GetInputType().End)
 	{
-		Disp();
-		_System.SystemRun();
-		SDL_Delay(10);
-		_System.GetInitData()->timer->UpdateFrame();
+		Disp();					// 画面の表示
+		_System.SystemRun();	// メインシステムの実行
+		SDL_Delay(10);			// 遅延
+		_System.GetInitData()->timer->UpdateFrame(); // Timerの更新
 	}
 
 	if (_System.GetInitData()->input->GetInputType().End)
