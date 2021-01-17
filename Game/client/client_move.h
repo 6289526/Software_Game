@@ -1,6 +1,7 @@
-/*
- *  ファイル名  : client_move.h
- *  機能    : ClientのSystem内における移動や設置の関数を定義
+/**
+ * @file client_move.h
+ * @brief 
+ * ClientのSystem内における移動や設置の関数を定義
  */
 
 #pragma once

@@ -1,3 +1,9 @@
+/**
+ * @file client_system.cpp
+ * @brief 
+ * クライアントシステムメインモジュールの実装
+ */
+
 #include "client_common.h"
 #include "client_system.hpp"
 #include "graphic.h"

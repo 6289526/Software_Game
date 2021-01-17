@@ -1,3 +1,8 @@
+/**
+ * @file client_gamestate.hpp
+ * @brief ゲームの状態を定義
+ */
+
 #pragma once
 #include <stdio.h>
 #include <list>

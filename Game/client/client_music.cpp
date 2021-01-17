@@ -1,3 +1,9 @@
+/**
+ * @file client_music.cpp
+ * @brief 
+ * 音楽モジュールの実装
+ */
+
 #include "client_music.hpp"
 
 using namespace Sound;

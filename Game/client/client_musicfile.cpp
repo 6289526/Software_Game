@@ -1,3 +1,9 @@
+/**
+ * @file client_musicfile.cpp
+ * @brief 
+ * 音楽読み込みモジュールの実装
+ */
+
 #include "client_musicfile.hpp"
 
 using namespace SoundLoader;
