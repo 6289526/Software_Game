@@ -183,10 +183,10 @@ PlaceData ClientSystem::GetPlaceData()
  */
 void ClientSystem::SystemRun()
 {
-	pair<bool, bool> t = _MoveCalculator->SetPlayerVelocity(Input, &PData[MyId], &Time);
-	isJumped = t.second;
+	bool isMoved = _MoveCalculator->SetPlayerVelocity(Input, &PData[MyId], &Time);
+	isJumped = _MoveCalculator->IsJumped();
 	// 移動処理
-	if (t.first)
+	if (isMoved)
 	{
 		// 移動コマンド実行
 		InCommand(MOVE_COMMAND);

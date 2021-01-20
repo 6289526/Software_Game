@@ -92,7 +92,7 @@ Vector3Int MoveCalculator::GetTopOfHeightBlockIndex(Vector3 position){
  * @return true 地面にいる
  * @return false 宙に浮いている
  */
-bool MoveCalculator::IsPlayerOnGroundSimple(){
+bool MoveCalculator::IsPlayerOnGround(){
     const PlayerData *pData = _System->GetPlayerData();
     const int myId = _System->GetMyID();
 	float result = 0;
@@ -157,30 +157,30 @@ bool MoveCalculator::IsPlayerOnGroundSimple(){
  * @param timer タイマー
  * @return pair<bool, bool> 移動したか、ジャンプ中か
  */
-pair<bool, bool> MoveCalculator::SetPlayerVelocity(InputModuleBase *inputModule, PlayerData *pData, Timer *timer){
+bool MoveCalculator::SetPlayerVelocity(InputModuleBase *inputModule, PlayerData *pData, Timer *timer){
 
 	if (inputModule == NULL || pData == NULL || timer == NULL) {
 		fprintf(stderr,"Error: input, pData, timerのいずれかがNULLです\n");
-		return make_pair(false, false);
+		return false;
 	}
 
-	// fprintf(stderr,"vel: (%.3f, %.3f, %.3f), pos: (%.2f, %.2f, %.2f), rot: (%.2f, %.2f), JPG: (%d, %d, %d)\n", pData->velocity.x, pData->velocity.y, pData->velocity.z, pData->pos.x, pData->pos.y, pData->pos.z, pData->direction.horizontal, pData->direction.vertical, isJumped, isPreGround, isOnGround);
+	fprintf(stderr,"vel: (%.3f, %.3f, %.3f), pos: (%.2f, %.2f, %.2f), rot: (%.2f, %.2f), JPG: (%d, %d, %d)\n", pData->velocity.x, pData->velocity.y, pData->velocity.z, pData->pos.x, pData->pos.y, pData->pos.z, pData->direction.horizontal, pData->direction.vertical, isJumped, isPreGround, isOnGround);
 
-	if (!USE_GRAVITY){
-		return make_pair(DisUseGravity(inputModule, pData, timer), false);
+	if (!USE_GRAVITY){ // デバッグ用の重力を考慮しない制御へ切り替え
+		return DisUseGravity(inputModule, pData, timer);
 	}
 	else
 	{
-		InputType data = inputModule->SystemGetInputType();
+		InputType input = inputModule->SystemGetInputType();
 
 		try
 		{
 			isPreGround = isOnGround;
-			isOnGround = IsPlayerOnGroundSimple();
+			isOnGround = IsPlayerOnGround();
 		}
 		catch (char const *e) // エラー処理
 		{
-			fprintf(stderr, "%s", e);
+			fprintf(stderr, "In IsPlayerOnGround: %s", e);
 		}
 
 		pData->velocity.x = 0;
@@ -197,9 +197,8 @@ pair<bool, bool> MoveCalculator::SetPlayerVelocity(InputModuleBase *inputModule,
 
 		if (inputModule->IsMoveButtonDown() || !isOnGround)
 		{
-			if (data.Forward) // 前進 : W Key
+			if (input.Forward) // 前進 : W Key
 			{
-				data.Forward = false;
 				if (strcmp(WiiAddress, "") != 0)
 				{
 					pData->velocity.x += GetMoveDirection(*pData, 0).x * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
@@ -211,33 +210,26 @@ pair<bool, bool> MoveCalculator::SetPlayerVelocity(InputModuleBase *inputModule,
 					pData->velocity.z += GetMoveDirection(*pData, 0).z * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
 				}
 			}
-			if (data.Left || data.L) // 左 : A Key
+			if (input.Left || input.L) // 左 : A Key
 			{
-				data.Left = false;
-				data.L = false;
 				pData->direction.horizontal += PLAYER_ROTATE_SPEED * timer->GetDeltaTime();
 			}
-			if (data.Right || data.R) // 右 : D Key
+			if (input.Right || input.R) // 右 : D Key
 			{
-				data.Right = false;
-				data.R = false;
 				pData->direction.horizontal -= PLAYER_ROTATE_SPEED * timer->GetDeltaTime();
 			}
-			if (data.U) // 上回転 : Up Key
+			if (input.U) // 上回転 : Up Key
 			{
-				data.U = false;
 				pData->direction.vertical += PLAYER_ROTATE_SPEED * timer->GetDeltaTime();
 			}
-			if (data.D) // 下回転 : Down Key
+			if (input.D) // 下回転 : Down Key
 			{
-				data.D = false;
 				pData->direction.vertical -= PLAYER_ROTATE_SPEED * timer->GetDeltaTime();
 			}
 
 			// ジャンプ
-			if (data.Jump && isOnGround == 1)
+			if (input.Jump && isOnGround && !isJumped)
 			{
-				data.Jump = false;
 				pData->velocity.y += PLAYER_JUMP_POWER;
 				isJumped = true;
 				_System->GetSoundController().GetSoundEffectSubject().OnNest(Sound::Jump);
@@ -261,11 +253,11 @@ pair<bool, bool> MoveCalculator::SetPlayerVelocity(InputModuleBase *inputModule,
 				pData->direction.vertical = MAXIMUM_ANGLE_DOWN;
 #pragma endregion
 
-			return make_pair(true, isJumped);
+			return true;
 		}
 	}
 
-	return make_pair(false, isJumped);
+	return false;
 }
 
 /**
@@ -280,16 +272,16 @@ pair<bool, bool> MoveCalculator::SetPlayerVelocity(InputModuleBase *inputModule,
 bool MoveCalculator::DisUseGravity(InputModuleBase *inputModule, PlayerData *pData, Timer *timer){
 	pData->velocity = {0, 0, 0};
 
-	InputType data = inputModule->SystemGetInputType();
+	InputType input = inputModule->SystemGetInputType();
 
 	if (inputModule->IsMoveButtonDown())
 	{
-		if (data.U)
+		if (input.U)
 		{
 			pData->velocity.y -= 1;
 		}
 		// 前
-		if (data.Forward)
+		if (input.Forward)
 		{
 			if (strcmp(WiiAddress, "") != 0)
 			{
@@ -303,49 +295,33 @@ bool MoveCalculator::DisUseGravity(InputModuleBase *inputModule, PlayerData *pDa
 			}
 		}
 		// 左右
-		if (data.Left)
+		if (input.Left)
 		{
-			// if(strcmp(WiiAddress, "") != 0){
-			// 	pData->velocity.x += 5*GetMoveDirection(*pData, 90).x * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
-			// 	pData->velocity.z += 5*GetMoveDirection(*pData, 90).z * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
-				pData->direction.horizontal += PLAYER_ROTATE_SPEED * timer->GetDeltaTime();
-			// }
-			// else
-			// {
-			// 	pData->velocity.x += GetMoveDirection(*pData, 90).x * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
-			// 	pData->velocity.z += GetMoveDirection(*pData, 90).z * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
-			// }
+			pData->direction.horizontal += PLAYER_ROTATE_SPEED * timer->GetDeltaTime();
 		}
 
-		else if (data.Right)
+		else if (input.Right)
 		{
-			// if(strcmp(WiiAddress, "") != 0){
-			// 	pData->velocity.x += 5*GetMoveDirection(*pData, 270).x * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
-			// 	pData->velocity.z += 5*GetMoveDirection(*pData, 270).z * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
-				pData->direction.horizontal -= PLAYER_ROTATE_SPEED * timer->GetDeltaTime();
-			// }
-			// else{
-			// pData->velocity.x += GetMoveDirection(*pData, 270).x * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
-			// pData->velocity.z += GetMoveDirection(*pData, 270).z * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
-			// }
+			pData->direction.horizontal -= PLAYER_ROTATE_SPEED * timer->GetDeltaTime();
 		}
 
-		if (data.R){
+		if (input.R){
 			pData->velocity.y += 1;
 		}
-		if (data.L)
+		if (input.L)
 		{
 			pData->direction.horizontal += PLAYER_ROTATE_SPEED * timer->GetDeltaTime();
 		}
 
 		///////////////////////////////// デバッグ用 後ろに下がる
-		if (data.D)
+		if (input.D)
 		{
 			pData->velocity.x += GetMoveDirection(*pData, 180).x * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
 			pData->velocity.z += GetMoveDirection(*pData, 180).z * PLAYER_MOVE_SPEED * timer->GetDeltaTime();
 		}
 		/////////////////////////////////
 
+		// 速度制限
 		if (TERMINAL_SPEED < pData->velocity.x)
 		{
 			pData->velocity.x = TERMINAL_SPEED;

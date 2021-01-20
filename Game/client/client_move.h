@@ -34,8 +34,9 @@ namespace Mover{
 
         int GetPutableBlockHeightIndexFromMap(Vector2Int pos);
         Vector3Int GetTopOfHeightBlockIndex(Vector3 position);
-        bool IsPlayerOnGroundSimple();
+        bool IsPlayerOnGround();
+        bool IsJumped() { return isJumped; }
 
-        std::pair<bool, bool> SetPlayerVelocity(InputModuleBase *inputModule, PlayerData *pData, Timer *timer);
+        bool SetPlayerVelocity(InputModuleBase *inputModule, PlayerData *pData, Timer *timer);
     };
 }
