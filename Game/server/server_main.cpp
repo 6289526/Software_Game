@@ -196,8 +196,9 @@ int main(int argc, char *argv[])
     SDL_Delay(10);
   }
 
-  char str[32];
-  fgets(str, 32, stdin);
+  // char str[32];
+  // fgets(str, 32, stdin);
+  SDL_Delay(10000);
 
   TerminateServer(); // サーバー終了処理
   EndSys();          // システム終了処理
