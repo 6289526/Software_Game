@@ -232,6 +232,8 @@ bool MoveCalculator::SetPlayerVelocity(InputModuleBase *inputModule, PlayerData 
 			{
 				pData->velocity.y += PLAYER_JUMP_POWER;
 				isJumped = true;
+				if(!isPreGround && isOnGround) // 空中浮遊のバグを修正
+					isJumped = false;
 				_System->GetSoundController().GetSoundEffectSubject().OnNest(Sound::Jump);
 			}
 			else if (!isOnGround)
