@@ -11,7 +11,7 @@ MoveCalculator::MoveCalculator(System::ClientSystem *system){
 }
 
 /**
- * @brief 
+ * @brief
  * ブロックの設置場所を計算する
  * @param playerData 設置するプレイヤーの情報
  * @param handLength プレイヤーの手の長さ
@@ -32,7 +32,7 @@ PlaceData MoveCalculator::BuildPlaceData(PlayerData playerData, float handLength
 }
 
 /**
- * @brief 
+ * @brief
  * プレイヤーの移動向きを返す
  * @param player 設置するプレイヤーの情報
  * @param angle プレイヤーの角度
@@ -47,7 +47,7 @@ Vector3 MoveCalculator::GetMoveDirection(PlayerData player, float angle){
 }
 
 /**
- * @brief 
+ * @brief
  * マップに設置可能なブロックの高さを返す
  * @param pos 計算する座標位置
  * @return int 高さ
@@ -68,7 +68,7 @@ int MoveCalculator::GetPutableBlockHeightIndexFromMap(Vector2Int pos){
 }
 
 /**
- * @brief 
+ * @brief
  * マップの最も高い位置のブロックの要素番号を返す
  * @param position 計算する位置
  * @return Vector3Int ブロックの位置
@@ -87,7 +87,7 @@ Vector3Int MoveCalculator::GetTopOfHeightBlockIndex(Vector3 position){
 }
 
 /**
- * @brief 
+ * @brief
  * プレイヤーが地面にいるかを返す
  * @return true 地面にいる
  * @return false 宙に浮いている
@@ -150,7 +150,7 @@ bool MoveCalculator::IsPlayerOnGround(){
 }
 
 /**
- * @brief 
+ * @brief
  * プレイヤーの角度を計算し返す
  * @param inputModule 入力モジュール
  * @param pData プレイヤーデータ
@@ -164,7 +164,7 @@ bool MoveCalculator::SetPlayerVelocity(InputModuleBase *inputModule, PlayerData 
 		return false;
 	}
 
-	fprintf(stderr,"vel: (%.3f, %.3f, %.3f), pos: (%.2f, %.2f, %.2f), rot: (%.2f, %.2f), JPG: (%d, %d, %d)\n", pData->velocity.x, pData->velocity.y, pData->velocity.z, pData->pos.x, pData->pos.y, pData->pos.z, pData->direction.horizontal, pData->direction.vertical, isJumped, isPreGround, isOnGround);
+	// fprintf(stderr,"vel: (%.3f, %.3f, %.3f), pos: (%.2f, %.2f, %.2f), rot: (%.2f, %.2f), JPG: (%d, %d, %d)\n", pData->velocity.x, pData->velocity.y, pData->velocity.z, pData->pos.x, pData->pos.y, pData->pos.z, pData->direction.horizontal, pData->direction.vertical, isJumped, isPreGround, isOnGround);
 
 	if (!USE_GRAVITY){ // デバッグ用の重力を考慮しない制御へ切り替え
 		return DisUseGravity(inputModule, pData, timer);
@@ -248,7 +248,7 @@ bool MoveCalculator::SetPlayerVelocity(InputModuleBase *inputModule, PlayerData 
 				pData->velocity.y = TERMINAL_SPEED;
 			if (TERMINAL_SPEED < pData->velocity.z)
 				pData->velocity.z = TERMINAL_SPEED;
-				
+
 			if (pData->direction.vertical > MAXIMUM_ANGLE_UP)
 				pData->direction.vertical = MAXIMUM_ANGLE_UP;
 			if (pData->direction.vertical < MAXIMUM_ANGLE_DOWN)
@@ -263,7 +263,7 @@ bool MoveCalculator::SetPlayerVelocity(InputModuleBase *inputModule, PlayerData 
 }
 
 /**
- * @brief 
+ * @brief
  * 重力を考慮しない移動法で移動を計算する
  * @param inputModule 入力モジュール
  * @param pData プレイヤーデータ
