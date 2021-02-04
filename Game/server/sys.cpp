@@ -72,7 +72,7 @@ void EndSys() // システム終了処理
   delete[] PRank.Rank;
 }
 
-void Start_Time(){ 
+void Start_Time(){
   StartTime = time(NULL);
 }
 
@@ -856,6 +856,9 @@ void SendAllPos(int client_num) {
 void SetRank() {
   for (int i = 0; i < Num_Clients; ++i) {
     PRank.distance[i] = Map.GetMapD() * BLOCK_MAGNIFICATION - PData[i].pos.z;
+    if (PData[i].rank != 0) {
+      PRank.distance[i] = PData[i].rank;
+    }
   }
 
   float max_distance = 0;
