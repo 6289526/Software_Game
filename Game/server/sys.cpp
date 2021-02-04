@@ -27,7 +27,7 @@ time_t StartTime = 0; // ゲーム開始時間
 
 time_t NowTime = 0; // 今の時間
 
-time_t PleveTime = 0; // 前の時間
+time_t PreveTime = 0; // 前の時間
 
 // クライアント配列の先頭ポインタを返す
 const PlayerData *GetPlayerData() { return PData; }
@@ -45,7 +45,7 @@ void SetClientName(int id, char *name) { Name_Clients[id] = name; }
 void InitSys(char *file) // システム初期化
 {
   Map.LoadMapData(file);
-  StartTime = time(NULL); // スタート時間入手
+  StartTime = time(NULL);
 }
 
 void InitPlayerData() // プレイヤーデータ初期化処理
@@ -72,9 +72,13 @@ void EndSys() // システム終了処理
   delete[] PRank.Rank;
 }
 
+void Start_Time(){ 
+  StartTime = time(NULL);
+}
+
 // 時間セット
 void Set_Time() {
-  PleveTime = NowTime;
+  PreveTime = NowTime;
   NowTime = time(NULL);
 }
 
@@ -85,7 +89,7 @@ int Get_Time() {
 
 // タイムを送信
 void Send_Per_Time() {
-  if (NowTime - PleveTime) {
+  if (NowTime - PreveTime) {
     RunCommand(BROADCAST, TIMER_COMMAND);
     for (int i = 0; i < Num_Clients; ++i) {
       if (!PData[i].goal) {
@@ -208,7 +212,7 @@ static int BuryCheck_Vertical(const int chara_ID, const int y,
   const int(*terrainData)[MAP_SIZE_H][MAP_SIZE_D] = Map.GetTerrainData();
 
   int Bury_Count = 0; // 返り値　埋まり具合
-  int Errer_Count = 0;
+  int Error_Count = 0;
 
   for (int i = 1; i < (accuracy - 1); ++i) {
     block.x = point_X[i] / BLOCK_MAGNIFICATION;
@@ -227,7 +231,7 @@ static int BuryCheck_Vertical(const int chara_ID, const int y,
             ++t_Count;
             // 埋まっている(かもしれない)
             if (chara_size <= k) {
-              ++Errer_Count;
+              ++Error_Count;
               t_Count = 0;
             }
           }
@@ -249,7 +253,7 @@ static int BuryCheck_Vertical(const int chara_ID, const int y,
   }
 
   // 全体が埋まっていたら
-  if (Errer_Count == ((accuracy - 2) * (accuracy - 2))) {
+  if (Error_Count == ((accuracy - 2) * (accuracy - 2))) {
     return -1;
   }
 

@@ -76,6 +76,8 @@ void InitPlayerData(); // プレイヤーデータ初期化処理
 
 void EndSys(); // システム終了処理
 
+void Start_Time(); // タイマーの開始 
+
 void Set_Time(); // 時間セット
 
 int Get_Time(); // 経過時間入手
