@@ -208,6 +208,8 @@ void SetupServer(int num_cl, u_short port)
         FD_SET(Clients[i].sock, &Mask);
     }
 
+    Start_Time(); // ゲーム時間の計測を開始する
+
     fprintf(stderr, "Server setup is done.\n");
 }
 
